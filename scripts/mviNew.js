@@ -113,6 +113,7 @@ function getMVIData(){
         }
         mviData.push({ name: dimensionList[i], axes: mviAxes })
     }
+    console.log(mviData)
 return mviData
 }
 
