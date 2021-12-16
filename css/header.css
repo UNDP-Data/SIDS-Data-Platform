@@ -19,7 +19,12 @@ a:hover {
   margin-bottom: 0;
   height: 0;
 }
-
+.main-logo_img {
+  max-height: 100px;
+  margin-top: 5px;
+  position: absolute;
+  z-index: 5;
+}
 .nav-masthead .nav-link {
   padding: 0.25rem 0;
   font-weight: 700;
