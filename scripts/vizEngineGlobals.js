@@ -229,7 +229,7 @@ mviRecodeDict={
     "Palau",
     "Papua New Guinea",
     "Solomon Islands",
-    "Micronesia",
+    "Micronesia, Fed. Sts.",
     "Marshall Islands",
     "Vanuatu",
     "Nauru",
