@@ -1,26 +1,32 @@
-presetDict = { "evi": ["agrInst", "expConc", "expInst", "popLECZ", "popDry", "remote", "victims", "agrGDP"] }
+    //currently only used when apending rectangles
+    const indexColors = {"mvi-index-index":{
+        "Financial": "#0DB14B",
+        "Economic": "#f0db3a",
+        "Geographic": "#CC333F",
+        "Environmental": "#00A0B0",
+      },"egov":{
+        "Human Capital Index":"",
+        "Capital Assets Index":"",
+        "Telecommunications Index":"",
+        "Cybersiei":""
+      }
+    };
 
-mviIndicatorNames = {
-    "expConc": "Export Concentration", "expInst": "Export Instability", "agrInst": "Agricultural Instability", "agrGDP": "Agriculture & Fishing (% of GDP)",
-    "victims": "Victims of Disasters", "popLECZ": "% Population in Coastal Zones", "remote": "Remoteness",//"popDry": "% Population in Drylands", 
-    "tourism": "Tourism Revenue (% of Exports)", "fdi": "FDI Inflows (% of GDP)", "remit": "Remittances (% of GDP)"
-}
+const indexWeightsDict={"mvi-index-index":{"normalization":true, "subindices":{
+    "Financial": {"weight":1,"subsubindices":{"mvi-ST.INT.RCPT.XP.ZS-financial":1, "mvi-BX.TRF.PWKR.DT.GD.ZS-financial":1, "mvi-BX.KLT.DINV.WD.GD.ZS-financial":1}},
+    "Economic": {"weight":1,"subsubindices":{"mvi-ldc-AIN-Index-economic":1, "mvi-ldc-XCON-Index-economic":1, "mvi-ldc-XIN-Index-economic":1}},
+    "Geographic": {"weight":1,"subsubindices":{"mvi-ldc-LECZ-Index-geographic":1, "mvi-ldc-REM-Index-geographic":1}}, //"popDry",
+    "Environmental": {"weight":1,"subsubindices":{"mvi-ldc-VIC-Index-environmental":1, "mvi-ldc-AFF-Index-environmental":1}}
+   }},
+  "egov-egi-unEGovernmentSurvey":{"normalization":false, "subindices":{
+  "E-Participation Index":{"weight":1,"subsubindices":{"egov-epi-unEGovernmentSurvey":1}},
+  "Human Capital Index":{"weight":1,"subsubindices":{"egov-hci-unEGovernmentSurvey":1}},
+  "Online Service Index":{"weight":1,"subsubindices":{"egov-osi-unEGovernmentSurvey":1}},
+  "Telecommunication Infrastructure Index":{"weight":1,"subsubindices":{"egov-tii-unEGovernmentSurvey":1}}
+  }
+  }
+  };
 
-mviIndicatorsDict = {
-    "expConc": "Exportconcentration", "expInst": "ExportInstability", "agrInst": "AgriculturalInstability", "agrGDP": "AgricultureandfishingasshareofGDP",
-    "victims": "Victimsofdisasters", "popLECZ": "Shareofpopulationinlowelevatedcoastalzones",  "remote": "Remoteness",//"popDry": "%PopulationinDrylands",
-    "tourism": "Tourismrevenuesasshareofexports", "fdi": "FDIinflowsaspercentageofGDP", "remit": "RemittancesaspercentageofGDP"
-}
+  const indexCodes={"mvi-index-index":"mvi","egov-egi-unEGovernmentSurvey":"egov"}//,egov,etc.]
 
-mviDimensionColors = { "Financial": "#0DB14B", "Economic": "#f0db3a", "Geographic": "#CC333F", "Environmental": "#00A0B0" }
 
-mviDimensions = {
-    "Financial": ["tourism", "remit", "fdi"],
-    "Economic": ["agrInst", "expConc", "expInst"],
-
-    "Geographic": ["popLECZ", "remote"],//"popDry", 
-    "Environmental": ["victims", "agrGDP"]
-
-}
-
-mviDimensionList = Object.keys(mviDimensions)
