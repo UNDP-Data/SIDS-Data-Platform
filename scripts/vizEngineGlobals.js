@@ -30,8 +30,7 @@ var indicatorGlobal="Region";
 var bboxDict = {};
 var textBBoxDict = {};
 var bboxInit=0;
-var indexCodes=["mvi"]//,egov,etc.]
-//var subindexWeights={"mvi":{"Economic":1,"Geographic":1,"Environmental":1,"Financial":1}}
+var totalIndexRectangles =4;
 var vizMode;
 d3.select(self.frameElement).style("height", "650px");
 /////
@@ -45,21 +44,34 @@ choro_legend_svg=d3.select("#choro_legend_container")
   .append("svg")
   .attr("width", vizContainerWidth)
   .attr("height", vizContainerHeight);
-countryListLongitude = ["Belize", "Jamaica", "Cayman Islands", "Cuba", "The Bahamas", "Curaçao", "Aruba", "Haiti", "Dominican Republic",
-    "St. Kitts and Nevis", "Sint Maarten","Antigua and Barbuda", "Montserrat", "Dominica", "St. Lucia"
-    , "Barbados", "St. Vincent and the Grenadines", "Grenada", "Trinidad and Tobago", "Guyana", "Suriname", "", "",
-    "Cabo Verde", "Guinea-Bissau",
-    "São Tomé and Príncipe", "Comoros", "Bahrain", "Mauritius", "Seychelles", "Maldives", "Singapore", "", "",
-    "Timor Leste", "Palau", "Papua New Guinea", "Solomon Islands",
-    "Micronesia", "Marshall Islands", "Vanuatu", "Nauru", "Kiribati", "Fiji", "Tuvalu", "Tonga", "Niue", "Samoa", "Cook Islands"]
+
+////////
+//MVI Initializations
+//////////////
+
+presetDict = {
+  evi: [
+    "mvi-ldc-AIN-Index-economic",
+    "mvi-ldc-XCON-Index-economic",
+    "mvi-ldc-XIN-Index-economic",
+    "mvi-ldc-LECZ-Index-geographic",
+    "popDry",
+    "mvi-ldc-REM-Index-geographic",
+    "mvi-ldc-VIC-Index-environmental",
+    "mvi-ldc-AFF-Index-environmental",
+  ],
+};
+
+///country lists, could be refactored
 
 regionCountries = {
-    "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP"], 
-        "pacific": ["TLS", "PLW", "PNG", "SLB","TON",
-            "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "ABW", "NIU", "WSM", "TKL", "COK"],
+   
     "caribbean": ["BLZ", "JAM", "CYM", "CUB", "BMU", "BHS", "ABW", "CUW", "TCA", "HTI", "DOM",
         "KNA", "VGB", "AIA", "SXM", "ATG", "MSR", "DMA", "LCA"
-        , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR"]
+        , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR"] , 
+        "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP"],
+        "pacific": ["TLS", "PLW", "PNG", "SLB","TON",
+            "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "ABW", "NIU", "WSM", "TKL", "COK"]
 }
 
 sidsDict= {"ATG":"Antigua and Barbuda", "ABW":"Aruba","BHS":"The Bahamas","BMU":"Bermuda",
@@ -73,212 +85,14 @@ sidsDict= {"ATG":"Antigua and Barbuda", "ABW":"Aruba","BHS":"The Bahamas","BMU":
 "SUR":"Suriname","TLS": "Timor Leste","TTO":"Trinidad and Tobago", "TON": "Tonga", 
 "TUV":"Tuvalu","TCA":"Turks and Caicos Islands","VUT": "Vanuatu","AIA":"Anguilla",
 "COK":"Cook Islands","MSR":"Montserrat","TKL":"Tokelau","NIU": "Niue"}
+ 
+  countryListLongitude = ["BLZ","CYM","BHS", "JAM", "CUB", "HTI", "DOM","TCA","CUW", "ABW"
+  ,"BMU","VGB","AIA","KNA", "SXM","ATG", "MSR", "DMA", "LCA", "BRB", "VCT", "GRD", "TTO", "GUY", "SUR",
+  "CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP", "TLS", "PLW", "PNG", "SLB",
+  "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "TON", "NIU", "WSM","TKL", "COK"]
 
-
-
-
-// sidsSvgToIso= {"antiguaAndBarbuda":"ATG", "aruba":"ABW","bahamas":"BHS","bermuda":"BMU",
-// "bahrain":"BHR", "barbados":"BRB", "belize":"BLZ", "britishVirginIslands":"VGB","caboVerde":"CPV","caymanIslands":"CYM", "comoros":"COM",
-// "cuba":"CUB","curacao":"CUW","dominica":"DMA", "dominicanRepublic":"DOM",
-// "fiji":"FJI" ,"grenada":"GRD", "guineaBissau":"GNB", "guyana":"GUY", "haiti":"HTI", 
-// "jamaica":"JAM", "kiribati":"KIR", "maldives":"MDV", "marshallIslands":"MHL",
-// "mauritius":"MUS", "micronesia":"FSM", "nauru":"NRU", "palau":"PLW", 
-// "papuaNewGuinea":"PNG", "samoa":"WSM", "saoTomeAndPrincipe":"STP", "seychelles":"SYC",
-// "singapore":"SGP","sintMaarten":"SXM","solomonIslands":"SLB", "kittsAndNevis":"KNA", "stVincent":"VCT",
-// "saintLucia":"LCA", "suriname":"SUR", "timorLeste":"TLS","trinidadAndTobago":"TTO",  "tonga":"TON", 
-//            "tuvalu":"TUV","turksAndCaicos":"TCA", "vanuatu":"VUT","anguilla":"AIA","cookIslands":"COK",
-//            "montserrat":"MSR","tokelau":"TKL", "niue":"NIU"}
-
-
-
-
-
-
-
-////////
-//Old MVI Initializations, should mostly all be abstracted
-//////////////
-
-presetDict = {
-    evi: [
-      "agrInst",
-      "expConc",
-      "expInst",
-      "popLECZ",
-      "popDry",
-      "remote",
-      "victims",
-      "agrGDP",
-    ],
-  };
-  
-  mviIndicatorNames = {
-    expConc: "Export Concentration",
-    expInst: "Export Instability",
-    agrInst: "Agricultural Instability",
-    agrGDP: "Agriculture & Fishing (% of GDP)",
-    victims: "Victims of Disasters",
-    popLECZ: "% Population in Coastal Zones",
-    remote: "Remoteness", //"popDry": "% Population in Drylands",
-    tourism: "Tourism Revenue (% of Exports)",
-    fdi: "FDI Inflows (% of GDP)",
-    remit: "Remittances (% of GDP)",
-  };
-  
-  mviIndicatorsDict = {
-    expConc: "mvi-ldc-XCON-Index-economic",
-    expInst: "mvi-ldc-XIN-Index-economic",
-    agrInst: "mvi-ldc-AIN-Index-economic",
-    agrGDP: "mvi-ldc-AFF-Index-environmental",
-    victims: "mvi-ldc-VIC-Index-environmental",
-    popLECZ: "mvi-ldc-LECZ-Index-geographic",
-    remote: "mvi-ldc-REM-Index-geographic", //"popDry": "%mvi-ldc-DRY-Index-geographic",
-    tourism: "mvi-ST.INT.RCPT.XP.ZS-financial",
-    fdi: "mvi-BX.KLT.DINV.WD.GD.ZS-financial",
-    remit: "mvi-BX.TRF.PWKR.DT.GD.ZS-financial",
-  };
-  
-  indexDict={"mvi":"mvi-index-index"}
-  
-  mviDimensionColors = {
-      Financial: "#0DB14B",
-      Economic: "#f0db3a",
-      Geographic: "#CC333F",
-      Environmental: "#00A0B0",
-    };
-  
-    
-mviRecodeDict={
-
-}
-  
-  mviDimensions = {
-    Financial: ["tourism", "remit", "fdi"],
-    Economic: ["agrInst", "expConc", "expInst"],
-    Geographic: ["popLECZ", "remote"], //"popDry",
-    Environmental: ["victims", "agrGDP"],
-  };
-  
-  mviDimensionList = Object.keys(mviDimensions);
-  
   //should compute this automatically
-  mviCountryListSpider = [
-    "HTI",
-    "DOM",
-    "ATG",
-    "KNA",
-    "DMA",
-    "LCA",
-    "BRB",
-    "VCT",
-    "GRD",
-    "TTO",
-    "GUY",
-    "SUR",
-    "CPV",
-    "GNB",
-    "STP",
-    "COM",
-    "MUS",
-    "SYC",
-    "MDV",
-    "TLS",
-    "PLW",
-    "PNG",
-    "SLB",
-    "FSM",
-    "MHL",
-    "VUT",
-    "NRU",
-    "KIR",
-    "FJI",
-    "TUV",
-    "TON",
-    "WSM",
-    "BLZ",
-    "JAM",
-  ];
-  
-  mviCountryListLongitude = [
-    "Belize",
-    "Jamaica",
-    "Haiti",
-    "Dominican Republic",
-    "Antigua and Barbuda",
-    "St. Kitts and Nevis",
-    "Dominica",
-    "Saint Lucia",
-    "Barbados",
-    "St. Vincent and the Grenadines",
-    "Grenada",
-    "Trinidad and Tobago",
-    "Guyana",
-    "Suriname",
-    "",
-    "",
-    "Cabo Verde",
-    "Guinea-Bissau",
-    "São Tomé and Príncipe",
-    "Comoros",
-    "Mauritius",
-    "Seychelles",
-    "Maldives",
-    "",
-    "",
-    "Timor Leste",
-    "Palau",
-    "Papua New Guinea",
-    "Solomon Islands",
-    "Micronesia, Fed. Sts.",
-    "Marshall Islands",
-    "Vanuatu",
-    "Nauru",
-    "Kiribati",
-    "Fiji",
-    "Tuvalu",
-    "Tonga",
-    "Samoa",
-  ];
-  
-
-  // pacificList2 = [
-  //   "Timor Leste",
-  //   "Palau",
-  //   "Papua New Guinea",
-  //   "Solomon Islands",
-  //   "Micronesia",
-  //   "Marshall Islands",
-  //   "Vanuatu",
-  //   "Nauru",
-  //   "Kiribati",
-  //   "Fiji",
-  //   "Tuvalu",
-  //   "Tonga",
-  //   "Samoa",
-  // ];
-  // aisList2 = [
-  //   "Cabo Verde",
-  //   "Guinea-Bissau",
-  //   "São Tomé and Príncipe",
-  //   "Comoros",
-  //   "Mauritius",
-  //   "Seychelles",
-  //   "Maldives",
-  // ];
-  // caribbeanList2 = [
-  //   "Belize",
-  //   "Jamaica",
-  //   "Haiti",
-  //   "Dominican Republic",
-  //   "Antigua and Barbuda",
-  //   "St. Kitts and Nevis",
-  //   "Dominica",
-  //   "Saint Lucia",
-  //   "Barbados",
-  //   "St. Vincent and the Grenadines",
-  //   "Grenada",
-  //   "Trinidad and Tobago",
-  //   "Guyana",
-  //   "Suriname",
-  // ];
-  
+  countryListSpider = [ "HTI", "DOM","TCA","CUW", "ABW"
+  ,"BMU","VGB","AIA","KNA", "SXM","ATG", "MSR", "DMA", "LCA", "BRB", "VCT", "GRD", "TTO", "GUY", "SUR",
+  "CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP", "TLS", "PLW", "PNG", "SLB",
+  "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "TON", "NIU", "WSM","TKL", "COK","BLZ","CYM","BHS", "JAM", "CUB"]

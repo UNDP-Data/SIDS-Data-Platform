@@ -552,7 +552,7 @@ function updateTimeChart({ dataset, optionSelected }) {
             : xScale(closestPoint.year) + 30
         )
         .attr("y", yScale(closestPoint.value) - 20)
-        .text(closestPoint.value);
+        .text(nFormatter(closestPoint.value,3));
 
       const tickText = gXAxis
         .selectAll("g.tick")

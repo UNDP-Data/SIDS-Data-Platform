@@ -133,3 +133,13 @@ function filterObject(obj, arr) {
 function getIsoByName(countryName) {
     return Object.keys(sidsDict).find(key => sidsDict[key] === countryName);
   }
+
+  function normalizeIndex(val,min,max){
+      if(max>min){
+    normValue=(val-min)/(max-min)
+      }
+      else{
+          normValue=0
+      }
+      return normValue
+  }

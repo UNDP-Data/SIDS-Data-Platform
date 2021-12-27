@@ -4,11 +4,12 @@
 
 
 function updateVizEngine(indicatorCode) {
+ 
 
      //process code
      selectedPage = $(".selectedPage").attr("id");
   if(selectedPage=="mviTab"){ 
-  indicatorCode = "mvi";
+  indicatorCode = "mvi-index-index";
   }else{
       indicatorGlobal=indicatorCode
   }
@@ -16,11 +17,10 @@ function updateVizEngine(indicatorCode) {
     indicatorCode = "hdr137506-compositeIndices";///temp so has something to attach to data
   }
   //choose index or indicator mode
-  if (indexCodes.includes(indicatorCode)) {
+  if (Object.keys(indexCodes).includes(indicatorCode)) {
     vizMode = "index";
-    apiCode="indexData-" +indicatorCode
+    apiCode="indexData-" +indexCodes[indicatorCode]
     indexCode=indicatorCode
-    indicatorCode=indexDict[indicatorCode]
   } else {
     vizMode = "indicator";
     codeSplit = indicatorCode.split("-");
@@ -35,10 +35,7 @@ function updateVizEngine(indicatorCode) {
   indiSelections["sortby"] = $(".selectedSortby")[0].children[0].innerHTML;
   indiSelections["year"] = "recentValue"; /// temp until year selector is in place
   indiSelections["mviPreset"] = $(".selectedMviPreset")[0].id;
-
   ///also selectedRegion, selected statType
-  
-  console.log(indiSelections,indicatorCode) 
 
     ///update all and page elements
     updateVizBlocks(indiSelections);
@@ -52,33 +49,28 @@ function updateVizEngine(indicatorCode) {
     "https://sids-dashboard.github.io/api/data/"+  apiCode + ".json"
   ).then((dat) => {
     
-
+    if(vizMode=="indicator"){
     indicatorData = dat[indicatorCode];
-   
- if(vizMode=="index"){
-       console.log("Index Mode")
-       indexData=dat
-      // indicatorData=getIndexValues(indexData,indicatorCode)
+    indexData={}
+    indexWeights={"subindices":{},"normalization":false}
+    }
+ else if(vizMode=="index"){
+       indexData=getIndexValues(dat,indexCode,indiSelections)
+       indicatorData=indexData["index"]
 
-
-    //  if(indiSelections["viz"] == "Spider"){
-        console.log("japa")
-
-        subindexWeights=mviDimensions
-        subindexList=mviDimensionList
-        
-    
-        orderedCountryList=getIndexCountryList(indiSelections,subindexList)//temp
+    //  if(indiSelections["viz"] == "Spider"){//add this in once the index processing layer hsa been added before spider processing
+        ///abstract this
+        indexWeights = JSON.parse(JSON.stringify(indexWeightsDict[indexCode]));//deep copy
+        orderedCountryList=getIndexCountryList(indiSelections,indexWeights,indexData)
         indiSelections["countryOrder"]=orderedCountryList
-        
-        spiderData=processSpiderData(indexData,subindexWeights,indiSelections,orderedCountryList) 
-       
-        indiSelections["spiderData"]=spiderData//probably a bad idea
-        drawIndexSpider(spiderData,subindexList)
+        spiderData=processSpiderData(indexData,indexWeights,indiSelections,orderedCountryList)      
+        console.log(spiderData)
+        indiSelections["spiderData"]=spiderData//probably a bad idea, but used for now in index rect updates
+        drawIndexSpider(spiderData,indexWeights)
     //  } 
    }
 
-   console.log(indicatorData)
+  //  console.log(indicatorData)
       quantize=quantizeData(indicatorData,indiSelections)
     noData=countriesWithNoData(indicatorData,indiSelections)
 
@@ -88,14 +80,16 @@ function updateVizEngine(indicatorCode) {
     firstIndicatorInit=1; }
 
     //main update functions////
-    vizElementAttributes = processVizElementAttributes(indicatorData,indiSelections);
+    vizElementAttributes = processVizElementAttributes(indicatorData,indexData,indiSelections,indexWeights);
     ///////////
+console.log(vizElementAttributes)
+    //console.log(vizElementAttributes)
 
     updateCountrySvgColors(indicatorData, indicatorCode, quantize, indiSelections);//currently color data is computed here (quantize)
     updateCountryPositions(vizElementAttributes);
     updateCountryTitles( vizElementAttributes,indicatorCode, indiSelections, noData); 
     updateRectangles(vizElementAttributes);
-    updateIndexRectangles(indiSelections,indicatorData)
+    updateIndexRectangles(vizElementAttributes,indexWeights);
     updateLabels(vizElementAttributes, noData); //selectedPage, selectedViz, selectedYear,selectedSortby, indicatorData, noData)
     updateCircles(vizElementAttributes);
 //    updateCountryLines(vizElementAttributes);
@@ -104,8 +98,10 @@ function updateVizEngine(indicatorCode) {
     updateBarAxis(indicatorData, indiSelections);
     updateYAxis(indicatorData, indiSelections);
     if (indiSelections["viz"] == "Time Series") {
-        ///this should pass in data directly or else it won't update based on the customMvi
-        dataset = parse(dat);
+        ///this could be updated
+        timeData={}
+        timeData[indicatorCode]=indicatorData
+        dataset = parse(timeData);
         optionSelected = {
           countryGroupOption: tempTimeChartSelection,
           datasetOption: indicatorCode,
@@ -181,10 +177,9 @@ function updateVizBlocks(indiSelections){
     
     if (indiSelections["viz"] == "Spider") {
         $("#indexSpider").css("display", "block");
-        console.log("show me the spider")
+ 
       } else {
         $("#indexSpider").css("display", "none");
-        console.log("hidey spidey?")
       }
     
       if (indiSelections["viz"] == "Time Series") {
@@ -450,30 +445,6 @@ function updateCountryTitles(
     });
   }
 
-  // if (indiSelections["page"] == "mviTab"){
-
-  //     $(".choroText").each(function (d) {
-  //         //which is this only mviCountryListSpider? it doesn't check which tab is selected
-  //         ///console.log(indicator, indiSelections["page"], indiSelections["viz"])
-  //         if(noData.includes(country)) {
-  //             $(this).css("fill-opacity", 0)
-  //         }
-  //         else {
-  //             $(this).css("fill-opacity", 1)
-  //         }
-  //     })
-
-  //     $(".choroText2").each(function (d) {
-  //         $(this).css("fill-opacity", 0)
-  //     })
-  //     $(".choroText3").each(function (d) {
-
-  //         $(this).css("fill-opacity", 0)
-  //     })
-
-  // }
-
-
     if (indiSelections["viz"] == "Time Series") {
       $(".choroText").each(function (d) {
         $(this).css("fill-opacity", 0);
@@ -509,58 +480,6 @@ function updateCountryTitles(
         }
       });
     }
-
-  // else if (indiSelections["page"] == "mviTab"&&indiSelections["viz"]=="Bar Chart") {
-  //     chosenCountryListMVI=getChosenCountryListMVI()
-  // //    console.log(chosenCountryListMVI)
-  //     d3.select(sidsMaps).selectAll(".choroText")
-  //     .transition()
-  //     .duration(1200) //make transition time relative to to/from viz
-  //     .attr("transform", function (d) {
-  //         //    console.log(this.innerHTML)
-  //         var country = this.innerHTML;
-
-  //         var bBox = getBoundingBox(d3.select(this.parentNode).select("path"))
-  //         textX = bBox[4]
-  //         textY = bBox[2] - 11;
-  //         textBBox = this.getBBox()
-  //         if (chosenCountryListMVI.includes(country)) {
-
-  //             //console.log(textBBox)
-
-  //             MBC = mviBarChart(country, indiSelections["viz"], getMVIData(), getChosenCountryListMVI(), 1)["y"]
-  //             // console.log(bBox,textBBox,TT,country)
-  //             totalVals = 40
-  //             totalHeight = 500
-  //             rank = MBC / 12.45  //almost totalHeight/totalVals
-  //             //console.log(rank)
-  //             return "scale(1,1) translate(" + (-textX + 140 - textBBox.width / 2) + "," + (-textY + totalHeight / totalVals * (rank + .5)) + ")"
-  //         } else {
-  //             return "scale(1,1) translate(" + (-textX + 140 - textBBox.width / 2) + "," + (-textY)+")"
-  //         }
-
-  //     })
-  // }
-
-  //     if (indiSelections["page"] == "mviTab"){
-  //     if (indiSelections["viz"] == "Global View") {
-  //         $(".choroText2").each(function (d) {
-  //             $(this).css("fill-opacity", 1)
-  //         })
-  //         $(".choroText3").each(function (d) {
-  //             $(this).css("fill-opacity", 0)
-  //         })
-  //     }
-  //     else {
-  //         $(".choroText2").each(function (d) {
-  //             $(this).css("fill-opacity", 0)
-  //         })
-  //         $(".choroText3").each(function (d) {
-  //             $(this).css("fill-opacity", 0)
-  //         })
-  //     }
-  // }
-
   if (indiSelections["viz"] == "Multi-indicator") {
     d3.select(".yAxisTitle")
       .transition()
@@ -616,7 +535,7 @@ function updateLabels(vizElementAttributes, noData) {
   
 }
 
-function updateRectangles(vizElementAttributes) {
+function updateRectangles(vizElementAttributes,indexWeights) {
   d3.select(sidsMaps)
     .selectAll(".choroRect")
     .transition()
@@ -628,88 +547,63 @@ function updateRectangles(vizElementAttributes) {
       return vizElementAttributes[this.parentNode.id]["RT"]["y"];
     })
     .attr("width", function () {
-        // if(vizMode=="indicator"){
+        if(vizMode=="indicator"){
       return vizElementAttributes[this.parentNode.id]["RT"]["width"];
-        // }
-        // if(vizMode=="index"){
-        //     return 0;
-        // }
+        }
+        if(vizMode=="index"){
+            return 0;
+        }
     })
     .attr("height", function () {
       return vizElementAttributes[this.parentNode.id]["RT"]["height"];
     });
 }
 
-function updateIndexRectangles(indiSelections,indicatorData) {
-    selectedViz=indiSelections["viz"]
+function updateIndexRectangles(vizElementAttributes,indexWeights){
+  subindexList=Object.keys(indexWeights["subindices"])
+  for(i=0;i<subindexList.length;i++){
+   d3.select(sidsMaps)
+      .selectAll(".choroRect"+(i))
+      .transition()
+      .duration(1200)
+      .attr("x", function () {
+        return vizElementAttributes[this.parentNode.id]["MRT"+(i)]["x"];
+      })
+      .attr("y", function () {
+        return vizElementAttributes[this.parentNode.id]["MRT"+(i)]["y"];
+      })
+      .attr("width", function () {
+              return vizElementAttributes[this.parentNode.id]["MRT"+(i)]["width"];
+      })
+      .attr("height", function () {
+        return vizElementAttributes[this.parentNode.id]["MRT"+(i)]["height"];
+      });
+    
+}
+for(i=subindexList.length;i<totalIndexRectangles;i++){
+  d3.select(sidsMaps)
+     .selectAll(".choroRect"+(i))
+     .transition()
+     .duration(1200)
+     .attr("x", function () {
+       return vizElementAttributes[this.parentNode.id]["RT"]["x"];
+     })
+     .attr("y", function () {
+       return vizElementAttributes[this.parentNode.id]["RT"]["y"];
+     })
+     .attr("width", function () {
+             return vizElementAttributes[this.parentNode.id]["RT"]["width"];
+     })
+     .attr("height", function () {
+       return 0;
+     });
+   
+}
 
-if(indiSelections["page"]=="countryDataTab"){
-    rectTransformData = {}
-
-    $(".choroRectMvi").each(function () {
-        var country = this.parentNode.id
-        var bBox = getBoundingBox(d3.select(this.parentNode).select("path"))
-        dat = rectTransform( country, bBox, indicatorData, indiSelections )
-        rectTransformData[country] = dat
-    });
-
-    d3.select(sidsMaps).selectAll(".choroRectMvi")
-        .transition()
-        .duration(1200)
-        .attr("x", function () { return rectTransformData[this.parentNode.id]["x"] })
-        .attr("y", function () { return rectTransformData[this.parentNode.id]["y"] })
-        .attr("width", 0)
-        .attr("height", function () { return rectTransformData[this.parentNode.id]["height"] })
 
 }
 
-else if(indiSelections["page"]="mviTab"){
 
-    
-        for (i = 1; i < mviDimensionList.length+1; i++) {
-            rectTransformData = {};//get for index!
-    
-            if (selectedViz == "Spider"||selectedViz=="Time Series") {
-                $(".choroRect" + i).each(function () {
-                var country = this.parentNode.id;
-                var bBox = bboxDict[country]// getBoundingBox(d3.select(this.parentNode).select("path"));
-                dat = rectTransform( country, bBox, indicatorData, indiSelections );
-                dat["width"]=0
-                rectTransformData[country] = dat;
-                });
-            }
-    
-            else if (selectedViz == "Global View") {
-                    $(".choroRect" + i).each(function () {
-                    var country = this.parentNode.id;
-                    dat = mviColumnChart( country, indiSelections,  indiSelections["spiderData"],  mviCountryListLongitude,   i );
-                    rectTransformData[country] = dat;
-                });
-            }
-    
-            else if (selectedViz == "Bar Chart") {
-                rectTransformData = {};
-                $(".choroRect" + i).each(function () {
-                    var country = this.parentNode.id;
-                    dat = mviBarChart(  country, indiSelections, indiSelections["spiderData"],  chosenCountryListMVI,  i );
-                    rectTransformData[country] = dat;
-                });
-            }
-        
-    console.log(i)
-        d3.select(sidsMaps)
-        .selectAll(".choroRect"+i)
-
-        .transition()
-        .duration(1200)
-        .attr("x", function () { console.log("sfdg"); return rectTransformData[  this.parentNode.id]["x"]; })
-        .attr("y", function () {    return rectTransformData[  this.parentNode.id      ]["y"];    })
-        .attr("width", function () {     return rectTransformData[  this.parentNode.id   ]["width"];   })
-        .attr("height", function () {   return rectTransformData[  this.parentNode.id    ]["height"];    }); 
-    }
-    }
-  
-}
 function updateCircles(vizElementAttributes) {
   d3.select(sidsMaps)
     .selectAll(".choroCircle")
@@ -764,7 +658,7 @@ function updateLinesAndMap(indiSelections) {
 
 function updateBarAxis(indicatorData, indiSelections) {
   indicatorDataYear = indicatorData["data"][indiSelections["year"]];
-console.log(indicatorDataYear)
+
   barAxis = d3.select(".barAxis");
   const x = d3.scaleLinear();
   var margin = { left: 160, right: 5 };
@@ -813,50 +707,6 @@ console.log(indicatorDataYear)
     .attr("transform", `translate(${margin.left}, ${height / 2})`)
     .call(xAxis);
 }
-
-// function updateMviBarAxis(pillarData,indiSelections) {
-
-//     values = []
-//     for (key in pillarData[0]["axes"]) {
-//         values.push(pillarData[0]["axes"][key].value)
-//     }
-
-//     barAxis = d3.select(".barAxis")
-//     const x = d3.scaleLinear();
-//     var margin = { left: 160, right: 5 };
-//     var xAxis = d3.axisTop(x);
-//     var width = 440
-//     var height = 90
-
-//     max = Math.max(...values)
-//     min = 0
-
-//     if (indiSelections["viz"] == "Multi-indicator") {
-//         margin.left = 90;
-//         width = 700
-//         min = Math.min(...values)
-//     }
-
-//     // console.log(max, min)
-
-//     xAxis.tickFormat(d3.format(".2s"));
-//     x
-//         .domain([min, max])
-//         .range([0, width]);
-
-//     if (indiSelections["viz"] == "Choropleth" || indiSelections["viz"] == "Global View" || indiSelections["viz"] == "Spider"||indiSelections["viz"]=="Time Series") {
-//         x.range([0, 0]);
-//         setTimeout(function () { barAxis.attr("visibility", "hidden") }, 1100)
-
-//     }
-//     else if (indiSelections["viz"] == "Bar Chart") { barAxis.attr("visibility", "visible") }
-//     else if (indiSelections["viz"] = "Multi-indicator") { barAxis.attr("visibility", "visible") }
-
-//     barAxis
-//         .transition().duration(1200)
-//         .attr("transform", `translate(${margin.left}, ${height / 2})`)
-//         .call(xAxis);
-// }
 
 function updateYAxis(indicatorData, indiSelections) {
   indicatorDataYear = indicatorData["data"][indiSelections["year"]];
@@ -955,17 +805,9 @@ function updateChoroLegend(indicatorCode, indiSelections,quantize) {
     //var choroLegend = d3.select("#choro_legend_container").selectAll('g.choroLegendEntry')
   
     choro_legend_container.select(".choroLegendTitle").text(function () {
-      //extent will be a two-element array, format it however you want:
-      //return format(extent[0]) + " - " + format(+extent[1])
-      // if (indiSelections["page"] == "mviTab") {
-      //     return "Multidimensional Vulnerability Index"
-      // }
-      // else {
-      console.log(indicatorCode);
-
+  
       return indicatorMeta[indicatorCode]["Indicator"]; //["name"];//.toFixed(2))//extent[0].toFixed(2) + " - " +
     
-      // }
     });
   
     choroLegend.selectAll("rect").attr("class", function (d) {
@@ -1067,7 +909,8 @@ function updateChoroTooltips(indicatorData, indiSelections) {
           secondLine = "No Data";
         }
         if ((indiSelections["year"] = "recentValue")) {
-          year = indicatorData["data"]["recentYear"][iso];
+         try{ year = indicatorData["data"]["recentYear"][iso];}
+         catch(error){year="Most recent value"}///for indices, tempporary until improve
         } else {
           year = indiSelections["year"];
         }
@@ -1086,45 +929,6 @@ function updateChoroTooltips(indicatorData, indiSelections) {
       ); //<div class="arrow" data-popper-arrow></div>
       // console.log(index+": yo");
     });
-//   } else if ((indiSelections["page"] = "mviTab")) {
-//     // indiMax = 1
-//     // regionTitles = { "ais": "AIS", "pacific": "Pacific", "caribbean": "Caribbean" }
-//     // countryMaps.each(function (index) {
-//     //     if (countryMaps[index].id.includes("RegionTitle")) {
-//     //         region = countryMaps[index].id.replace("RegionTitle", "")
-//     //         tooltipTitle = regionTitles[region] + " Region"
-//     //         population = 0
-//     //         for (countryIndex in regionCountries[region]) {
-//     //           //  console.log(region, countryIndex)
-//     //             population += countryJson[regionCountries[region][countryIndex]].Population
-//     //         }
-//     //         regionColor = regionColor = regionColors(region, "Y").substring(1)
-//     //         content = "Population: " + nFormatter(population, 3)
-//     //         regionAverages[region] = population
-//     //     }
-//     //     else {
-//     //         try {
-//     //             tooltipTitle = countryJson[countryMaps[index].id].Country
-//     //         }
-//     //         catch { tooltipTitle = countryMaps[index].id }
-//     //         // console.log(tooltipTitle)
-//     //         // console.log(wdiFull[indicator]["year"])
-//     //      //   console.log("yaaaaaah")
-//     //         try {
-//     //             MBC = getMviValue(tooltipTitle,indiSelections)
-//     //             secondLine = "MVI Value: " +nFormatter(MBC["value"],2)
-//     //           //  console.log(mviData)//+ getMVIData//-----get MVI value//wdiFull[indicator]["data"][tooltipTitle].toFixed(2)
-//     //         }
-//     //         catch (error) { secondLine = "No Data" }
-//     //         thirdLine = "Year: " + 2018 /// <-- replace with year variable when refactored
-//     //         regionColor = regionColors(countryJson[countryMaps[index].id].Region, "Y").substring(1)
-//     //         $('#tooltipChoro' + (index).toString()).html('<h4 style="color:#' + regionColor + '">' + tooltipTitle + '</h4><h6>' + secondLine + '</h6><h6>' + thirdLine + '</h6></div>')//<div class="arrow" data-popper-arrow></div>
-//     //         // console.log(index+": yo");
-//     //     }
-//     // });
-//   }
-
-  //console.log(regionAverages, indiMax, regionRank, allVals.length)
 
   if (
     indiSelections["viz"] == "Choropleth" ||
@@ -1154,11 +958,7 @@ function updateChoroTooltips(indicatorData, indiSelections) {
         aisY: 250,
       };
       regionTitleHeight = 400;
-      // if(indiSelections["page"]=="mviTab"){
-      //     countryListLength=34
-      //     regionTitleVals = { "opacity": 1, "pacificX": 775, "pacificY": 330, "caribbeanX": 760, "caribbeanY": 170, "aisX": 785, "aisY": 250 }
-      // }
-      // else if(indiSelections["page"]=="countryDataTab"){
+   
       countryListLength = allVals.length;
       if (countryListLength > 0) {
         regionTitleVals = {

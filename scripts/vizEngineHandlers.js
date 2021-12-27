@@ -61,7 +61,7 @@ $("#mviTab").on("click",function () {
     $("#mviCustomSelectBox").css("display", "block");
 
     ///package selections and update viz engine
-    updateVizEngine("mvi");//this doesn't actually matter what the argment is
+    updateVizEngine("mvi-index-index");//this doesn't actually matter what the argment is
     
     // d3.select("#regionLegend").style("height", 0)///remove? and these next two lines
     // // d3.select("#regionLegend").transition().duration(1000).style("height",0)

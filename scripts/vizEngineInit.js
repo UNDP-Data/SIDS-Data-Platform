@@ -51,10 +51,10 @@ function initVizEngine() {
 //////////////////////////////////////
 function appendAllElements(){
     appendCountryTitles()
-    appendCountryTitles2();
+ //   appendCountryTitles2();
     appendCountryTitles3();
     appendCountryRectangles();
-    //appendIndexRectangles();
+    appendIndexRectangles();
     appendCountryLabels();
     appendCountryCircles();
     appendRegionLegend();
@@ -435,18 +435,22 @@ function appendCountryTitles3() {
 
     .attr("y", function () {
       try {
-        text = countryJson[this.parentNode.id].Country;
-        return -1 * 9.65 * countryListLongitude.indexOf(text) + 265;
+        country = this.parentNode.id;
+        regionSpacing=Object.keys(regionCountries).indexOf(countryJson[country].Region.toLowerCase())
+       index=countryListLongitude.indexOf(country)+regionSpacing*2
+        return -1 * 9.2 * index+ 265;
       } catch {
         return 0;
       }
     })
     .attr("x", function () {
       var bBox = getBoundingBox(d3.select(this.parentNode).select("path"));
-      text = countryJson[this.parentNode.id].Country;
-      index = countryListLongitude.indexOf(text);
+      country = this.parentNode.id;
+      regionSpacing=Object.keys(regionCountries).indexOf(countryJson[country].Region.toLowerCase())
+
+          index = countryListLongitude.indexOf(country)+regionSpacing*2;
       if (index >= 0) {
-        return 9.65 * index + 345;
+        return 9.2 * index + 345;
       } else {
         //not the best way of making these hidden. should be improved
         return -1000;
@@ -497,43 +501,44 @@ function appendIndexRectangles() {
   d3.select("#allSids")
     .selectAll("g")
     .append("rect")
-    .style("fill", mviDimensionColors["Environmental"])
+    .style("fill", indexColors["mvi-index-index"]["Environmental"])
     .attr("x", 160)
-    .attr("y", 300)
-    .attr("width", 100)
-    .attr("height", 30)
+    .attr("y", 100)
+    .attr("width", 0)
+    .attr("height", 0)
+    .classed("choroRect0 choroRectMvi", true);
+
+  d3.select("#allSids")
+    .selectAll("g")
+    .append("rect")
+    .style("fill", indexColors["mvi-index-index"]["Geographic"])
+    .attr("x", 160)
+    .attr("y", 200)
+    .attr("width", 0)
+    .attr("height", 0)
     .classed("choroRect1 choroRectMvi", true);
 
   d3.select("#allSids")
     .selectAll("g")
     .append("rect")
-    .style("fill", mviDimensionColors["Geographic"])
+    .style("fill", indexColors["mvi-index-index"]["Economic"])
     .attr("x", 160)
     .attr("y", 300)
-    .attr("width", 20)
-    .attr("height", 100)
+    .attr("width", 0)
+    .attr("height", 0)
     .classed("choroRect2 choroRectMvi", true);
 
   d3.select("#allSids")
     .selectAll("g")
     .append("rect")
-    .style("fill", mviDimensionColors["Economic"])
+    .style("fill", indexColors["mvi-index-index"]["Financial"])
     .attr("x", 160)
-    .attr("y", 300)
-    .attr("width", 10)
-    .attr("height", 100)
+    .attr("y", 400)
+    .attr("width", 0)
+    .attr("height", 0)
     .classed("choroRect3 choroRectMvi", true);
 
-  d3.select("#allSids")
-    .selectAll("g")
-    .append("rect")
-    .style("fill", mviDimensionColors["Financial"])
-    .attr("x", 160)
-    .attr("y", 300)
-    .attr("width", 20)
-    .attr("height", 10)
-    .classed("choroRect4 choroRectMvi", true);
-
+    d3.selectAll(".choroRectMvi").each(function(){console.log("j")})
   //  console.log("rect12")
 }
 

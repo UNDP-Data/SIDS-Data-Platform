@@ -2,7 +2,7 @@
 //////Data Processing function
 //////////////////////////////////////
 
-function processVizElementAttributes(indicatorData, indiSelections) {
+function processVizElementAttributes(indicatorData,indexData, indiSelections,indexWeights) {
   vizElementAttributes = {};
 
   ////problem code, doesn't work in init so moved here instead.
@@ -29,7 +29,14 @@ function processVizElementAttributes(indicatorData, indiSelections) {
     textBBox = textBBoxDict[country];
 
     RTa = rectTransform(country, bBox, indicatorDataObj, indiSelections);
-    //MRTa = multiRectTransform(country, bBox, indicatorDataObj, indiSelections);
+
+//given an arbitrary 8 rectangles, all should default to RT except for the ones in the length of the chosen indexweights list
+subindexList=Object.keys(indexWeights["subindices"])
+    MRTa={}
+    for(i=0;i<subindexList.length;i++){
+      MRTa[i] = multiRectTransform(country, bBox, indicatorDataObj,indexData, indiSelections,indexWeights,i);
+
+    }
     VTa = vizTransform(country, bBox, indicatorDataObj, indiSelections);
     LTa = labelTransform(country, bBox, indicatorDataObj, indiSelections);
     CTa = circleTransform(country, bBox, indicatorDataObj, indiSelections);
@@ -46,10 +53,13 @@ function processVizElementAttributes(indicatorData, indiSelections) {
       RT: RTa,
       LT: LTa,
       CT: CTa,
-            //MRT: MRTa,
       TT: TTa
 
     };
+    for(i=0;i<subindexList.length;i++){
+      vizElementAttributes[country]["MRT"+i]=MRTa[i];
+
+    }
   }
 
   return vizElementAttributes;
@@ -171,7 +181,10 @@ function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           y: (totalHeight / totalVals) * rank + topMargin,
           width: normValue * totalWidth,
           height: totalHeight / totalVals - margin,
-        }; //,"color":color};
+        };
+
+        
+        //,"color":color};
         // console.log(country,output)
       } catch (error) {
         console.log(error);
@@ -195,8 +208,9 @@ function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
     );
 
     countryOrder = countryListLongitude;
-
-    rank = countryOrder.indexOf(sidsDict[country]);
+    regionSpacing=Object.keys(regionCountries).indexOf(countryJson[country].Region.toLowerCase())
+    
+    rank = countryOrder.indexOf(country)+regionSpacing*2;
 
     //        sortedData = sort_object(filtered);
 
@@ -270,6 +284,55 @@ function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
   return output;
 }
 
+function multiRectTransform(country, bBox, indicatorDataObj, indexDataObj, indiSelections,indexWeights,i){
+  RTm=rectTransform(country, bBox, indicatorDataObj, indiSelections) 
+  subindexList=Object.keys(indexWeights["subindices"])
+
+  totalWidthBar = 440;
+  totalHeightColumn = 200;
+
+  if(vizMode=="index"&&(indiSelections["viz"] == "Bar Chart"||indiSelections["viz"] == "Global View")){
+      x=0
+      val=indexDataObj[subindexList[i]]["data"][indiSelections["year"]][country]
+      for(j=0;j<i;j++){
+        x+=indexDataObj[subindexList[j]]["data"][indiSelections["year"]][country] 
+      }
+
+      if(country=="TTO"){
+        console.log(x,i,val)
+      }
+     
+      maxx = Math.max(...Object.values(indexDataObj["index"]["data"][indiSelections["year"]]));
+      minn = 0; //Math.min(...indicatorValues)
+if(maxx>min&&!isNaN(val)&&!isNaN(x)){
+      normValue = (val - minn) / (maxx - minn);
+      normX= (x-min)/maxx-minn
+}
+else{
+  normValue=0
+  normX=0
+}
+
+
+if(!isNaN(val)){
+
+      if (indiSelections["viz"] == "Bar Chart") {
+        RTm["x"]=normX*totalWidthBar+160
+        RTm["width"]=normValue*totalWidthBar
+      }
+      else if (indiSelections["viz"] == "Global View") {
+        RTm["y"]=425-(normX+normValue)*totalHeightColumn
+        RTm["height"]=normValue*totalHeightColumn
+      }
+
+  }
+  else{ RTm["width"]=0
+  RTm["height"]=0}//default, to hide the index rectangles
+}else{ RTm["width"]=0
+RTm["height"]=0}//default, to hide the index rectangles
+  return RTm
+}
+
 function textTransform(
   country,
   bBox,
@@ -319,13 +382,14 @@ function textTransform(
     }
   } else if (indiSelections["viz"] == "Spider") {
     mviRank = indiSelections["countryOrder"].indexOf(country)
+    numberOfCountries=orderedCountryList.length
     if (mviRank == -1) {
         scale = 1//0.001;
     } else {
         scale = 1;
     }
-    x = 300 * Math.sin(mviRank / 34 * 2 * 3.14) - textX + 370
-    y = -280 * Math.cos(mviRank / 34 * 2 * 3.14) - textY + 250
+    x = 300 * Math.sin(mviRank / numberOfCountries * 2 * 3.14) - textX + 370
+    y = -280 * Math.cos(mviRank / numberOfCountries * 2 * 3.14) - textY + 250
 
     // scale = 1;
     // x = 0;
@@ -416,6 +480,7 @@ function vizTransform(country, bBox, indicatorDataObj, indiSelections) {
     scale = scale / 1.41;
   } else if (indiSelections["viz"] == "Spider") {
       orderedCountryList=indiSelections["countryOrder"]
+      numberOfCountries=orderedCountryList.length
     mviRank = orderedCountryList.indexOf(country)
 
     if (mviRank == -1) {
@@ -424,8 +489,8 @@ function vizTransform(country, bBox, indicatorDataObj, indiSelections) {
     else {
         scale = .54;
     }
-    x = 460 * Math.sin(mviRank / 34 * 2 * 3.14) - cx + 690
-    y = -460 * Math.cos(mviRank / 34 * 2 * 3.14) - cy + 450
+    x = 460 * Math.sin(mviRank / numberOfCountries * 2 * 3.14) - cx + 690
+    y = -460 * Math.cos(mviRank / numberOfCountries * 2 * 3.14) - cy + 450
 
     // //temp
     // x = 0;
