@@ -1,45 +1,45 @@
 {
-    "guadeloupe":{
+    "GLP":{
         "Country": "Guadeloupe",
         "Region": "Caribbean",
         "Population": 395700
     },
-    "usVirginIslands":{
+    "VIR":{
         "Country": "US Virgin Islands",
         "Region": "Caribbean",
         "Population": 106631
     },
-    "martinique":{
+    "MTQ":{
         "Country": "Martinique",
         "Region": "Caribbean",
         "Population":376480
     },
-    "puertoRico":{
+    "PRI":{
         "Country": "Puerto Rico",
         "Region": "Caribbean",
         "Population": 3194000
     },
-    "americanSamoa":{
+    "ASM":{
         "Country": "American Samoa",
         "Region": "Pacific",
         "Population": 55312
     },
-    "newCaledonia":{
+    "NCL":{
         "Country": "New Caledonia",
         "Region": "Pacific",
         "Population": 287800
     },
-    "frenchPolynesia":{
+    "PYF":{
         "Country": "French Polynesia",
         "Region": "Pacific",
         "Population": 279287
     },
-    "marianaIslands":{
+    "MNP":{
         "Country": "Mariana Islands",
         "Region": "Pacific",
         "Population": 57216
     },
-    "guam":{
+    "GUM":{
         "Country": "Guam",
         "Region": "Pacific",
         "Population": 167294
@@ -47,7 +47,7 @@
 
 
 
-    "anguilla": {
+    "AIA": {
         "Country": "Anguilla",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -60,7 +60,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "antiguaAndBarbuda": {
+    "ATG": {
         "Country": "Antigua and Barbuda",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -73,7 +73,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.778
     },
-    "aruba": {
+    "ABW": {
         "Country": "Aruba",
         "Region": "Caribbean",
         "CO/MCO": "Trinidad and Tobago MCO",
@@ -86,8 +86,8 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "bahamas": {
-        "Country": "Bahamas",
+    "BHS": {
+        "Country": "The Bahamas",
         "Region": "Caribbean",
         "CO/MCO": "Jamaica MCO",
         "Member State (Y/N)": "Y",
@@ -99,7 +99,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.814
     },
-    "bahrain": {
+    "BHR": {
         "Country": "Bahrain",
         "Region": "AIS",
         "CO/MCO": "CO",
@@ -112,7 +112,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.852
     },
-    "barbados": {
+    "BRB": {
         "Country": "Barbados",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -125,7 +125,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.814
     },
-    "belize": {
+    "BLZ": {
         "Country": "Belize",
         "Region": "Caribbean",
         "CO/MCO": "El Salvador MCO",
@@ -138,7 +138,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.716
     },
-    "bermuda": {
+    "BMU": {
         "Country": "Bermuda",
         "Region": "Caribbean",
         "CO/MCO": "Jamaica MCO",
@@ -151,7 +151,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "caboVerde": {
+    "CPV": {
         "Country": "Cabo Verde",
         "Region": "AIS",
         "CO/MCO": "CO",
@@ -164,7 +164,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.665
     },
-    "caymanIslands": {
+    "CYM": {
         "Country": "Cayman Islands",
         "Region": "Caribbean",
         "CO/MCO": "Jamaica MCO",
@@ -177,7 +177,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "comoros": {
+    "COM": {
         "Country": "Comoros",
         "Region": "AIS",
         "CO/MCO": "CO",
@@ -190,7 +190,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.554
     },
-    "cookIslands": {
+    "COK": {
         "Country": "Cook Islands",
         "Region": "Pacific",
         "CO/MCO": "Samoa MCO",
@@ -203,7 +203,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "cuba": {
+    "CUB": {
         "Country": "Cuba",
         "Region": "Caribbean",
         "CO/MCO": "CO",
@@ -216,7 +216,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.783
     },
-    "curacao": {
+    "CUW": {
         "Country": "Cura\u00e7ao",
         "Region": "Caribbean",
         "CO/MCO": "Trinidad and Tobago MCO",
@@ -229,7 +229,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "dominica": {
+    "DMA": {
         "Country": "Dominica",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -242,7 +242,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.742
     },
-    "dominicanRepublic": {
+    "DOM": {
         "Country": "Dominican Republic",
         "Region": "Caribbean",
         "CO/MCO": "CO",
@@ -255,8 +255,8 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.756
     },
-    "micronesia": {
-        "Country": "Micronesia",
+    "FSM": {
+        "Country": "Micronesia, Fed. Sts.",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
         "Member State (Y/N)": "Y",
@@ -268,7 +268,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.62
     },
-    "fiji": {
+    "FJI": {
         "Country": "Fiji",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
@@ -281,7 +281,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.743
     },
-    "grenada": {
+    "GRD": {
         "Country": "Grenada",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -294,7 +294,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.779
     },
-    "guineaBissau": {
+    "GNB": {
         "Country": "Guinea-Bissau",
         "Region": "AIS",
         "CO/MCO": "CO",
@@ -307,7 +307,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.48
     },
-    "guyana": {
+    "GUY": {
         "Country": "Guyana",
         "Region": "Caribbean",
         "CO/MCO": "CO",
@@ -320,7 +320,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.682
     },
-    "haiti": {
+    "HTI": {
         "Country": "Haiti",
         "Region": "Caribbean",
         "CO/MCO": "CO",
@@ -333,7 +333,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.51
     },
-    "jamaica": {
+    "JAM": {
         "Country": "Jamaica",
         "Region": "Caribbean",
         "CO/MCO": "Jamaica MCO",
@@ -346,7 +346,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.734
     },
-    "kiribati": {
+    "KIR": {
         "Country": "Kiribati",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
@@ -359,7 +359,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.63
     },
-    "maldives": {
+    "MDV": {
         "Country": "Maldives",
         "Region": "AIS",
         "CO/MCO": "CO",
@@ -372,7 +372,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.74
     },
-    "mauritius": {
+    "MUS": {
         "Country": "Mauritius",
         "Region": "AIS",
         "CO/MCO": "Mauritius MCO",
@@ -385,7 +385,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.804
     },
-    "montserrat": {
+    "MSR": {
         "Country": "Montserrat",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -398,7 +398,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "nauru": {
+    "NRU": {
         "Country": "Nauru",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
@@ -411,7 +411,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": ".."
     },
-    "niue": {
+    "NIU": {
         "Country": "Niue",
         "Region": "Pacific",
         "CO/MCO": "Samoa MCO",
@@ -424,7 +424,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "palau": {
+    "PLW": {
         "Country": "Palau",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
@@ -437,7 +437,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.826
     },
-    "papuaNewGuinea": {
+    "PNG": {
         "Country": "Papua New Guinea",
         "Region": "Pacific",
         "CO/MCO": "CO",
@@ -450,7 +450,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.555
     },
-    "marshallIslands": {
+    "MHL": {
         "Country": "Marshall Islands",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
@@ -463,8 +463,8 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.704
     },
-    "saintLucia": {
-        "Country": "Saint Lucia",
+    "LCA": {
+        "Country": "St. Lucia",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
         "Member State (Y/N)": "Y",
@@ -476,7 +476,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.759
     },
-    "samoa": {
+    "WSM": {
         "Country": "Samoa",
         "Region": "Pacific",
         "CO/MCO": "Samoa MCO",
@@ -489,7 +489,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.715
     },
-    "saoTomeAndPrincipe": {
+    "STP": {
         "Country": "S\u00e3o Tom\u00e9 and Pr\u00edncipe",
         "Region": "AIS",
         "CO/MCO": "CO",
@@ -502,7 +502,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.625
     },
-    "seychelles": {
+    "SYC": {
         "Country": "Seychelles",
         "Region": "AIS",
         "CO/MCO": "Mauritius MCO",
@@ -515,7 +515,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.796
     },
-    "singapore": {
+    "SGP": {
         "Country": "Singapore",
         "Region": "AIS",
         "CO/MCO": "Malaysia MCO",
@@ -528,7 +528,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.938
     },
-    "sintMaarten": {
+    "SXM": {
         "Country": "Sint Maarten",
         "Region": "Caribbean",
         "CO/MCO": "Trinidad and Tobago MCO",
@@ -541,7 +541,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "solomonIslands": {
+    "SLB": {
         "Country": "Solomon Islands",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji, with own DRR",
@@ -554,7 +554,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.567
     },
-    "kittsAndNevis": {
+    "KNA": {
         "Country": "St. Kitts and Nevis",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -567,7 +567,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.779
     },
-    "stVincent": {
+    "VCT": {
         "Country": "St. Vincent and the Grenadines",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -580,7 +580,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.738
     },
-    "suriname": {
+    "SUR": {
         "Country": "Suriname",
         "Region": "Caribbean",
         "CO/MCO": "CO",
@@ -593,7 +593,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.738
     },
-    "britishVirginIslands": {
+    "VGB": {
         "Country": "British Virgin Islands",
         "Region": "Caribbean",
         "CO/MCO": "Barbados & OECS MCO",
@@ -606,7 +606,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "timorLeste": {
+    "TLS": {
         "Country": "Timor Leste",
         "Region": "Pacific",
         "CO/MCO": "CO",
@@ -619,7 +619,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.606
     },
-    "tokelau": {
+    "TKL": {
         "Country": "Tokelau",
         "Region": "Pacific",
         "CO/MCO": "Samoa MCO",
@@ -632,7 +632,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "tonga": {
+    "TON": {
         "Country": "Tonga",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
@@ -645,7 +645,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.725
     },
-    "trinidadAndTobago": {
+    "TTO": {
         "Country": "Trinidad and Tobago",
         "Region": "Caribbean",
         "CO/MCO": "Trinidad and Tobago MCO",
@@ -658,8 +658,8 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": 0.796
     },
-    "turksAndCaicos": {
-        "Country": "Turks and Caicos",
+    "TCA": {
+        "Country": "Turks and Caicos Islands",
         "Region": "Caribbean",
         "CO/MCO": "Jamaica MCO",
         "Member State (Y/N)": "N",
@@ -671,7 +671,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": "Not Available"
     },
-    "tuvalu": {
+    "TUV": {
         "Country": "Tuvalu",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
@@ -684,7 +684,7 @@
         "Economic  Zone Area": 0.0,
         "Human Development Index\u00a0": ".."
     },
-    "vanuatu": {
+    "VUT": {
         "Country": "Vanuatu",
         "Region": "Pacific",
         "CO/MCO": "Pacific Office Fiji",
