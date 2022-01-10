@@ -48,7 +48,7 @@ document.getElementsByClassName('dataset-internal-box')[0].innerHTML = innerData
 var prevData;
 function handleDatasetHover(e,curr){
   if(!e.children[1].matches(':hover') && curr!==prevData){
-    e.children[1].style.top = (window.event.pageY-100) + "px";
+    e.children[1].style.top = (window.event.clientY-180) + "px";
   }
   prevData = curr;
 }
@@ -229,7 +229,7 @@ function selectDescriptionDropdown(value,indicatorCode){
   description.children[0].children[3].children[2].innerHTML = '<a href="' + indicatorMeta[indicatorCode]["Link"] + '" target="_blank">Link</a>';
 
   console.log({'IndicatorCode':indicatorCode,'Indicator' : indicatorMeta[indicatorCode]["Indicator"],'Dimension':value});
-  
+
 
 ///this function is poorly built (and generally the way dimension is handled) since the indicatorCode itself is changing.
 //so this is just a temp fix
@@ -414,9 +414,9 @@ function activateSearch(){
     }
   }
 
-  // allVal.sort(function(a,b){
-  //   return (a.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase() > b.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase()) ? 1 : ((a.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase() < b.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase()) ? -1 : 0);
-  // });
+  allVal.sort(function(a,b){
+    return (a.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase() > b.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase()) ? 1 : ((a.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase() < b.indicator.replace(/^\s+|\s+$/gm,'').toUpperCase()) ? -1 : 0);
+  });
 
   var innerHTML = ``;
   for(var i = 0 ; i < allVal.length ; i++){
@@ -487,7 +487,7 @@ function handleDatasetSearch(event){
 var prev;
 function handleHover(e,curr){
   if(!e.children[2].matches(':hover') && curr!==prev){
-    e.children[2].style.top = (window.event.pageY-100) + "px";
+    e.children[2].style.top = (window.event.clientY-180) + "px";
   }
   prev = curr;
 }
@@ -890,10 +890,10 @@ function toggleOptionMenu(val){
   }
 }
 
-window.addEventListener('click', function(e){   
+window.addEventListener('click', function(e){
   if (document.getElementById('indicatorSelectMenu').contains(e.target)){
     console.log("indicatorClick")// Clicked in box
-    
+
   } else{
     onClick="deactivateSearch()"
     // Clicked outside the box
