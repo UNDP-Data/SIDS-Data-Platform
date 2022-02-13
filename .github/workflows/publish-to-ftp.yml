@@ -31,4 +31,4 @@ jobs:
           server: data.undp.org
           username: sidsautoupdate@data.undp.org
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: build
+          local-dir: build/
