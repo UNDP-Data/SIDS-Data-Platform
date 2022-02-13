@@ -27,8 +27,8 @@ jobs:
           npm run build
       - name: Deploy 🚀
         uses: SamKirkland/FTP-Deploy-Action@4.2.0
-          with:
-            server: data.undp.org
-            username: sidsautoupdate@data.undp.org
-            password: ${{ secrets.FTP_PASSWORD }}
-            local-dir: build
+        with:
+          server: data.undp.org
+          username: sidsautoupdate@data.undp.org
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: build
