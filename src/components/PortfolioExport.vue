@@ -3,12 +3,16 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         color="primary"
-        dark
         rounded
+        small
+        dark
+        :fab="isSmall"
+        :block="!isSmall"
         v-bind="attrs"
         v-on="on"
       >
-        Export
+        <span v-if="!isSmall">Export</span>
+        <v-icon dark v-else>mdi-export-variant</v-icon>
       </v-btn>
     </template>
     <v-list dense>
@@ -69,6 +73,11 @@ export default {
       sdgs: ["No poverty", "Zero hunger", "Good health and well-being", "Quality education", "Gender equality", "Clean water and sanitation", "Affordable and clean energy", "Decent work and economic growth", "Industry, innovation and infrastructure", "Reduced inequalities", "Sustainable cities and communities", "Responsible consumption and production", "Climate action", "Life below water", "Life on Land", "Peace, justice, and strong institutions", "Partnerships for the goals"],
       ss: ["Keeping people out of poverty", "Strengthen effective, inclusive and accountable governance", "Enhance national prevention and recovery capacities for resilient societies", "Promote nature-based solutions for a sustainable planet", "Close the energy gap", "Strengthen gender equality and the empowerment of women and girls"],
 
+    }
+  },
+  computed: {
+    isSmall() {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm || this.$vuetify.breakpoint.md
     }
   },
   methods: {

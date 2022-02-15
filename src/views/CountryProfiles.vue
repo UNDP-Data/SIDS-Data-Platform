@@ -3,6 +3,7 @@
     <v-row class="profile-header-row d-none-print" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}" justify="center">
       <v-col cols="12" offset-md="1" md="4" offset-lg="3" lg="3">
         <h2 class="page-header country-profile-header">Country profile</h2>
+        <info-button-profiles/>
       </v-col>
       <v-col cols="10" md="4" lg="3" class="select-column">
         <v-select
@@ -22,7 +23,7 @@
             <div>
               <i
                 class="flag-icon select_icon"
-                :class="'flag-icon-' + flagGodes[data.item.id]"
+                :class="'flag-icon-' + flagCodes[data.item.id]"
               ></i>
               {{ data.item.name }}
             </div>
@@ -84,7 +85,7 @@
             <template slot="item" slot-scope="data">
             <i
               class="flag-icon select_icon"
-              :class="'flag-icon-' + flagGodes[data.item.id]"
+              :class="'flag-icon-' + flagCodes[data.item.id]"
             ></i>
             {{ data.item.name }}
             </template>
@@ -164,7 +165,7 @@
             <template slot="item" slot-scope="data">
             <i
               class="flag-icon select_icon"
-              :class="'flag-icon-' + flagGodes[data.item.id]"
+              :class="'flag-icon-' + flagCodes[data.item.id]"
             ></i>
             {{ data.item.name }}
             </template>
@@ -203,8 +204,9 @@
 </template>
 
 <script>
-import flagGodes from '@/assets/flagCodes.js'
+import flagCodes from '@/assets/flagCodes.js'
 
+import InfoButtonProfiles from '@/components/InfoButtonProfiles.vue'
 import CountryInfoBar from '@/components/CountryInfoBar.vue'
 import ProfilesSpiderChart from '@/components/ProfilesSpiderChart.vue'
 import ProfilesFinance from '@/components/ProfilesFinance.vue'
@@ -218,10 +220,11 @@ export default {
   components: {
     CountryInfoBar,
     ProfilesSpiderChart,
-    ProfilesFinance
+    ProfilesFinance,
+    InfoButtonProfiles
   },
   data: () => ({
-    flagGodes,
+    flagCodes,
     region:'All SIDS',
     regions:["All SIDS", "Caribbean", "AIS", "Pacific"],
     colorScheme: ["#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"],

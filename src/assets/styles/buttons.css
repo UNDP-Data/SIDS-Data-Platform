@@ -36,6 +36,19 @@
 .v-btn.primary:before {
   display: none;
 }
+
+.v-btn.v-size--small {
+  height: 28px !important;
+}
+.v-btn.v-btn--icon {
+  width: 50px !important;
+  padding: 0 25px !important;
+}
+.v-btn.v-btn--icon.v-size--small, .v-btn.v-btn--fab.v-size--small {
+  height: 34px !important;
+  width: 34px !important;
+  padding: 0 !important;
+}
 .v-tabs {
   background: #FFFFFF;
   border: 2px solid #E9ECF6;

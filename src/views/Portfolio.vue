@@ -6,7 +6,28 @@
           :region="region"
           @updateRegion="changeFilter({type:'region'})"
           :projects="filteredProjects"
-        ></portfolio-map>
+        >
+          <template v-slot:header>
+            <v-row>
+              <v-col class="offset-md-2" md='8'>
+                <h2 class="page-header prtfolio-header mt-md-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
+              </v-col>
+              <v-col md='2'>
+                <div class="mt-2 mb-2">
+                  <info-button-portfolio/>
+                </div>
+                <portfolio-export
+                  :region="region"
+                  :year="year"
+                  :funding="fundingCategory"
+                  :projects="filteredProjects"
+                  :data="fundingCategoriesFiltered"
+                  :categories="fundingCategoriesTypes"
+                />
+              </v-col>
+            </v-row>
+          </template>
+        </portfolio-map>
       </v-col>
     </v-row>
     <router-view class="d-none d-lg-block mb-3 mt-negative"></router-view>
@@ -130,18 +151,6 @@
             ></portfolio-pie-chart>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-block">
-          <v-col>
-            <portfolio-export
-              :region="region"
-              :year="year"
-              :funding="fundingCategory"
-              :projects="filteredProjects"
-              :data="fundingCategoriesFiltered"
-              :categories="fundingCategoriesTypes"
-            />
-          </v-col>
-        </v-row>
       </v-col>
     </v-row>
     <v-row>
@@ -161,6 +170,7 @@ import * as d3 from 'd3';
 import PortfolioMap from '@/components/PortfolioMap';
 import PortfolioExport from '@/components/PortfolioExport';
 import PortfolioPieChart from '@/components/PortfolioPieChart';
+import InfoButtonPortfolio from '@/components/InfoButtonPortfolio.vue'
 import GoalsSelector from '@/components/GoalsSelector';
 import { mapState } from 'vuex';
 import sidsdata from '@/mixins/SIDSData.mixin'
@@ -172,7 +182,8 @@ export default {
     PortfolioMap,
     PortfolioPieChart,
     PortfolioExport,
-    GoalsSelector
+    GoalsSelector,
+    InfoButtonPortfolio
   },
   props:['year', 'fundingCategory', 'fundingSource', 'region'],
   mixins:[sidsdata],
@@ -410,5 +421,10 @@ export default {
     .margin-wrap-right {
       max-width: none;
     }
+  }
+  @media all and max-width:960px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>
