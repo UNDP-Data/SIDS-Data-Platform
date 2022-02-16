@@ -1,9 +1,8 @@
 <template>
   <div class="mt-xs-0 mt-sm-0 mt-md-5 mt-lg-5 mt-xl-5">
     <v-row class="profile-header-row d-none-print" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}" justify="center">
-      <v-col cols="12" offset-md="1" md="4" offset-lg="3" lg="3">
+      <v-col cols="12" md="4" offset-md="1" offset-lg="2" lg="3">
         <h2 class="page-header country-profile-header">Country profile</h2>
-        <info-button-profiles/>
       </v-col>
       <v-col cols="10" md="4" lg="3" class="select-column">
         <v-select
@@ -30,7 +29,8 @@
           </template>
         </v-select>
       </v-col>
-      <v-col class="ml-auto d-none d-md-block" md="2">
+
+      <v-col class="d-none d-md-block" md="2">
         <div class="select">
           <v-select
             rounded
@@ -40,6 +40,37 @@
             outlined
           ></v-select>
         </div>
+      </v-col>
+      <v-col class="d-none d-md-block header_buttons" md='1' lg='2'>
+        <info-button-profiles/>
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              rounded
+              class="mt-2 mb-2"
+              :small="!isTablet"
+              dark
+              :fab="isTablet"
+              :block="!isTablet"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <span v-if="!isTablet">Export</span>
+              <v-icon dark v-else>mdi-export-variant</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item-group>
+              <v-list-item @click="exportCSV">
+                <v-list-item-title>Summary CSV</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="exportPDF">
+                <v-list-item-title>Summary PDF</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
       </v-col>
     </v-row>
     <h1 class="d-none d-block-print">
@@ -171,33 +202,6 @@
             </template>
           </v-select>
         </div>
-      </v-col>
-    </v-row>
-    <v-row class="d-none d-md-flex" justify="center">
-      <v-col cols="2">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              rounded
-              class="ma-2 d-none-print"
-              color="primary"
-              v-bind="attrs"
-              v-on="on"
-            >
-              Export
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item-group>
-              <v-list-item @click="exportCSV">
-                <v-list-item-title>Summary CSV</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="exportPDF">
-                <v-list-item-title>Summary PDF</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-menu>
       </v-col>
     </v-row>
   </div>
@@ -353,6 +357,9 @@ export default {
     },
     isMobile() {
       return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm'
+    },
+    isTablet() {
+      return this.$vuetify.breakpoint.name === 'md'
     },
   },
   methods:{
@@ -525,6 +532,9 @@ export default {
   }
   .graph-tabs {
     background-color: transparent !important;
+  }
+  .header_buttons{
+    margin-top: -12px;
   }
  @media all and (max-width:960px) {
   .country-profile-header {

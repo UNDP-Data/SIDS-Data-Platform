@@ -9,10 +9,10 @@
         >
           <template v-slot:header>
             <v-row>
-              <v-col class="offset-md-2" md='8'>
+              <v-col class="offset-lg-2 offset-md-1" cols="12" md='10' lg='8'>
                 <h2 class="page-header prtfolio-header mt-md-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
               </v-col>
-              <v-col md='2'>
+              <v-col class="d-none d-md-block" md='1' lg='2'>
                 <div class="mt-2 mb-2">
                   <info-button-portfolio/>
                 </div>
@@ -421,10 +421,5 @@ export default {
     .margin-wrap-right {
       max-width: none;
     }
-  }
-  @media all and max-width:960px) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 </style>

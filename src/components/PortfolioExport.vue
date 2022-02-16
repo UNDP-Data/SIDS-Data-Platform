@@ -4,7 +4,7 @@
       <v-btn
         color="primary"
         rounded
-        small
+        :small="!isSmall"
         dark
         :fab="isSmall"
         :block="!isSmall"

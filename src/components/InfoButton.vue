@@ -8,16 +8,16 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         color="normal"
-        small
-        :block="!isSmall"
+        :small="!isSmallScreen"
+        :block="!isSmallScreen"
         outlined
         rounded
-        :icon="isSmall"
+        :icon="isSmallScreen"
         v-bind="attrs"
         v-on="on"
         @click='toggleTooltip'
       >
-        <span v-if="!isSmall">About this</span>
+        <span v-if="!isSmallScreen">About this</span>
         <v-icon v-else>mdi-information-variant</v-icon>
       </v-btn>
     </template>
@@ -55,7 +55,7 @@ export default {
     isFullscreen() {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },
-    isSmall() {
+    isSmallScreen() {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm || this.$vuetify.breakpoint.md
     }
   },
