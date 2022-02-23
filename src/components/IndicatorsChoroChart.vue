@@ -1,6 +1,6 @@
 <template>
   <div class="choro">
-    <h4 class="text-center" v-if="page!=='global'">
+    <h4 class="choro-title text-center" v-if="page!=='global'">
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
@@ -478,6 +478,11 @@ export default {
     width: 100%;
     display:none;
   }
+}
+
+.choro-title{
+  position: relative;
+  z-index: 9999;
 }
 /*# sourceMappingURL=vizEngine.css.map */
 
