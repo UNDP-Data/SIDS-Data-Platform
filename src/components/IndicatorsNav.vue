@@ -59,7 +59,7 @@
               {{item.def}}
               <v-divider class="mb-1 mt-1"></v-divider>
               <b>Source:</b>{{item.source}} <br/>
-              <a :href="item.Link" target="_blank">Link</a>
+              <a :href="item.link" target="_blank">Link</a>
             </v-card-text>
           </v-card>
         </v-tooltip>
@@ -201,10 +201,18 @@
             :value="year"
             item-text="name"
             item-value="id"
+            :disabled="playingYear"
             @change="emitYearChange"
             label="Year"
             dense
           ></v-select>
+          <v-btn
+            @click="toggleYearPlay"
+            icon
+            >
+            <v-icon v-if="playingYear">mdi-pause</v-icon>
+            <v-icon v-else>mdi-play</v-icon>
+          </v-btn>
         </div>
         <div class="mb-1 d-flex">
           <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
@@ -212,6 +220,7 @@
             :value="activeIndicatorCode"
             item-text="dimension"
             item-value="code"
+            :disabled="playingYear"
             @change="emitindicatorChange"
             label="Dimension"
             dense
@@ -220,7 +229,7 @@
         {{activeIndicator.def}}
         <v-divider class="mb-1 mt-1"></v-divider>
         <b>Source:</b>{{activeIndicator.source}} <br/>
-        <a :href="activeIndicator.Link" target="_blank">Link</a>
+        <a :href="activeIndicator.link" target="_blank">Link</a>
       </v-card-text>
     </v-card>
   </div>
@@ -237,6 +246,8 @@ export default {
     return {
       activeSearch: false,
       searchString: '',
+      playingYear:false,
+      playInterval:null,
       dataset: null,
       deepSearch:'',
       activeIndicatorDimension:null,
@@ -444,6 +455,39 @@ export default {
     },
     clearDeepSearch() {
       this.deepSearch = '';
+    },
+    toggleYearPlay() {
+      if(this.playingYear) {
+        this.pausePlayYear()
+      } else {
+        this.playYear()
+      }
+    },
+    playYear() {
+      this.playingYear = true;
+      if(this.playInterval) {
+        clearTimeout(this.playInterval)
+      }
+      let years = this.activeIndicatorYears.slice().reverse();
+      let index = 0;
+      this.transitionToNextYear(years, index)
+    },
+    transitionToNextYear(years, index) {
+      if(this.playingYear) {
+        if(index !== this.activeIndicatorYears.length-1) {
+          this.emitYearChange(years[index].id);
+          index++;
+          this.playInterval = setTimeout(()=>{this.transitionToNextYear(years, index)}, 3000)
+        } else {
+          this.pausePlayYear()
+        }
+      } else {
+        clearTimeout(this.playInterval)
+      }
+    },
+    pausePlayYear() {
+      clearTimeout(this.playInterval)
+      this.playingYear = false;
     }
   },
   watch:{
