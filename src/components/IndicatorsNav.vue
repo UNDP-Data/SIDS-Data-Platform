@@ -229,7 +229,7 @@
         {{activeIndicator.def}}
         <v-divider class="mb-1 mt-1"></v-divider>
         <b>Source:</b>{{activeIndicator.source}} <br/>
-        <a :href="activeIndicator.Link" target="_blank">Link</a>
+        <a :href="activeIndicator.link" target="_blank">Link</a>
       </v-card-text>
     </v-card>
   </div>
