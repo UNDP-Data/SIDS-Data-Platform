@@ -314,7 +314,7 @@ export default {
             .transition(700)
             .attr("height", function (d) {
               if(rootThis.budgetNamesObject[d.name] === 0) {
-                return rootThis.barsHeight
+                return 0
               }
               return rootThis.barsHeight - rootThis.y2(rootThis.budgetNamesObject[d.name]);
             })
@@ -408,12 +408,12 @@ export default {
       .join(
         (enter) => {
           if(rootThis.goalsType === 'sdgs') {
-            let bar = enter.append('g').attr('class', 'hoverbar');
+            let bar = enter.append('g')
             bar.append('rect')
               .attr('class', 'hoverbar')
-              .attr("x", function (d) { return rootThis.x(d.name) - 6; })
+              .attr("x", function (d) { return rootThis.x(d.name); })
               .attr("y", function (d) { return rootThis.y1(rootThis.projectNamesObject[d.name]) - 30; })
-              .attr("width", rootThis.x.bandwidth())
+              .attr("width", 60)
               .attr("height", function (d) {
                 if(rootThis.projectNamesObject[d.name] === 0) {
                   return 0
@@ -440,12 +440,8 @@ export default {
           },
           (update) => {
             if(rootThis.goalsType === 'sdgs') {
-              let bar = update.append('g').attr('class', 'hoverbar');
-              bar.append('rect')
-                .attr('class', 'hoverbar')
-                .attr("x", function (d) { return rootThis.x(d.name) - 6; })
+               update
                 .attr("y", function (d) { return rootThis.y1(rootThis.projectNamesObject[d.name]) - 30; })
-                .attr("width", rootThis.x.bandwidth())
                 .attr("height", function (d) {
                   if(rootThis.projectNamesObject[d.name] === 0) {
                     return 0
@@ -453,19 +449,6 @@ export default {
                   return rootThis.barsHeight - rootThis.y1(rootThis.projectNamesObject[d.name]) + 30;
                 })
                 .attr("opacity", 0)
-                .each((data, index, list) => {
-                  tippy(list[index], {
-                    content() {
-                      const template = document.getElementById(`goalstooltip${index}`);
-                      return template.innerHTML;
-                    },
-                    theme: 'light',
-                    interactive: true,
-                    maxWidth:420,
-                    allowHTML: true,
-                    appendTo: () => document.body
-                  });
-                })
               } else {
                 update.remove()
               }

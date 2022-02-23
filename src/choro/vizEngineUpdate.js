@@ -104,7 +104,7 @@ export function updateVizEngine(indicatorCode) {
       this.updateYAxis();
       if (this.indiSelections["viz"] == "series") {
         let timeData={};
-        timeData[this.indicatorCode] = this.indicatorData;
+        timeData[this.indicatorCode] = JSON.parse(JSON.stringify(this.indicatorData));
         let dataset = this.parse(timeData);
         let optionSelected = {
           countryGroupOption: this.countyType,
