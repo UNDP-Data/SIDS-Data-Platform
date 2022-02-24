@@ -3,8 +3,7 @@
     <v-row dense>
       <v-col class="printing-4" cols="7" md="4">
         <v-subheader class="d-none d-md-block info-bar_header block-header">{{name}}</v-subheader>
-        <v-list dense class="indicators-list background-grey"
-        >
+        <v-list dense class="indicators-list background-grey">
           <v-list-item v-if="checkIndicator('key-1')">
             <v-list-item-content class="one-line">
               <v-list-item-title class="one-line_header" v-text="indicatorsMetadata['key-1'].indicator"></v-list-item-title>
@@ -72,6 +71,7 @@
       </v-col>
       <v-col class="p-0 d-flex align-center printing-4" md="4" cols="5">
         <v-img
+          eager
           class="bg-printable"
           contain
           :src="require(`@/assets/media/profiles-maps/${id}.png`)"
@@ -80,6 +80,7 @@
       </v-col>
       <v-col class="p-0 align-center d-none d-block-print d-md-block printing-4" cols="4">
         <v-img
+          eager
           class="bg-printable"
           cover
           :src="require(`@/assets/media/country-photos/${id}.jpg`)"

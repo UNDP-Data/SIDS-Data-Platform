@@ -13,15 +13,31 @@
     transform: scale(1);
   }
   html{
-    min-width: 900px;
+    min-width: 940px;
   }
 
+  .print-page {
+    max-height: 1350px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
   .justify-print-space-between {
     justify: space-between !important;
+  }
+
+  .printout {
+    min-height: 100vh
   }
 }
 
 .bg-printable {
   -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
   color-adjust: exact !important;                 /*Firefox*/
+}
+.no-page-break{
+  break-after:avoid !important;
+}
+.page-break{
+  break-after:always;
 }

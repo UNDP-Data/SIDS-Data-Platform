@@ -54,6 +54,10 @@ export default {
     headerText: {
       type: String,
       default: ''
+    },
+    maxValue: {
+      type: Number,
+      default: 42
     }
   },
   data: ()=>({
@@ -131,9 +135,12 @@ export default {
             lineHeight = 1.4, // ems
             y = text.attr("y"),
             x = text.attr("x"),
+
             dy = parseFloat(text.attr("dy")),
             tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
           word  =  words.pop();
+
+          text.attr("Width", 80)
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
@@ -323,7 +330,21 @@ export default {
       blobWrapper
         .append("path")
         .attr("class", "radarArea")
-        .attr("d", d => radarLine(d.axes))
+        .attr("d", function (d) {
+          if(rootThis.pillarName === 'MVI') {
+            let values = d.axes.map(v => {
+              if(v.value === 'No Data') {
+                return {
+                  axis: v.axis,
+                  value: 0
+                }
+              }
+              return v
+            })
+            return radarLine(values);
+          }
+          return radarLine(d.axes);
+        })
         .style("fill", (d, i) => this.fullGraphOptions.color(i))
         .style("fill-opacity", this.fullGraphOptions.opacityArea)
         .style("pointer-events","auto")
@@ -358,7 +379,21 @@ export default {
       //Create the outlines
       blobWrapper.append("path")
             .attr("class", "radarStroke")
-            .attr("d", function (d) { return radarLine(d.axes); })
+            .attr("d", function (d) {
+              if(rootThis.pillarName === 'MVI') {
+                let values = d.axes.map(v => {
+                  if(v.value === 'No Data') {
+                    return {
+                      axis: v.axis,
+                      value: 0
+                    }
+                  }
+                  return v
+                })
+                return radarLine(values);
+              }
+              return radarLine(d.axes);
+            })
             .style("stroke-width", this.fullGraphOptions.strokeWidth + "px")
             .style("stroke", (d, i) => { return this.fullGraphOptions.color(i)})
             .style("fill", "none")
@@ -491,7 +526,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .graph-container{
+  .graph-container {
+    max-width: 500px;
     display: flex;
     align-items: center;
     flex-direction: column;
