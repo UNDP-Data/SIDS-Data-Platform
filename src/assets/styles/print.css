@@ -20,6 +20,7 @@
     max-height: 1350px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     position: relative;
   }
   .justify-print-space-between {

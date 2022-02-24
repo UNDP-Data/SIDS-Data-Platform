@@ -25,7 +25,7 @@
           <v-list-item v-if="checkIndicator('key-wdi2-SP.POP.TOTL')">
             <v-list-item-content class="one-line">
               <v-list-item-title class="one-line_header" v-text="indicatorsMetadata['key-wdi2-SP.POP.TOTL'].indicator"></v-list-item-title>
-              <v-list-item-subtitle>{{nFormatter(getIndicator('key-wdi2-SP.POP.TOTL').value)}}</v-list-item-subtitle>
+              <v-list-item-subtitle>{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-list-item v-if="checkIndicator('key-7')">
@@ -37,7 +37,7 @@
           <v-list-item v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')">
             <v-list-item-content class="one-line">
               <v-list-item-title class="one-line_header" v-text="indicatorsMetadata['key-wdi-AG.SRF.TOTL.K2'].indicator"></v-list-item-title>
-              <v-list-item-subtitle>{{nFormatter(getIndicator('key-wdi-AG.SRF.TOTL.K2').value)}} km<sup>2</sup></v-list-item-subtitle>
+              <v-list-item-subtitle>{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}} <span v-if="!checkNoData">km<sup>2</sup></span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-list-item v-if="checkIndicator('key-10')">
@@ -120,6 +120,16 @@ export default {
     },
     checkIndicator(code) {
       return this.getIndicator(code) && this.getIndicator(code).value;
+    },
+    checkNoData(code) {
+      return this.getIndicator(code).value === 'No Data' ?
+      false : true;
+    },
+    checkNoDataIndicator(code) {
+      if(this.getIndicator(code) && this.getIndicator(code).value) {
+        return this.getIndicator(code).value === 'No Data' ?
+        this.getIndicator(code).value : this.nFormatter(this.getIndicator(code).value)
+      }
     }
   }
 }

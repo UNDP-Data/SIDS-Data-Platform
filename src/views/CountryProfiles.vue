@@ -272,7 +272,17 @@
             <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
               <v-col cols="12">
                 <h2 class="mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
-                <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                <v-row>
+                  <v-col cols='7'>
+                    <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  </v-col>
+                  <v-col class="mb-0" cols='5'>
+                    <div class="text-center" v-for="stat in activeCountryProfile.KeyStats" :key="stat.title">
+                      <h3>{{stat.value}} {{stat.unit}}</h3>
+                      <p class="mb-0">{{stat.title}}</p>
+                    </div>
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
             <v-row class="mb-2 no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
@@ -285,7 +295,7 @@
                   :values="graphValueData[pillar]"/>
               </v-col>
               <v-col class="charts-description mt-0 mb-0" cols="12">
-                <p class="mt-0 mb-0 text-center">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among AIS countries for visualization purposes</p>
+                <p class="mt-0 mb-0 text-center desc-spiders">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among AIS countries for visualization purposes</p>
               </v-col>
             </v-row>
           </div>
@@ -297,7 +307,7 @@
               </v-col>
             </v-row>
             <v-row class="no-page-break">
-              <v-col class="d-flex flex-column" cols="7">
+              <v-col class="mvi-wrapper d-flex flex-column" cols="7">
                 <profiles-spider-chart
                   class="no-page-break"
                   postfix="print"
@@ -305,7 +315,7 @@
                   :pillarName="'MVI'"
                   :ranks="graphRankData['MVI']"
                   :values="graphValueData['MVI']"/>
-                <p class="no-page-break desc-mvi mt-0 mb-0 text-center">
+                <p class="desc-mvi desc-spiders mt-0 mb-0 text-center">
                   Values for each indicator for vulnerability are normalized among all countries with available data on a scale from 0 to 100
                 </p>
               </v-col>
@@ -707,5 +717,18 @@ export default {
      left: 0;
      bottom: 0px;
    }
+ }
+ .desc-spiders {
+   width: 80%;
+   text-align: center;
+   margin: 0 auto 0 !important;
+   font-size:12px;
+ }
+ .mvi-wrapper {
+   position: relative;
+ }
+ .desc-mvi {
+   position: absolute;
+   bottom: 50px;
  }
 </style>

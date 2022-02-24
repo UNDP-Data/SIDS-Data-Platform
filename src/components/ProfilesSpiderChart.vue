@@ -125,7 +125,7 @@ export default {
   methods:{
     drawGraph(){
       let rootThis = this;
-      const wrap = (text, width) => {
+      const wrap = (text) => {
         text.each(function () {
           var text = d3.select(this),
             words = text.text().split(/\s+/).reverse(),
@@ -140,11 +140,11 @@ export default {
             tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
           word  =  words.pop();
 
-          text.attr("Width", 80)
+          text.attr("width", '80px')
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
-            if (tspan.node().getComputedTextLength() > width) {
+            if (tspan.node().getComputedTextLength() > 80) {
               line.pop();
               tspan.text(line.join(" "));
               line = [word];
@@ -256,12 +256,13 @@ export default {
           .style("font-size", "10px")
           .attr("text-anchor", "middle")
           .attr("dy", "0.35em")
+          .attr("width", '80px')
           .attr("x", (d, i) => this.fullGraphOptions.textFormat * rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.cos(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
           .attr("y", (d, i) => -15 / this.fullGraphOptions.textFormat ** 3 + rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.sin(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
           .text(d => d)
           .call(wrap, this.fullGraphOptions.wrapWidth)
           .style("pointer-events","auto")
-          .attr("id", (d, i) => `${this.pillarName}axis${i}`)
+          .attr("id", (d, i) => `${this.pillarName}axis${i}${this.postfix}`)
           this.ranks[0].axes.map((axis, i) => {
             tippy(`#${this.pillarName}axis${i}`, {
               content() {
