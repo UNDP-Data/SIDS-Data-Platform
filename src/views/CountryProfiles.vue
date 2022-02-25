@@ -236,10 +236,10 @@
         </v-menu>
       </v-col>
     </v-row>
-    <v-row class="d-none d-flex-print">
+    <v-row class="hide-print">
       <v-col cols="12">
         <div class="printout">
-          <div class="print-page page-break">
+          <div :class="{'full-size': activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
             <v-row class="mb-3">
               <v-col cols="3">
                 <img
@@ -273,11 +273,11 @@
               <v-col cols="12">
                 <h2 class="mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
                 <v-row>
-                  <v-col cols='7'>
+                  <v-col cols='9'>
                     <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
                   </v-col>
-                  <v-col class="mb-0" cols='5'>
-                    <div class="text-center" v-for="stat in activeCountryProfile.KeyStats" :key="stat.title">
+                  <v-col class="mb-0" cols='3'>
+                    <div class="text-center mb-1" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
                       <h3>{{stat.value}} {{stat.unit}}</h3>
                       <p class="mb-0">{{stat.title}}</p>
                     </div>
@@ -300,10 +300,10 @@
             </v-row>
           </div>
           <div class="print-page page-break">
-            <v-row class="mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
+            <v-row class="mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
               <v-col cols="12">
-                <h2 class="mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
-                <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+                <h2 class="mb-0">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
+                <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
               </v-col>
             </v-row>
             <v-row class="no-page-break">
@@ -324,10 +324,10 @@
                   :countryId="activeCountryId"/>
               </v-col>
             </v-row>
-            <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
+            <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
               <v-col cols="12">
-                <h2 class="mb-0">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
-                <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+                <h2 class="mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
+                <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
               </v-col>
             </v-row>
             <p class="print-footer d-none d-print-block">

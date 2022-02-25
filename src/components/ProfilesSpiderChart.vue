@@ -144,6 +144,7 @@ export default {
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
+            console.log(tspan.node().getComputedTextLength())
             if (tspan.node().getComputedTextLength() > 80) {
               line.pop();
               tspan.text(line.join(" "));

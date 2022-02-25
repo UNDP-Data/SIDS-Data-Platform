@@ -1,3 +1,10 @@
+.hide-print {
+  visibility: hidden;
+  position: absolute;
+  top: -99999px;
+  left: -99999px;
+}
+
 @media print {
   body .v-application .d-none-print {
     display: none !important;
@@ -8,14 +15,18 @@
   body .v-application .d-flex-print {
     display: flex !important;
   }
-
+  .hide-print {
+    visibility: visible;
+    position: static;
+    top:-99999;
+    left:-99999;
+  }
   body {
     transform: scale(1);
   }
   html{
     min-width: 940px;
   }
-
   .print-page {
     max-height: 1350px;
     display: flex;
@@ -26,9 +37,11 @@
   .justify-print-space-between {
     justify: space-between !important;
   }
-
   .printout {
     min-height: 100vh
+  }
+  .full-size{
+    min-height: 1350px;
   }
 }
 
