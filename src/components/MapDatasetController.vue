@@ -185,7 +185,7 @@
             item-text="name"
             item-value="name"
             label="Dataset"
-            @input="emitUpdate"
+            @input="onInput"
             outlined
           ></v-autocomplete>
         </v-col>
@@ -206,7 +206,7 @@
             item-value="Description"
             :items="activeDataset.layers"
             label="Layer"
-            @input="emitUpdate"
+            @input="onInput"
             outlined
           ></v-select>
         </v-col>
@@ -225,7 +225,7 @@
             step="1"
             ticks="always"
             tick-size="4"
-            @input="emitUpdate"
+            @input="onInput"
           ></v-slider>
         </v-col>
       </v-row>
@@ -294,19 +294,53 @@
       <!-- DUPLICATE END -->
     </v-card>
 
-    <!-- TESTING - TAB SYSTEM -->
-    <vue-tabs-chrome
-      ref="tab"
-      :minHiddenWidth="120"
-      v-model="tab"
-      :tabs="tabs"
-      @contextmenu="handleRightClick"
-      @click="handleTabClick"
-      @swap="handleSwap"
-    />
+    <!-- TESTING - FLEXBOX TO CONTROL TABS AND ADDTAB BUTTON LAYOUT -->
+    <div
+      class="tab-system-box"
+      v-bind:style="{
+        'background-color': tabsAreVisible ? 'transparent' : '#e4e1e1',
+        display: tabsAreVisible ? 'flex' : 'none',
+      }"
+    >
+      <!-- TESTING - TAB SYSTEM -->
+      <vue-tabs-chrome
+        class="vue-tabs-component"
+        v-bind:style="{ visibility: tabsAreVisible ? 'visible' : 'hidden' }"
+        theme="default"
+        ref="tab"
+        :minHiddenWidth="120"
+        v-model="tab"
+        :tabs="tabs"
+        :gap="2"
+        @contextmenu="handleRightClick"
+        @swap="handleSwap"
+        @dragstart="handleDragStart"
+        @dragging="handleDragging"
+        @dragend="handleDragEnd"
+        @remove="handleRemove"
+      >
+        <!-- <button
+                id="chrome-tabs-slot-button"
+                class="chrome-tabs-slot-button"
+                @click="addTab"
+                slot="after"
+              >
+                ➕
+              </button> -->
+      </vue-tabs-chrome>
+      <button class="tab-add" @click="addEmptyTab">+</button>
+      <!-- ➕ -->
+    </div>
     <!-- INFO CARD -->
     <v-card class="mb-1 block-info background-grey">
-      <b>Info Card</b>
+      <button
+        v-bind:style="{ display: tabsAreVisible ? 'none' : 'block' }"
+        style="position: absolute; top: 0; right: 0"
+        class="tab-add"
+        @click="addTab"
+      >
+        +
+      </button>
       <v-card-subtitle class="block-header" v-if="activeLayer">
         <b
           >{{ activeLayer.Description }}
@@ -328,10 +362,10 @@
         dataset above or a country to view spatial data about that region.
       </v-card-text>
       <!-- TESTING - BUTTONS TO ADD/REMOVE TABS FOR DEBUG -->
-      <div class="btns">
+      <!-- <div class="btns">
         <button @click="addTab">New Tab</button>
         <button @click="removeTab">Remove active Tab</button>
-      </div>
+      </div> -->
     </v-card>
 
     <!-- New Legend/Histogram -->
@@ -376,16 +410,33 @@ export default {
     return {
       // TESTING - TAB SYSTEM
       // tabSystem: null, //used for v-model of tabs/tab-items
-      tab: "info", //"google",
+      // tabsAreVisible: this.tabs.length <= 1 ? "hidden" : "visible",
+      // currentTabInstance: null, //obsoleted by directly accessing via $refs..._props.tabs
+      tab: "starting-tab", //"google",
       tabs: [
-        /* {
+        /*  {
+          label: "info",
+          key: "info",
+          // closable: false,
+        },
+        {
           label: "google",
           key: "google",
           favicon: require("../assets/testing/google.jpg"),
-        },
-        {
+        }, */
+        /* {
           label: "New Tab",
-          key: "any-string-key",
+          key: "starting-tab",
+          data: {
+            dataset: null,
+            layer: null,
+            filters: {
+              //intended to facilitate resetting the filter
+              pillar: null, //int
+              goal: null, ///int
+              goalType: null, //str
+            },
+          },
         }, */
       ],
       //
@@ -401,24 +452,21 @@ export default {
         {
           name: "SIDS offer Pillars",
           value: "pillars",
-          headerImg:
-            require("@/assets/media/goals-icons/sidsOfferPillars.png"),
+          headerImg: require("@/assets/media/goals-icons/sidsOfferPillars.png"),
           description:
             "UNDP’s SIDS offer – Rising Up for SIDS – presents an integrated approach for tapping into areas with potential to accelerate green recovery and transform societies based on three interconnected pillars and responds to the ambitions and demands SIDS expressed during the 2019 midterm review of the S.A.M.O.A. Pathway.",
         },
         {
           name: "SDGs",
           value: "sdgs",
-          headerImg:
-            require("@/assets/media/goals-icons/SDGs.png"),
+          headerImg: require("@/assets/media/goals-icons/SDGs.png"),
           description:
             "The Global Goals designed to guide development for a better and more sustainable future for all, set up by the UNGA in 2015 and are intended to be achieved in 2030, as per Agenda 2030.",
         },
         {
           name: "SAMOA Pathway",
           value: "samoaPriorities",
-          headerImg:
-            require("@/assets/media/goals-icons/samoaPathway.png"),
+          headerImg: require("@/assets/media/goals-icons/samoaPathway.png"),
           description:
             "The SAMOA Pathway (SIDS Accelerated Modalities of Action) reaffirms that SIDS remain a special case for sustainable development, recognizing SIDS's ownership and leadership in overcoming these challenges.",
         },
@@ -689,7 +737,7 @@ export default {
       );
     },
     activeLayer() {
-      if (!this.activeDataset) return null;
+      if (!this.activeDataset || this.comparisonDataset === "info") return null;
       if (this.activeDataset.type === "temporal") {
         return this.activeDataset.layers[this.activeLayerName];
       } else if (this.activeDataset.type === "layers") {
@@ -703,7 +751,8 @@ export default {
 
     comparisonLayer() {
       console.log(this.comparisonDataset);
-      if (!this.comparisonDataset) return null;
+      if (!this.comparisonDataset || this.comparisonDataset === "info")
+        return null;
       if (this.comparisonDataset.type === "temporal") {
         return this.comparisonDataset.layers[this.comparisonLayerName];
       } else if (this.comparisonDataset.type === "layers") {
@@ -725,37 +774,198 @@ export default {
         (dataset) => dataset.name === this.comparisonDatasetName
       );
     },
+
+    tabsAreVisible() {
+      return this.tabs.length <= 0 ? false : true;
+    },
   },
   methods: {
     //TESTING - TAB SYSTEM
-    addTab(label = null, id = null) {
-      // let item = "tab" + Date.now();
-      let item = "tab";
-      item += id ? id : Date.now();
+    replaceCurrentTab() {
+      //find current tab by looking through .getTabs() for matching this.tab key and overwrite the data and label values
+      let currentTabKey = this.tab;
+      // let tabList = this.$refs.tab.getTabs();
+      let tabList = this.$refs.tab._props.tabs; //directly accessing the storage of tab instances
+      console.info("currentTabKey", currentTabKey, "tabList:", tabList);
+
+      for (const tab of tabList) {
+        console.log(
+          `${currentTabKey} vs
+          ${tab.key},`
+        );
+        if (tab.key === currentTabKey) {
+          console.log("found current tab; overwriting", tab);
+          tab.label = this.createTabLabel();
+          tab.data.dataset = this.activeDatasetName;
+          tab.data.layer = this.activeLayerName;
+          tab.data.filters.pillar = this.activePillar;
+          tab.data.filters.pillar = this.activeGoal;
+          tab.data.filters.pillar = this.activeGoalType;
+          console.log("tab new config: ", tab);
+          break;
+        } else
+          console.warn(
+            "!no matching current tab found for currentTabKey:",
+            currentTabKey
+          );
+      }
+
+      /* let tab = this.currentTabInstance;
+      console.log("current tab; overwriting", tab);
+      tab.label = this.createTabLabel();
+      tab.data.dataset = this.activeDatasetName;
+      tab.data.layer = this.activeLayerName;
+      tab.data.filters.pillar = this.activePillar;
+      tab.data.filters.pillar = this.activeGoal;
+      tab.data.filters.pillar = this.activeGoalType;*/
+    },
+    addEmptyTab() {
+      /* let tabLabel = ;
+      let key = ""; //"tab";
+      key += Date.now(); //timecode used for a unique id
+      let data = {
+        dataset: null,
+        layer: null,
+        filters: {
+          //intended to facilitate resetting the filter
+          pillar: null, //int
+          goal: null, ///int
+          goalType: null, //str
+        },
+      }; */
+      let key = Date.now();
       let newTabs = [
         {
-          label: label ? label : "New Tab",
-          key: item,
+          label: "New Tab",
+          key: key,
+          data: {
+            dataset: null,
+            layer: null,
+            filters: {
+              //intended to facilitate resetting the filter
+              pillar: null, //int
+              goal: null, ///int
+              goalType: null, //str
+            },
+          },
+        },
+      ];
+
+      this.$refs.tab.addTab(...newTabs);
+      this.tab = key;
+    },
+    addTab() {
+      //TODO - ADD CHECK FOR MAX TAB AMOUNT BEFORE AADDING
+      let key = ""; //"tab";
+      key += Date.now(); //timecode used for a unique id
+      let tabLabel = this.createTabLabel();
+      let newTabs = [
+        {
+          label: tabLabel ? tabLabel : "New Tab",
+          key: key,
+          data: {
+            dataset: this.activeDatasetName,
+            layer: this.activeLayerName,
+            filters: {
+              //intended to facilitate resetting the filter
+              pillar: this.activePillar, //int
+              goal: this.activeGoal, ///int
+              goalType: this.activeGoalType, //str
+            },
+          },
         },
       ];
       console.log(this.$refs);
       this.$refs.tab.addTab(...newTabs);
-      this.tab = item;
+      this.tab = key;
 
       //
     },
-    removeTab() {
+    /* removeTab() {
       console.log(this.$refs.tab);
       this.$refs.tab.removeTab(this.tab);
-    },
+    }, */
     handleRightClick(e, tab, index) {
-      console.log(e, tab, index);
-    },
-    handleTabClick(e, tab, index) {
-      console.log(e, tab, index);
+      console.log("e, tab, index", e, tab, index);
+      // this.tab = tab.key;
+      // this.currentTabInstance.label = "rightclick";
+      console.log("getTabs", this.$refs.tab.getTabs());
     },
     handleSwap(tab, targetTab) {
       console.info("swap", tab, targetTab);
+    },
+    handleDragStart(e, tab, index) {
+      console.info("dragstart", e, tab, index);
+      this.handleTabClick(e, tab, index); //to trigger auto select
+    },
+    handleDragging(e, tab, index) {
+      console.info("dragging", e, tab, index);
+    },
+    handleDragEnd(e, tab, index) {
+      console.info("dragend", e, tab, index);
+    },
+    handleRemove(e, tab, index) {
+      console.info("remove", e, tab, index);
+      //on close, if length of tabs is 1, get that tab and call handleClick to select that layer automatically
+      let tabs = this.$refs.tab.getTabs();
+      if (tabs.length === 1) {
+        console.log("only 1 tab, defaulting to that tab's layer");
+        let loneTab = tabs[0];
+        this.handleTabClick(e, loneTab, 0);
+      } else if (tabs.length < 1) {
+        console.warn(
+          "! last tab removed, needs handling; maybe default infobox content"
+        );
+      }
+    },
+    handleTabClick(e, tab, index) {
+      //intended to facilitate resetting the filter
+      this.activeGoalType = tab.data.filters.goalType; //str
+      this.activeGoal = tab.data.filters.goal; ///int
+      this.activePillar = tab.data.filters.pillar; //int
+      //should look for the corresponding dataset and layer in filtered datasets
+      //and update the reactive data/computed props in this components:
+      //activeDatasetName and activeLayerName are computed properties and inform activeLayer and activeDataset
+      //which in turn informs the dataset selector and slider
+      this.updateControllerFromTab(tab);
+      //update tab instance reference stored for use in replacing current active tab
+      console.info(e, tab, index);
+      this.emitUpdate();
+    },
+
+    updateControllerFromTab(tab) {
+      console.log("updateControllerFromTab", tab);
+      console.log(tab.data);
+      // let label = tab.label;
+      this.activeDatasetName = tab.data.dataset;
+      this.activeLayerName = tab.data.layer;
+    },
+
+    createTabLabel() {
+      let labelString = "Placeholder Label";
+      if (this.activeDataset.type === "single") {
+        labelString = this.activeDataset.name;
+      } else if (this.activeDataset.type === "temporal") {
+        labelString = `${this.activeLayer.Temporal}:${this.activeDataset.name}`;
+      } else if (this.activeDataset.type === "layers" && this.activeLayer) {
+        labelString = this.activeLayer.Description;
+      } else {
+        console.warn(
+          "Tab label couldn't be created for:",
+          this.activeDataset.name,
+          this.activeLayer.Field_Name
+        );
+        return null;
+      }
+      console.log("labelString created: ", labelString);
+      return labelString;
+    },
+
+    onInput() {
+      //interaction handler for dataset and layer selectors of the dataset controller
+      this.replaceCurrentTab();
+      this.emitUpdate();
+      // this.addTab(); //disabled, not desired to add tab on every selection
     },
     //
     /**
@@ -767,27 +977,6 @@ export default {
       let active = { dataset: this.activeDataset, layer: this.activeLayer }; //package data to pass to parents with update
       console.log("$emit update:", active);
       this.$emit("update", active);
-
-      //TESTING - TAB SYSTEM
-      if (this.activeDataset.type === "single") {
-        console.log("Tab add for single-type dataset");
-        this.addTab(this.activeDataset.name, this.activeLayer?.Field_Name);
-      } else if (this.activeDataset.type === "temporal") {
-        console.log("Tab add for temporal-type dataset");
-        this.addTab(
-          `${this.activeLayer.Temporal}:${this.activeDataset.name}`,
-          this.activeLayer.Field_Name
-        );
-      } else if (this.activeDataset.type === "layers" && this.activeLayer) {
-        console.log("Tab add for multilayers-type dataset");
-        this.addTab(this.activeLayer.Description, this.activeLayer.Field_Name);
-      } else {
-        console.warn(
-          "Tab could not be added for:",
-          this.activeDataset.name,
-          this.activeLayer.Field_Name
-        );
-      }
     },
     emitComparisonUpdate() {
       console.warn("emitComparisonUpdate");
@@ -830,6 +1019,26 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 /*Brandon additions*/
+.data-controller .v-sheet.v-card {
+  border-radius: 0;
+}
+.tab-system-box {
+  /* should force the chrome-tabs and tab-add towards extreme ends of container */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tab-system-box .vue-tabs-component {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+}
+.tab-add {
+  font-size: larger;
+  color: #fff;
+  padding: 0 5px;
+}
 .data-controller {
   display: flex;
   flex-direction: column;
@@ -943,54 +1152,52 @@ export default {
 }
 
 /* TESTING - TAB SYSTEM */
-/* .vue-tabs-chrome.theme-custom {
+.vue-tabs-chrome .tabs-content,
+.tab-add {
+  height: 22px;
+}
+.vue-tabs-chrome {
+  font-size: smaller;
   padding-top: 0;
   background-color: transparent;
-  overflow: hidden;
+  position: relative;
 }
-.vue-tabs-chrome.theme-custom .tabs-footer,
-.vue-tabs-chrome.theme-custom .tabs-divider,
-.vue-tabs-chrome.theme-custom .tabs-background-before,
-.vue-tabs-chrome.theme-custom .tabs-background-after {
+.vue-tabs-chrome .tabs-background {
+  /* disabling highlight glow on selectedactive tab */
+  width: 0;
+  height: 0;
+}
+.vue-tabs-chrome .tabs-main {
+  background-color: #babcc1;
+  /* background-color: #e4e1e1; */
+  border-radius: 0;
+  /* margin: 0 5px; */
+  margin: 0 7px 0 0; /* removing leftmargin to allow tabs to align with infocard's leftedge*/
+}
+
+.vue-tabs-chrome .tabs-main,
+.tab-add {
+  background-color: #babcc1;
+  /* background-color: #e4e1e1; */
+}
+.vue-tabs-chrome .active .tabs-main {
+  background-color: #e4e1e1;
+  /* background-color: #fff; */
+}
+/* .vue-tabs-chrome .tabs-main :hover {
+  background-color: #fff !important;
+} */
+
+.chrome-tabs-slot-button {
+  height: 20px;
+  line-height: 20px;
+  padding: 0 10px;
+}
+
+.vue-tabs-chrome .tabs-footer,
+.vue-tabs-chrome .tabs-divider,
+.vue-tabs-chrome .tabs-background-before,
+.vue-tabs-chrome .tabs-background-after {
   display: none;
 }
-.vue-tabs-chrome.theme-custom .tabs-item {
-  cursor: pointer;
-}
-.vue-tabs-chrome.theme-custom .tabs-content {
-  overflow: unset;
-  border-bottom: 1px solid #e4e7ed;
-}
-.vue-tabs-chrome.theme-custom .tabs-background {
-  padding: 0;
-}
-.vue-tabs-chrome.theme-custom .tabs-background-content {
-  border-top: 1px solid #e4e7ed;
-  border-left: 1px solid #e4e7ed;
-  border-right: 1px solid #e4e7ed;
-  border-radius: 0;
-  background-color: #fff;
-}
-.vue-tabs-chrome.theme-custom .tabs-content {
-  height: 40px;
-}
-.vue-tabs-chrome.theme-custom .active {
-  color: #409eff;
-}
-.vue-tabs-chrome.theme-custom .active .tabs-background::before,
-.vue-tabs-chrome.theme-custom .active .tabs-background::after {
-  top: 100%;
-  left: 0;
-  content: "";
-  width: 100%;
-  height: 1px;
-  background-color: #fff;
-  z-index: 1;
-  position: absolute;
-}
-.vue-tabs-chrome.theme-custom .active .tabs-background::before {
-  top: 0;
-  height: 2px;
-  background-color: #409eff;
-} */
 </style>
