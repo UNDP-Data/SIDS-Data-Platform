@@ -62,3 +62,7 @@
 .page-break{
   break-after:always;
 }
+@page {
+    size: A4;
+    margin: 8%;
+}
