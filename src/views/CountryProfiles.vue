@@ -239,7 +239,7 @@
     <v-row class="hide-print">
       <v-col cols="12">
         <div class="printout">
-          <div :class="{'full-size': activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
+          <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
             <v-row class="mb-3">
               <v-col cols="3">
                 <img
