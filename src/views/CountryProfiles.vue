@@ -1,25 +1,5 @@
 <template>
   <div class="mt-xs-0 mt-sm-0 mt-md-5 mt-lg-5 mt-xl-5">
-    <v-row class="d-none mb-3 d-flex-print">
-      <v-col cols="3">
-        <img
-          class="printed-Logo"
-          src="@/assets/media/RFSIDS-dark.png"
-        >
-      </v-col>
-      <v-col cols="6">
-        <v-row dense>
-          <v-col>
-            <h2 class="printout-header text-center"><b>{{activeCountry.name}}</b> Country profile</h2>
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col>
-            <h4 class="printout-subheader text-center">UNDP SIDS Data Platform</h4>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
     <v-row class="profile-header-row d-none-print" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}" justify="center">
       <v-col cols="12" offset-md="1" md="4" offset-lg="3" lg="3">
         <h2 class="page-header country-profile-header">Country profile</h2>
@@ -49,7 +29,7 @@
           </template>
         </v-select>
       </v-col>
-      <v-col class="ml-auto d-none d-md-block" md="2">
+      <v-col class="d-none-print ml-auto d-none d-md-block" md="2">
         <div class="select">
           <v-select
             rounded
@@ -61,7 +41,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="mt-xs-0 mt-sm-0" justify="center" dense>
+    <v-row class="d-none-print mt-xs-0 mt-sm-0" justify="center" dense>
       <v-col class="pt-xs-0 pt-sm-0" cols="12">
         <country-info-bar
           :profile="activeCountryProfile.Profile"
@@ -127,27 +107,14 @@
         </div>
       </v-col>
     </v-row>
-    <v-row v-if="graphRankData && graphValueData" class="d-flex-print d-none d-md-flex justify-print-space-between" justify="center">
-      <template v-for="(pillar, index) in pillars">
-        <v-col cols="4" md="6" lg="4" :class="{'printing-6':pillar==='MVI'}" :key="pillar">
+    <v-row v-if="graphRankData && graphValueData" class="d-none-print d-none d-md-flex" justify="center">
+        <v-col  v-for="pillar in pillars" cols="4" md="6" lg="4" :key="pillar">
           <profiles-spider-chart
             :graphOptions="graphOptions[pillar]"
             :pillarName="pillar"
             :ranks="graphRankData[pillar]"
             :values="graphValueData[pillar]"/>
-
-          <v-row dense v-if="index === 3" class="mvi-print-desc mb-0 d-none d-print-flex">
-            <v-col class="mt-0 mb-0" cols="12">
-              <p class="mt-0 mb-0 text-center">
-                Values for each indicator for vulnerability are normalized among all countries with available data on a scale from 0 to 100
-              </p>
-            </v-col>
-          </v-row>
         </v-col>
-        <v-col v-if="index === 2" class="d-none d-print-block mt-0 mb-0" :key="`${pillar}des`" cols="12">
-          <p class="mt-0 mb-0 text-center">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among AIS countries for visualization purposes</p>
-        </v-col>
-      </template>
       <v-col class="printing-6" cols="4" md="6" lg="4">
         <profiles-finance
           :countryId="activeCountryId"/>
@@ -269,10 +236,108 @@
         </v-menu>
       </v-col>
     </v-row>
-    <p class="print-footer d-none d-print-block">
-      Live version and links to original data sources available at
-      <a :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
-    </p>
+    <v-row :class="{'printout-one-page':!activeCountryProfile.CountryText}" class="hide-print">
+      <v-col cols="12">
+        <div class="printout">
+          <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
+            <v-row class="mb-3">
+              <v-col cols="3">
+                <img
+                  class="printed-Logo"
+                  src="@/assets/media/RFSIDS-dark.png"
+                >
+              </v-col>
+              <v-col cols="6">
+                <v-row dense>
+                  <v-col>
+                    <h2 class="printout-header text-center"><b>{{activeCountry.name}}</b> Country profile</h2>
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col>
+                    <h4 class="printout-subheader text-center">UNDP SIDS Data Platform</h4>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row class="mt-xs-0 mt-sm-0" justify="center" dense>
+              <v-col class="pt-xs-0 pt-sm-0" cols="12">
+                <country-info-bar
+                  :profile="activeCountryProfile.Profile"
+                  :id="activeCountryId"
+                  :name="activeCountry.name"
+                />
+              </v-col>
+            </v-row>
+            <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
+              <v-col cols="12">
+                <h2 class="mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
+                <v-row>
+                  <v-col cols='9'>
+                    <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  </v-col>
+                  <v-col class="mb-0" cols='3'>
+                    <div class="text-center mb-1" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+                      <h3>{{stat.value}} {{stat.unit}}</h3>
+                      <p class="mb-0">{{stat.title}}</p>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row class="mb-2 no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
+              <v-col class="no-page-break" v-for="pillar in pillars.slice(0, 3)" cols="4" :key="pillar">
+                <profiles-spider-chart
+                  postfix="print"
+                  :graphOptions="graphOptions[pillar]"
+                  :pillarName="pillar"
+                  :ranks="graphRankData[pillar]"
+                  :values="graphValueData[pillar]"/>
+              </v-col>
+              <v-col class="charts-description mt-0 mb-0" cols="12">
+                <p class="mt-0 mb-0 text-center desc-spiders">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among AIS countries for visualization purposes</p>
+              </v-col>
+            </v-row>
+          </div>
+          <div class="print-page page-break">
+            <v-row class="mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
+              <v-col cols="12">
+                <h2 class="mb-0">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
+                <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+              </v-col>
+            </v-row>
+            <v-row class="no-page-break">
+              <v-col class="mvi-wrapper d-flex flex-column" cols="7">
+                <profiles-spider-chart
+                  class="no-page-break"
+                  postfix="print"
+                  :graphOptions="graphOptions['MVI']"
+                  :pillarName="'MVI'"
+                  :ranks="graphRankData['MVI']"
+                  :values="graphValueData['MVI']"/>
+                <p :class="{'desc-mvi-one-page': !activeCountryProfile.CountryText}" class="desc-mvi desc-spiders mt-0 mb-0 text-center">
+                  Values for each indicator for vulnerability are normalized among all countries with available data on a scale from 0 to 100
+                </p>
+              </v-col>
+              <v-col cols="5">
+                <profiles-finance
+                  :countryId="activeCountryId"/>
+              </v-col>
+            </v-row>
+            <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
+              <v-col cols="12">
+                <h2 class="mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
+                <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+              </v-col>
+            </v-row>
+            <p :class="{'single-page-print-footer': !activeCountryProfile.CountryText}" class="print-footer d-none d-print-block">
+              Live version and links to original data sources available at
+              <a :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
+            </p>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -355,7 +420,7 @@ export default {
         header:'Multidimensional Vulnerability',
         w: 320,
         h: 200,
-        margin: { top: 70, right: 45, bottom: 100, left: 45 },
+        margin: { top: 70, right: 45, bottom: 60, left: 45 },
         maxValue: 80,
         levels: 4,
         spin: 0,
@@ -652,5 +717,30 @@ export default {
      left: 0;
      bottom: 0px;
    }
+   .single-page-print-footer {
+
+     bottom: 30px;
+   }
  }
+ .desc-spiders {
+   width: 80%;
+   text-align: center;
+   margin: 0 auto 0 !important;
+   font-size:12px;
+ }
+ .mvi-wrapper {
+   position: relative;
+ }
+ .desc-mvi {
+   position: absolute;
+   bottom: 70px;
+ }
+ .desc-mvi-one-page {
+   position: absolute;
+   bottom: 190px;
+ }
+ .page-single-page{
+   max-height: 1340px;
+ }
+
 </style>
