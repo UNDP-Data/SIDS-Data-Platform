@@ -236,7 +236,7 @@
         </v-menu>
       </v-col>
     </v-row>
-    <v-row class="hide-print">
+    <v-row :class="{'printout-one-page':!activeCountryProfile.CountryText}" class="hide-print">
       <v-col cols="12">
         <div class="printout">
           <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
@@ -719,7 +719,7 @@ export default {
    }
    .single-page-print-footer {
 
-     bottom: 100px;
+     bottom: 30px;
    }
  }
  .desc-spiders {
@@ -738,10 +738,6 @@ export default {
  .desc-mvi-one-page {
    position: absolute;
    bottom: 190px;
- }
- .printout-single-page {
-   position: absolute;
-   bottom: 110px;
  }
  .page-single-page{
    max-height: 1340px;
