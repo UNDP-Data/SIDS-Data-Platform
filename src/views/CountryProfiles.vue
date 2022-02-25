@@ -315,7 +315,7 @@
                   :pillarName="'MVI'"
                   :ranks="graphRankData['MVI']"
                   :values="graphValueData['MVI']"/>
-                <p class="desc-mvi desc-spiders mt-0 mb-0 text-center">
+                <p :class="{'desc-mvi-one-page': !activeCountryProfile.CountryText}" class="desc-mvi desc-spiders mt-0 mb-0 text-center">
                   Values for each indicator for vulnerability are normalized among all countries with available data on a scale from 0 to 100
                 </p>
               </v-col>
@@ -330,7 +330,7 @@
                 <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
               </v-col>
             </v-row>
-            <p class="print-footer d-none d-print-block">
+            <p :class="{'single-page-print-footer': !activeCountryProfile.CountryText}" class="print-footer d-none d-print-block">
               Live version and links to original data sources available at
               <a :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
             </p>
@@ -717,6 +717,10 @@ export default {
      left: 0;
      bottom: 0px;
    }
+   .single-page-print-footer {
+
+     bottom: 100px;
+   }
  }
  .desc-spiders {
    width: 80%;
@@ -729,6 +733,18 @@ export default {
  }
  .desc-mvi {
    position: absolute;
-   bottom: 50px;
+   bottom: 70px;
  }
+ .desc-mvi-one-page {
+   position: absolute;
+   bottom: 190px;
+ }
+ .printout-single-page {
+   position: absolute;
+   bottom: 110px;
+ }
+ .page-single-page{
+   max-height: 1340px;
+ }
+
 </style>

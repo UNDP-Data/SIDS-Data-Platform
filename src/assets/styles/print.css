@@ -20,12 +20,15 @@
     position: static;
     top:-99999;
     left:-99999;
+    overflow: hidden;
   }
   body {
     transform: scale(1);
+    overflow: hidden;
   }
   html{
     min-width: 940px;
+    overflow: hidden;
   }
   .print-page {
     max-height: 1350px;
