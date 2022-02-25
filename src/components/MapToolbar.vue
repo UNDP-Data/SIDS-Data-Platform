@@ -16,7 +16,8 @@
               <div class="menu row-flex">
                 <div class="icon country-icon" @click="toggleMenu(0)"></div>
                 <div class="description hover">
-                  Map : Select country of your choice
+                  <b>Country Select</b> - Focus map on the country or region of
+                  interest
                 </div>
                 <div
                   class="
@@ -112,7 +113,10 @@
                   class="icon resolution-icon hex5"
                   @click="toggleMenu(1)"
                 ></div>
-                <div class="description hover">Change Data Resolution</div>
+                <div class="description hover">
+                  <b>Data Resolution</b> - Change the data aggregation level
+                  (hexagonal grids, administrative regions, etc.)
+                </div>
                 <div class="menu-drop row-flex display-none menu-big">
                   <div
                     class="col-flex"
@@ -309,7 +313,10 @@
                   class="icon color-icon color-icon-1"
                   @click="toggleMenu(2)"
                 ></div>
-                <div class="description hover">Palette Switcher</div>
+                <div class="description hover">
+                  <b>Color Chooser</b> - Change between several color palettes
+                  for the displayed data
+                </div>
                 <div
                   class="
                     menu-drop
@@ -485,7 +492,10 @@
                   class="icon basemap-icon-handle basemap-icon"
                   @click="toggleMenu(3)"
                 ></div>
-                <div class="description hover">Basemap Switch</div>
+                <div class="description hover">
+                  <b>Change Basemap</b> - Switch between Satellite Imagery and
+                  abstract map themes
+                </div>
                 <div
                   class="
                     menu-drop
@@ -610,7 +620,10 @@
                   class="icon add-boundaries-icon"
                   @click="toggleMenu(4)"
                 ></div>
-                <div class="description hover">Administrative Boundaries</div>
+                <div class="description hover">
+                  <b>Overlay Boundaries</b> - Toggle On/Off different levels of
+                  administrative regions
+                </div>
                 <div class="menu-drop row-flex display-none menu-big">
                   <div
                     class="col-flex"
@@ -760,7 +773,10 @@
                   class="icon twoD-icon display-none"
                   @click="handleHeightChange('twoD', 'threeD')"
                 ></div>
-                <div class="description hover">Toggle 3D</div>
+                <div class="description hover">
+                  <b>3D Mode</b> - Visualize data values using 3-dimensional
+                  height
+                </div>
                 <div
                   class="menu-drop row-flex align-items-center display-none"
                 ></div>
@@ -769,7 +785,9 @@
               <!-- Opacity Select Menu -->
               <div class="menu row-flex">
                 <div class="icon opacity-icon" @click="toggleMenu(6)"></div>
-                <div class="description hover">Opacity Slider</div>
+                <div class="description hover">
+                  <b>Transparency Slider</b> - Change data layers' opacity
+                </div>
                 <div class="menu-drop row-flex align-items-center display-none">
                   <div
                     class="row-flex align-items-center"
@@ -807,7 +825,9 @@
                   class="icon aplus-icon"
                   @click="handleLabelsChange('aplus', 'aminus')"
                 ></div>
-                <div class="description hover">Toggle on/off Map Labels</div>
+                <div class="description hover">
+                  <b>Map Labels</b> - Toggle On/Off labels (Towns, roads, etc.)
+                </div>
                 <div
                   class="menu-drop row-flex align-items-center display-none"
                 ></div>
@@ -841,7 +861,7 @@
                   class="icon bivariate-mode-icon"
                   @click="handleBivariateMode()"
                 ></div>
-                <div class="description hover">Bivariate</div>
+                <div class="description hover"><b>Bivariate</b></div>
                 <!-- <div class="menu-drop row-flex align-items-center display-none bivariate menu-with-blue">
                       <div class="row-flex align-items-center" style="height: 40px;margin:0 6px 0 0;">
                         <div class="row-flex" style="font-weight: bold; padding-left: 10px;line-height:40px;margin:0 10px 0 0;height: 40px;width:200px;background-color:#DFDFDF;">Bivariate Mode Enabled</div>
@@ -862,37 +882,14 @@
                 </div>
               </div>
 
-              <!-- Draw Menu hidden due to unresolved issue (see github link on trello) -->
-              <div class="menu row-flex display-none">
+              <!-- Draw Menu has due to unresolved issue (see github link on trello) -->
+              <div class="menu row-flex">
                 <div class="icon draw-icon" @click="toggleMenu(10)"></div>
                 <!-- <div class="icon draw-icon" onClick="handleDrawMenu()"></div> -->
-                <div class="description hover">Custom Regional Analysis</div>
-                <!-- <div class="menu-drop row-flex display-none menu-big menu-with-blue" id="draw-menu">
-                  
-                      <div class="col-flex align-items-center" style="height:auto; width:auto;">
-                        <div class="row-flex align-items-center space-evenly" style="border-top-left-radius:5px; height:52px; width: 280px;background-color:#C4C4C4;">
-                          <div class="row-flex" style="margin-left: 15px; line-height:52px; font-weight:bold; font-size:16px;">Draw Mode - Region Analysis</div>
-                          <div class="info-nobg-icon"></div>
-                        </div>
-                        <div class="col-flex align-items-center" style="width:280px;background-color:#C4C4C4;border-bottom-left-radius:5px; border-bottom-right-radius:5px;">
-                          <div class="row-flex space-between align-items-center" style="height:30px;width:250px;background-color:#DFDFDF">
-                            <div style="font-weight:bold; margin:0 10px;" id='drawControls'>Region Polygon 1</div>
-                            <div style="margin:0 10px 0 0;"><i>edit</i></div>
-                          </div>
-                          <div class="row-flex align-items-center" style="margin-top:5px; width:250px;height:90px">
-                             <div style="margin:0 10px">Draw a polygon for regional analysis.</div>
-                          </div>
-                          <div class="row-flex align-items-center space-evenly" style="margin: 10px 0;width:250px;height:30px;background-color:#DFDFDF;border-radius:5px;">
-                            <div style="color:#949494;margin:0 10px;">Add polygon to compares</div>
-                            <div class="grey-plus-icon"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-flex">
-                        <div class="col-flex" style="width:6px;height:52px;background-color:#C4C4C4"></div>
-                      </div>
-                    </div>
-                    <div class="blue-box blue-box-draw display-none"></div> -->
+                <div class="description hover">
+                  <b>Regional Analysis</b> - Draw an area of interest to compute
+                  statistics for the region
+                </div>
                 <div
                   class="
                     menu-drop
@@ -902,7 +899,104 @@
                   "
                   id="draw-menu"
                 >
-                  <!-- Placeholder Draw Menu content -->
+                  <!--<div
+                    class="col-flex align-items-center"
+                    style="height: auto; width: auto"
+                  >
+                    <div
+                      class="row-flex align-items-center space-evenly"
+                      style="
+                        border-top-left-radius: 5px;
+                        height: 52px;
+                        width: 280px;
+                        background-color: #c4c4c4;
+                      "
+                    >
+                      <div
+                        class="row-flex"
+                        style="
+                          margin-left: 15px;
+                          line-height: 52px;
+                          font-weight: bold;
+                          font-size: 16px;
+                        "
+                      >
+                        Draw Mode - Region Analysis
+                      </div>
+                      <div class="info-nobg-icon"></div>
+                    </div>
+                    <div
+                      class="col-flex align-items-center"
+                      style="
+                        width: 280px;
+                        background-color: #c4c4c4;
+                        border-bottom-left-radius: 5px;
+                        border-bottom-right-radius: 5px;
+                      "
+                    >
+                      <div
+                        class="row-flex space-between align-items-center"
+                        style="
+                          height: 30px;
+                          width: 250px;
+                          background-color: #dfdfdf;
+                        "
+                      >
+                        <div
+                          style="font-weight: bold; margin: 0 10px"
+                          id="drawControls"
+                        >
+                          Region Polygon 1
+                        </div>
+                        <div style="margin: 0 10px 0 0"><i>edit</i></div>
+                      </div>
+                      <div
+                        class="row-flex align-items-center"
+                        style="margin-top: 5px; width: 250px; height: 90px"
+                      >
+                        <div style="margin: 0 10px">
+                          Draw a polygon for regional analysis.
+                        </div>
+                      </div>
+                      <div
+                        class="row-flex align-items-center space-evenly"
+                        style="
+                          margin: 10px 0;
+                          width: 250px;
+                          height: 30px;
+                          background-color: #dfdfdf;
+                          border-radius: 5px;
+                        "
+                      >
+                        <div style="color: #949494; margin: 0 10px">
+                          Add polygon to compares
+                        </div>
+                        <div class="grey-plus-icon"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-flex">
+                    <div
+                      class="col-flex"
+                      style="
+                        width: 6px;
+                        height: 52px;
+                        background-color: #c4c4c4;
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="blue-box blue-box-draw display-none"></div>
+                <div
+                  class="
+                    menu-drop
+                    row-flex
+                    display-none
+                    menu-big menu-with-blue
+                  "
+                  id="draw-menu"
+                >
+                   -->
                   <div id="drawControls"></div>
                 </div>
               </div>
@@ -949,7 +1043,10 @@
                   class="icon dual-mode-icon"
                   @click="handleDualMode()"
                 ></div>
-                <div class="description hover">Comparison Slider</div>
+                <div class="description hover">
+                  <b>Comparison</b> - Enable a draggable slider to visually
+                  compare datasets
+                </div>
                 <div
                   class="
                     menu-drop
@@ -1016,8 +1113,16 @@
 import names from "@/gis/static/names";
 import CountrySelectorOption from "@/components/CountrySelectorOption";
 
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+
 export default {
-  props: ["active_dataset", "active_layer", "dualModeEnabled"], //to receive from MapDatasetController via GeospatialData; //currently active_dataset informs handleResolutionChange
+  props: [
+    "active_dataset",
+    "active_layer",
+    "dualModeEnabled", //to receive from MapDatasetController via GeospatialData;
+    "map", //mapboxInstance to receive from GeospatiaData.vue
+  ], //currently active_dataset informs handleResolutionChange
   name: "MapToolbar",
   components: {
     CountrySelectorOption,
@@ -1311,14 +1416,88 @@ export default {
       }
 
       //hide information controls when done using tools from toolbar
-      let drawInfoControl = document
+      let drawInfoDiv = document.getElementsByClassName("draw-info-box")[0];
+      drawInfoDiv.innerHTML = ""; //clear the drawInfoDiv of old content
+      drawInfoDiv.classList.add("display-none");
+
+      /* let drawInfoControl = document
         .getElementById("draw-info-control")
+        ?.classList.add("display-none"); */
+      let drawInfoBox = document
+        .getElementById("draw-info-box")
         ?.classList.add("display-none");
-      console.log(drawInfoControl);
+      console.log(drawInfoBox);
+
+      //belowcopied from toggleMenu logic for Draw Mode
+      //removing the mapboxDraw instance if present, due to it blocking mapclicking of data
+      if (index !== 10) {
+        console.log("closeAllMenu removing Draw instance");
+        let mapClassInstance = this.map;
+        if (!(mapClassInstance.Draw === null)) {
+          mapClassInstance.map.removeControl(mapClassInstance.Draw);
+        } else {
+          console.log("mapClassInstance.Draw is null");
+        }
+        mapClassInstance.Draw = null;
+        console.log(
+          "closeAllMenu cleared mapClassInstance.Draw:",
+          mapClassInstance.Draw
+        );
+      }
     },
+
     //handles open/closing related behaviour for specified sidebar menu button
     toggleMenu(index) {
       console.log("toggleMenu called for index: ", index);
+
+      //---------------------------------------------------
+      //workaround to accommodate the preventDefault error (the MapboxDraw blocking touch interactions ie. on dataclick on mobile)
+      //attempt to instantiate/delete the mapInstance.Draw ie. MapboxDraw instance with the clicking on the mapToolbar button click
+      //??the menu #draw-menu's size likely will be affected by the presence/instance
+      if (index === 10) {
+        let mapClassInstance = this.map;
+        if (mapClassInstance.Draw === null) {
+          console.log("instantiating Draw");
+          mapClassInstance.Draw = new MapboxDraw({
+            displayControlsDefault: false,
+            // Select which mapbox-gl-draw control buttons to add to the map.
+            controls: {
+              polygon: true,
+              // trash: true,
+            },
+          });
+          console.log(
+            "instantiated mapClassInstance.Draw",
+            mapClassInstance.Draw
+          );
+
+          let drawControlsDiv = document.getElementById("drawControls");
+          drawControlsDiv.appendChild(
+            mapClassInstance.Draw.onAdd(mapClassInstance.map)
+          );
+          // document
+          //   .getElementById("drawControls")
+          //   .appendChild(mapboxDrawInstance.onAdd(this.map)); //get the hardcoded div from the toolbar template
+          //
+
+          mapClassInstance._addDrawListeners(mapClassInstance);
+        } else {
+          console.log("removing Draw instance");
+          mapClassInstance.map.removeControl(mapClassInstance.Draw);
+          //!!despite map.hasControl => false for this, map.removeControl still removes the mapClassInstance.Draw fed to it as desired;
+          /* //replaced by map.removeControl(mapClassInstance.Draw)
+             let drawControls = document.querySelector(
+            "#drawControls div.mapboxgl-ctrl-group"
+          );
+          drawControls.remove(); */
+          mapClassInstance.Draw = null;
+          console.log("cleared mapClassInstance.Draw:", mapClassInstance.Draw);
+          // console.warn("unexpected Draw instance state", mapboxDrawInstance);
+        }
+        console.log("checking mapClassInstance.Draw", mapClassInstance.Draw);
+      }
+      //-----------------------------------------------------------------
+
       var allMenu = document.getElementsByClassName("menu-drop");
 
       for (let i = 0; i < allMenu.length; i++) {
