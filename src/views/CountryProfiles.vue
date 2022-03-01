@@ -1,271 +1,10 @@
 <template>
-  <div class="mt-xs-0 mt-sm-0 mt-md-5 mt-lg-5 mt-xl-5">
-    <v-row class="profile-header-row d-none-print" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}" justify="center">
-      <v-col cols="12" offset-md="1" md="4" offset-lg="3" lg="3">
-        <h2 class="page-header country-profile-header">Country profile</h2>
-      </v-col>
-      <v-col cols="10" md="4" lg="3" class="select-column">
-        <v-select
-          rounded
-          class="country-select"
-          :value="activeCountryId"
-          @change="selectCountry"
-          :items="sidsListFilteredNoAverage"
-          hide-selected
-          menu-props='{auto:false}'
-          item-text="name"
-          item-value="id"
-          outlined
-          hide-details
-        >
-          <template  slot="item" slot-scope="data">
-            <div>
-              <i
-                class="flag-icon select_icon"
-                :class="'flag-icon-' + flagGodes[data.item.id]"
-              ></i>
-              {{ data.item.name }}
-            </div>
-          </template>
-        </v-select>
-      </v-col>
-      <v-col class="d-none-print ml-auto d-none d-md-block" md="2">
-        <div class="select">
-          <v-select
-            rounded
-            dense
-            v-model="region"
-            :items="regions"
-            outlined
-          ></v-select>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row class="d-none-print mt-xs-0 mt-sm-0" justify="center" dense>
-      <v-col class="pt-xs-0 pt-sm-0" cols="12">
-        <country-info-bar
-          :profile="activeCountryProfile.Profile"
-          :id="activeCountryId"
-          :name="activeCountry.name"
-        />
-      </v-col>
-    </v-row>
-    <v-row class="d-none d-md-flex d-none-print" justify="center">
-      <v-col cols="11" md="6">
-        <div class="select">
-          <v-select
-            rounded
-            :value="compareIdsList"
-            :items="sidsListFiltered"
-            item-text="name"
-            item-value="id"
-            placeholder="Overlay countries to compare indicator rank"
-            @change="setCompareCountries"
-            chips
-            outlined
-            hide-selected
-            multiple
-            dense
-            hide-details
-          >
-            <template #selection="{ item, index }">
-              <v-chip
-                class="muliselect-chip"
-                close
-                @click:close="removeCountry(item.id)"
-                :style="getChipStyle(index)"
-                :color="getColor(index)">
-                {{item.name}}
-              </v-chip>
-            </template>
-            <template slot="item" slot-scope="data">
-            <i
-              class="flag-icon select_icon"
-              :class="'flag-icon-' + flagGodes[data.item.id]"
-            ></i>
-            {{ data.item.name }}
-            </template>
-          </v-select>
-        </div>
-      </v-col>
-      <v-col class="d-flex align-center" md="1">
-        <p class="mt-auto mb-auto">among</p>
-      </v-col>
-      <v-col cols="11" md="3" lg="2">
-        <div class="select">
-          <v-select
-            rounded
-            v-model="rankType"
-            :items="rankTypes"
-            @change="changeRankSelector"
-            item-text="name"
-            item-value="id"
-            outlined
-            dense
-            hide-details
-          >
-          </v-select>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row v-if="graphRankData && graphValueData" class="d-none-print d-none d-md-flex" justify="center">
-        <v-col  v-for="(pillar, index) in pillars" cols="4" md="6" lg="4" :key="pillar">
-          <template v-if="index < 3">
-            <profiles-spider-chart
-              :graphOptions="graphOptions[pillar]"
-              :pillarName="pillar"
-              :maxValue="maxValuePillars"
-              :ranks="graphRankData[pillar]"
-              :values="graphValueData[pillar]"/>
-          </template>
-          <template v-else>
-            <profiles-spider-chart
-              :graphOptions="graphOptions[pillar]"
-              :pillarName="pillar"
-              :maxValue="80"
-              :ranks="graphRankData[pillar]"
-              :values="graphValueData[pillar]"/>
-          </template>
-        </v-col>
-      <v-col class="printing-6" cols="4" md="6" lg="4">
-        <profiles-finance
-          :countryId="activeCountryId"/>
-      </v-col>
-    </v-row>
-    <v-row justify="center" class="d-none-print d-md-none">
-      <v-col cols="11">
-        <v-tabs
-          v-model="tab"
-          show-arrows
-          center-active
-          grow>
-          <v-tab v-for="tab in tabs" :key="tab">
-            {{ tab }}
-          </v-tab>
-        </v-tabs>
-        <v-tabs-items class="mt-4 graph-tabs" v-model="tab">
-          <v-tab-item  v-for="(pillar, index) in pillars" :key="pillar">
-            <template v-if="index < 3">
-              <profiles-spider-chart
-                :graphOptions="graphOptions[pillar]"
-                :pillarName="pillar"
-                postfix="mobile"
-                :maxValue="maxValuePillars"
-                :ranks="graphRankData[pillar]"
-                :values="graphValueData[pillar]"/>
-            </template>
-            <template v-else>
-              <profiles-spider-chart
-                :graphOptions="graphOptions[pillar]"
-                :pillarName="pillar"
-                postfix="mobile"
-                :maxValue="80"
-                :ranks="graphRankData[pillar]"
-                :values="graphValueData[pillar]"/>
-            </template>
-          </v-tab-item>
-          <v-tab-item>
-            <profiles-finance
-              :countryId="activeCountryId"/>
-          </v-tab-item>
-        </v-tabs-items>
-
-      </v-col>
-    </v-row>
-    <v-row class="d-flex d-none-print d-md-none" justify="center">
-      <v-col cols="11" md="6">
-        <div class="select">
-          <v-select
-            rounded
-            :value="compareIdsList"
-            :items="sidsListFiltered"
-            item-text="name"
-            item-value="id"
-            placeholder="Overlay countries to compare indicator rank"
-            @change="setCompareCountries"
-            chips
-            outlined
-            hide-selected
-            multiple
-            dense
-            hide-details
-          >
-            <template #selection="{ item, index }">
-              <v-chip
-                class="muliselect-chip"
-                close
-                @click:close="removeCountry(item.id)"
-                :style="getChipStyle(index)"
-                :color="getColor(index)">
-                {{item.name}}
-              </v-chip>
-            </template>
-            <template slot="item" slot-scope="data">
-            <i
-              class="flag-icon select_icon"
-              :class="'flag-icon-' + flagGodes[data.item.id]"
-            ></i>
-            {{ data.item.name }}
-            </template>
-          </v-select>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row class="d-flex d-none-print d-md-none" justify="center">
-      <v-col cols="3" class="d-flex align-center" md="1">
-        <p class="mt-auto mb-auto">among</p>
-      </v-col>
-      <v-col cols="8" md="3" lg="2">
-        <div class="select">
-          <v-select
-            rounded
-            v-model="rankType"
-            :items="rankTypes"
-            @change="changeRankSelector"
-            item-text="name"
-            item-value="id"
-            outlined
-            dense
-            hide-details
-          >
-          </v-select>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row class="d-none d-none-print d-md-flex" justify="center">
-      <v-col cols="2">
-        <v-menu
-          content-class="d-none-print"
-          offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              rounded
-              class="ma-2 d-none-print"
-              color="primary"
-              v-bind="attrs"
-              v-on="on"
-            >
-              Export
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item-group>
-              <v-list-item @click="exportCSV">
-                <v-list-item-title>Summary CSV</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="exportPDF">
-                <v-list-item-title>Summary PDF</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-menu>
-      </v-col>
-    </v-row>
-    <v-row :class="{'printout-one-page':!activeCountryProfile.CountryText}" class="hide-print">
+  <div class="mt-xs-0 mt-sm-0 mt-md-2 mt-lg-2 mt-xl-2">
+    <v-row :class="{'printout-one-page':!activeCountryProfile.CountryText}">
       <v-col cols="12">
         <div class="printout">
           <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
-            <v-row class="mb-3">
+            <v-row class="mb-3 d-none d-print-flex">
               <v-col cols="3">
                 <img
                   class="printed-Logo"
@@ -285,7 +24,48 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-row class="mt-xs-0 mt-sm-0" justify="center" dense>
+            <v-row class="mt-0 profile-header-row d-none-print" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}" justify="center">
+              <v-col cols="12" offset-md="1" md="4" offset-lg="3" lg="3">
+                <h2 class="page-header country-profile-header">Country profile</h2>
+              </v-col>
+              <v-col cols="10" md="4" lg="3" class="select-column">
+                <v-select
+                  rounded
+                  class="country-select"
+                  :value="activeCountryId"
+                  @change="selectCountry"
+                  :items="sidsListFilteredNoAverage"
+                  hide-selected
+                  menu-props='{auto:false}'
+                  item-text="name"
+                  item-value="id"
+                  outlined
+                  hide-details
+                >
+                  <template  slot="item" slot-scope="data">
+                    <div>
+                      <i
+                        class="flag-icon select_icon"
+                        :class="'flag-icon-' + flagGodes[data.item.id]"
+                      ></i>
+                      {{ data.item.name }}
+                    </div>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col class="d-none-print ml-auto d-none d-md-block" md="2">
+                <div class="select">
+                  <v-select
+                    rounded
+                    dense
+                    v-model="region"
+                    :items="regions"
+                    outlined
+                  ></v-select>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row class="mt-xs-0 mt-sm-0 mb-2 mb-print-0" justify="center" dense>
               <v-col class="pt-xs-0 pt-sm-0" cols="12">
                 <country-info-bar
                   :profile="activeCountryProfile.Profile"
@@ -296,13 +76,13 @@
             </v-row>
             <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
               <v-col cols="12">
-                <h2 class="mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
+                <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
                 <v-row>
-                  <v-col cols='9'>
-                    <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  <v-col class="printing-9" cols='12' md="9">
+                    <div class="px-4" v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
                   </v-col>
-                  <v-col class="mb-0" cols='3'>
-                    <div class="text-center mb-1" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+                  <v-col class="printing-3 mb-0" cols='12' md="3">
+                    <div class=" px-4 text-center mb-3 mb-print-1" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
                       <h3>{{stat.value}} {{stat.unit}}</h3>
                       <p class="mb-0">{{stat.title}}</p>
                     </div>
@@ -310,7 +90,165 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-row class="mb-2 no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
+            <v-row justify="center" class="d-none-print d-md-none">
+              <v-col cols="11">
+                <v-tabs
+                  v-model="tab"
+                  show-arrows
+                  center-active
+                  grow>
+                  <v-tab v-for="tab in tabs" :key="tab">
+                    {{ tab }}
+                  </v-tab>
+                </v-tabs>
+                <v-tabs-items class="mt-4 graph-tabs" v-model="tab">
+                  <v-tab-item  v-for="(pillar, index) in pillars" :key="pillar">
+                    <template v-if="index < 3">
+                      <profiles-spider-chart
+                        :graphOptions="graphOptions[pillar]"
+                        :pillarName="pillar"
+                        postfix="mobile"
+                        :maxValue="maxValuePillars"
+                        :ranks="graphRankData[pillar]"
+                        :values="graphValueData[pillar]"/>
+                    </template>
+                    <template v-else>
+                      <profiles-spider-chart
+                        :graphOptions="graphOptions[pillar]"
+                        :pillarName="pillar"
+                        postfix="mobile"
+                        :maxValue="80"
+                        :ranks="graphRankData[pillar]"
+                        :values="graphValueData[pillar]"/>
+                    </template>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <profiles-finance
+                      :countryId="activeCountryId"/>
+                  </v-tab-item>
+                </v-tabs-items>
+
+              </v-col>
+            </v-row>
+            <v-row class="d-flex d-none-print d-md-none" justify="center">
+              <v-col cols="11" md="6">
+                <div class="select">
+                  <v-select
+                    rounded
+                    :value="compareIdsList"
+                    :items="sidsListFiltered"
+                    item-text="name"
+                    item-value="id"
+                    placeholder="Overlay countries to compare indicator rank"
+                    @change="setCompareCountries"
+                    chips
+                    outlined
+                    hide-selected
+                    multiple
+                    dense
+                    hide-details
+                  >
+                    <template #selection="{ item, index }">
+                      <v-chip
+                        class="muliselect-chip"
+                        close
+                        @click:close="removeCountry(item.id)"
+                        :style="getChipStyle(index)"
+                        :color="getColor(index)">
+                        {{item.name}}
+                      </v-chip>
+                    </template>
+                    <template slot="item" slot-scope="data">
+                    <i
+                      class="flag-icon select_icon"
+                      :class="'flag-icon-' + flagGodes[data.item.id]"
+                    ></i>
+                    {{ data.item.name }}
+                    </template>
+                  </v-select>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row class="d-flex d-none-print d-md-none" justify="center">
+              <v-col cols="3" class="d-flex align-center" md="1">
+                <p class="mt-auto mb-auto">among</p>
+              </v-col>
+              <v-col cols="8" md="3" lg="2">
+                <div class="select">
+                  <v-select
+                    rounded
+                    v-model="rankType"
+                    :items="rankTypes"
+                    @change="changeRankSelector"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    dense
+                    hide-details
+                  >
+                  </v-select>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row class="d-none d-md-flex d-none-print" justify="center">
+              <v-col cols="11" md="6">
+                <div class="select">
+                  <v-select
+                    rounded
+                    :value="compareIdsList"
+                    :items="sidsListFiltered"
+                    item-text="name"
+                    item-value="id"
+                    placeholder="Overlay countries to compare indicator rank"
+                    @change="setCompareCountries"
+                    chips
+                    outlined
+                    hide-selected
+                    multiple
+                    dense
+                    hide-details
+                  >
+                    <template #selection="{ item, index }">
+                      <v-chip
+                        class="muliselect-chip"
+                        close
+                        @click:close="removeCountry(item.id)"
+                        :style="getChipStyle(index)"
+                        :color="getColor(index)">
+                        {{item.name}}
+                      </v-chip>
+                    </template>
+                    <template slot="item" slot-scope="data">
+                    <i
+                      class="flag-icon select_icon"
+                      :class="'flag-icon-' + flagGodes[data.item.id]"
+                    ></i>
+                    {{ data.item.name }}
+                    </template>
+                  </v-select>
+                </div>
+              </v-col>
+              <v-col class="d-flex align-center" md="1">
+                <p class="mt-auto mb-auto">among</p>
+              </v-col>
+              <v-col cols="11" md="3" lg="2">
+                <div class="select">
+                  <v-select
+                    rounded
+                    v-model="rankType"
+                    :items="rankTypes"
+                    @change="changeRankSelector"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    dense
+                    hide-details
+                  >
+                  </v-select>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row class="mb-4 d-none d-md-flex d-print-flex no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
               <v-col class="no-page-break" v-for="pillar in pillars.slice(0, 3)" cols="4" :key="pillar">
                 <profiles-spider-chart
                   :graphOptions="graphOptions[pillar]"
@@ -328,11 +266,11 @@
           <div class="print-page page-break">
             <v-row class="mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
               <v-col cols="12">
-                <h2 class="mb-0">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
-                <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+                <h2 class="mb-0 px-4">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
+                <div class="px-4" v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
               </v-col>
             </v-row>
-            <v-row class="no-page-break">
+            <v-row class="d-none d-md-flex d-print-flex no-page-break mb-4 mb-print-0">
               <v-col class="mvi-wrapper d-flex flex-column" cols="7">
                 <profiles-spider-chart
                   class="no-page-break"
@@ -353,14 +291,43 @@
             </v-row>
             <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
               <v-col cols="12">
-                <h2 class="mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
-                <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+                <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
+                <div class="px-4" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
               </v-col>
             </v-row>
             <p :class="{'single-page-print-footer': !activeCountryProfile.CountryText}" class="print-footer d-none d-print-block">
               Live version and links to original data sources available at
               <a :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
             </p>
+            <v-row class="d-none-print d-md-flex" justify="center">
+              <v-col class="d-flex" cols="6" md="2"  justify="center">
+                <v-menu
+                  content-class="d-none-print"
+                  offset-y>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      rounded
+                      class="mt-2 mb-2 mr-auto ml-auto d-none-print"
+                      color="primary"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      Export
+                    </v-btn>
+                  </template>
+                  <v-list dense>
+                    <v-list-item-group>
+                      <v-list-item @click="exportCSV">
+                        <v-list-item-title>Summary CSV</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="exportPDF">
+                        <v-list-item-title>Summary PDF</v-list-item-title>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-menu>
+              </v-col>
+            </v-row>
           </div>
         </div>
       </v-col>
@@ -766,6 +733,15 @@ export default {
 
      bottom: 30px;
    }
+
+   /* .desc-mvi {
+     position: absolute;
+     bottom: 70px;
+   } */
+   .desc-mvi-one-page {
+     position: absolute;
+     bottom: 190px;
+   }
  }
  .desc-spiders {
    width: 80%;
@@ -775,14 +751,6 @@ export default {
  }
  .mvi-wrapper {
    position: relative;
- }
- .desc-mvi {
-   position: absolute;
-   bottom: 70px;
- }
- .desc-mvi-one-page {
-   position: absolute;
-   bottom: 190px;
  }
  .page-single-page{
    max-height: 1340px;
