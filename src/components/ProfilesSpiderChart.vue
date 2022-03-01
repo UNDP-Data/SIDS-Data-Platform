@@ -57,7 +57,7 @@ export default {
     },
     maxValue: {
       type: Number,
-      default: 42
+      default: 50
     }
   },
   data: ()=>({
@@ -117,9 +117,9 @@ export default {
             return maxAxesValue
           }
           return maxAxesValue > axe.value ? maxAxesValue : axe.value;
-        }, this.fullGraphOptions.maxValue);
+        }, this.maxValue);
         return maxCountriesValue > currentCountryMax ? maxCountriesValue : currentCountryMax;
-      }, this.fullGraphOptions.maxValue);
+      }, this.maxValue);
     }
   },
   methods:{
@@ -144,7 +144,6 @@ export default {
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
-            console.log(tspan.node().getComputedTextLength())
             if (tspan.node().getComputedTextLength() > 80) {
               line.pop();
               tspan.text(line.join(" "));

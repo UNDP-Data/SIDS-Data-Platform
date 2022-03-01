@@ -97,6 +97,7 @@
             rounded
             v-model="rankType"
             :items="rankTypes"
+            @change="changeRankSelector"
             item-text="name"
             item-value="id"
             outlined
@@ -108,12 +109,23 @@
       </v-col>
     </v-row>
     <v-row v-if="graphRankData && graphValueData" class="d-none-print d-none d-md-flex" justify="center">
-        <v-col  v-for="pillar in pillars" cols="4" md="6" lg="4" :key="pillar">
-          <profiles-spider-chart
-            :graphOptions="graphOptions[pillar]"
-            :pillarName="pillar"
-            :ranks="graphRankData[pillar]"
-            :values="graphValueData[pillar]"/>
+        <v-col  v-for="(pillar, index) in pillars" cols="4" md="6" lg="4" :key="pillar">
+          <template v-if="index < 3">
+            <profiles-spider-chart
+              :graphOptions="graphOptions[pillar]"
+              :pillarName="pillar"
+              :maxValue="maxValuePillars"
+              :ranks="graphRankData[pillar]"
+              :values="graphValueData[pillar]"/>
+          </template>
+          <template v-else>
+            <profiles-spider-chart
+              :graphOptions="graphOptions[pillar]"
+              :pillarName="pillar"
+              :maxValue="80"
+              :ranks="graphRankData[pillar]"
+              :values="graphValueData[pillar]"/>
+          </template>
         </v-col>
       <v-col class="printing-6" cols="4" md="6" lg="4">
         <profiles-finance
@@ -132,13 +144,25 @@
           </v-tab>
         </v-tabs>
         <v-tabs-items class="mt-4 graph-tabs" v-model="tab">
-          <v-tab-item  v-for="pillar in pillars" :key="pillar">
-            <profiles-spider-chart
-              :graphOptions="graphOptions[pillar]"
-              :pillarName="pillar"
-              :ranks="graphRankData[pillar]"
-              postfix="mobile"
-              :values="graphValueData[pillar]"/>
+          <v-tab-item  v-for="(pillar, index) in pillars" :key="pillar">
+            <template v-if="index < 3">
+              <profiles-spider-chart
+                :graphOptions="graphOptions[pillar]"
+                :pillarName="pillar"
+                postfix="mobile"
+                :maxValue="maxValuePillars"
+                :ranks="graphRankData[pillar]"
+                :values="graphValueData[pillar]"/>
+            </template>
+            <template v-else>
+              <profiles-spider-chart
+                :graphOptions="graphOptions[pillar]"
+                :pillarName="pillar"
+                postfix="mobile"
+                :maxValue="80"
+                :ranks="graphRankData[pillar]"
+                :values="graphValueData[pillar]"/>
+            </template>
           </v-tab-item>
           <v-tab-item>
             <profiles-finance
@@ -197,6 +221,7 @@
             rounded
             v-model="rankType"
             :items="rankTypes"
+            @change="changeRankSelector"
             item-text="name"
             item-value="id"
             outlined
@@ -288,14 +313,15 @@
             <v-row class="mb-2 no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
               <v-col class="no-page-break" v-for="pillar in pillars.slice(0, 3)" cols="4" :key="pillar">
                 <profiles-spider-chart
-                  postfix="print"
                   :graphOptions="graphOptions[pillar]"
                   :pillarName="pillar"
+                  postfix="print"
+                  :maxValue="maxValuePillars"
                   :ranks="graphRankData[pillar]"
                   :values="graphValueData[pillar]"/>
               </v-col>
               <v-col class="charts-description mt-0 mb-0" cols="12">
-                <p class="mt-0 mb-0 text-center desc-spiders">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among AIS countries for visualization purposes</p>
+                <p class="mt-0 mb-0 text-center desc-spiders">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among {{region}} countries for visualization purposes</p>
               </v-col>
             </v-row>
           </div>
@@ -311,6 +337,7 @@
                 <profiles-spider-chart
                   class="no-page-break"
                   postfix="print"
+                  :maxValue="80"
                   :graphOptions="graphOptions['MVI']"
                   :pillarName="'MVI'"
                   :ranks="graphRankData['MVI']"
@@ -431,6 +458,13 @@ export default {
         textColor: "#9e0909"
       }
     },
+    maxValues:{
+      global: 200,
+      sids:50,
+      Caribbean:25,
+      AIS:10,
+      Pacific:16
+    }
   }),
   computed:{
     ...mapState({
@@ -446,13 +480,19 @@ export default {
           return country.region === this.region ||
             this.compareIdsList.includes(country.id) ||
             country.id === this.activeCountryId
-        })
+        });
       }
     },
     sidsListFilteredNoAverage(){
       return this.sidsListFiltered.filter(country => {
         return !country.average
       })
+    },
+    maxValuePillars(){
+      if(this.rankType !== 'region') {
+        return this.maxValues[this.rankType]
+      }
+      return this.maxValues[this.activeCountryProfile.Profile[0].value]
     },
     graphValueData() {
       let result = {};
@@ -508,6 +548,11 @@ export default {
   methods:{
     exportPDF() {
       window.print();
+    },
+    changeRankSelector(e) {
+      if(e === 'region') {
+        this.region = this.activeCountryProfile.Profile[0].value
+      }
     },
     exportCSV() {
       // TODO: move export to mixins
