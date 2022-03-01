@@ -34,7 +34,7 @@
           max-width="250"
           transition="none"
           :key="item.indicator"
-          content-class="indicator-tooltip"
+          content-class="tooltip-content"
          >
           <template v-slot:activator="{ on, attrs }">
             <v-list-item
@@ -75,7 +75,7 @@
             transition="none"
             max-width="250"
             :key="i"
-            content-class="indicator-tooltip"
+            content-class="tooltip-content"
            >
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
@@ -160,7 +160,7 @@
             transition="none"
             max-width="250"
             :key="item['indicatorCode']"
-            content-class="indicator-tooltip"
+            content-class="tooltip-content"
            >
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
@@ -553,10 +553,6 @@ export default {
 .active-indicator_header {
   padding-bottom: 0.5em;
   word-break: break-word;
-}
-.indicator-tooltip {
-  background: none !important;
-  padding: 0 !important;
 }
 .active-dimension{
   margin-right: auto;
