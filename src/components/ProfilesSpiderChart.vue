@@ -262,11 +262,11 @@ export default {
           .text(d => d)
           .call(wrap, this.fullGraphOptions.wrapWidth)
           .style("pointer-events","auto")
-          .attr("id", (d, i) => `${this.pillarName}axis${i}${this.postfix}`)
+          .attr("id", (d, i) => `${rootThis.pillarName}axis${i}${this.postfix}`)
           this.ranks[0].axes.map((axis, i) => {
-            tippy(`#${this.pillarName}axis${i}`, {
+            tippy(`#${rootThis.pillarName}axis${i}`, {
               content() {
-                const template = document.getElementById(`${rootThis.pillarName}${i}`);
+                const template = document.getElementById(`${rootThis.pillarName}${i}${this.postfix}`);
                 return template.innerHTML;
               },
               theme: 'light',
@@ -284,7 +284,7 @@ export default {
           .attr("dy", "0.35em")
           .attr("x", (d, i) => this.fullGraphOptions.textFormat * rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.cos(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
           .attr("y", (d, i) => {
-            let lines = document.getElementById(`${this.pillarName}axis${i}`).children.length
+            let lines = document.getElementById(`${rootThis.pillarName}axis${i}${this.postfix}`).children.length
             return (-15 / this.fullGraphOptions.textFormat ** 3 + rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.sin(angleSlice * i - HALF_PI - this.fullGraphOptions.spin)) + lines * 14
           }).text((d) => {
             let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d })[0].value;
@@ -446,11 +446,11 @@ export default {
                 tooltip
                   .attr('x', this.cx.baseVal.value)
                   .attr('y', this.cy.baseVal.value - 10)
-                if (this.pillarName == "MVI") {
+                if (rootThis.pillarName == "MVI") {
                   tooltip.transition()
                     .style('display', 'block')
                     .text(rootThis.nFormatter(d.value,2));
-                } else if (this.pillarName=="customIndex") {
+                } else if (rootThis.pillarName=="customIndex") {
                   tooltip.transition()
                     .style('display', 'block')
                     .text(this.nFormatter(d.value,2)+", "+d.axis);
@@ -528,6 +528,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .graph-container {
+    margin: auto;
     max-width: 500px;
     display: flex;
     align-items: center;

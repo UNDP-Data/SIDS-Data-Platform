@@ -203,10 +203,4 @@ export default {
   max-width: 94%;
   margin: auto;
 }
-@media print {
-  .printing-4 {
-    flex: 0 0 33.3333333333% !important;
-    max-width: 33.3333333333% !important;
-  }
-}
 </style>
