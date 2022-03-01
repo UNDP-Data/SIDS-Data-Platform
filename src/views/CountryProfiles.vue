@@ -64,6 +64,8 @@
                   ></v-select>
                 </div>
               </v-col>
+              <v-col cols="1">
+              </v-col>
             </v-row>
             <v-row class="mt-xs-0 mt-sm-0 mb-2 mb-print-0" justify="center" dense>
               <v-col class="pt-xs-0 pt-sm-0" cols="12">
@@ -102,24 +104,28 @@
                   </v-tab>
                 </v-tabs>
                 <v-tabs-items class="mt-4 graph-tabs" v-model="tab">
-                  <v-tab-item  v-for="(pillar, index) in pillars" :key="pillar">
+                  <v-tab-item  v-for="(pillar, index) in pillars" :key="pillar.name">
                     <template v-if="index < 3">
                       <profiles-spider-chart
-                        :graphOptions="graphOptions[pillar]"
-                        :pillarName="pillar"
+                        :graphOptions="graphOptions[pillar.name]"
+                        :pillarName="pillar.name"
                         postfix="mobile"
+                        :tooltipContentName="pillar.tooltipName"
                         :maxValue="maxValuePillars"
-                        :ranks="graphRankData[pillar]"
-                        :values="graphValueData[pillar]"/>
+                        :headerIcon="pillar.icon"
+                        :ranks="graphRankData[pillar.name]"
+                        :values="graphValueData[pillar.name]"/>
                     </template>
                     <template v-else>
                       <profiles-spider-chart
-                        :graphOptions="graphOptions[pillar]"
-                        :pillarName="pillar"
+                        :graphOptions="graphOptions[pillar.name]"
+                        :pillarName="pillar.name"
                         postfix="mobile"
+                        :headerIcon="pillar.icon"
+                        :tooltipContentName="pillar.tooltipName"
                         :maxValue="80"
-                        :ranks="graphRankData[pillar]"
-                        :values="graphValueData[pillar]"/>
+                        :ranks="graphRankData[pillar.name]"
+                        :values="graphValueData[pillar.name]"/>
                     </template>
                   </v-tab-item>
                   <v-tab-item>
@@ -189,6 +195,21 @@
                   </v-select>
                 </div>
               </v-col>
+              <v-col cols="1">
+                <info-hover-tooltip
+                  :large="true"
+                  contentName="profileTooltip-radar"
+                >
+                  <template v-slot:icon>
+                    <v-img
+                      class="pr-4"
+                      max-height="40"
+                      max-width="250"
+                      contain
+                      src="@/assets/media/goals-icons/sidsOfferPillars.png"/>
+                  </template>
+                </info-hover-tooltip>
+              </v-col>
             </v-row>
             <v-row class="d-none d-md-flex d-none-print" justify="center">
               <v-col cols="11" md="6">
@@ -247,16 +268,33 @@
                   </v-select>
                 </div>
               </v-col>
+              <v-col cols="1">
+                <info-hover-tooltip
+                  :large="true"
+                  contentName="profileTooltip-radar"
+                >
+                  <template v-slot:icon>
+                    <v-img
+                      class="pr-4"
+                      max-height="48"
+                      max-width="250"
+                      contain
+                      src="@/assets/media/goals-icons/sidsOfferPillars.png"/>
+                  </template>
+                </info-hover-tooltip>
+              </v-col>
             </v-row>
             <v-row class="mb-4 d-none d-md-flex d-print-flex no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
-              <v-col class="no-page-break" v-for="pillar in pillars.slice(0, 3)" cols="4" :key="pillar">
+              <v-col class="no-page-break" v-for="pillar in pillars.slice(0, 3)" cols="4" :key="pillar.name">
                 <profiles-spider-chart
-                  :graphOptions="graphOptions[pillar]"
-                  :pillarName="pillar"
+                  :graphOptions="graphOptions[pillar.name]"
+                  :pillarName="pillar.name"
                   postfix="print"
+                  :headerIcon="pillar.icon"
+                  :tooltipContentName="pillar.tooltipName"
                   :maxValue="maxValuePillars"
-                  :ranks="graphRankData[pillar]"
-                  :values="graphValueData[pillar]"/>
+                  :ranks="graphRankData[pillar.name]"
+                  :values="graphValueData[pillar.name]"/>
               </v-col>
               <v-col class="charts-description mt-0 mb-0" cols="12">
                 <p class="mt-0 mb-0 text-center desc-spiders">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among {{region}} countries for visualization purposes</p>
@@ -276,6 +314,8 @@
                   class="no-page-break"
                   postfix="print"
                   :maxValue="80"
+                  :headerIcon="pillars[3].icon"
+                  :tooltipContentName="pillars[3].tooltipName"
                   :graphOptions="graphOptions['MVI']"
                   :pillarName="'MVI'"
                   :ranks="graphRankData['MVI']"
@@ -340,6 +380,7 @@ import flagGodes from '@/assets/flagCodes.js'
 
 import CountryInfoBar from '@/components/CountryInfoBar.vue'
 import ProfilesSpiderChart from '@/components/ProfilesSpiderChart.vue'
+import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
 import ProfilesFinance from '@/components/ProfilesFinance.vue'
 import * as d3 from 'd3';
 import store from '@/store'
@@ -351,7 +392,8 @@ export default {
   components: {
     CountryInfoBar,
     ProfilesSpiderChart,
-    ProfilesFinance
+    ProfilesFinance,
+    InfoHoverTooltip
   },
   data: () => ({
     flagGodes,
@@ -371,7 +413,23 @@ export default {
       }
     ],
     colorScheme: ["#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"],
-    pillars:['Climate', 'Blue', 'Digital', 'MVI'],
+    pillars:[{
+      name: 'Climate',
+      tooltipName: 'profileTooltip-climate',
+      icon: require(`@/assets/media/goals-icons/pillars/climateAction.png`)
+    }, {
+      name: 'Blue',
+      tooltipName: 'profiletooltip-blue',
+      icon: require(`@/assets/media/goals-icons/pillars/blueEconomy.png`)
+    }, {
+      name: 'Digital',
+      tooltipName:'profileTooltip-digital',
+      icon: require(`@/assets/media/goals-icons/pillars/digitalTransformation.png`)
+    }, {
+      name: 'MVI',
+      tooltipName:'profileTooltip-mvi',
+      icon: false
+    }],
     tab:'Climate',
     tabs:['Climate','Blue Economy','Digital Transformation','Vulnerability','Finance'],
     rgbaColorScheme:['rgba(237, 201, 81, 0.4)','rgba(204, 51, 63, 0.4)','rgba(0, 160, 176, 0.4)','rgba(255, 255, 255, 0.4)'],
@@ -465,8 +523,8 @@ export default {
       let result = {};
       let countriesList = [this.activeCountryId, ...this.compareIdsList];
       this.pillars.map(pillar => {
-        result[pillar] = countriesList.map(countyId => {
-          let countyAxes = this.profiles[countyId][pillar].map(axis => {
+        result[pillar.name] = countriesList.map(countyId => {
+          let countyAxes = this.profiles[countyId][pillar.name].map(axis => {
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
               value: axis.value,
@@ -485,8 +543,8 @@ export default {
       let result = {};
       let countriesList = [this.activeCountryId, ...this.compareIdsList];
       this.pillars.map(pillar => {
-        result[pillar] = countriesList.map(countyId => {
-          let countyAxes = this.profiles[countyId][pillar].map(axis => {
+        result[pillar.name] = countriesList.map(countyId => {
+          let countyAxes = this.profiles[countyId][pillar.name].map(axis => {
             let rank = this.rankType + 'Rank'
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,

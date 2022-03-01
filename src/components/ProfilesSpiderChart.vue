@@ -3,6 +3,12 @@
       <h4 class="block-subheader text-center"
         :style="{color: graphOptions.textColor}">
         {{graphOptions.header}}
+
+        <info-hover-tooltip v-if="tooltipContentName" :contentName="tooltipContentName">
+          <template v-if="headerIcon" v-slot:icon>
+            <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${headerIcon}`"/>
+          </template>
+        </info-hover-tooltip>
       </h4>
       <div class="d-none" v-for="(axis, index) in ranks[0].axes" :id="`${pillarName}${index}`" :key="index">
         <profiles-spider-chart-tooltip
@@ -23,13 +29,15 @@
 import * as d3 from 'd3';
 import { mapState } from 'vuex';
 import tippy from 'tippy.js';
+import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
 import ProfilesSpiderChartTooltip from '@/components/ProfilesSpiderChartTooltip';
 import format from '@/mixins/format.mixin'
 
 export default {
   name: 'ProfilesSpiderChart',
   components:{
-    ProfilesSpiderChartTooltip
+    ProfilesSpiderChartTooltip,
+    InfoHoverTooltip
   },
   mixins:[format],
   props: {
@@ -58,7 +66,11 @@ export default {
     maxValue: {
       type: Number,
       default: 50
-    }
+    },
+    tooltipContentName: {
+      type: String
+    },
+    headerIcon:null
   },
   data: ()=>({
     defaultGraphOptions: {

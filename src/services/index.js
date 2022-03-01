@@ -18,8 +18,8 @@ export default {
   loadIndicatorData,
   loadCountryProfile,
   loadProfileIndicarotsMetadata,
-  loadDatasetsList
-
+  loadDatasetsList,
+  loadTextContent
 }
 
 
@@ -91,5 +91,10 @@ async function loadMapLocations () {
 
 async function loadIndicatorData (apiCode) {
   const resp = await axios.get(`${NEW_API_URl_2}${apiCode}.json`)
+  return resp.data
+}
+
+async function loadTextContent () {
+  const resp = await axios.get(`${NEW_API_URl_2}/cms/englishText.json`)
   return resp.data
 }
