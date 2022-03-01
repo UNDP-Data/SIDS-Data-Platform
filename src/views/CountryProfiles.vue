@@ -572,7 +572,7 @@ export default {
           this.indicatorsMetadata[indicatorFull.axis].source.replace(/,/g, '') :
           '';
           [this.activeCountryId, ...this.compareIdsList].map(countryId => {
-            newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value
+            newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value.replace(/,/g, ' ')
           })
           countryExport.push(newIndi)
         }
