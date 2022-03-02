@@ -276,9 +276,9 @@ export default {
           .style("pointer-events","auto")
           .attr("id", (d, i) => `${rootThis.pillarName}axis${i}${this.postfix}`)
           this.ranks[0].axes.map((axis, i) => {
-            tippy(`#${rootThis.pillarName}axis${i}`, {
+            tippy(`#${rootThis.pillarName}axis${i}${this.postfix}`, {
               content() {
-                const template = document.getElementById(`${rootThis.pillarName}${i}${this.postfix}`);
+                const template = document.getElementById(`${rootThis.pillarName}${i}`);
                 return template.innerHTML;
               },
               theme: 'light',

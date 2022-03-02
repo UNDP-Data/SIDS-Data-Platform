@@ -1,9 +1,11 @@
 <template>
-  <v-tooltip
+  <v-menu
     eager
     transition="none"
     open-delay="200"
     max-width="600"
+    close-delay="200"
+    open-on-hover
     content-class="tooltip-content"
     allow-overflow
     bottom>
@@ -21,7 +23,7 @@
         <v-card-text v-html="textContent[contentName].content">
         </v-card-text>
       </v-card>
-    </v-tooltip>
+    </v-menu>
 </template>
 
 <script>
