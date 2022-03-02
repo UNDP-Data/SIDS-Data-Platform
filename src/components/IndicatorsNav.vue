@@ -409,9 +409,11 @@ export default {
       }
     },
     selectDataset(name) {
-      this.activeCategory = 'All categories';
-      this.activeSubCategory = 'All subcategories';
-      this.dataset = name;
+      if(name !== this.dataset) {
+        this.activeCategory = 'All categories';
+        this.activeSubCategory = 'All subcategories';
+        this.dataset = name;
+      }
     },
     getSubcategoryindicators(category, subCategory) {
       let indicatorsList = [];

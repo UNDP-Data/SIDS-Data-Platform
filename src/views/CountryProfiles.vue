@@ -408,7 +408,7 @@ export default {
         name:'Regionally',
         id:'region'
       },{
-        name:'SIDS counties',
+        name:'SIDS countries',
         id:'sids'
       }
     ],
