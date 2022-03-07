@@ -3,6 +3,12 @@
       <h4 class="block-subheader text-center"
         :style="{color: graphOptions.textColor}">
         {{graphOptions.header}}
+
+        <info-hover-tooltip v-if="tooltipContentName" :contentName="tooltipContentName">
+          <template v-if="headerIcon" v-slot:icon>
+            <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${headerIcon}`"/>
+          </template>
+        </info-hover-tooltip>
       </h4>
       <div class="d-none" v-for="(axis, index) in ranks[0].axes" :id="`${pillarName}${index}`" :key="index">
         <profiles-spider-chart-tooltip
@@ -23,13 +29,15 @@
 import * as d3 from 'd3';
 import { mapState } from 'vuex';
 import tippy from 'tippy.js';
+import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
 import ProfilesSpiderChartTooltip from '@/components/ProfilesSpiderChartTooltip';
 import format from '@/mixins/format.mixin'
 
 export default {
   name: 'ProfilesSpiderChart',
   components:{
-    ProfilesSpiderChartTooltip
+    ProfilesSpiderChartTooltip,
+    InfoHoverTooltip
   },
   mixins:[format],
   props: {
@@ -57,8 +65,12 @@ export default {
     },
     maxValue: {
       type: Number,
-      default: 42
-    }
+      default: 50
+    },
+    tooltipContentName: {
+      type: String
+    },
+    headerIcon:null
   },
   data: ()=>({
     defaultGraphOptions: {
@@ -117,9 +129,9 @@ export default {
             return maxAxesValue
           }
           return maxAxesValue > axe.value ? maxAxesValue : axe.value;
-        }, this.fullGraphOptions.maxValue);
+        }, this.maxValue);
         return maxCountriesValue > currentCountryMax ? maxCountriesValue : currentCountryMax;
-      }, this.fullGraphOptions.maxValue);
+      }, this.maxValue);
     }
   },
   methods:{
@@ -144,7 +156,6 @@ export default {
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
-            console.log(tspan.node().getComputedTextLength())
             if (tspan.node().getComputedTextLength() > 80) {
               line.pop();
               tspan.text(line.join(" "));
@@ -263,9 +274,9 @@ export default {
           .text(d => d)
           .call(wrap, this.fullGraphOptions.wrapWidth)
           .style("pointer-events","auto")
-          .attr("id", (d, i) => `${this.pillarName}axis${i}${this.postfix}`)
+          .attr("id", (d, i) => `${rootThis.pillarName}axis${i}${this.postfix}`)
           this.ranks[0].axes.map((axis, i) => {
-            tippy(`#${this.pillarName}axis${i}`, {
+            tippy(`#${rootThis.pillarName}axis${i}${this.postfix}`, {
               content() {
                 const template = document.getElementById(`${rootThis.pillarName}${i}`);
                 return template.innerHTML;
@@ -285,7 +296,7 @@ export default {
           .attr("dy", "0.35em")
           .attr("x", (d, i) => this.fullGraphOptions.textFormat * rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.cos(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
           .attr("y", (d, i) => {
-            let lines = document.getElementById(`${this.pillarName}axis${i}`).children.length
+            let lines = document.getElementById(`${rootThis.pillarName}axis${i}${this.postfix}`).children.length
             return (-15 / this.fullGraphOptions.textFormat ** 3 + rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.sin(angleSlice * i - HALF_PI - this.fullGraphOptions.spin)) + lines * 14
           }).text((d) => {
             let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d })[0].value;
@@ -443,32 +454,30 @@ export default {
         .style("fill", "none")
         .style("pointer-events", "all")
         .on("mouseover", function (d) {
-              if(rootThis.pillarName !== 'MVI'){
-                tooltip
-                  .attr('x', this.cx.baseVal.value)
-                  .attr('y', this.cy.baseVal.value - 10)
-                if (this.pillarName == "MVI") {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(rootThis.nFormatter(d.value,2));
-                } else if (this.pillarName=="customIndex") {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(this.nFormatter(d.value,2)+", "+d.axis);
-                } else {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(function () {
-                      let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d.axis })[0].value
-                      if (isNaN(value)) {
-                        return value   + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
-                      }
-                      else {
-                        return rootThis.nFormatter(value,2) + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit;
-                      }
-                    })
+            tooltip
+              .attr('x', this.cx.baseVal.value)
+              .attr('y', this.cy.baseVal.value - 10)
+            if (rootThis.pillarName == "MVI") {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(rootThis.nFormatter(d.value,2));
+            } else if (rootThis.pillarName=="customIndex") {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(this.nFormatter(d.value,2)+", "+d.axis);
+            } else {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(function () {
+                  let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d.axis })[0].value
+                  if (isNaN(value)) {
+                    return value   + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
                   }
-                }
+                  else {
+                    return rootThis.nFormatter(value,2) + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit;
+                  }
+                })
+              }
               })
               .on("mouseout", function () {
                 tooltip.transition()
@@ -529,6 +538,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .graph-container {
+    margin: auto;
     max-width: 500px;
     display: flex;
     align-items: center;

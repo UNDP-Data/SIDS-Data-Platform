@@ -482,7 +482,7 @@ export default {
 
 .choro-title{
   position: relative;
-  z-index: 9999;
+  z-index: 2;
 }
 /*# sourceMappingURL=vizEngine.css.map */
 
