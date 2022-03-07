@@ -141,7 +141,8 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((toRoute, fromRoute, next) => {
+router.beforeEach(async (toRoute, fromRoute, next) => {
+  await store.dispatch('texts/getTextContent');
   let pagetitle = toRoute && toRoute.name ? toRoute.name : 'Home';
   window.document.title = `${pagetitle} - UNDP SIDS Data Platform`
   next();

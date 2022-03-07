@@ -19,8 +19,8 @@
     </v-dialog>
 
     <v-col md='12' lg='9'>
-      <v-row dense >
-        <v-col cols='12'>
+      <v-row class="nav-filter-row" >
+        <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
           <h2 v-if="page!=='mvi'" class="page-header">
             Development Indicators
           </h2>
@@ -28,8 +28,23 @@
             Towards a Multidimensional Vulnerability Index
           </h2>
         </v-col>
+        <v-col cols='2' sm="1" lg="2">
+          <div class="float-right mt-2 mb-2">
+            <info-button :contentName="page!=='mvi' ? 'aboutThis-indicators' : 'aboutThis-mvi'"/>
+          </div>
+        </v-col>
       </v-row>
       <v-row dense class="nav-tabs-row justify-center">
+        <v-col>
+          <v-btn
+              class="d-none d-md-block float-right filter-button d-lg-none"
+              rounded
+              @click="dialog=!dialog"
+              fab
+              color="primary"
+            >
+            <v-icon>mdi-filter</v-icon>
+          </v-btn>
           <v-tabs
             v-if="indicator!=='region' || isMobile || page==='mvi'"
             :value="activeTab"
@@ -42,15 +57,7 @@
           >
             <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
           </v-tabs>
-          <v-btn
-              class="d-none d-md-block filter-button d-lg-none"
-              rounded
-              @click="dialog=!dialog"
-              fab
-              color="primary"
-            >
-            <v-icon>mdi-filter</v-icon>
-          </v-btn>
+        </v-col>
       </v-row>
       <v-row class="nav-filter-row" dense jusify="end">
         <v-btn
@@ -142,6 +149,7 @@
 <script>
 // @ is an alias to /src
 
+import InfoButton from '@/components/InfoButton.vue'
 import IndicatorsNav from '@/components/IndicatorsNav.vue'
 import MVIIndicatorsNav from '@/components/MVIIndicatorsNav.vue'
 import IndicatorsChoroChart from '@/components/IndicatorsChoroChart.vue'
@@ -216,6 +224,7 @@ export default {
     }
   },
   components: {
+    InfoButton,
     IndicatorsNav,
     IndicatorsChoroChart,
     MviIndicatorsNav:MVIIndicatorsNav
@@ -335,7 +344,7 @@ export default {
   .sorting{
     position: absolute;
     max-width: 224px;
-    left: calc(100% - 224px);
+    right: 4px;
   }
   .sorting-select {
     top: 12px;

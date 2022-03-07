@@ -19,7 +19,7 @@
                 nudge-right="516"
                 :nudge-top="18 + 40 * (i + 1)"
                 bottom
-                content-class="indicator-tooltip"
+                content-class="tooltip-content"
                 allow-overflow
               >
                 <template v-slot:activator="{ on, attrs }">
@@ -68,7 +68,7 @@
                 max-width="400"
                 bottom
                 :nudge-right="303"
-                content-class="indicator-tooltip"
+                content-class="tooltip-content"
                 allow-overflow
               >
                 <template v-slot:activator="{ on, attrs }">
@@ -144,7 +144,7 @@
                     :nudge-right="(4 - (index % 5)) * 80 || 6"
                     :nudge-top="Math.floor(index / 5) * 80 || 6"
                     max-width="400"
-                    content-class="indicator-tooltip"
+                    content-class="tooltip-content"
                     allow-overflow
                   >
                     <template v-slot:activator="{ on, attrs }">
@@ -1104,10 +1104,6 @@ export default {
 }
 .map-input {
   padding: 0 1em !important;
-}
-.indicator-tooltip {
-  background: none !important;
-  padding: 0 !important;
 }
 .tooltip-card_img {
   margin: auto;
