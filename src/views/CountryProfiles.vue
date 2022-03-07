@@ -25,10 +25,10 @@
               </v-col>
             </v-row>
             <v-row class="mt-0 profile-header-row d-none-print" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}" justify="center">
-              <v-col cols="12" offset-md="1" md="4" offset-lg="3" lg="3">
-                <h2 class="page-header country-profile-header">Country profile</h2>
+              <v-col cols="12" md="4" offset-lg="2" lg="3">
+                <h2 class="page-header country-profile-header text-md-right">Country profile</h2>
               </v-col>
-              <v-col cols="10" md="4" lg="3" class="select-column">
+              <v-col cols="7" sm="6" md="4" lg="3" class="offset-sm-1 offset-md-0 select-column">
                 <v-select
                   rounded
                   class="country-select"
@@ -64,7 +64,38 @@
                   ></v-select>
                 </div>
               </v-col>
-              <v-col cols="1">
+              <v-col class=" d-none-print d-flex flex-md-column align-md-end  header_buttons align-center justify-start" cols="4" sm="3" md='1' lg='2'>
+                <div class="mr-2 mr-md-0">
+                  <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
+                </div>
+                <v-menu offset-y>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="primary"
+                      rounded
+                      :icon="isTablet"
+                      :fab="!isDesktop && !isTablet"
+                      :small="isDesktop"
+                      class="mt-2 mb-2"
+                      :outlined="isTablet"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <span v-if="isDesktop">Export</span>
+                      <v-icon v-else>mdi-export-variant</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list dense>
+                    <v-list-item-group>
+                      <v-list-item @click="exportCSV">
+                        <v-list-item-title>Summary CSV</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="exportPDF">
+                        <v-list-item-title>Summary PDF</v-list-item-title>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-menu>
               </v-col>
             </v-row>
             <v-row class="mt-xs-0 mt-sm-0 mb-2 mb-print-0" justify="center" dense>
@@ -339,35 +370,6 @@
               Live version and links to original data sources available at
               <a :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
             </p>
-            <v-row class="d-none-print d-md-flex" justify="center">
-              <v-col class="d-flex" cols="6" md="2"  justify="center">
-                <v-menu
-                  content-class="d-none-print"
-                  offset-y>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      rounded
-                      class="mt-2 mb-2 mr-auto ml-auto d-none-print"
-                      color="primary"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      Export
-                    </v-btn>
-                  </template>
-                  <v-list dense>
-                    <v-list-item-group>
-                      <v-list-item @click="exportCSV">
-                        <v-list-item-title>Summary CSV</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="exportPDF">
-                        <v-list-item-title>Summary PDF</v-list-item-title>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-menu>
-              </v-col>
-            </v-row>
           </div>
         </div>
       </v-col>
@@ -376,8 +378,9 @@
 </template>
 
 <script>
-import flagGodes from '@/assets/flagCodes.js'
+import flagCodes from '@/assets/flagCodes.js'
 
+import InfoButton from '@/components/InfoButton.vue'
 import CountryInfoBar from '@/components/CountryInfoBar.vue'
 import ProfilesSpiderChart from '@/components/ProfilesSpiderChart.vue'
 import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
@@ -393,10 +396,11 @@ export default {
     CountryInfoBar,
     ProfilesSpiderChart,
     ProfilesFinance,
-    InfoHoverTooltip
+    InfoHoverTooltip,
+    InfoButton
   },
   data: () => ({
-    flagGodes,
+    flagCodes,
     region:'All SIDS',
     regions:["All SIDS", "Caribbean", "AIS", "Pacific"],
     rankType: 'sids',
@@ -568,6 +572,12 @@ export default {
     },
     isMobile() {
       return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm'
+    },
+    isDesktop() {
+      return this.$vuetify.breakpoint.name !== 'xs' && this.$vuetify.breakpoint.name !== 'sm' && this.$vuetify.breakpoint.name !== 'md'
+    },
+    isTablet() {
+      return this.$vuetify.breakpoint.name === 'md'
     },
   },
   methods:{
@@ -745,6 +755,9 @@ export default {
   }
   .graph-tabs {
     background-color: transparent !important;
+  }
+  .header_buttons{
+    margin-top: -12px;
   }
  @media all and (max-width:960px) {
   .country-profile-header {

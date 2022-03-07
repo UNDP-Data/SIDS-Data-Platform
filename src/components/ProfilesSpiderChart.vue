@@ -454,32 +454,30 @@ export default {
         .style("fill", "none")
         .style("pointer-events", "all")
         .on("mouseover", function (d) {
-              if(rootThis.pillarName !== 'MVI'){
-                tooltip
-                  .attr('x', this.cx.baseVal.value)
-                  .attr('y', this.cy.baseVal.value - 10)
-                if (rootThis.pillarName == "MVI") {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(rootThis.nFormatter(d.value,2));
-                } else if (rootThis.pillarName=="customIndex") {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(this.nFormatter(d.value,2)+", "+d.axis);
-                } else {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(function () {
-                      let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d.axis })[0].value
-                      if (isNaN(value)) {
-                        return value   + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
-                      }
-                      else {
-                        return rootThis.nFormatter(value,2) + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit;
-                      }
-                    })
+            tooltip
+              .attr('x', this.cx.baseVal.value)
+              .attr('y', this.cy.baseVal.value - 10)
+            if (rootThis.pillarName == "MVI") {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(rootThis.nFormatter(d.value,2));
+            } else if (rootThis.pillarName=="customIndex") {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(this.nFormatter(d.value,2)+", "+d.axis);
+            } else {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(function () {
+                  let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d.axis })[0].value
+                  if (isNaN(value)) {
+                    return value   + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
                   }
-                }
+                  else {
+                    return rootThis.nFormatter(value,2) + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit;
+                  }
+                })
+              }
               })
               .on("mouseout", function () {
                 tooltip.transition()

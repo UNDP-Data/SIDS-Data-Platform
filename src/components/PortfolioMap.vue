@@ -1,31 +1,33 @@
 <template>
   <div class="map d-flex" :class="regionClass" :style="backgroundData">
-    <h2 class="page-header prtfolio-header mt-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
+    <slot name="header" />
     <v-row class="justify-md-end justify-center" >
-      <v-card
-        class="ma-2 portfolio-chip"
-      >
-        <v-card-title class="custom-chip_header">{{projectsNumber}}</v-card-title>
-        <v-card-text class="custom-chip_text">SIDS with UNDP Projects</v-card-text>
-      </v-card>
-      <v-card
-        class="ma-2 portfolio-chip"
-      >
-        <v-card-title class="custom-chip_header">{{memberStates}}</v-card-title>
-        <v-card-text class="custom-chip_text">UN Member States</v-card-text>
-      </v-card>
-      <v-card
-        class="ma-2 portfolio-chip"
-      >
-        <v-card-title class="custom-chip_header">{{UNDPprojectsNumber}}</v-card-title>
-        <v-card-text class="custom-chip_text">UNDP Projects</v-card-text>
-      </v-card>
-      <v-card
-        class="ma-2 portfolio-chip"
-      >
-        <v-card-title class="custom-chip_header">{{projectsFundning}}</v-card-title>
-        <v-card-text class="custom-chip_text">Total Project Funding</v-card-text>
-      </v-card>
+      <v-col class="chips-container justify-md-end justify-center">
+        <v-card
+          class="ma-2 portfolio-chip"
+        >
+          <v-card-title class="custom-chip_header">{{projectsNumber}}</v-card-title>
+          <v-card-text class="custom-chip_text">SIDS with UNDP Projects</v-card-text>
+        </v-card>
+        <v-card
+          class="ma-2 portfolio-chip"
+        >
+          <v-card-title class="custom-chip_header">{{memberStates}}</v-card-title>
+          <v-card-text class="custom-chip_text">UN Member States</v-card-text>
+        </v-card>
+        <v-card
+          class="ma-2 portfolio-chip"
+        >
+          <v-card-title class="custom-chip_header">{{UNDPprojectsNumber}}</v-card-title>
+          <v-card-text class="custom-chip_text">UNDP Projects</v-card-text>
+        </v-card>
+        <v-card
+          class="ma-2 portfolio-chip"
+        >
+          <v-card-title class="custom-chip_header">{{projectsFundning}}</v-card-title>
+          <v-card-text class="custom-chip_text">Total Project Funding</v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
     <v-row class="map_zones d-none d-md-flex">
       <v-col cols="10">
@@ -218,6 +220,9 @@ export default {
     min-height: 350px;
     max-height: calc(100vh - 460px);
     background-position: 50% 3vh;
+    margin: 0 -2em;
+    width: calc(100% + 4em);
+    padding: 0 2em;
   }
   .map-AIS {
     background-size:115%;
@@ -233,6 +238,9 @@ export default {
     background-size:120%;
     background-position-x: 210%;
     background-position-y: -5vh;
+  }
+  .portfolio-chip:last-child {
+    margin-right: 0 !important;
   }
 }
 
@@ -273,11 +281,18 @@ export default {
 }
 @media all and (max-width:600px) {
   .prtfolio-header {
-    padding: 0 40px 0 40px;
+    padding: 0;
   }
   .portfolio-chip {
     min-width: 30%;
     margin: 5px 5% !important
   }
+}
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 </style>

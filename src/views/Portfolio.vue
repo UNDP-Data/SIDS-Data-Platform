@@ -6,7 +6,30 @@
           :region="region"
           @updateRegion="changeFilter({type:'region'})"
           :projects="filteredProjects"
-        ></portfolio-map>
+        >
+          <template v-slot:header>
+            <v-row>
+              <v-col class="offset-lg-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2" cols="8" sm="8" md='10' lg='8' xl="10">
+                <h2 class="page-header prtfolio-header mt-md-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
+              </v-col>
+              <v-col class="" cols="2" sm="1" md='1' lg='2' xl="1">
+                <div class="mt-2 float-md-right mb-2">
+                  <info-button :contentName="'aboutThis-portfolio'"/>
+                </div>
+                <div class="float-md-right">
+                  <portfolio-export
+                    :region="region"
+                    :year="year"
+                    :funding="fundingCategory"
+                    :projects="filteredProjects"
+                    :data="fundingCategoriesFiltered"
+                    :categories="fundingCategoriesTypes"
+                  />
+                </div>
+              </v-col>
+            </v-row>
+          </template>
+        </portfolio-map>
       </v-col>
     </v-row>
     <v-row class="d-none d-lg-block mb-3 mt-negative">
@@ -132,18 +155,6 @@
             ></portfolio-pie-chart>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-block">
-          <v-col>
-            <portfolio-export
-              :region="region"
-              :year="year"
-              :funding="fundingCategory"
-              :projects="filteredProjects"
-              :data="fundingCategoriesFiltered"
-              :categories="fundingCategoriesTypes"
-            />
-          </v-col>
-        </v-row>
       </v-col>
     </v-row>
     <v-row>
@@ -164,6 +175,7 @@ import PortfolioMap from '@/components/PortfolioMap';
 import PortfolioBars from '@/components/PortfolioBars';
 import PortfolioExport from '@/components/PortfolioExport';
 import PortfolioPieChart from '@/components/PortfolioPieChart';
+import InfoButton from '@/components/InfoButton.vue'
 import GoalsSelector from '@/components/GoalsSelector';
 import { mapState } from 'vuex';
 import sidsdata from '@/mixins/SIDSData.mixin'
@@ -176,6 +188,7 @@ export default {
     PortfolioPieChart,
     PortfolioExport,
     GoalsSelector,
+    InfoButton,
     PortfolioBars
   },
   props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
