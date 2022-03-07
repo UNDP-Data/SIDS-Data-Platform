@@ -9,28 +9,32 @@
         >
           <template v-slot:header>
             <v-row>
-              <v-col class="offset-lg-2 offset-md-1" cols="12" md='10' lg='8'>
+              <v-col class="offset-lg-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2" cols="8" sm="8" md='10' lg='8' xl="10">
                 <h2 class="page-header prtfolio-header mt-md-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
               </v-col>
-              <v-col class="d-none d-md-block" md='1' lg='2'>
-                <div class="mt-2 mb-2">
-                  <info-button-portfolio/>
+              <v-col class="" cols="2" sm="1" md='1' lg='2' xl="1">
+                <div class="mt-2 float-md-right mb-2">
+                  <info-button :contentName="'aboutThis-portfolio'"/>
                 </div>
-                <portfolio-export
-                  :region="region"
-                  :year="year"
-                  :funding="fundingCategory"
-                  :projects="filteredProjects"
-                  :data="fundingCategoriesFiltered"
-                  :categories="fundingCategoriesTypes"
-                />
+                <div class="float-md-right">
+                  <portfolio-export
+                    :region="region"
+                    :year="year"
+                    :funding="fundingCategory"
+                    :projects="filteredProjects"
+                    :data="fundingCategoriesFiltered"
+                    :categories="fundingCategoriesTypes"
+                  />
+                </div>
               </v-col>
             </v-row>
           </template>
         </portfolio-map>
       </v-col>
     </v-row>
-    <router-view class="d-none d-lg-block mb-3 mt-negative"></router-view>
+    <v-row class="d-none d-lg-block mb-3 mt-negative">
+      <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
+    </v-row>
     <v-row class="flex-lg-nowrap" justify="center">
       <v-col class="d-none d-lg-block margin-wrap-right"></v-col>
       <v-col class="d-none d-md-block tabs-column">
@@ -168,9 +172,10 @@
 import * as d3 from 'd3';
 // @ is an alias to /src
 import PortfolioMap from '@/components/PortfolioMap';
+import PortfolioBars from '@/components/PortfolioBars';
 import PortfolioExport from '@/components/PortfolioExport';
 import PortfolioPieChart from '@/components/PortfolioPieChart';
-import InfoButtonPortfolio from '@/components/InfoButtonPortfolio.vue'
+import InfoButton from '@/components/InfoButton.vue'
 import GoalsSelector from '@/components/GoalsSelector';
 import { mapState } from 'vuex';
 import sidsdata from '@/mixins/SIDSData.mixin'
@@ -183,16 +188,17 @@ export default {
     PortfolioPieChart,
     PortfolioExport,
     GoalsSelector,
-    InfoButtonPortfolio
+    InfoButton,
+    PortfolioBars
   },
-  props:['year', 'fundingCategory', 'fundingSource', 'region'],
+  props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
   mixins:[sidsdata],
   data: function () {
     return {
       goalType:'Sustainable Development Goals',
       selectedGoal: 1,
       pages:['samoa', 'sdgs', 'signature-solutions'],
-      activePage:['samoa', 'sdgs', 'signature-solutions'].indexOf(this.$route.path.split('/')[2]),
+      activePage:['samoa', 'sdgs', 'signature-solutions'].indexOf(this.goalsType),
       fundingCategoriesTypes:['All',"European Union", "Donor Countries", "Programme Countries", "UN Agencies", "UN Pooled Funds", "Vertical Funds", "Other"],
       years:[
         {
@@ -255,7 +261,7 @@ export default {
     ...mapState({
       countries: state => state.sids.countryList,
       fundingCategories: state => state.sids.fundingCategories,
-      SIDSDataWithDonors: state => state.sids.SIDSDataWithDonors,
+      SIDSDataWithDonors: state => state.sids.SIDSDataWithDonors
     }),
     fundingCategoriesFiltered() {
       let projects = this.filteredYearDataSIDS;

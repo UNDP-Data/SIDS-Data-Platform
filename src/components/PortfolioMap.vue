@@ -281,7 +281,7 @@ export default {
 }
 @media all and (max-width:600px) {
   .prtfolio-header {
-    padding: 0 40px 0 40px;
+    padding: 0;
   }
   .portfolio-chip {
     min-width: 30%;

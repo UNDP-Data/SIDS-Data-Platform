@@ -2,7 +2,7 @@
   <div class="mt-5">
   <v-row dense>
     <v-col  class="d-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
-      <indicators-nav :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate"/>
+      <indicators-nav :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
     </v-col>
     <v-col  class="d-none d-lg-block" v-else cols='3'>
       <mvi-indicators-nav @MviIndicatorsChange="MVIindicatorUpdate"/>
@@ -14,13 +14,13 @@
       content-class="dialog-box"
       transition="dialog-right-transition"
     >
-      <indicators-nav @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate"/>
+      <indicators-nav @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
       <mvi-indicators-nav v-else @close="dialog = !dialog" @MviIndicatorsChange="MVIindicatorUpdate"/>
     </v-dialog>
 
     <v-col md='12' lg='9'>
-      <v-row dense >
-        <v-col cols='12'>
+      <v-row class="nav-filter-row" >
+        <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
           <h2 v-if="page!=='mvi'" class="page-header">
             Development Indicators
           </h2>
@@ -28,8 +28,23 @@
             Towards a Multidimensional Vulnerability Index
           </h2>
         </v-col>
+        <v-col cols='2' sm="1" lg="2">
+          <div class="float-right mt-2 mb-2">
+            <info-button :contentName="page!=='mvi' ? 'aboutThis-indicators' : 'aboutThis-mvi'"/>
+          </div>
+        </v-col>
       </v-row>
       <v-row dense class="nav-tabs-row justify-center">
+        <v-col>
+          <v-btn
+              class="d-none d-md-block float-right filter-button d-lg-none"
+              rounded
+              @click="dialog=!dialog"
+              fab
+              color="primary"
+            >
+            <v-icon>mdi-filter</v-icon>
+          </v-btn>
           <v-tabs
             v-if="indicator!=='region' || isMobile || page==='mvi'"
             :value="activeTab"
@@ -42,15 +57,7 @@
           >
             <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
           </v-tabs>
-          <v-btn
-              class="d-none d-md-block filter-button d-lg-none"
-              rounded
-              @click="dialog=!dialog"
-              fab
-              color="primary"
-            >
-            <v-icon>mdi-filter</v-icon>
-          </v-btn>
+        </v-col>
       </v-row>
       <v-row class="nav-filter-row" dense jusify="end">
         <v-btn
@@ -89,7 +96,8 @@
       </v-row>
       <v-row dense v-if="chartType !== 'info'">
         <v-col  v-if="chartType !== 'info'" cols='12'>
-          <indicators-choro-chart :region="region" :mviCodes="mviCodes" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
+          <indicators-choro-chart v-if='!noData' :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
+          <h4 class="text-center" v-else>No data for selected indicator</h4>
         </v-col>
       </v-row>
       <v-row  v-else class="justify-center" >
@@ -141,13 +149,16 @@
 <script>
 // @ is an alias to /src
 
+import InfoButton from '@/components/InfoButton.vue'
 import IndicatorsNav from '@/components/IndicatorsNav.vue'
 import MVIIndicatorsNav from '@/components/MVIIndicatorsNav.vue'
 import IndicatorsChoroChart from '@/components/IndicatorsChoroChart.vue'
+import { mapState } from 'vuex'
+import store from '@/store'
 
 export default {
   name: 'DevelopmentIndicators',
-  props:['chartType', 'indicator', 'page'],
+  props:['chartType', 'indicator', 'page', 'year'],
   data: function() {
     return {
       dialog:false,
@@ -213,11 +224,15 @@ export default {
     }
   },
   components: {
+    InfoButton,
     IndicatorsNav,
     IndicatorsChoroChart,
     MviIndicatorsNav:MVIIndicatorsNav
   },
   computed: {
+    ...mapState({
+      activeIndicatorData: state => state.indicators.activeIndicatorData
+    }),
     sortingName() {
       if(this.sorting === 0) {
         return 'rank'
@@ -234,9 +249,17 @@ export default {
       }
       return this.menuBar[this.page]
     },
+    noData() {
+      if(this.page !== 'mvi') {
+        return false;
+      }
+      return this.activeIndicatorData.data && !Object.keys(this.activeIndicatorData.data.recentValue).some(value => {
+        return this.activeIndicatorData.data.recentValue[value] !== 'No Data'
+      })
+    },
     activeTab() {
       return this.tabs.findIndex(menuItem => menuItem.chartType === this.chartType)
-    },
+    }
   },
   methods: {
     transitionTo(chartType) {
@@ -244,11 +267,14 @@ export default {
         this.$router.push({path:`/vulnerability/${this.indicator}/${chartType}`})
       }
       else {
-        this.$router.push({path:`/development-indicators/${this.indicator}/${chartType}`})
+        this.$router.push({path:`/development-indicators/${this.indicator}/${this.year}/${chartType}`})
       }
     },
     indicatorUpdate(indicatorCode) {
-      this.$router.push({path:`/development-indicators/${indicatorCode}/${this.chartType}`})
+      this.$router.push({path:`/development-indicators/${indicatorCode}/recentValue/${this.chartType}`})
+    },
+    yearUpdate(year) {
+      this.$router.push({path:`/development-indicators/${this.indicator}/${year}/${this.chartType}`})
     },
     MVIindicatorUpdate(mviCodes){
       this.mviCodes = mviCodes;
@@ -258,7 +284,23 @@ export default {
     page() {
       this.sorting = 0
     }
-  }
+  },
+  async beforeRouteUpdate(to, from, next) {
+    try {
+      await store.dispatch('indicators/getIndicatorData',to.params.indicator)
+      next()
+    } catch (e) {
+      next(from)
+    }
+  },
+  async beforeRouteEnter(to, from, next) {
+    try {
+      await store.dispatch('indicators/getIndicatorData',to.params.indicator)
+      next()
+    } catch (e) {
+      next(from)
+    }
+  },
 }
 </script>
 <style media="screen">
@@ -302,7 +344,7 @@ export default {
   .sorting{
     position: absolute;
     max-width: 224px;
-    left: calc(100% - 224px);
+    right: 4px;
   }
   .sorting-select {
     top: 12px;

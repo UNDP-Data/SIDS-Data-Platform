@@ -4,9 +4,10 @@
       <v-btn
         color="primary"
         rounded
+        :icon="isSmall"
         :small="!isSmall"
         dark
-        :fab="isSmall"
+        :outlined="isSmall"
         :block="!isSmall"
         v-bind="attrs"
         v-on="on"

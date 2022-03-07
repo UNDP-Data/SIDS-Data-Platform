@@ -34,7 +34,7 @@
           max-width="250"
           transition="none"
           :key="item.indicator"
-          content-class="indicator-tooltip"
+          content-class="tooltip-content"
          >
           <template v-slot:activator="{ on, attrs }">
             <v-list-item
@@ -59,7 +59,7 @@
               {{item.def}}
               <v-divider class="mb-1 mt-1"></v-divider>
               <b>Source:</b>{{item.source}} <br/>
-              <a :href="item.Link" target="_blank">Link</a>
+              <a :href="item.link" target="_blank">Link</a>
             </v-card-text>
           </v-card>
         </v-tooltip>
@@ -75,7 +75,7 @@
             transition="none"
             max-width="250"
             :key="i"
-            content-class="indicator-tooltip"
+            content-class="tooltip-content"
            >
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
@@ -160,7 +160,7 @@
             transition="none"
             max-width="250"
             :key="item['indicatorCode']"
-            content-class="indicator-tooltip"
+            content-class="tooltip-content"
            >
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
@@ -193,15 +193,34 @@
     </v-virtual-scroll>
   </v-card>
     <v-card flat class="mt-2" v-if="activeIndicator">
-      <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}}</v-card-title>
+      <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
       <v-card-text class="active-indicator-info">
         <div class="mb-1 d-flex">
-          <div class="active-dimension"> {{activeIndicator.units}} </div>
+          <v-select class='dimensions-select' v-if="activeIndicatorYears.length > 2"
+            :items="activeIndicatorYears"
+            :value="year"
+            item-text="name"
+            item-value="id"
+            :disabled="playingYear"
+            @change="emitYearChange"
+            label="Year"
+            dense
+          ></v-select>
+          <v-btn
+            @click="toggleYearPlay"
+            icon
+            >
+            <v-icon v-if="playingYear">mdi-pause</v-icon>
+            <v-icon v-else>mdi-play</v-icon>
+          </v-btn>
+        </div>
+        <div class="mb-1 d-flex">
           <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
             :items="activeIndicatorDimensions"
             :value="activeIndicatorCode"
             item-text="dimension"
             item-value="code"
+            :disabled="playingYear"
             @change="emitindicatorChange"
             label="Dimension"
             dense
@@ -210,7 +229,7 @@
         {{activeIndicator.def}}
         <v-divider class="mb-1 mt-1"></v-divider>
         <b>Source:</b>{{activeIndicator.source}} <br/>
-        <a :href="activeIndicator.Link" target="_blank">Link</a>
+        <a :href="activeIndicator.link" target="_blank">Link</a>
       </v-card-text>
     </v-card>
   </div>
@@ -222,11 +241,13 @@ import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
 export default {
   name: 'indicatorsNav',
-  props:['activeIndicatorCode'],
+  props:['activeIndicatorCode', 'year'],
   data() {
     return {
       activeSearch: false,
       searchString: '',
+      playingYear:false,
+      playInterval:null,
       dataset: null,
       deepSearch:'',
       activeIndicatorDimension:null,
@@ -259,13 +280,26 @@ export default {
   computed: {
     ...mapState({
       indicatorsCategories: state => state.indicators.indicatorsCategories,
-      indicatorsMeta: state => state.indicators.indicatorsMeta
+      indicatorsMeta: state => state.indicators.indicatorsMeta,
+      data: state => state.indicators.activeIndicatorData
     }),
     activeDataset() {
       if(this.dataset) {
         return this.indicatorsCategories[this.dataset];
       }
       return null
+    },
+    activeIndicatorYears(){
+      if(this.data && this.data.data) {
+        return Object.keys(this.data.data).filter(year => year !== 'recentYear').map(year => {
+          return {
+            name: year === 'recentValue' ? 'Recent value' : year,
+            id: year
+          }
+        }).reverse()
+      } else {
+        return []
+      }
     },
     indicatorCategories() {
       if(this.activeDataset) {
@@ -324,7 +358,6 @@ export default {
       let indicatorsWithMetaArray = this.activeIndicators.map(codesArray => {
         codesArray.map(code =>  {
           let metaData = this.indicatorsMeta[code];
-          console.log(this.indicatorsMeta, 'metadata')
           metaData.codesArray = codesArray;
         })
         let metaData = this.indicatorsMeta[codesArray[0]];
@@ -376,9 +409,11 @@ export default {
       }
     },
     selectDataset(name) {
-      this.activeCategory = 'All categories';
-      this.activeSubCategory = 'All subcategories';
-      this.dataset = name;
+      if(name !== this.dataset) {
+        this.activeCategory = 'All categories';
+        this.activeSubCategory = 'All subcategories';
+        this.dataset = name;
+      }
     },
     getSubcategoryindicators(category, subCategory) {
       let indicatorsList = [];
@@ -392,6 +427,9 @@ export default {
     },
     emitindicatorChange(indicator) {
       this.$emit('indicatorChange', indicator)
+    },
+    emitYearChange(year) {
+      this.$emit('yearChange', year)
     },
     setActiveindicator(indicator) {
       this.activeIndicator = indicator;
@@ -419,6 +457,39 @@ export default {
     },
     clearDeepSearch() {
       this.deepSearch = '';
+    },
+    toggleYearPlay() {
+      if(this.playingYear) {
+        this.pausePlayYear()
+      } else {
+        this.playYear()
+      }
+    },
+    playYear() {
+      this.playingYear = true;
+      if(this.playInterval) {
+        clearTimeout(this.playInterval)
+      }
+      let years = this.activeIndicatorYears.slice().reverse();
+      let index = 0;
+      this.transitionToNextYear(years, index)
+    },
+    transitionToNextYear(years, index) {
+      if(this.playingYear) {
+        if(index !== this.activeIndicatorYears.length-1) {
+          this.emitYearChange(years[index].id);
+          index++;
+          this.playInterval = setTimeout(()=>{this.transitionToNextYear(years, index)}, 3000)
+        } else {
+          this.pausePlayYear()
+        }
+      } else {
+        clearTimeout(this.playInterval)
+      }
+    },
+    pausePlayYear() {
+      clearTimeout(this.playInterval)
+      this.playingYear = false;
     }
   },
   watch:{
@@ -484,10 +555,6 @@ export default {
 .active-indicator_header {
   padding-bottom: 0.5em;
   word-break: break-word;
-}
-.indicator-tooltip {
-  background: none !important;
-  padding: 0 !important;
 }
 .active-dimension{
   margin-right: auto;

@@ -10,9 +10,10 @@
         color="normal"
         :small="!isSmallScreen"
         :block="!isSmallScreen"
-        outlined
+        :fab="fab"
+        :outlined="!fab"
         rounded
-        :icon="isSmallScreen"
+        :icon="isSmallScreen && !fab"
         v-bind="attrs"
         v-on="on"
         @click='toggleTooltip'
@@ -23,27 +24,26 @@
     </template>
     <template>
       <v-card>
-        <v-toolbar
-        >
-        <v-spacer></v-spacer>
-        <v-btn
-          icon
-          @click="toggleTooltip"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-toolbar>
-        <v-card-text>
-          <slot name="content"></slot>
+        <v-card-title class="justify-space-between">
+          {{textContent[contentName].title}}
+          <v-btn
+            color="normal"
+            icon
+            @click='toggleTooltip'
+          >
+            <v-icon >mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text v-html="textContent[contentName].content">
         </v-card-text>
-        <v-card-actions class="justify-end">
-        </v-card-actions>
       </v-card>
     </template>
   </v-dialog>
 </template>
 
 <script>
+
+import { mapState } from 'vuex';
 export default {
   name: 'InfoButton',
   data() {
@@ -51,7 +51,11 @@ export default {
       dialog: false
     }
   },
-  computed:{
+  props:['contentName', 'fab'],
+  computed: {
+    ...mapState({
+      textContent: (state) => state.texts.textContent
+    }),
     isFullscreen() {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
     },

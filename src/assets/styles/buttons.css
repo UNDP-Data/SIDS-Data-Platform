@@ -24,6 +24,7 @@
   height: 38px !important;
   width: 38px !important;
 }
+
 .v-btn--fab:hover  {
   width: 50px !important;
 }
@@ -45,6 +46,12 @@
   height: 34px !important;
   width: 34px !important;
   padding: 0 !important;
+}
+
+.v-btn--icon.v-size--default {
+  height: 36px !important;
+  width: 36px !important;
+  padding: 0 16px !important;
 }
 .v-tabs {
   background: #FFFFFF;

@@ -3,6 +3,12 @@
       <h4 class="block-subheader text-center"
         :style="{color: graphOptions.textColor}">
         {{graphOptions.header}}
+
+        <info-hover-tooltip v-if="tooltipContentName" :contentName="tooltipContentName">
+          <template v-if="headerIcon" v-slot:icon>
+            <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${headerIcon}`"/>
+          </template>
+        </info-hover-tooltip>
       </h4>
       <div class="d-none" v-for="(axis, index) in ranks[0].axes" :id="`${pillarName}${index}`" :key="index">
         <profiles-spider-chart-tooltip
@@ -23,13 +29,15 @@
 import * as d3 from 'd3';
 import { mapState } from 'vuex';
 import tippy from 'tippy.js';
+import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
 import ProfilesSpiderChartTooltip from '@/components/ProfilesSpiderChartTooltip';
 import format from '@/mixins/format.mixin'
 
 export default {
   name: 'ProfilesSpiderChart',
   components:{
-    ProfilesSpiderChartTooltip
+    ProfilesSpiderChartTooltip,
+    InfoHoverTooltip
   },
   mixins:[format],
   props: {
@@ -54,7 +62,15 @@ export default {
     headerText: {
       type: String,
       default: ''
-    }
+    },
+    maxValue: {
+      type: Number,
+      default: 50
+    },
+    tooltipContentName: {
+      type: String
+    },
+    headerIcon:null
   },
   data: ()=>({
     defaultGraphOptions: {
@@ -113,15 +129,15 @@ export default {
             return maxAxesValue
           }
           return maxAxesValue > axe.value ? maxAxesValue : axe.value;
-        }, this.fullGraphOptions.maxValue);
+        }, this.maxValue);
         return maxCountriesValue > currentCountryMax ? maxCountriesValue : currentCountryMax;
-      }, this.fullGraphOptions.maxValue);
+      }, this.maxValue);
     }
   },
   methods:{
     drawGraph(){
       let rootThis = this;
-      const wrap = (text, width) => {
+      const wrap = (text) => {
         text.each(function () {
           var text = d3.select(this),
             words = text.text().split(/\s+/).reverse(),
@@ -131,13 +147,16 @@ export default {
             lineHeight = 1.4, // ems
             y = text.attr("y"),
             x = text.attr("x"),
+
             dy = parseFloat(text.attr("dy")),
             tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
           word  =  words.pop();
+
+          text.attr("width", '80px')
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
-            if (tspan.node().getComputedTextLength() > width) {
+            if (tspan.node().getComputedTextLength() > 80) {
               line.pop();
               tspan.text(line.join(" "));
               line = [word];
@@ -249,14 +268,15 @@ export default {
           .style("font-size", "10px")
           .attr("text-anchor", "middle")
           .attr("dy", "0.35em")
+          .attr("width", '80px')
           .attr("x", (d, i) => this.fullGraphOptions.textFormat * rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.cos(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
           .attr("y", (d, i) => -15 / this.fullGraphOptions.textFormat ** 3 + rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.sin(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
           .text(d => d)
           .call(wrap, this.fullGraphOptions.wrapWidth)
           .style("pointer-events","auto")
-          .attr("id", (d, i) => `${this.pillarName}axis${i}`)
+          .attr("id", (d, i) => `${rootThis.pillarName}axis${i}${this.postfix}`)
           this.ranks[0].axes.map((axis, i) => {
-            tippy(`#${this.pillarName}axis${i}`, {
+            tippy(`#${rootThis.pillarName}axis${i}${this.postfix}`, {
               content() {
                 const template = document.getElementById(`${rootThis.pillarName}${i}`);
                 return template.innerHTML;
@@ -268,6 +288,35 @@ export default {
               appendTo: () => document.body
             });
           })
+
+        axis.append("text")
+          .attr("class", "d-none d-print-block")
+          .style("font-size", "10px")
+          .attr("text-anchor", "middle")
+          .attr("dy", "0.35em")
+          .attr("x", (d, i) => this.fullGraphOptions.textFormat * rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.cos(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
+          .attr("y", (d, i) => {
+            let lines = document.getElementById(`${rootThis.pillarName}axis${i}${this.postfix}`).children.length
+            return (-15 / this.fullGraphOptions.textFormat ** 3 + rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.sin(angleSlice * i - HALF_PI - this.fullGraphOptions.spin)) + lines * 14
+          }).text((d) => {
+            let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d })[0].value;
+            let rank = rootThis.ranks[0].axes.filter(obj => { return obj.axis === d })[0].value;
+            let displayValue = ''
+            if(rootThis.pillarName === 'MVI') {
+              if(isNaN(rank)) {
+                displayValue = rank
+              } else {
+                displayValue = rootThis.nFormatter(rank,2);
+              }
+            } else if (isNaN(value)) {
+              displayValue = `${value}, ${rootThis.rankFormat(rank.toString())}`
+            } else {
+              displayValue = `${rootThis.nFormatter(value,2)}${rootThis.fullGraphOptions.unit}, ${rootThis.rankFormat(rank.toString())}`;
+            }
+            return displayValue
+          })
+          .style("pointer-events","auto")
+          .style("font-weight", "bold")
       }
       const radarLine = d3.radialLine()
         .curve(d3.curveLinearClosed)
@@ -294,7 +343,21 @@ export default {
       blobWrapper
         .append("path")
         .attr("class", "radarArea")
-        .attr("d", d => radarLine(d.axes))
+        .attr("d", function (d) {
+          if(rootThis.pillarName === 'MVI') {
+            let values = d.axes.map(v => {
+              if(v.value === 'No Data') {
+                return {
+                  axis: v.axis,
+                  value: 0
+                }
+              }
+              return v
+            })
+            return radarLine(values);
+          }
+          return radarLine(d.axes);
+        })
         .style("fill", (d, i) => this.fullGraphOptions.color(i))
         .style("fill-opacity", this.fullGraphOptions.opacityArea)
         .style("pointer-events","auto")
@@ -329,9 +392,23 @@ export default {
       //Create the outlines
       blobWrapper.append("path")
             .attr("class", "radarStroke")
-            .attr("d", function (d) { return radarLine(d.axes); })
+            .attr("d", function (d) {
+              if(rootThis.pillarName === 'MVI') {
+                let values = d.axes.map(v => {
+                  if(v.value === 'No Data') {
+                    return {
+                      axis: v.axis,
+                      value: 0
+                    }
+                  }
+                  return v
+                })
+                return radarLine(values);
+              }
+              return radarLine(d.axes);
+            })
             .style("stroke-width", this.fullGraphOptions.strokeWidth + "px")
-            .style("stroke", (d, i) => {console.log(d, i, 'id'); return this.fullGraphOptions.color(i)})
+            .style("stroke", (d, i) => { return this.fullGraphOptions.color(i)})
             .style("fill", "none")
             .style("filter", "url(#glow)")
             .style("pointer-events","none");
@@ -366,6 +443,7 @@ export default {
         .attr("class", "radarCircleWrapper");
 
       //Append a set of invisible circles on top for the mouseover pop-up
+
       blobCircleWrapper.selectAll(".radarInvisibleCircle")
         .data(d => d.axes)
         .enter().append("circle")
@@ -376,32 +454,30 @@ export default {
         .style("fill", "none")
         .style("pointer-events", "all")
         .on("mouseover", function (d) {
-              if(rootThis.pillarName !== 'MVI'){
-                tooltip
-                  .attr('x', this.cx.baseVal.value)
-                  .attr('y', this.cy.baseVal.value - 10)
-                if (this.pillarName == "MVI") {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(rootThis.nFormatter(d.value,2));
-                } else if (this.pillarName=="customIndex") {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(this.nFormatter(d.value,2)+", "+d.axis);
-                } else {
-                  tooltip.transition()
-                    .style('display', 'block')
-                    .text(function () {
-                      let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d.axis })[0].value
-                      if (isNaN(value)) {
-                        return value   + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
-                      }
-                      else {
-                        return rootThis.nFormatter(value,2) + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit;
-                      }
-                    })
+            tooltip
+              .attr('x', this.cx.baseVal.value)
+              .attr('y', this.cy.baseVal.value - 10)
+            if (rootThis.pillarName == "MVI") {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(rootThis.nFormatter(d.value,2));
+            } else if (rootThis.pillarName=="customIndex") {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(this.nFormatter(d.value,2)+", "+d.axis);
+            } else {
+              tooltip.transition()
+                .style('display', 'block')
+                .text(function () {
+                  let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d.axis })[0].value
+                  if (isNaN(value)) {
+                    return value   + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
                   }
-                }
+                  else {
+                    return rootThis.nFormatter(value,2) + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit;
+                  }
+                })
+              }
               })
               .on("mouseout", function () {
                 tooltip.transition()
@@ -461,7 +537,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .graph-container{
+  .graph-container {
+    margin: auto;
+    max-width: 500px;
     display: flex;
     align-items: center;
     flex-direction: column;
