@@ -19,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-steps:
-  - name: Checkout 🛎️
-    uses: actions/checkout@v2
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
 
-  - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
-    run: |
-      npm ci
-      npm run ci
+      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+        run: |
+          npm ci
+          npm run ci
