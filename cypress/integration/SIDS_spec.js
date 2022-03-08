@@ -6,7 +6,7 @@ describe('SIDS pages', function() {
 
   it('Loads the SIDS app', function() {
     cy.get('.sdg-goal', { timeout: 15000 }).should('exist')
-    cy.percySnapshot({name: 'prtfolio'})
+    cy.percySnapshot('prtfolio')
   })
 
   it('Loads the about', function() {
@@ -14,7 +14,7 @@ describe('SIDS pages', function() {
     cy.visit('localhost:8080/about');
     cy.get('.v-expansion-panel', { timeout: 15000 }).should('exist')
     // Take a snapshot for visual diffing
-    cy.percySnapshot({name: 'about'});
+    cy.percySnapshot('about');
   });
 
   it('Loads the indicator page', function() {
@@ -22,7 +22,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/development-indicators');
     cy.get('.choroMap', { timeout: 15000 }).should('exist')
     // Take a snapshot for visual diffing
-    cy.percySnapshot({name: 'indicators'});
+    cy.percySnapshot('indicators');
   });
 
   it('Loads the indicator bars', function() {
@@ -30,7 +30,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/development-indicators/hdr-185106/recentValue/bars');
     cy.get('.choroRect', { timeout: 15000 }).should('exist')
     // Take a snapshot for visual diffing
-    cy.percySnapshot({name: 'bars'});
+    cy.percySnapshot('bars');
   });
 
   it('Loads the mvi', function() {
@@ -38,7 +38,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/vulnerability');
     cy.get('.radarArea', { timeout: 15000 }).should('exist')
     // Take a snapshot for visual diffing
-    cy.percySnapshot({name: 'mvi'});
+    cy.percySnapshot('mvi');
   });
 
   it('Loads the profiles', function() {
@@ -46,7 +46,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/country-profiles');
     cy.get('.desc-spiders', { timeout: 15000 }).should('exist')
     // Take a snapshot for visual diffing
-    cy.percySnapshot({name: 'profiles'});
+    cy.percySnapshot('profiles');
   });
 
   it('Loads the gis', function() {
@@ -54,6 +54,6 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/geospatial-data');
     cy.get('.mapboxgl-canvas', { timeout: 25000 }).should('exist')
     // Take a snapshot for visual diffing
-    cy.percySnapshot({name: 'gis'});
+    cy.percySnapshot('gis');
   });
 })
