@@ -26,4 +26,6 @@ jobs:
       - name: Install 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: npm ci
       - name: Percy 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
-        run: npm run ci
+        run: |
+          export PERCY_TOKEN=3ca8221f3e3d77c8e50c5d278ebb80f6268245b4edac96c71a0ba1b8988cf3c8
+          npm run ci
