@@ -23,7 +23,6 @@
     <main role="main" class="header-text">
         <h1 class="header-text_header header-text_header-big">Data Visualization Platform</h1>
         <h2 class="header-text_header header-text_header-small">for the</h2>
-        <h1 class="header-text_header header-text_header-big">SMALL ISLAND DEVELOPING STATES </h1>
         <hr class="d-none d-md-block d-lg-block d-xl-block header-text_divider">
     </main>
     <a class="header_button-down d-none d-md-block" href="#content">
