@@ -18,9 +18,6 @@
                   </v-col>
                 </v-row>
                 <v-row dense>
-                  <v-col>
-                    <h4 class="printout-subheader text-center">UNDP SIDS Data Platform</h4>
-                  </v-col>
                 </v-row>
               </v-col>
             </v-row>
