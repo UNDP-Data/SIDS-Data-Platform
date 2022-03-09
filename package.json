@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ci": "start-server-and-test start-server http://localhost:8080 test",
-    "start-server": "vue-cli-service serve",
+    "start-server": "vue-cli-service serve --mode testing",
     "test": "percy exec -- cypress run",
     "serve": "vue-cli-service serve",
     "build-staging": "vue-cli-service build --mode staging",
