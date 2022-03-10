@@ -43,7 +43,7 @@
                     <div>
                       <i
                         class="flag-icon select_icon"
-                        :class="'flag-icon-' + flagGodes[data.item.id]"
+                        :class="'flag-icon-' + flagCodes[data.item.id]"
                       ></i>
                       {{ data.item.name }}
                     </div>
@@ -195,7 +195,7 @@
                     <template slot="item" slot-scope="data">
                     <i
                       class="flag-icon select_icon"
-                      :class="'flag-icon-' + flagGodes[data.item.id]"
+                      :class="'flag-icon-' + flagCodes[data.item.id]"
                     ></i>
                     {{ data.item.name }}
                     </template>
@@ -270,7 +270,7 @@
                     <template slot="item" slot-scope="data">
                     <i
                       class="flag-icon select_icon"
-                      :class="'flag-icon-' + flagGodes[data.item.id]"
+                      :class="'flag-icon-' + flagCodes[data.item.id]"
                     ></i>
                     {{ data.item.name }}
                     </template>
