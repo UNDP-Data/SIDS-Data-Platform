@@ -44,7 +44,6 @@ export default {
   name: 'RootHeader',
   computed:{
     isTesting(){
-      console.log(process.env.NODE_ENV)
       return process.env.NODE_ENV === 'testing'
     }
   }
