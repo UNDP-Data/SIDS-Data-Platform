@@ -24,6 +24,16 @@
       }
       // pass();
     </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XSRGSB7LCY"></script>
+    <script>
+      if(NODE_ENV === "production") {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){window.dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XSRGSB7LCY');
+      }
+    </script>
   <link href="/SIDSDataPlatform/js/about.js" rel="prefetch"><link href="/SIDSDataPlatform/js/chunk-vendors.js" rel="preload" as="script"><link href="/SIDSDataPlatform/js/index.js" rel="preload" as="script"></head>
   <body>
     <noscript>
