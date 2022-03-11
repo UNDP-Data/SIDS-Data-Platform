@@ -207,7 +207,7 @@
               <v-col cols="3" class="d-flex align-center" md="1">
                 <p class="mt-auto mb-auto">among</p>
               </v-col>
-              <v-col cols="8" md="3" lg="2">
+              <v-col cols="6" md="3" lg="2">
                 <div class="select">
                   <v-select
                     rounded
@@ -223,7 +223,7 @@
                   </v-select>
                 </div>
               </v-col>
-              <v-col cols="1">
+              <v-col cols="2">
                 <info-hover-tooltip
                   :large="true"
                   contentName="profileTooltip-radar"
