@@ -162,6 +162,7 @@ export default {
   data: function() {
     return {
       dialog:false,
+      resizeTimeout:null,
       mviCodes:["mvi-ldc-VIC-Index"
                 ,"mvi-ldc-AFF-Index"
                 ,"mvi-ldc-REM-Index"
@@ -278,7 +279,24 @@ export default {
     },
     MVIindicatorUpdate(mviCodes){
       this.mviCodes = mviCodes;
+    },
+    updateScreenSize() {
+      let rootThis = this;
+      if(this.resizeTimeout) {
+        clearTimeout(this.resizeTimeout);
+      }
+      this.resizeTimeout = setTimeout(async () => {
+        if(rootThis.isMobile && !rootThis.activeTab.mobile) {
+          rootThis.transitionTo('bars')
+        }
+      }, 100);
     }
+  },
+  created() {
+    window.addEventListener("resize", this.updateScreenSize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.updateScreenSize);
   },
   watch: {
     page() {

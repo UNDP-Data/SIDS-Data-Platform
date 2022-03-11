@@ -28,7 +28,8 @@ export default {
   name: 'IndicatorsChoroChart',
   data: function () {
     return {
-      choro:null
+      choro:null,
+      resizeTimeout: null
     }
   },
   props:['indicatorCode', 'region', 'page', 'chartType', 'sorting', 'mviCodes', 'year'],
@@ -66,6 +67,17 @@ export default {
     },
     counntryClickCallback(countryCode) {
       this.$router.push({path:`/country-profiles/${countryCode}`})
+    },
+    updateScreenSize(){
+      if(this.resizeTimeout) {
+        clearTimeout(this.resizeTimeout);
+      }
+      this.resizeTimeout = setTimeout(async () => {
+        await this.choro.updateSize({
+          vizContainerWidth: (document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
+          vizContainerHeight: (document.body.clientWidth - 40) > 800 ? 580 : 1360
+        })
+      }, 100);
     }
   },
   async mounted() {
@@ -111,7 +123,13 @@ export default {
         this.choro.updateVizYear(this.year)
       }
     }
-  }
+  },
+  created() {
+    window.addEventListener("resize", this.updateScreenSize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.updateScreenSize);
+  },
 }
 </script>
 

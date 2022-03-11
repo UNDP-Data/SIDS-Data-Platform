@@ -391,7 +391,7 @@ export default {
       this.activePage = this.pages.indexOf(e.type);
       this.$router.push({path:`/portfolio/${e.type}`, query: this.$route.query})
     }
-  }
+  },
 }
 </script>
 <style media="screen">
