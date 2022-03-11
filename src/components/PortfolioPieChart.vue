@@ -40,14 +40,15 @@ export default {
   },
   data() {
     return {
+      resizeTimeout:null,
       pie: null,
       tooltips:[],
       arc: null,
       outerArc: null,
       makePie: null,
-      radius: this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm' ?
-      38 : 64
     }
+  },
+  computed: {
   },
   methods: {
     initChart() {
@@ -60,14 +61,14 @@ export default {
         .attr("class", "labels").attr("transform", translate);
       this.pie.append("g")
         .attr("class", "lines").attr("transform", translate);
-
+        let radius = window.innerWidth < 960 ? 38 : 64
       this.arc = d3.arc()
-        .outerRadius(this.radius * 0.8)
-        .innerRadius(this.radius * 0.4);
+        .outerRadius(radius * 0.8)
+        .innerRadius(radius * 0.4);
 
       this.outerArc = d3.arc()
-        .innerRadius(this.radius * 0.9)
-        .outerRadius(this.radius * 0.9);
+        .innerRadius(radius * 0.9)
+        .outerRadius(radius * 0.9);
 
       this.makePie = d3.pie()
         .value(d => d.value)
@@ -78,7 +79,18 @@ export default {
     },
     drawChart() {
       const rootThis = this;
-
+      let radius = window.innerWidth < 960 ? 38 : 64
+      this.arc
+        .outerRadius(radius * 0.8)
+        .innerRadius(radius * 0.4);
+      this.outerArc
+        .innerRadius(radius * 0.9)
+        .outerRadius(radius * 0.9);
+      let translate = window.innerWidth < 960 ?
+        `translate(160, 40)` : `translate(140, 75)`;
+      this.pie.select(".slices").attr("transform", translate);
+      this.pie.select(".labels").attr("transform", translate);
+      this.pie.select(".lines").attr("transform", translate);
       /* ------- PIE SLICES -------*/
       var slice = this.pie.select(".slices").selectAll("path.slice")
         .data(this.makePie(this.data));
@@ -156,7 +168,7 @@ export default {
           return function (t) {
             var d2 = interpolate(t);
             var pos = rootThis.outerArc.centroid(d2);
-            pos[0] = rootThis.radius * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
+            pos[0] = radius * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
             return "translate(" + pos + ")";
           };
         })
@@ -189,7 +201,7 @@ export default {
           return function (t) {
             var d2 = interpolate(t);
             var pos = rootThis.outerArc.centroid(d2);
-            pos[0] = rootThis.radius * 0.95 * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
+            pos[0] = radius * 0.95 * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
             let showText = !((d.data.value / sumall) < 0.0236);
             if(c !== 0) {
               showText = showText && !(((d.data.value + g[c-1].__data__.data.value) / sumall) < 0.1);
@@ -206,7 +218,22 @@ export default {
       },
       setFilter(type, value) {
         this.$emit('changeFilter',{type, value})
+      },
+      updateScreenSize() {
+        let rootThis = this;
+        if(this.resizeTimeout) {
+          clearTimeout(this.resizeTimeout);
+        }
+        this.resizeTimeout = setTimeout(async () => {
+          rootThis.$nextTick(rootThis.drawChart);
+        }, 100);
       }
+    },
+    created() {
+      window.addEventListener("resize", this.updateScreenSize);
+    },
+    destroyed() {
+      window.removeEventListener("resize", this.updateScreenSize);
     },
     mounted() {
       this.initChart();

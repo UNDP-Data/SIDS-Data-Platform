@@ -161,6 +161,19 @@ export default class Choro {
     this.indiSelections.year = year
     this.updateVizEngine(this.indicatorCodeInitial)
   }
+  updateSize({vizContainerWidth, vizContainerHeight}) {
+    if(vizContainerWidth !== this.vizWidth || vizContainerHeight !== this.vizHeigh) {
+      this.main_chart_svg
+        .attr("width", vizContainerWidth)
+        .attr("height", vizContainerHeight);
+      this.choro_legend_svg
+        .attr("width", vizContainerWidth)
+        .attr("height", vizContainerHeight);
+      this.vizWidth = vizContainerWidth;
+      this.vizHeigh = vizContainerHeight;
+      this.updateVizEngine(this.indicatorCodeInitial)
+    }
+  }
 }
 Choro.prototype.initVizEngine = initVizEngine;
 Choro.prototype.initCountrySvgs = initCountrySvgs;

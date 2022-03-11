@@ -84,7 +84,8 @@ export function updateVizEngine(indicatorCode) {
     if(!this.firstIndicatorInit){
       this.initChoroLegend(quantize);// require data to be loaded
       this.initXAxis()//messes chorolegend if it is too soon
-    this.firstIndicatorInit=1; }
+      this.firstIndicatorInit=1; 
+    }
 //
 //     //main update functions////
       let vizElementAttributes = this.processVizElementAttributes();
