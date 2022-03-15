@@ -24,6 +24,7 @@
     <v-virtual-scroll
       v-if="activeSearch"
       :items="allindicators"
+      bench='5'
       height="calc(100vh - 70px)"
       itemHeight="69"
     >
@@ -148,6 +149,7 @@
     ></v-text-field>
     <v-virtual-scroll
       v-if="dataset"
+      bench='5'
       :items="activeIndicatorsWithMeta"
       :height="inticatorsListHeight"
       itemHeight="69"

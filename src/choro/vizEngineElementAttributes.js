@@ -12,20 +12,19 @@ export function processVizElementAttributes() {
   let vizElementAttributes = {};
   let rootThis = this;
   ////problem code, doesn't work in init so moved here instead.
-  if (this.bboxInit == 0) {
-    d3.select(this.sidsMaps)
-      .selectAll("path")
-      .each(function () {
-        let bbox = getBoundingBox(d3.select(this));
-        rootThis.bboxDict[this.id] = bbox;
-      });
-
-    [...document.querySelectorAll(".choroText")].forEach((item) => {
-        let textBBox = item.getBBox();
-        rootThis.textBBoxDict[item.parentNode.id] = textBBox;
+  d3.select(this.sidsMaps)
+    .selectAll("path")
+    .each(function () {
+      let bbox = getBoundingBox(d3.select(this));
+      rootThis.bboxDict[this.id] = bbox;
     });
-    this.bboxInit = 1;
-  }
+
+  [...document.querySelectorAll(".choroText")].forEach((item) => {
+      let textBBox = item.getBBox();
+      console.log(textBBox)
+      rootThis.textBBoxDict[item.parentNode.id] = textBBox;
+  });
+  this.bboxInit = 1;
   ////////////////////
   let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
   //console.log(textBBoxDict)

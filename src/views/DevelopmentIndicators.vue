@@ -251,7 +251,7 @@ export default {
       return this.menuBar[this.page]
     },
     noData() {
-      if(this.page !== 'mvi') {
+      if(this.page === 'mvi') {
         return false;
       }
       return this.activeIndicatorData.data && !Object.keys(this.activeIndicatorData.data.recentValue).some(value => {
@@ -286,7 +286,7 @@ export default {
         clearTimeout(this.resizeTimeout);
       }
       this.resizeTimeout = setTimeout(async () => {
-        if(rootThis.isMobile && !rootThis.activeTab.mobile) {
+        if(rootThis.isMobile && !(rootThis.chartType === 'bars' || rootThis.chartType === 'series')) {
           rootThis.transitionTo('bars')
         }
       }, 100);

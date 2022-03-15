@@ -69,11 +69,12 @@ export default {
       this.$router.push({path:`/country-profiles/${countryCode}`})
     },
     updateScreenSize(){
+      let rootThis = this;
       if(this.resizeTimeout) {
         clearTimeout(this.resizeTimeout);
       }
       this.resizeTimeout = setTimeout(async () => {
-        await this.choro.updateSize({
+        await rootThis.choro.updateSize({
           vizContainerWidth: (document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
           vizContainerHeight: (document.body.clientWidth - 40) > 800 ? 580 : 1360
         })
@@ -495,6 +496,9 @@ export default {
   #timeSeriesContainer {
     width: 100%;
     display:none;
+  }
+  .choro {
+    min-height: 1400px;
   }
 }
 
