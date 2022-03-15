@@ -24,10 +24,10 @@
     <v-virtual-scroll
       v-if="activeSearch"
       :items="allindicators"
-      bench='5'
+      bench='12'
       height="calc(100vh - 70px)"
       itemHeight="69"
-    >
+      >
       <template v-slot:default="{ item }">
         <v-tooltip
           right
@@ -149,7 +149,7 @@
     ></v-text-field>
     <v-virtual-scroll
       v-if="dataset"
-      bench='5'
+      bench='12'
       :items="activeIndicatorsWithMeta"
       :height="inticatorsListHeight"
       itemHeight="69"
@@ -194,46 +194,46 @@
         </template>
     </v-virtual-scroll>
   </v-card>
-    <v-card flat class="mt-2" v-if="activeIndicator">
-      <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
-      <v-card-text class="active-indicator-info">
-        <div class="mb-1 d-flex">
-          <v-select class='dimensions-select' v-if="activeIndicatorYears.length > 2"
-            :items="activeIndicatorYears"
-            :value="year"
-            item-text="name"
-            item-value="id"
-            :disabled="playingYear"
-            @change="emitYearChange"
-            label="Year"
-            dense
-          ></v-select>
-          <v-btn
-            @click="toggleYearPlay"
-            icon
-            >
-            <v-icon v-if="playingYear">mdi-pause</v-icon>
-            <v-icon v-else>mdi-play</v-icon>
-          </v-btn>
-        </div>
-        <div class="mb-1 d-flex">
-          <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
-            :items="activeIndicatorDimensions"
-            :value="activeIndicatorCode"
-            item-text="dimension"
-            item-value="code"
-            :disabled="playingYear"
-            @change="emitindicatorChange"
-            label="Dimension"
-            dense
-          ></v-select>
-        </div>
-        {{activeIndicator.def}}
-        <v-divider class="mb-1 mt-1"></v-divider>
-        <b>Source:</b>{{activeIndicator.source}} <br/>
-        <a :href="activeIndicator.link" target="_blank">Link</a>
-      </v-card-text>
-    </v-card>
+  <v-card flat class="mt-2" v-if="activeIndicator && !isSmallScreen">
+    <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
+    <v-card-text class="active-indicator-info">
+      <div class="mb-1 d-flex">
+        <v-select class='dimensions-select' v-if="activeIndicatorYears.length > 2"
+          :items="activeIndicatorYears"
+          :value="year"
+          item-text="name"
+          item-value="id"
+          :disabled="playingYear"
+          @change="emitYearChange"
+          label="Year"
+          dense
+        ></v-select>
+        <v-btn
+          @click="toggleYearPlay"
+          icon
+          >
+          <v-icon v-if="playingYear">mdi-pause</v-icon>
+          <v-icon v-else>mdi-play</v-icon>
+        </v-btn>
+      </div>
+      <div class="mb-1 d-flex">
+        <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
+          :items="activeIndicatorDimensions"
+          :value="activeIndicatorCode"
+          item-text="dimension"
+          item-value="code"
+          :disabled="playingYear"
+          @change="emitindicatorChange"
+          label="Dimension"
+          dense
+        ></v-select>
+      </div>
+      {{activeIndicator.def}}
+      <v-divider class="mb-1 mt-1"></v-divider>
+      <b>Source:</b>{{activeIndicator.source}} <br/>
+      <a :href="activeIndicator.link" target="_blank">Link</a>
+    </v-card-text>
+  </v-card>
   </div>
 </template>
 <script>
@@ -290,6 +290,9 @@ export default {
         return this.indicatorsCategories[this.dataset];
       }
       return null
+    },
+    isSmallScreen() {
+      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm || this.$vuetify.breakpoint.md
     },
     activeIndicatorYears(){
       if(this.data && this.data.data) {
@@ -389,7 +392,7 @@ export default {
     inticatorsListHeight() {
       let height = '100vh',
       substraction = 200;
-      if(this.activeIndicator) {
+      if(this.activeIndicator && !this.isSmallScreen) {
         height = '50vh'
         substraction = 128
       }
@@ -429,6 +432,9 @@ export default {
     },
     emitindicatorChange(indicator) {
       this.$emit('indicatorChange', indicator)
+      if(this.isSmallScreen){
+        this.$emit('close', indicator)
+      }
     },
     emitYearChange(year) {
       this.$emit('yearChange', year)
