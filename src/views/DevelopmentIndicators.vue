@@ -301,7 +301,13 @@ export default {
   watch: {
     page() {
       this.sorting = 0
-    }
+    },
+    // indicator() {
+      // let activeIndicator = this.allindicators.find(indicator => indicator['indicatorCode'] === this.indicator)
+      // if(activeIndicator) {
+      //   this.setActiveindicatorFromFullList(activeIndicator)
+      // }
+    // }
   },
   async beforeRouteUpdate(to, from, next) {
     try {
@@ -382,6 +388,10 @@ export default {
   .filter-button {
     margin-left: auto;
     margin-right: 0;
+  }
+  .description {
+    position: relative;
+    z-index: 1;
   }
   @media all and (max-width:960px) {
     .indicators-tabs, .mvi-tabs {

@@ -577,7 +577,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
   function legend(g) {
     const fontSize = 10;
     const legendData = legendLayout(timeData, fontSize);
-    console.log(width)
     if(width >= 800) {
       g.selectAll("line.link")
         .data(legendData)
