@@ -653,10 +653,10 @@ export function updateTimeChart({ dataset, optionSelected }) {
             if(index >= i) {
               return [w,h]
             }
-            if(w + node.getComputedTextLength() < width - 120) {
+            if(w + node.getComputedTextLength() + 10 < width - 120) {
               return [w + node.getComputedTextLength() + 10, h];
             } else {
-              return [0,h + 16]
+              return [0,(h + 16)]
             }
           }, [0,0]);
           return res[1];
