@@ -149,16 +149,19 @@
 <script>
 // @ is an alias to /src
 
+import IndicatorsNav from './children/IndicatorsNav.vue'
+import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
+import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
+
 import InfoButton from '@/components/InfoButton.vue'
-import IndicatorsNav from '@/components/IndicatorsNav.vue'
-import MVIIndicatorsNav from '@/components/MVIIndicatorsNav.vue'
-import IndicatorsChoroChart from '@/components/IndicatorsChoroChart.vue'
+import sizeMixin from '@/mixins/size.mixin'
 import { mapState } from 'vuex'
 import store from '@/store'
 
 export default {
   name: 'DevelopmentIndicators',
   props:['chartType', 'indicator', 'page', 'year'],
+  mixins:[sizeMixin],
   data: function() {
     return {
       dialog:false,
@@ -240,9 +243,6 @@ export default {
       } else {
         return 'region'
       }
-    },
-    isMobile() {
-      return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm'
     },
     tabs() {
       if(this.isMobile) {
@@ -328,16 +328,6 @@ export default {
 }
 </script>
 <style media="screen">
-  .transition {
-    transition: 500ms;
-  }
-  .left {
-    margin-left: 80px;
-  }
-  .no-left {
-    transition: 500ms;
-    margin-left: 0px;
-  }
   .nav-tabs-row {
     margin-top: -10px !important;;
   }

@@ -376,7 +376,6 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 	}
 
 	else {
-		console.log("job=g")
 		blobWrapper
 			.append("path")
 			.attr("class", "radarArea")
@@ -531,7 +530,6 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 		.attr("height", 40)
 
 	if (cfg.legend !== false && typeof cfg.legend === "object") {
-		//console.log("legended")
 		let legendZone = svgLegend;//.append('g');
 		let names = data.map(el => el.name);
 		if (cfg.legend.title) {
@@ -545,7 +543,6 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 				.text(cfg.legend.title);
 		}
 		let legend = legendZone.append("g")
-			//.attr("class", "legend")
 			.attr("height", 40)
 			.attr("width", "100%")
 			.attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY})`)
@@ -560,16 +557,6 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 			.attr("width", 10)
 			.attr("height", 10)
 			.style("fill", (d, i) => cfg.color(i));
-		// Create labels
-		// legend.selectAll('text')
-		// 	.data(names)
-		// 	.enter()
-		// 	.append("text")
-		// 	.attr("x", cfg.w - 52)
-		// 	.attr("y", (d, i) => i * 20 + 9)
-		// 	.attr("font-size", "9px")
-		// 	.attr("fill", "#737373")
-		// 	.text(d => allKeyData[d]["Profile"].Country);
 	}
 	return svg;
 }
