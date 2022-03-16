@@ -58,7 +58,8 @@
 
 <script>
 
-import sizeMixin from '@/mixins/size.mixin'
+import sizeMixin from '@/mixins/size.mixin';
+
 export default {
   name: 'NavMenu',
   mixins:[sizeMixin],
