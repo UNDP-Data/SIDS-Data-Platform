@@ -192,9 +192,6 @@ export default {
 .map_zones {
   height: 100%
 }
-.prtfolio-header {
-  text-align: center;
-}
 .custom-chip_header {
   justify-content: center;
   padding: 0.1em;
@@ -280,9 +277,6 @@ export default {
   }
 }
 @media all and (max-width:600px) {
-  .prtfolio-header {
-    padding: 0;
-  }
   .portfolio-chip {
     min-width: 30%;
     margin: 5px 5% !important
