@@ -21,7 +21,6 @@ export function processVizElementAttributes() {
 
   [...document.querySelectorAll(".choroText")].forEach((item) => {
       let textBBox = item.getBBox();
-      console.log(textBBox)
       rootThis.textBBoxDict[item.parentNode.id] = textBBox;
   });
   this.bboxInit = 1;
