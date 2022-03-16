@@ -47,6 +47,7 @@ export default {
     return {
       id: this._uid,
       svg:null,
+      goals:[],
       svgContainer: null,
       barsMargin: { top: 60, right: 10, bottom: 0, left: 10 },
       svgWidth: 1074,

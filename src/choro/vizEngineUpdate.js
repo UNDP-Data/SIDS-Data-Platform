@@ -84,7 +84,7 @@ export function updateVizEngine(indicatorCode) {
     if(!this.firstIndicatorInit){
       this.initChoroLegend(quantize);// require data to be loaded
       this.initXAxis()//messes chorolegend if it is too soon
-      this.firstIndicatorInit=1; 
+      this.firstIndicatorInit=1;
     }
 //
 //     //main update functions////
@@ -1066,7 +1066,6 @@ export function updateRegionLables() {
     }
 
     this.regionAverages = regionAverages;
-    // console.log( regionTitleHeight, regionRank["pacific"], countryListLength)
     d3.select("#pacificRegionTitle")
       .transition()
       .duration(1000)

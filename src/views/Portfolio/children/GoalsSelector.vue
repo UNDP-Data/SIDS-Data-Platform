@@ -1,5 +1,6 @@
 <template>
   <v-row class="goals-selector">
+    {{activeGoalType}}
     <v-col cols="5">
       <v-list dense>
         <v-list-item-group
@@ -31,7 +32,7 @@
       >
         <v-slide-item
           v-for="(n, index) in activeGoalTypes"
-          :key="n"
+          :key="index"
           :value="index + 1"
         >
           <v-menu
@@ -51,11 +52,11 @@
             <div class="goals-selector-tooltip-content">
               <img
                 v-for="(n, index) in activeGoalTypes"
-                :key="n"
+                :key="index"
                 @click="selectGoal(index + 1)"
                 :src="getGoalImage(index)"
                 class="goals-selector-tooltip-image"
-                :width="activeGoalType === 'signature-solutions' ? 240 : 80"
+                :width="activeGoalType.value === 'signature-solutions' ? 240 : 80"
 
               />
             </div>
@@ -113,8 +114,10 @@ export default {
 
     },
     emitTypeChange(type) {
-      this.$store.commit("goals/setActiveGoal", 1);
-      this.$emit("changeType", { activeGoal: this.activeGoal, type: type });
+      if(type !== this.activeGoalType) {
+        this.$store.commit("goals/setActiveGoal", 1);
+        this.$emit("changeType", { activeGoal: this.activeGoal, type: type });
+      }
     },
     resetGoalModel() {
       this.$nextTick(() => {
