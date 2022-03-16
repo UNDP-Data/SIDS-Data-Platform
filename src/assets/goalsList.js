@@ -154,7 +154,7 @@ export const goals = {
     {
       name: "Quality education",
       color: "#C5192D",
-      type:' sdg',
+      type:'sdg',
       title: "Goal 4 - Quality Education",
       content: "To ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.",
     },
@@ -301,7 +301,7 @@ export const goalTypes = [
     value: "samoa",
   },
   {
-    name: "SDGs",
+    name: "Sustainable Development Goals",
     value: "sdgs",
   },
   {

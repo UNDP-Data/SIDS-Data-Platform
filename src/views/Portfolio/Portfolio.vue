@@ -158,7 +158,7 @@
     <v-row>
       <v-col>
         <v-card flat>
-          <goals-selector class="d-flex d-lg-none" @changeType="transitionTo($event.type)" :activeGoalType="pages[activePage]" />
+          <goals-selector class="d-flex d-lg-none" @changeType="transitionTo($event.type)" :activeGoalType="activeGoalType" />
         </v-card>
       </v-col>
     </v-row>
@@ -328,6 +328,9 @@ export default {
       });
       return labels
     },
+    activeGoalType() {
+      return this.pages[this.activePage].value
+    }
   },
   methods: {
     setYear(year) {
@@ -380,7 +383,7 @@ export default {
       }
     },
     transitionTo(to) {
-      this.activePage = this.pages.findIndex((goal) => goal.value === this.goalsType);
+      this.activePage = this.pages.findIndex((goal) => goal.value === to);
       this.$router.push({path:`/portfolio/${to}`, query: this.$route.query})
     }
   },
