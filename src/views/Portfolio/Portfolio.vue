@@ -41,12 +41,10 @@
         <v-row class="d-none d-lg-flex" justify="center">
           <v-col cols="12">
               <v-tabs
-                class="tabs prtfolio-slider"
+                class="tabs portfolio-slider"
                 v-model="activePage"
               >
-                <v-tab @change="transitionTo('samoa')">SAMOA Pathway</v-tab>
-                <v-tab @change="transitionTo('sdgs')">Sustainable Development Goals</v-tab>
-                <v-tab @change="transitionTo('signature-solutions')">Signature Solutions</v-tab>
+                <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">{{page.name}}</v-tab>
               </v-tabs>
           </v-col>
         </v-row>
@@ -183,6 +181,7 @@ import { mapState } from 'vuex';
 import sidsdata from '@/mixins/SIDSData.mixin'
 
 import sidsList from '@/assets/sidsList'
+import {goalTypes} from '@/assets/goalsList'
 
 
 export default {
@@ -199,8 +198,8 @@ export default {
   mixins:[sidsdata],
   data: function () {
     return {
-      pages:['samoa', 'sdgs', 'signature-solutions'],
-      activePage:['samoa', 'sdgs', 'signature-solutions'].indexOf(this.goalsType),
+      pages:goalTypes,
+      activePage:goalTypes.findIndex((goal) => goal.value === this.goalsType),
       fundingCategoriesTypes:['All',"European Union", "Donor Countries", "Programme Countries", "UN Agencies", "UN Pooled Funds", "Vertical Funds", "Other"],
       years:[
         {
@@ -381,14 +380,14 @@ export default {
       }
     },
     transitionTo(to) {
-      this.activePage = this.pages.indexOf(to);
+      this.activePage = this.pages.findIndex((goal) => goal.value === this.goalsType);
       this.$router.push({path:`/portfolio/${to}`, query: this.$route.query})
     }
   },
 }
 </script>
 <style media="screen">
-  .prtfolio-slider {
+  .portfolio-slider {
     max-width: 792px;
     margin-left: auto;
     margin-top: -22px;
@@ -403,11 +402,6 @@ export default {
   .tabs {
     margin-left: auto;
     margin-right: auto;
-  }
-  .margin-wrap-left {
-    width: 200px;
-    max-width: 200px;
-    margin-left: auto;
   }
   .margin-wrap-right {
     max-width: 200px;
