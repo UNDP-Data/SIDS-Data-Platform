@@ -67,267 +67,14 @@
 </template>
 
 <script>
+import {goalTypes, goals} from '@/assets/goalsList'
 export default {
   name: "GoualsSelector",
   data() {
     return {
-      goalTypes: [
-        {
-          name: "SAMOA Pathway",
-          value: "samoa",
-        },
-        {
-          name: "SDGs",
-          value: "sdgs",
-        },
-        {
-          name: "Signature solutions",
-          value: "signature-solutions",
-        },
-      ],
+      goalTypes,
+      goalsList: goals,
       activeGoal: 1,
-      "signature-solutions": [
-        "Poverty",
-        "Governance",
-        "Resilience",
-        "Environment",
-        "Energy",
-        "Gender",
-      ],
-      sdgs: [
-        "No poverty",
-        "Zero hunger",
-        "Good health and well-being",
-        "Quality education",
-        "Gender equality",
-        "Clean water and sanitation",
-        "Affordable and clean energy",
-        "Decent work and economic growth",
-        "Industry, innovation and infrastructure",
-        "Reduced inequalities",
-        "Sustainable cities and communities",
-        "Responsible consumption and production",
-        "Climate action",
-        "Life below water",
-        "Life on Land",
-        "Peace, justice, and strong institutions",
-        "Partnerships for the goals",
-      ],
-      samoa: [
-        "Sustainable, inclusive and equitable economic growth",
-        "Climate Change",
-        "Sustainable Energy",
-        "Disaster Risk Reduction",
-        "Oceans and Seas",
-        "Food Security and Nutrition",
-        "Water and Sanitation",
-        "Sustainable Transportation",
-        "Sustainable Consumption and Production",
-        "Chemical and Waste management",
-        "Health and NCDs",
-        "Gender Equality",
-        "Social Development",
-        "Biodiversity",
-        "Invasive species",
-        "Means of Implementation",
-      ],
-      goalDescriptions: {
-        "No poverty": {
-          title: "Goal 1 - No Poverty",
-          content:
-            "To end poverty in all its forms, everywhere, through a powerful commitment to leave no one behind and to reach those fathest behind first.",
-        },
-        "Zero hunger": {
-          title: "Goal 2 - Zero Hunger",
-          content:
-            "To end hunger, achieve food security and improve nutrition and promote sustainable agriculture.",
-        },
-        "Good health and well-being": {
-          title: "Goal 3 - Good Health and Well-Being",
-          content:
-            "To ensure healthy lives and promote well-being for all at all ages.",
-        },
-        "Quality education": {
-          title: "Goal 4 - Quality Education",
-          content:
-            "To ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.",
-        },
-        "Gender equality": {
-          title: "Goal 5 - Gender Equality",
-          content:
-            "To achieve gender equality and empower all women and girls.",
-        },
-        "Clean water and sanitation": {
-          title: "Goal 6 - Clean Water and Sanitation",
-          content:
-            "To ensure availability and sustainable management of water and sanitation for all.",
-        },
-        "Affordable and clean energy": {
-          title: "Goal 7 - Affordable and Clean Energy",
-          content:
-            "To ensure access to affordable, reliable, sustainable and modern energy for all.",
-        },
-        "Decent work and economic growth": {
-          title: "Goal 8 - Decent Work and Economic Growth",
-          content:
-            "To foster sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all.",
-        },
-        "Industry, innovation and infrastructure": {
-          title: "Goal 9 - Industry, Innovation, and Infrastructure",
-          content:
-            "To build resilient infrastructure, promote inclusive and sustainable industrialization, and foster innovation",
-        },
-        "Reduced inequalities": {
-          title: "Goal 10 - Reduced Inequality",
-          content: "To reduce income inequality within and among countries.",
-        },
-        "Sustainable cities and communities": {
-          title: "Goal 11 - Sustainable cities and communities",
-          content:
-            "To make cities and human settlements inclusive, safe, resilient, and sustainable.",
-        },
-        "Responsible consumption and production": {
-          title: "Goal 12 - Responsible consumption and production",
-          content: "To ensure sustainable consumption and production patterns",
-        },
-        "Climate action": {
-          title: "Goal 13 - Climate Action",
-          content:
-            "To take urgent action to combat climate change and its impacts by regulating emissions and promoting developments in renewable energy",
-        },
-        "Life below water": {
-          title: "Goal 14 - Life Below Water",
-          content:
-            "To conserve and sustainably use the oceans, seas and marine resources for sustainable development.",
-        },
-        "Life on Land": {
-          title: "Goal 15 - Life on Land",
-          content:
-            "To protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss",
-        },
-        "Peace, justice, and strong institutions": {
-          title: "Goal 16 - Peace, justice and strong institutions",
-          content:
-            "To promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels.",
-        },
-        "Partnerships for the goals": {
-          title: "Goal 17 - Partnership for the goals",
-          content:
-            "To strengthen the means of implementation and revitalize the global partnership for sustainable development.",
-        },
-        "Sustainable, inclusive and equitable economic growth": {
-          title:
-            "1. Sustained and sustainable, inclusive and equitable economic growth with decent work for all",
-          content:
-            "To support SIDS to achieve sustained, inclusive and equitable growth with full and productive employment, social protection and the creation of decent work for all.",
-        },
-        "Climate Change": {
-          title: "2. Climate Change",
-          content:
-            "To help SIDS with climate adaptation, including persistent drought and extreme weather events, sea-level rise, coastal erosion and ocean acidification.",
-        },
-        "Sustainable Energy": {
-          title: "3. Sustainable Energy",
-          content:
-            "To address challenges in accessing sustainable energy in the SIDS including enhanced accessibility to modern energy services, energy efficiency and use of economically viable and environmentally sound technology",
-        },
-        "Disaster Risk Reduction": {
-          title: "4. Disaster risk reduction",
-          content:
-            "To address the critical need to build resilience, strengthen monitoring and prevention, reduce vulnerability, raise awareness and increase preparedness to respond to and recover from disasters in SIDS",
-        },
-        "Oceans and Seas": {
-          title: "5. Oceans and seas",
-          content:
-            "To support healthy, productive and resilient oceans and coasts are critical for, inter alia, poverty eradication, access to sufficient, safe and nutritious food, livelihoods, economic development, essential ecosystem services, and identity and culture in SIDS.",
-        },
-        "Food Security and Nutrition": {
-          title: "6. Food security and nutrition",
-          content:
-            "To support the right to have access to safe, sufficient and nutritious food, the eradication of hunger and the provision of livelihoods while conserving, protecting and ensuring the sustainable use of land, soil, forests, water, plants and animals, biodiversity and ecosystems.",
-        },
-        "Water and Sanitation": {
-          title: "7. Water and sanitation",
-          content:
-            "To support the efforts of small island developing States to develop capacities for the effective, inclusive and sustainable implementation of the integrated management of water resources and related ecosystems",
-        },
-        "Sustainable Transportation": {
-          title: "8. Sustainable transportation",
-          content:
-            "To support SIDS to gain access to environmentally sound, safe, affordable, sustainable and well-maintained transportation",
-        },
-        "Sustainable Consumption and Production": {
-          title: "9. Sustainable consumption and production",
-          content:
-            "To support SIDS on sustainable consumption and production patterns to advance sustainable consumption and production, with an emphasis on MSMEs, sustainable tourism, waste management, food and nutrition, lifestyles, and rural supply chains.",
-        },
-        "Chemical and Waste management": {
-          title:
-            "10. Management of chemicals and waste, including hazardous waste",
-          content:
-            "To support SIDS in sound management of chemicals throughout their life cycle and of waste is crucial for the protection of human health and the environment",
-        },
-        "Health and NCDs": {
-          title: "11. Health and non-communicable diseases",
-          content:
-            "To support prevention, treatment, care, and education in health as well as support the national actions of SIDS in addressing communicable and non-communicable diseases.",
-        },
-        "Gender Equality": {
-          title: "12. Gender Equality and women’s empowerment",
-          content:
-            "To support gender equality and women’s empowerment and the full realization of human rights for women and girls have a transformative and multiplier effect on sustainable development and is a driver of economic growth in SIDS.",
-        },
-        "Social Development": {
-          title: "13. Social Development",
-          content:
-            "To support efforts to enhance social protection and inclusion, to improve well-being and to guarantee opportunities for the most vulnerable and disadvantaged to have equal access to education, health, food, water and sanitation, and productive resources.",
-        },
-        Biodiversity: {
-          title: "14. Biodiversity",
-          content:
-            "To suport the conservation and sustainable use of biodiversity, as well as their access to and the fair and equitable sharing of benefits arising from the utilization of genetic resources, with the vision of living in harmony with nature",
-        },
-        "Invasive species": {
-          title: "15. Invasive alien species",
-          content:
-            "To help multisectoral collaboration in SIDS to address invasive alien species in order to protect biodiversity and livelihoods, preserve and maintain ocean resources and ecosystem resiliency, and enhance food security and adapt to climate change",
-        },
-        "Means of Implementation": {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-        Poverty: {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-        Governance: {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-        Resilience: {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-        Environment: {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-        Energy: {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-        Gender: {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-      },
     };
   },
   props: {
@@ -338,11 +85,8 @@ export default {
   },
   computed: {
     activeGoalTypes() {
-      return this[this.activeGoalType];
-    },
-    activeGoalIndex() {
-      return ["samoa", "sdgs", "signature-solutions"][this.activeGoalName];
-    },
+      return this.goalsList[this.activeGoalType];
+    }
   },
   methods: {
     getGoalImage(index) {
@@ -365,7 +109,6 @@ export default {
     selectGoal(goalNumber) {
       this.activeGoal = goalNumber;
       this.$store.commit("goals/setActiveGoal", this.activeGoal);
-      // this.$refs.slider && this.$refs.slider.items[goalNumber-1].toggle();
       this.$refs.slider.scrollOffset = 120 * (goalNumber - 1);
 
     },

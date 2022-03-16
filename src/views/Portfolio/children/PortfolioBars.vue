@@ -33,7 +33,7 @@
 import sidsdata from '@/mixins/SIDSData.mixin'
 import format from '@/mixins/format.mixin'
 import { mapState } from 'vuex';
-import goalsList from '@/assets/goalsList'
+import { goals } from '@/assets/goalsList'
 import * as d3 from 'd3';
 import PortfolioTooltip from './PortfolioSDGSTooltip'
 import tippy from 'tippy.js';
@@ -47,7 +47,6 @@ export default {
     return {
       id: this._uid,
       svg:null,
-      goals:[],
       svgContainer: null,
       barsMargin: { top: 60, right: 10, bottom: 0, left: 10 },
       svgWidth: 1074,
@@ -92,7 +91,7 @@ export default {
     },
     barsData() {
       if(this.goalsType === 'samoa') {
-        let barsData = goalsList.samoa.map(() => {
+        let barsData = goals.samoa.map(() => {
           return {
             budget: 0,
             projects: 0
@@ -101,7 +100,7 @@ export default {
         this.filteredProjects.map(project => {
           let projectSdgs = project.sdg.split(",");
           projectSdgs.map((projectSdg) => {
-            const sdgIndex = goalsList.sdgs.findIndex((sdg) => sdg.name === projectSdg);
+            const sdgIndex = goals.sdgs.findIndex((sdg) => sdg.name === projectSdg);
             if(sdgIndex !== -1) {
               let priorities = this.sdgToSamoa[sdgIndex+1];
               priorities.map((priority) => {
@@ -502,13 +501,13 @@ export default {
     }
   },
   mounted() {
-    this.goals = goalsList[this.goalsType];
+    this.goals = goals[this.goalsType];
     this.initBars();
     this.$nextTick(this.drawBars);
   },
   watch: {
     goalsType() {
-      this.goals = goalsList[this.goalsType];
+      this.goals = goals[this.goalsType];
     },
     barsData() {
       this.$nextTick(this.drawBars);
