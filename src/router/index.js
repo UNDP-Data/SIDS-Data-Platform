@@ -33,7 +33,7 @@ const routes = [
     path: '/development-indicators/:indicator?/:year?/:chartType?',
     link: '/development-indicators',
     name: 'Development Indicators',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
       let chartType = to.params.chartType || 'choro',
       indicator = to.params.indicator || 'region',
@@ -70,7 +70,7 @@ const routes = [
     path: '/vulnerability/:indicator?/:chartType?',
     link: '/vulnerability',
     name: 'Vulnerability',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
       console.log(vuetify)
       let chartType = to.params.chartType || 'spider'
