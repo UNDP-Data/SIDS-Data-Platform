@@ -49,9 +49,6 @@ export default {
 .indicators-list .v-list-item {
   min-height: 25px;
 }
-.overflow {
-  overflow: hidden;
-}
 .indicators-list .one-line_subtitle{
   white-space: normal;
 }
@@ -61,8 +58,5 @@ export default {
   margin-right: 8px !important;
   text-overflow: none;
   overflow:visible;
-}
-.p-0 {
-  padding: 0 !important;
 }
 </style>

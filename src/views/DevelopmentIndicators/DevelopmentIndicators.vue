@@ -322,16 +322,6 @@ export default {
 }
 </script>
 <style media="screen">
-  .transition {
-    transition: 500ms;
-  }
-  .left {
-    margin-left: 80px;
-  }
-  .no-left {
-    transition: 500ms;
-    margin-left: 0px;
-  }
   .nav-tabs-row {
     margin-top: -10px !important;;
   }
