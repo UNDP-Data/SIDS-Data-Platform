@@ -21,8 +21,6 @@ export function initTimeSeries() {
 //
 export function updateTimeChart({ dataset, optionSelected }) {
   let rootThis = this;
- // console.log({ dataset, optionSelected })
- // console.log(dataset)
   const timeSeriesContainer = d3.select("#timeSeriesContainer");
   const width = this.vizWidth;
   const height = 560/800 * this.vizWidth;
@@ -46,7 +44,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
 
   //data
   const timeData = dataFilter(dataset);
-//  console.log(timeData)
   if (timeData.length == 0) return;
   const allData = timeData.map((d) => d.data).flat();
 
@@ -577,7 +574,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
   function legend(g) {
     const fontSize = 10;
     const legendData = legendLayout(timeData, fontSize);
-    console.log(width)
     if(width >= 800) {
       g.selectAll("line.link")
         .data(legendData)
@@ -691,7 +687,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
 
   function dataFilter(dataset) {
     const { datasetOption, countryGroupOption } = optionSelected;
-    //console.log(dataset)
     const filtered0 = dataset[datasetOption]["data"];
 
     if (countryGroupOption == "All") {
@@ -784,7 +779,6 @@ export function parse(rawDataset) {
     rawDataset[key]["data"] = processData(rawDataset[key]["data"]);
 
   });
- // console.log(rawDataset)
   return rawDataset;
 
   function processData(rawData) {
