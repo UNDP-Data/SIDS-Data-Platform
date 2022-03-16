@@ -21,7 +21,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Portfolio.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       await store.dispatch('sids/getAllKeyData');
       await store.dispatch('sids/setSIDSData');
@@ -101,7 +101,7 @@ const routes = [
     path: '/country-profiles/:country?',
     link: '/country-profiles',
     name: 'Country Profiles',
-    component: () => import(/* webpackChunkName: "about" */ '../views/CountryProfiles.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/CountryProfiles/CountryProfiles.vue'),
     beforeEnter: async (to, from, next) => {
       await store.dispatch('profiles/getIndicatorsMetadata');
       if(!to.params.country) {

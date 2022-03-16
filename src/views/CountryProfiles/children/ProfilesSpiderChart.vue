@@ -30,7 +30,7 @@ import * as d3 from 'd3';
 import { mapState } from 'vuex';
 import tippy from 'tippy.js';
 import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
-import ProfilesSpiderChartTooltip from '@/components/ProfilesSpiderChartTooltip';
+import ProfilesSpiderChartTooltip from './ProfilesSpiderChartTooltip';
 import format from '@/mixins/format.mixin'
 
 export default {
@@ -99,26 +99,6 @@ export default {
       profiles: state => state.profiles.profiles,
       indicatorsMetadata: state => state.profiles.indicatorsMetadata
     }),
-    // graphData() {
-    //   return this.activeCountries.map(country => {
-    //     return {
-    //       name:country.id,
-    //       axes: country[this.pillarName]
-    //     }
-    //   })
-    // },
-    // graphRanks() {
-    //   let rankName = `${this.pillarName}Rank`;
-    //   if(this.pillarName === 'MVI') {
-    //     rankName = 'MVI'
-    //   }
-    //   return this.activeCountries.map(country => {
-    //     return {
-    //       name:country,
-    //       axes: this.allKeyData[country][rankName]
-    //     }
-    //   })
-    // },
     fullGraphOptions(){
       return Object.assign({} ,this.defaultGraphOptions, this.graphOptions);
     },

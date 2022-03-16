@@ -160,8 +160,7 @@
     <v-row>
       <v-col>
         <v-card flat>
-          <goals-selector class="d-flex d-lg-none" @changeType="updateTypeData" :activeGoalType="pages[activePage]" />
-          <router-view class="d-block d-lg-none"></router-view>
+          <goals-selector class="d-flex d-lg-none" @changeType="transitionTo($event.type)" :activeGoalType="pages[activePage]" />
         </v-card>
       </v-col>
     </v-row>
@@ -171,14 +170,19 @@
 <script>
 import * as d3 from 'd3';
 // @ is an alias to /src
-import PortfolioMap from '@/components/PortfolioMap';
-import PortfolioBars from '@/components/PortfolioBars';
-import PortfolioExport from '@/components/PortfolioExport';
-import PortfolioPieChart from '@/components/PortfolioPieChart';
+import PortfolioMap from './children/PortfolioMap';
+import PortfolioBars from './children/PortfolioBars';
+import PortfolioExport from './children/PortfolioExport';
+import PortfolioPieChart from './children/PortfolioPieChart';
+import GoalsSelector from './children/GoalsSelector';
+
+
 import InfoButton from '@/components/InfoButton.vue'
-import GoalsSelector from '@/components/GoalsSelector';
+
 import { mapState } from 'vuex';
 import sidsdata from '@/mixins/SIDSData.mixin'
+
+import sidsList from '@/assets/sidsList'
 
 
 export default {
@@ -195,8 +199,6 @@ export default {
   mixins:[sidsdata],
   data: function () {
     return {
-      goalType:'Sustainable Development Goals',
-      selectedGoal: 1,
       pages:['samoa', 'sdgs', 'signature-solutions'],
       activePage:['samoa', 'sdgs', 'signature-solutions'].indexOf(this.goalsType),
       fundingCategoriesTypes:['All',"European Union", "Donor Countries", "Programme Countries", "UN Agencies", "UN Pooled Funds", "Vertical Funds", "Other"],
@@ -242,12 +244,7 @@ export default {
         {value: "Pacific", text:'Pacific'},
         {value: "All", text:'All SIDS'},
       ],
-      sidsList: ["Antigua and Barbuda", "Aruba",
-          "Bahrain", "Barbados", "Belize", "Cape Verde", "Comoros", "Cook Islands", "Cuba", "Dominica", "Dominican Republic",
-          "Grenada", "Guinea-Bissau", "Guyana", "Haiti", "Jamaica", "Kiribati", "Maldives", "Marshall Islands",
-          "Mauritius", "Micronesia", "Nauru", "Republic of Palau", "Papua New Guinea", "Samoa", "Sao Tome and Principe", "Seychelles",
-          "Solomon Islands", "St. Kitts and Nevis", "St. Vincent and the Grenadines", "Saint Lucia", "Suriname", "Timor-Leste",
-          "Trinidad and Tobago", "Tokelau", "Niue", "Tonga", "Puerto Rico", "Palau", "Tuvalu", "Vanuatu", "Cuba", "Bahamas", "Fiji", "Bermuda"],
+      sidsList,
       regions: ["Caribbean", "AIS", "Pacific"],
       regionColors: d3.scaleOrdinal()
         .domain(["Caribbean", "AIS", "Pacific"])
@@ -348,10 +345,10 @@ export default {
     },
     checkDonorsCategory(donor) {
       if(this.fundingCategory === 'Programme Countries') {
-        return donor.category === 'Government' && this.sidsList.some(country =>  country === donor.subCategory);
+        return donor.category === 'Government' && this.sidsList.some(country =>  country.name === donor.subCategory);
       }
       else if(this.fundingCategory === 'Donor Countries') {
-        return donor.category === 'Government' && this.sidsList.every(country =>  country != donor.subCategory);
+        return donor.category === 'Government' && this.sidsList.every(country =>  country.name != donor.subCategory);
       }
       else {
         return donor.category === this.fundingCategory;
@@ -384,12 +381,8 @@ export default {
       }
     },
     transitionTo(to) {
-      this.activePage = ['samoa', 'sdgs', 'signature-solutions'].indexOf(to);
+      this.activePage = this.pages.indexOf(to);
       this.$router.push({path:`/portfolio/${to}`, query: this.$route.query})
-    },
-    updateTypeData(e) {
-      this.activePage = this.pages.indexOf(e.type);
-      this.$router.push({path:`/portfolio/${e.type}`, query: this.$route.query})
     }
   },
 }

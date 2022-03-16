@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import PortfolioPieChartTooltip from '@/components/PortfolioPieChartTooltip';
+import PortfolioPieChartTooltip from './PortfolioPieChartTooltip';
 import * as d3 from 'd3';
 import format from '@/mixins/format.mixin'
 import tippy from 'tippy.js';

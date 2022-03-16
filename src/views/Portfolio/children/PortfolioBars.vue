@@ -35,7 +35,7 @@ import format from '@/mixins/format.mixin'
 import { mapState } from 'vuex';
 import goalsList from '@/assets/goalsList'
 import * as d3 from 'd3';
-import PortfolioTooltip from '@/components/PortfolioSDGSTooltip'
+import PortfolioTooltip from './PortfolioSDGSTooltip'
 import tippy from 'tippy.js';
 
 export default {
