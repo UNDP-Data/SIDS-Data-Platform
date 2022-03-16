@@ -72,7 +72,6 @@ const routes = [
     name: 'Vulnerability',
     component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
-      console.log(vuetify)
       let chartType = to.params.chartType || 'spider'
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'
