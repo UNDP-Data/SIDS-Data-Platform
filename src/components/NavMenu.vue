@@ -58,8 +58,10 @@
 
 <script>
 
+import sizeMixin from '@/mixins/size.mixin'
 export default {
   name: 'NavMenu',
+  mixins:[sizeMixin],
   data(){
     return {
       offset: 0,
@@ -67,9 +69,6 @@ export default {
     }
   },
   computed: {
-    isMobile() {
-      return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm'
-    },
     routes () {
       return this.$router.options.routes.filter( route => {
         if(this.isMobile) {
