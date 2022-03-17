@@ -302,12 +302,6 @@ export default {
     page() {
       this.sorting = 0
     },
-    // indicator() {
-      // let activeIndicator = this.allindicators.find(indicator => indicator['indicatorCode'] === this.indicator)
-      // if(activeIndicator) {
-      //   this.setActiveindicatorFromFullList(activeIndicator)
-      // }
-    // }
   },
   async beforeRouteUpdate(to, from, next) {
     try {

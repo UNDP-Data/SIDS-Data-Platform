@@ -564,9 +564,6 @@ export default {
   padding-bottom: 0.5em;
   word-break: break-word;
 }
-.active-dimension{
-  margin-right: auto;
-}
 .dimensions-select{
   max-width: 60%;
   margin-right: 0;
