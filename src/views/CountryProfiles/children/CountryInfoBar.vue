@@ -189,12 +189,6 @@ export default {
 .overflow {
   overflow: hidden;
 }
-.one-line_header {
-  flex: 0 1 auto !important;
-  margin-right: 8px !important;
-  text-overflow: none;
-  overflow: visible;
-}
 .info-bar_header {
   padding-top: 10px;
 }

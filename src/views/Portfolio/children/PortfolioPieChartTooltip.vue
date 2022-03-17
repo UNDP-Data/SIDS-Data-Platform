@@ -52,11 +52,4 @@ export default {
 .indicators-list .one-line_subtitle{
   white-space: normal;
 }
-.one-line_header {
-  align-self: auto;
-  flex: 0 1 auto !important;
-  margin-right: 8px !important;
-  text-overflow: none;
-  overflow:visible;
-}
 </style>
