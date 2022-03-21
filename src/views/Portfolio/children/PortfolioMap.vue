@@ -141,7 +141,6 @@ export default {
     regionChange(clickIndex) {
       this.$emit('updateRegion', this.mapClicks[this.region][clickIndex])
       this.updateBackground(clickIndex)
-      this.$router.push({query: Object.assign({}, this.$route.query, {region : this.mapClicks[this.region][clickIndex]})})
     },
     updateBackground(clickIndex) {
       let region = this.mapClicks[this.region][clickIndex];

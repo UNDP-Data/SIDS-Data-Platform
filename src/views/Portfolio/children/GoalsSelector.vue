@@ -1,6 +1,5 @@
 <template>
   <v-row class="goals-selector">
-    {{activeGoalType}}
     <v-col cols="5">
       <v-list dense>
         <v-list-item-group

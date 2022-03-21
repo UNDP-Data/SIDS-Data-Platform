@@ -7,6 +7,7 @@
   >
     <root-header class="d-none-print" />
     <v-row no-gutters id="content">
+      <root-loader v-if="loading"/>
       <v-col class="menu-col d-none-print" cols="0" md="2">
         <nav-menu />
       </v-col>
@@ -20,15 +21,24 @@
 <script>
 import RootHeader from "@/components/RootHeader.vue";
 import RootFooter from "@/components/RootFooter.vue";
+import RootLoader from "@/components/RootLoader.vue";
 import NavMenu from "@/components/NavMenu.vue";
+
+import { mapState } from 'vuex';
 
 export default {
   name: "Root",
   components: {
     RootHeader,
     RootFooter,
+    RootLoader,
     NavMenu,
   },
+  computed: {
+    ...mapState({
+      loading: state => state.loader.loading
+    }),
+  }
 };
 </script>
 <style>
@@ -50,6 +60,7 @@ html {
 #content {
   min-height: calc(100vh - 100px);
   overflow-x: hidden;
+  position: relative;
 }
 .root-router {
   padding: 0 2em 4em;

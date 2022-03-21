@@ -1,6 +1,9 @@
 <template>
   <div class="">
-    <div class="pie-chart" :id="chartName + postfix">
+    <p :style="{visibility: noData ? 'visible' : 'hidden'}">
+      No data for selected filters
+    </p>
+    <div :style="{visibility: !noData ? 'visible' : 'hidden'}" class="pie-chart" :id="chartName + postfix">
     </div>
     <div class="d-none" v-for="(axis, index) in data" :id="chartName + postfix +'tooltip'+ index" :key="index">
       <portfolio-pieChart-tooltip :header="axis.category" :budget="axis.value" :finance="nFormatter(axis.value)" :percetage="data"/>
@@ -49,6 +52,9 @@ export default {
     }
   },
   computed: {
+    noData() {
+      return this.data.every(item => item.value === 0)
+    }
   },
   methods: {
     initChart() {
