@@ -1,9 +1,9 @@
 <template>
   <div class="">
-    <p v-if="noData">
+    <p :style="{visibility: noData ? 'visible' : 'hidden'}">
       No data for selected filters
     </p>
-    <div v-else class="pie-chart" :id="chartName + postfix">
+    <div :style="{visibility: !noData ? 'visible' : 'hidden'}" class="pie-chart" :id="chartName + postfix">
     </div>
     <div class="d-none" v-for="(axis, index) in data" :id="chartName + postfix +'tooltip'+ index" :key="index">
       <portfolio-pieChart-tooltip :header="axis.category" :budget="axis.value" :finance="nFormatter(axis.value)" :percetage="data"/>
