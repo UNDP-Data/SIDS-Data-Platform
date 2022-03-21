@@ -25,3 +25,10 @@
 .v-text-field--outlined.v-input--dense .v-label {
     top: 8px;
 }
+.one-line_header {
+  align-self: auto;
+  flex: 0 1 auto !important;
+  margin-right: 8px !important;
+  text-overflow: none;
+  overflow:visible;
+}

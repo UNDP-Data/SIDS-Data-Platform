@@ -2,23 +2,23 @@
   <v-dialog
     v-model="dialog"
     transition="dialog-bottom-transition"
-    :fullscreen="isFullscreen"
+    :fullscreen="isMobile"
     width="500"
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         color="normal"
-        :small="!isSmallScreen"
-        :block="!isSmallScreen"
+        :small="isDesktop"
+        :block="isDesktop"
         :fab="fab"
         :outlined="!fab"
         rounded
-        :icon="isSmallScreen && !fab"
+        :icon="!isDesktop && !fab"
         v-bind="attrs"
         v-on="on"
         @click='toggleTooltip'
       >
-        <span v-if="!isSmallScreen">About this</span>
+        <span v-if="isDesktop">About this</span>
         <v-icon v-else>mdi-information-variant</v-icon>
       </v-btn>
     </template>
@@ -42,10 +42,12 @@
 </template>
 
 <script>
+import sizeMixin from '@/mixins/size.mixin'
 
 import { mapState } from 'vuex';
 export default {
   name: 'InfoButton',
+  mixins: [sizeMixin],
   data() {
     return {
       dialog: false
@@ -56,12 +58,6 @@ export default {
     ...mapState({
       textContent: (state) => state.texts.textContent
     }),
-    isFullscreen() {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm
-    },
-    isSmallScreen() {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm || this.$vuetify.breakpoint.md
-    }
   },
   methods: {
     toggleTooltip() {

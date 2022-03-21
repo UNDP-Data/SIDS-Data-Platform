@@ -141,7 +141,6 @@ export default {
     regionChange(clickIndex) {
       this.$emit('updateRegion', this.mapClicks[this.region][clickIndex])
       this.updateBackground(clickIndex)
-      this.$router.push({query: Object.assign({}, this.$route.query, {region : this.mapClicks[this.region][clickIndex]})})
     },
     updateBackground(clickIndex) {
       let region = this.mapClicks[this.region][clickIndex];
@@ -191,9 +190,6 @@ export default {
 }
 .map_zones {
   height: 100%
-}
-.prtfolio-header {
-  text-align: center;
 }
 .custom-chip_header {
   justify-content: center;
@@ -280,9 +276,6 @@ export default {
   }
 }
 @media all and (max-width:600px) {
-  .prtfolio-header {
-    padding: 0;
-  }
   .portfolio-chip {
     min-width: 30%;
     margin: 5px 5% !important

@@ -53,7 +53,6 @@ export default {
           return 0;
         });
         commit("setDatasetsList", datasetsList);
-        console.log(datasetsList)
       }
     },
     async getProfileData({ state, commit }) {

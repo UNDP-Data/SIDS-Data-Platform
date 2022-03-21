@@ -12,7 +12,6 @@
        </v-icon>
     </button>
     <v-navigation-drawer
-
       class="navigation-menu-drawer d-md-none"
       v-model="drawer"
       fixed
@@ -33,10 +32,13 @@
     </v-navigation-drawer>
     <v-list
       class="main-menu-desktop main-menu d-none d-md-block"
+      ref="stickyMenuContainer"
       dense>
-        <div class="border-wrapper">
+        <div
+          class="border-wrapper"
+          ref="stickyMenu"
+          :class="{ 'border-wrapper-fixed': offset }">
           <v-list-item
-
             class="menu-item"
             v-for="route in routes"
             :key="route.link"
@@ -56,17 +58,18 @@
 
 <script>
 
+import sizeMixin from '@/mixins/size.mixin';
+
 export default {
   name: 'NavMenu',
+  mixins:[sizeMixin],
   data(){
     return {
+      offset: 0,
       drawer: false
     }
   },
   computed: {
-    isMobile() {
-      return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm'
-    },
     routes () {
       return this.$router.options.routes.filter( route => {
         if(this.isMobile) {
@@ -75,6 +78,22 @@ export default {
         return route.path!=='*'
       } )
     }
+  },
+  methods: {
+    handleScroll () {
+      let containerOffset = this.$refs.stickyMenuContainer.$el.getBoundingClientRect().top;
+      if(containerOffset < 0 ) {
+        this.offset = true;
+      } else {
+        this.offset = false;
+      }
+    }
+  },
+  created () {
+    window.addEventListener('scroll', this.handleScroll);
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.handleScroll);
   },
   props: {
     msg: String
@@ -164,9 +183,14 @@ export default {
   padding-bottom: 10px;
   padding-top: 10px;
   border-right: 1px solid rgba(10, 11, 49, 0.2) !important;
+  /* transition: top 300ms linear */
+}
+.border-wrapper-fixed {
+  position: fixed;
+  top:20vh;
+  max-width: 16.6666666667%;
 }
 .menu-item.v-list-item--active .menu-item_text {
   color: #E21549;
-
 }
 </style>

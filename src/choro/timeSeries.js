@@ -21,13 +21,15 @@ export function initTimeSeries() {
 //
 export function updateTimeChart({ dataset, optionSelected }) {
   let rootThis = this;
- // console.log({ dataset, optionSelected })
- // console.log(dataset)
   const timeSeriesContainer = d3.select("#timeSeriesContainer");
-  const width = 900;
-  const height = 560;
-  const margin = { top: 20, right: 220, bottom: 50, left: 50 };
-
+  const width = this.vizWidth;
+  const height = 560/800 * this.vizWidth;
+    let margin
+  if(this.vizWidth < 800) {
+    margin = { top: 20, right: 15, bottom: 50, left: 40 };
+  } else {
+    margin = { top: 20, right: 220, bottom: 50, left: 50 };
+  }
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -42,7 +44,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
 
   //data
   const timeData = dataFilter(dataset);
-//  console.log(timeData)
   if (timeData.length == 0) return;
   const allData = timeData.map((d) => d.data).flat();
 
@@ -79,6 +80,17 @@ export function updateTimeChart({ dataset, optionSelected }) {
     )
     .call(xAxis);
 
+    gXAxis
+      .selectAll("g.tick")
+      .selectAll("text")
+      .attr("opacity", 1)
+      .attr('transform', () => {
+        if(width < 800) {
+          return 'translate(-7,5) rotate(-45)'
+        } else {
+          return 'rotate(0)'
+        }
+      });
   timeSvg
     .selectAll("g.y-axis")
     .data([0])
@@ -102,8 +114,13 @@ export function updateTimeChart({ dataset, optionSelected }) {
     .join("g")
     .attr("class", "legend")
     .attr(
-      "transform",
-      `translate(${margin.left + innerWidth},${margin.top})`
+      "transform", () => {
+        if(width < 800) {
+          return `translate(${margin.left},${height})`
+        } else {
+          return `translate(${margin.left + innerWidth},${margin.top})`
+        }
+      }
     )
     .call(legend);
 
@@ -247,11 +264,19 @@ export function updateTimeChart({ dataset, optionSelected }) {
     gLegend
       .selectAll("text")
       .attr("opacity", 0.1)
-      .attr("font-size",11)
       .attr("font-weight","regular")
       .filter((d) => d.country == dd.country)
       .attr("opacity", 1)
       .attr("font-size",14)
+      .attr('transform', (d,i,c)=> {
+        if(width < 800) {
+          if(c[i].x.baseVal[0].value + c[i].getComputedTextLength() + 120 > width) {
+            return `translate(-${c[i].getComputedTextLength()/2},0)`
+          }
+        } else {
+          return null
+        }
+      })
       .attr("font-weight","bold");
 
   }
@@ -271,7 +296,13 @@ export function updateTimeChart({ dataset, optionSelected }) {
     //
     gLegend.selectAll("line").attr("opacity", 1);
 
-    gLegend.selectAll("text").attr("opacity", 1);
+    gLegend.selectAll("text").attr("opacity", 1)
+    .attr("font-size",10)
+    .attr("font-weight","regular")
+
+    .attr('transform', ()=> {
+      return null
+    });
   }
 
   function hoverMark(g) {
@@ -543,28 +574,32 @@ export function updateTimeChart({ dataset, optionSelected }) {
   function legend(g) {
     const fontSize = 10;
     const legendData = legendLayout(timeData, fontSize);
+    if(width >= 800) {
+      g.selectAll("line.link")
+        .data(legendData)
+        .join("line")
+        .attr("class", "link")
+        .attr("stroke", (d) => rootThis.timeColor(d.country))
+        .attr("stroke-width", 1)
+        .attr("x1", 3)
+        .attr("x2", 30)
+        .attr("y1", (d) => d.y0)
+        .attr("y2", (d) => d.y);
 
-    g.selectAll("line.link")
-      .data(legendData)
-      .join("line")
-      .attr("class", "link")
-      .attr("stroke", (d) => rootThis.timeColor(d.country))
-      .attr("stroke-width", 1)
-      .attr("x1", 3)
-      .attr("x2", 30)
-      .attr("y1", (d) => d.y0)
-      .attr("y2", (d) => d.y);
-
-    g.selectAll("line.h")
-      .data(legendData)
-      .join("line")
-      .attr("class", "h")
-      .attr("stroke", (d) => rootThis.timeColor(d.country))
-      .attr("stroke-width", 1)
-      .attr("x1", 30)
-      .attr("x2", 40)
-      .attr("y1", (d) => d.y)
-      .attr("y2", (d) => d.y);
+      g.selectAll("line.h")
+        .data(legendData)
+        .join("line")
+        .attr("class", "h")
+        .attr("stroke", (d) => rootThis.timeColor(d.country))
+        .attr("stroke-width", 1)
+        .attr("x1", 30)
+        .attr("x2", 40)
+        .attr("y1", (d) => d.y)
+        .attr("y2", (d) => d.y);
+    } else {
+        g.selectAll("line.link").remove()
+        g.selectAll("line.h").remove()
+    }
 
     g.selectAll("text")
       .data(legendData)
@@ -575,10 +610,55 @@ export function updateTimeChart({ dataset, optionSelected }) {
       .attr("fill", (d) => rootThis.timeColor(d.country))
       //this is the font size for the country names in the legend
       .attr("font-size", 10)
-      .attr("x", 43)
-      .attr("y", (d) => d.y)
+      .attr("x", () => {
+        if(width < 800) {
+          return 0;
+        }
+        return 49
+      })
+      .attr("y", (d) => {
+        if(width < 800) {
+          return 0;
+        }
+        return d.y
+
+      })
       .attr("cursor", "pointer")
       .text((d) => countryNames[d.country]);
+
+      g.selectAll("text")
+      .attr("x", (d,i,k) => {
+        if(width < 800) {
+          let res = Array.from(k).reduce((padding, node, index) => {
+            if(index >= i) {
+              return padding
+            }
+            if(padding + node.getComputedTextLength() + 10 > width - 120) {
+              return 0;
+            } else {
+              return padding + node.getComputedTextLength() + 10
+            }
+          }, 0);
+          return res;
+        }
+        return 49
+      })
+      .attr("y", (d,i,k) => {
+        if(width < 800) {
+          let res = Array.from(k).reduce(([w,h], node, index) => {
+            if(index >= i) {
+              return [w,h]
+            }
+            if(w + node.getComputedTextLength() + 10 < width - 120) {
+              return [w + node.getComputedTextLength() + 10, h];
+            } else {
+              return [0,(h + 16)]
+            }
+          }, [0,0]);
+          return res[1];
+        }
+        return d.y
+      })
 
     g.selectAll("text")
       .on("mouseenter", function (dd) {
@@ -607,7 +687,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
 
   function dataFilter(dataset) {
     const { datasetOption, countryGroupOption } = optionSelected;
-    //console.log(dataset)
     const filtered0 = dataset[datasetOption]["data"];
 
     if (countryGroupOption == "All") {
@@ -700,7 +779,6 @@ export function parse(rawDataset) {
     rawDataset[key]["data"] = processData(rawDataset[key]["data"]);
 
   });
- // console.log(rawDataset)
   return rawDataset;
 
   function processData(rawData) {

@@ -12,23 +12,20 @@ export function processVizElementAttributes() {
   let vizElementAttributes = {};
   let rootThis = this;
   ////problem code, doesn't work in init so moved here instead.
-  if (this.bboxInit == 0) {
-    d3.select(this.sidsMaps)
-      .selectAll("path")
-      .each(function () {
-        let bbox = getBoundingBox(d3.select(this));
-        rootThis.bboxDict[this.id] = bbox;
-      });
-
-    [...document.querySelectorAll(".choroText")].forEach((item) => {
-        let textBBox = item.getBBox();
-        rootThis.textBBoxDict[item.parentNode.id] = textBBox;
+  d3.select(this.sidsMaps)
+    .selectAll("path")
+    .each(function () {
+      let bbox = getBoundingBox(d3.select(this));
+      rootThis.bboxDict[this.id] = bbox;
     });
-    this.bboxInit = 1;
-  }
+
+  [...document.querySelectorAll(".choroText")].forEach((item) => {
+      let textBBox = item.getBBox();
+      rootThis.textBBoxDict[item.parentNode.id] = textBBox;
+  });
+  this.bboxInit = 1;
   ////////////////////
   let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
-  //console.log(textBBoxDict)
   for (let country in this.bboxDict) {
     //rename to iso since the svg uses the old codes
     let bBox = this.bboxDict[country],
@@ -77,7 +74,6 @@ export function circleTransform(country, bBox, indicatorDataObj, indiSelections)
   if (this.indiSelections["viz"] == "choro") {
     return { x: bBox[4], y: bBox[5], r: 0 };
   } else if (this.indiSelections["viz"] == "global") {
-    //  console.log(VT,bBox,country)
     let r;
     if (this.mapLocations[country]["countryWidth"] == "no") {
       r = 2;
@@ -108,7 +104,6 @@ export function circleTransform(country, bBox, indicatorDataObj, indiSelections)
 }
 
 export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
-  // console.log(indicatorData)
   let val = indicatorDataObj[country],
   totalHeight = 500,
   totalWidth = this.vizWidth < 800 ? this.vizWidth - 40 : 440,
@@ -125,7 +120,6 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
 
         let sortedData = sort_object(filtered),
         indicatorValues = Object.values(filtered);
-        //           console.log(sortedData)
         let rank,
         totalVals;
         if (this.indiSelections["sortby"] == "rank") {
@@ -162,8 +156,6 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           maxx+=1;
         }
         let normValue = (val - minn) / (maxx - minn);
-        //console.log(country,normValue,rank,minn)
-        //console.log(totalHeight,totalVals,rank)
         let x = this.vizWidth < 800 ? 0 : 160;
         let y = this.vizWidth < 800 ?
         (totalHeight / totalVals) * rank + topMargin + 20 * rank :
@@ -173,15 +165,11 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           y,
           width: normValue * totalWidth,
           height: totalHeight / totalVals - margin,
-        }; //,"color":color};
-        // console.log(country,output)
+        };
       } catch (error) {
-        console.log(error);
-        //console.log(country,"no1");
         output = { x: 160, y: 300, width: 0, height: 10 };
       }
     } else {
-      //console.log(val)
       output = { x: 160, y: 300, width: 0, height: 0 };
     }
 
@@ -216,17 +204,12 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
       output = columnBase;
     } else {
       try {
-        //console.log(totalVals)
-
         let maxx = Math.max(...indicatorValues),
         minn = 0; //Math.min(...indicatorValues)
         if(maxx === minn) {
           maxx+=1;
         }
         let normValue = (val - minn) / (maxx - minn);
-        //console.log(country,normValue,rank,minn)
-
-          //console.log(val, typeof val)
 
           output = {
             y: totalHeight * 0.85 - (normValue * totalHeight) / 2.5,
@@ -242,8 +225,6 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
         //     output= columnBase
         // }
       } catch (error) {
-        //console.log(error)
-        //console.log(country,"no1");
         output = columnBase;
       }
     }
@@ -295,7 +276,6 @@ export function textTransform(
     return "scale(1,1) translate(0,0)";
   } else if (this.indiSelections["viz"] == "bars") {
     let RTo = this.rectTransform(country, bBox, indicatorDataObj),
-    // console.log(RTo,totalVals,textY)
     output;
     if(this.vizWidth < 800 && this.vizMode === 'index') {
       output =
@@ -322,7 +302,6 @@ export function textTransform(
 
     return output;
   } else if (this.indiSelections["viz"] == "global") {
-    //console.log(country)
     try {
       //VT = vizTransform(country, bBox, indicatorData,indiSelections);
       return (
@@ -334,8 +313,6 @@ export function textTransform(
       );
     } catch (error) {
       //shouldn't have any of these happening?
-      //return "translate(" + (-textX) + "," + (-textY) + ")";
-      console.log(country);
       return ""; //scale(0.001,0.001)"
     }
   } else if (this.indiSelections["viz"] == "spider") {
@@ -452,7 +429,6 @@ export function labelTransform(country, bBox, indicatorDataObj) {
 }
 //
 export function vizTransform(country, bBox, indicatorDataObj) {
-  //console.log(country, bBox, indiSelections["viz"], indicatorData, indicatorData2)
   let cx = bBox[4],
   cy = bBox[5],
   scale,
@@ -482,7 +458,6 @@ export function vizTransform(country, bBox, indicatorDataObj) {
         scale = (this.mapLocations[country]["countryWidth"] / bBox[1]) * 2;
       }
     } catch (error) {
-      // console.log(error)
       valX = 0;
       valY = 0;
       scale = 0.3;
