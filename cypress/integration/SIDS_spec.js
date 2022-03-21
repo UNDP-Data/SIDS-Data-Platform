@@ -7,6 +7,7 @@ describe('SIDS pages', function() {
   it('Loads the SIDS app', function() {
     cy.wait(60000)
     cy.get('.sdg-goal').should('exist')
+    cy.wait(30000)
     cy.percySnapshot('prtfolio')
   })
 
@@ -15,6 +16,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/about');
     cy.wait(60000)
     cy.get('.v-expansion-panel').should('exist')
+    cy.wait(30000)
     // Take a snapshot for visual diffing
     cy.percySnapshot('about');
   });
@@ -24,6 +26,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/development-indicators');
     cy.wait(60000)
     cy.get('.choroMap').should('exist')
+    cy.wait(30000)
     // Take a snapshot for visual diffing
     cy.percySnapshot('indicators');
   });
@@ -33,6 +36,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/development-indicators/hdr-185106/recentValue/bars');
     cy.wait(60000)
     cy.get('.choroRect').should('exist')
+    cy.wait(30000)
     // Take a snapshot for visual diffing
     cy.percySnapshot('bars');
   });
@@ -42,6 +46,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/vulnerability');
     cy.wait(60000)
     cy.get('.radarArea').should('exist')
+    cy.wait(30000)
     // Take a snapshot for visual diffing
     cy.percySnapshot('mvi');
   });
@@ -51,6 +56,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/country-profiles');
     cy.wait(60000)
     cy.get('.desc-spiders').should('exist')
+    cy.wait(30000)
     // Take a snapshot for visual diffing
     cy.percySnapshot('profiles');
   });
@@ -60,6 +66,7 @@ describe('SIDS pages', function() {
     cy.visit('http://localhost:8080/geospatial-data');
     cy.wait(60000)
     cy.get('.mapboxgl-canvas').should('exist')
+    cy.wait(30000)
     // Take a snapshot for visual diffing
     cy.percySnapshot('gis');
   });
