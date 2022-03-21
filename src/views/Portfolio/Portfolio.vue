@@ -32,7 +32,7 @@
         </portfolio-map>
       </v-col>
     </v-row>
-    <v-row class="d-none d-lg-block mb-3 mt-negative">
+    <v-row  v-if="isDesktop" class="d-block mb-3 mt-negative">
       <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
     </v-row>
     <v-row class="flex-lg-nowrap" justify="center">
@@ -155,10 +155,13 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="!isDesktop">
       <v-col>
         <v-card flat>
           <goals-selector class="d-flex d-lg-none" @changeType="transitionTo($event.type)" :activeGoalType="activeGoalType" />
+          <v-row>
+            <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -180,6 +183,7 @@ import InfoButton from '@/components/InfoButton.vue'
 import { mapState } from 'vuex';
 import sidsdata from '@/mixins/SIDSData.mixin'
 import store from '@/store'
+import sizeMixin from '@/mixins/size.mixin'
 
 import sidsList from '@/assets/sidsList'
 import {goalTypes} from '@/assets/goalsList'
@@ -196,7 +200,7 @@ export default {
     PortfolioBars
   },
   props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
-  mixins:[sidsdata],
+  mixins:[sidsdata, sizeMixin],
   data: function () {
     return {
       pages:goalTypes,
