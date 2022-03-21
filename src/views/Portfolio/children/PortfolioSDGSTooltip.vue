@@ -52,7 +52,7 @@ export default {
         { text: 'Project title', value: 'title',
         sortable: false, },
       ];
-      if(this.year === 'all') {
+      if(!this.$route.query.year || this.$route.query.year === 'all') {
         headers.push({
           text: 'Year', value: 'year',
           sortable: false

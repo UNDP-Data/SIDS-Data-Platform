@@ -26,6 +26,13 @@ const routes = [
       await store.dispatch('sids/getAllKeyData');
       await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
+      await store.dispatch('sids/generatePortfolioData', {
+        region: to.query.region || 'All',
+        year: to.query.year || 'all',
+        category: decodeURIComponent(to.query.fundingCategory || 'All') ,
+        source: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
+      });
+
       next()
     }
   },
