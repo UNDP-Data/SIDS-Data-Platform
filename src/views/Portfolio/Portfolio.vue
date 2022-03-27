@@ -8,7 +8,7 @@
           :projects="portfolioData"
         >
           <template v-slot:header>
-            <v-row>
+            <v-row class="d-none d-lg-flex">
               <v-col class="offset-lg-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2" cols="8" sm="8" md='10' lg='8' xl="10">
                 <h2 class="page-header mt-md-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
               </v-col>

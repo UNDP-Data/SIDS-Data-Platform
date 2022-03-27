@@ -10,20 +10,26 @@
         color="normal"
         :small="isDesktop"
         :block="isDesktop"
-        :fab="fab"
-        :outlined="!fab"
+        :outlined="isDesktop"
         rounded
-        :icon="!isDesktop && !fab"
+        :icon="!isDesktop"
         v-bind="attrs"
         v-on="on"
         @click='toggleTooltip'
       >
         <span v-if="isDesktop">About this</span>
-        <v-icon v-else>mdi-information-variant</v-icon>
+        <v-icon
+          v-else
+          v-bind="attrs"
+          v-on="on"
+          :large="true"
+        >
+          mdi-information-outline
+        </v-icon>
       </v-btn>
     </template>
     <template>
-      <v-card>
+      <v-card v-if="textContent">
         <v-card-title class="justify-space-between">
           {{textContent[contentName].title}}
           <v-btn

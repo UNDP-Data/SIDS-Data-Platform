@@ -18,6 +18,10 @@ const routes = [
       fundingSource: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
       goalsType: to.params.goalsType || 'sdgs'
     }),
+    meta:{
+      header:'UNDP Portfolio in Small Island Developing States',
+      infoContent:'aboutThis-portfolio'
+    },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -74,6 +78,10 @@ const routes = [
         next({ path: `/development-indicators/${indicator}/${year}/${chartType}`})
       }
     },
+    meta:{
+      header:'Development Indicators',
+      infoContent:'aboutThis-indicators'
+    },
     props: (to) => (
       {
         chartType: to.params.chartType,
@@ -111,6 +119,10 @@ const routes = [
         next({ path: `/vulnerability/mvi-index/${chartType}`})
       }
     },
+    meta:{
+      header:'Towards a Multidimensional Vulnerability Index',
+      infoContent:'aboutThis-mvi'
+    },
     props: (to) => (
       {
         chartType: to.params.chartType,
@@ -139,6 +151,10 @@ const routes = [
       }, 500)
       next();
     },
+    meta:{
+      header:'Country Profiles',
+      infoContent:'aboutThis-profiles'
+    },
     props: (route) => ({
       activeCountryId: route.params.country || '',
       compareIdsList: route.query.compare && route.query.compare.split(',') || []
@@ -148,12 +164,25 @@ const routes = [
     path: '/geospatial-data',
     link: '/geospatial-data',
     name: 'Geospatial Data',
+    meta:{
+      header:'Geospatial Data'
+    },
     component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData.vue')
   },
   {
     path: '/about',
     link: '/about',
     name: 'About',
+    meta:{
+      header:'About the SIDS Data Visualization Platform'
+    },
+    beforeEnter: async (to, from, next) => {
+      store.commit('loader/setLoading', true);
+      setTimeout(() => {
+        store.commit('loader/setLoading', false);
+      }, 500)
+      next();
+    },
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {

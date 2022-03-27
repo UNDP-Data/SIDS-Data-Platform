@@ -1,6 +1,6 @@
 <template>
   <div class="graph-container">
-      <h4 class="block-subheader text-center"
+      <h4 v-if="postfix!== 'mobile'" class="block-subheader text-center"
         :style="{color: graphOptions.textColor}">
         {{graphOptions.header}}
 
