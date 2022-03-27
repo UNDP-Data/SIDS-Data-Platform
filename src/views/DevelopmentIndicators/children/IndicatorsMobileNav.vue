@@ -57,6 +57,7 @@
             <v-btn
                 class="ml-2 filter-sm-button"
                 rounded
+                :disabled="chartType !== 'bars'"
                 @click="toggleYearPlay"
                 fab
                 color="primary"
@@ -235,5 +236,6 @@ export default {
 }
 .min-0 {
   min-width: 0;
+  width: 100%;
 }
 </style>

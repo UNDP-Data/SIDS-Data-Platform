@@ -120,9 +120,15 @@
           </div>
         </div>
       </v-row>
-      <v-row dense>
+      <v-row v-if="chartType !== 'ml'" dense>
         <v-col cols='12'>
           <indicators-choro-chart v-if='!noData' :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
+          <h4 class="text-center" v-else>No data for selected indicator</h4>
+        </v-col>
+      </v-row>
+      <v-row v-if="chartType === 'ml'" dense>
+        <v-col cols='12'>
+          <indicators-m-l v-if='!noData' :year="year" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
         </v-col>
       </v-row>
@@ -138,6 +144,7 @@ import IndicatorsNav from './children/IndicatorsNav.vue'
 import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
+import IndicatorsML from './children/IndicatorsML.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
 
@@ -190,7 +197,12 @@ export default {
           name:'Time series',
           chartType:'series',
           mobile: true
-        }
+        },
+        // {
+        //   name:'Machine Learning',
+        //   chartType:'ml',
+        //   mobile: false
+        // }
       ],
         mvi: [{
           name:'Spider',
@@ -219,7 +231,8 @@ export default {
     IndicatorsAutocomplete,
     MviIndicatorsNav:MVIIndicatorsNav,
     IndicatorsMobileNav,
-    MviMobileNav
+    MviMobileNav,
+    IndicatorsML
   },
   computed: {
     ...mapState({

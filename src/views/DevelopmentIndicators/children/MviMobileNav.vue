@@ -53,7 +53,7 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col class="d-flex align-end" cols="2">
+          <v-col class="d-flex align-end justify-end" cols="2">
             <v-btn
                 class="filter-sm-button"
                 rounded
