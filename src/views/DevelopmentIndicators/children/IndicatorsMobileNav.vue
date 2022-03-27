@@ -38,8 +38,8 @@
           </v-col>
         </v-row>
         <v-row class="mt-0">
-          <v-col cols="6">
-            <div class="select">
+          <v-col class="d-flex align-end justify-space-between" cols="6">
+            <div class="select min-0">
               <label class="input-label">Year</label>
               <v-select
                 :disabled="chartType !== 'bars'"
@@ -54,6 +54,16 @@
                 outlined
               ></v-select>
             </div>
+            <v-btn
+                class="ml-2 filter-sm-button"
+                rounded
+                @click="toggleYearPlay"
+                fab
+                color="primary"
+              >
+              <v-icon v-if="!playingYear">mdi-play</v-icon>
+              <v-icon v-else>mdi-pause</v-icon>
+            </v-btn>
           </v-col>
           <v-col cols="6">
             <div v-if="chartType === 'bars'" class="select">
@@ -100,6 +110,8 @@ export default {
   props:['activeIndicatorCode', 'year', 'sortingType', 'chartType', 'chartTypes', 'region' ,'regions'],
   data(){
     return {
+      playInterval:null,
+      playingYear:false,
       sortingTypes:[{
         value: 'rank',
         text: 'Rank'
@@ -177,10 +189,51 @@ export default {
     },
     emitRegionChange(region){
       this.$emit('regionChange', region)
+    },
+    toggleYearPlay() {
+      if(this.playingYear) {
+        this.pausePlayYear()
+      } else {
+        this.playYear()
+      }
+    },
+    playYear() {
+      this.playingYear = true;
+      if(this.playInterval) {
+        clearTimeout(this.playInterval)
+      }
+      let years = this.years.slice().reverse();
+      let index = 0;
+      this.transitionToNextYear(years, index)
+    },
+    transitionToNextYear(years, index) {
+      if(this.playingYear) {
+        if(index !== this.years.length-1) {
+          this.emitYearChange(years[index].id);
+          index++;
+          this.playInterval = setTimeout(()=>{this.transitionToNextYear(years, index)}, 3000)
+        } else {
+          this.pausePlayYear()
+        }
+      } else {
+        clearTimeout(this.playInterval)
+      }
+    },
+    pausePlayYear() {
+      clearTimeout(this.playInterval)
+      this.playingYear = false;
     }
   },
 }
 </script>
 
 <style>
+.filter-sm-button, .filter-sm-button:hover{
+  width: 36px !important;
+  height: 36px !important;
+  padding: 8px 18px !important;
+}
+.min-0 {
+  min-width: 0;
+}
 </style>

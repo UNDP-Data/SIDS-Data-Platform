@@ -104,6 +104,7 @@ const routes = [
       ) {
         chartType = 'bars'
       }
+      await store.dispatch('indicators/getDatasetsList');
       await store.dispatch('indicators/getCategories');
       await store.dispatch('indicators/getMeta');
       await store.dispatch('indicators/getProfileData');

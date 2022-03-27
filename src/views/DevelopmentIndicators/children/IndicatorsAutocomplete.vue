@@ -1,6 +1,6 @@
 <template>
   <v-row class="d-flex d-md-none justify-center">
-    <v-col class="d-flex" cols="9">
+    <v-col class="d-flex" cols="8">
       <div class="select indicators-autocomplete">
         <label class="input-label">Indicator</label>
         <v-autocomplete

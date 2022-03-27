@@ -273,14 +273,7 @@ export function textTransform(
   } else if (this.indiSelections["viz"] == "bars") {
     let RTo = this.rectTransform(country, bBox, indicatorDataObj),
     output;
-    if(this.vizWidth < 800 && this.vizMode === 'index') {
-      output =
-        "scale(1,1) translate(" +
-        (-textX + textBBox.width / 2) +
-        "," +
-        (-textY  - 20 + (RTo["y"]) + totalHeight / totalVals / 2) +
-        ")";
-    } else if (this.vizWidth < 800) {
+    if (this.vizWidth < 800) {
       output =
         "scale(1,1) translate(" +
         (-textX + textBBox.width / 2) +

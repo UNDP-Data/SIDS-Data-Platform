@@ -34,23 +34,14 @@
           </div>
         </v-col>
       </v-row>
-      <v-row class="d-flex d-md-none justify-center">
-        <v-col class="d-flex" cols="11">
-          <indicators-autocomplete @toggleDialog="dialog = !dialog" @indicatorChange="indicatorUpdate" :activeIndicatorCode="indicator"/>
-        </v-col>
-        <!-- <v-col cols="2">
-          <v-btn
-              class="d-block d-md-none filter-sm-button"
-              rounded
-              @click="dialog=!dialog"
-              fab
-              color="primary"
-            >
-            <v-icon>mdi-filter</v-icon>
-          </v-btn>
-        </v-col> -->
-      </v-row>
+      <indicators-autocomplete
+        v-if="page !== 'mvi'"
+        class="d-flex d-md-none"
+        @toggleDialog="dialog = !dialog"
+        @indicatorChange="indicatorUpdate"
+        :activeIndicatorCode="indicator"/>
       <indicators-mobile-nav
+        v-if="page !== 'mvi'"
         class="d-block d-md-none"
         @chartTypeChange="transitionTo"
         @yearChange="yearUpdate"
@@ -64,6 +55,19 @@
         :chartTypes="tabs"
         :region="region"
         :regions="regions"
+      />
+      <mvi-mobile-nav
+        class="mt-5 d-flex d-md-none"
+        v-if="page === 'mvi'"
+        :sortingType="sortingName"
+        :chartType="chartType"
+        :chartTypes="tabs"
+        :region="region"
+        :regions="regions"
+        @chartTypeChange="transitionTo"
+        @sortingChange="sortingUpdate"
+        @regionChange="regionUpdate"
+        @toggleDialog="dialog = !dialog"
       />
       <v-row dense class="d-none d-md-flex nav-tabs-row justify-center">
         <v-col>
@@ -132,6 +136,7 @@
 
 import IndicatorsNav from './children/IndicatorsNav.vue'
 import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
+import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
@@ -213,7 +218,8 @@ export default {
     IndicatorsChoroChart,
     IndicatorsAutocomplete,
     MviIndicatorsNav:MVIIndicatorsNav,
-    IndicatorsMobileNav
+    IndicatorsMobileNav,
+    MviMobileNav
   },
   computed: {
     ...mapState({
