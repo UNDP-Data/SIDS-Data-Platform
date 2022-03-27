@@ -198,11 +198,11 @@ export default {
           chartType:'series',
           mobile: true
         },
-        // {
-        //   name:'Machine Learning',
-        //   chartType:'ml',
-        //   mobile: false
-        // }
+        {
+          name:'Machine Learning',
+          chartType:'ml',
+          mobile: false
+        }
       ],
         mvi: [{
           name:'Spider',
