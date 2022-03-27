@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-5">
+  <div class="mt-md-5">
   <v-row dense>
     <v-col  class="d-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
       <indicators-nav :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
@@ -19,7 +19,7 @@
     </v-dialog>
 
     <v-col md='12' lg='9'>
-      <v-row class="nav-filter-row" >
+      <v-row class="d-none d-md-flex nav-filter-row" >
         <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
           <h2 v-if="page!=='mvi'" class="page-header">
             Development Indicators
@@ -34,10 +34,45 @@
           </div>
         </v-col>
       </v-row>
-      <v-row dense class="nav-tabs-row justify-center">
+      <indicators-autocomplete
+        v-if="page !== 'mvi'"
+        class="d-flex d-md-none"
+        @toggleDialog="dialog = !dialog"
+        @indicatorChange="indicatorUpdate"
+        :activeIndicatorCode="indicator"/>
+      <indicators-mobile-nav
+        v-if="page !== 'mvi'"
+        class="d-block d-md-none"
+        @chartTypeChange="transitionTo"
+        @yearChange="yearUpdate"
+        @sortingChange="sortingUpdate"
+        @indicatorChange="indicatorUpdate"
+        @regionChange="regionUpdate"
+        :activeIndicatorCode="indicator"
+        :year="year"
+        :sortingType="sortingName"
+        :chartType="chartType"
+        :chartTypes="tabs"
+        :region="region"
+        :regions="regions"
+      />
+      <mvi-mobile-nav
+        class="mt-5 d-flex d-md-none"
+        v-if="page === 'mvi'"
+        :sortingType="sortingName"
+        :chartType="chartType"
+        :chartTypes="tabs"
+        :region="region"
+        :regions="regions"
+        @chartTypeChange="transitionTo"
+        @sortingChange="sortingUpdate"
+        @regionChange="regionUpdate"
+        @toggleDialog="dialog = !dialog"
+      />
+      <v-row dense class="d-none d-md-flex nav-tabs-row justify-center">
         <v-col>
           <v-btn
-              class="d-none d-md-block float-right filter-button d-lg-none"
+              class="float-right filter-button d-lg-none"
               rounded
               @click="dialog=!dialog"
               fab
@@ -46,7 +81,7 @@
             <v-icon>mdi-filter</v-icon>
           </v-btn>
           <v-tabs
-            v-if="indicator!=='region' || isMobile || page==='mvi'"
+            v-if="!isMobile && (indicator!=='region' || page==='mvi')"
             :value="activeTab"
             :grow="isMobile"
             :class="{
@@ -59,17 +94,8 @@
           </v-tabs>
         </v-col>
       </v-row>
-      <v-row class="nav-filter-row" dense jusify="end">
-        <v-btn
-            class="d-block d-md-none filter-sm-button"
-            rounded
-            @click="dialog=!dialog"
-            fab
-            color="primary"
-          >
-          <v-icon>mdi-filter</v-icon>
-        </v-btn>
-        <div v-if="chartType === 'bars' || chartType === 'spider'" class="sorting-row">
+      <v-row class="nav-filter-row" dense justify="end">
+        <div v-if="!isMobile && (chartType === 'bars' || chartType === 'spider')" class="sorting-row">
           <div class="input-label tabs-slider-label">
             Sort by:
           </div>
@@ -81,7 +107,7 @@
               <v-tab key="region" value="region">Region</v-tab>
             </v-tabs>
         </div>
-        <div v-if="chartType === 'series'" class="sorting-row">
+        <div v-if="!isMobile && chartType === 'series'" class="sorting-row">
           <div class="select sorting sorting-select">
           <v-select
             rounded
@@ -94,51 +120,16 @@
           </div>
         </div>
       </v-row>
-      <v-row dense v-if="chartType !== 'info'">
-        <v-col  v-if="chartType !== 'info'" cols='12'>
+      <v-row v-if="chartType !== 'ml'" dense>
+        <v-col cols='12'>
           <indicators-choro-chart v-if='!noData' :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
         </v-col>
       </v-row>
-      <v-row  v-else class="justify-center" >
-        <v-col cols='10'>
-          <h3>About this page:</h3>
-          <p>
-            The data from this paper is presented in a parametric interface with a customizable version of the MVI, as well as multiple forms of visualizations that allow for an analysis of the contributions of each indicator towards SIDS vulnerability. This supports comparisons of indices between countries and regions, as well as between the MVI and the Environmental Vulnerability Index (EVI) which is currently used as part of the three criteria for inclusion in the Least Developed Countries (LDC) category.
-          </p>
-          <p>
-            The composite MVI is an average value of four dimensions of vulnerability: environmental, geographic, economic, and financial. Each of the dimensions is calculated as an average of the normalized indicators selected for that dimension. All data is from UNDESA and World Bank.
-          </p>
-          <h3>Background</h3>
-          <p>
-            In response to the unique context of SIDS and the acute lack of finance exacerbated by the COVID-19 pandemic, UNDP has developed a
-            <a target="_blank" href="https://www.undp.org/publications/towards-multidimensional-vulnerability-index">
-              <b>Multidimensional Vulnerability Index (MVI)</b>
-            </a>
-            to reflect traditional as well as emerging risks facing not only SIDS but all developing countries. The MVI responds to calls from SIDS for the reassessment the eligibility for concessional financing beyond income level to accurately capture the vulnerability SIDS face:
-          </p>
-          <ul>
-            <li>
-              In July and August 2020, the
-              <a target="_blank" href="https://www.aosis.org/">
-                <b>
-                  Alliance of Small Island States (AOSIS)
-                </b>
-              </a> sent two letters to the Executive Office of the Secretary-General requesting efforts be made on linking of vulnerability to access to financing and expanding eligibility criteria beyond income-based indicators.
-            </li>
-            <li>
-              In December, the
-              <a target="_blank" href="https://undocs.org/en/A/RES/75/215">
-                <b>SIDS Resolution (A/RES/75/215)</b>
-              </a> was passed by the GA, paragraph 8.a of the Resolution makes a direct mention of the multidimensional vulnerability index and requests the Secretary-General to report progress on the development and use of the index. A milestone in the efforts to advocate for the development of a new index, UNDP did a significant amount of advocacy work in the lead up to its adoption including through briefings to the 2nd committee and G77.
-            </li>
-          </ul>
-
-          <p>
-            Using the MVI, the analysis in the discussion paper shows clearly that the majority of SIDS are far more vulnerable their income level alone would suggest. Using 11 indicators for 128 countries (including 34 SIDS), the MVI demonstrates that all but five SIDS are far more vulnerable than their income level would suggest. Furthermore, a simulation comparing SIDS to LDCs demonstrates that, if the MVI were used as a financing criterion (rather than just income per capita), SIDS on average would save 1.5% of their GDP per annum in interest payments.
-
-
-          </p>
+      <v-row v-if="chartType === 'ml'" dense>
+        <v-col cols='12'>
+          <indicators-m-l v-if='!noData' :year="year" :indicatorCode="indicator"/>
+          <h4 class="text-center" v-else>No data for selected indicator</h4>
         </v-col>
       </v-row>
     </v-col>
@@ -150,6 +141,10 @@
 // @ is an alias to /src
 
 import IndicatorsNav from './children/IndicatorsNav.vue'
+import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
+import MviMobileNav from './children/MviMobileNav.vue'
+import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
+import IndicatorsML from './children/IndicatorsML.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
 
@@ -202,12 +197,14 @@ export default {
           name:'Time series',
           chartType:'series',
           mobile: true
-        }
+        },
+        // {
+        //   name:'Machine Learning',
+        //   chartType:'ml',
+        //   mobile: false
+        // }
       ],
         mvi: [{
-          name:'Info',
-          chartType:'info'
-        },{
           name:'Spider',
           chartType:'spider'
         },{
@@ -231,7 +228,11 @@ export default {
     InfoButton,
     IndicatorsNav,
     IndicatorsChoroChart,
-    MviIndicatorsNav:MVIIndicatorsNav
+    IndicatorsAutocomplete,
+    MviIndicatorsNav:MVIIndicatorsNav,
+    IndicatorsMobileNav,
+    MviMobileNav,
+    IndicatorsML
   },
   computed: {
     ...mapState({
@@ -271,11 +272,21 @@ export default {
         this.$router.push({path:`/development-indicators/${this.indicator}/${this.year}/${chartType}`})
       }
     },
+    sortingUpdate(sortingType) {
+      if(sortingType === 'rank') {
+        return this.sorting = 0
+      } else {
+        return this.sorting = 1
+      }
+    },
     indicatorUpdate(indicatorCode) {
       this.$router.push({path:`/development-indicators/${indicatorCode}/recentValue/${this.chartType}`})
     },
     yearUpdate(year) {
       this.$router.push({path:`/development-indicators/${this.indicator}/${year}/${this.chartType}`})
+    },
+    regionUpdate(region) {
+      this.region = region
     },
     MVIindicatorUpdate(mviCodes){
       this.mviCodes = mviCodes;
