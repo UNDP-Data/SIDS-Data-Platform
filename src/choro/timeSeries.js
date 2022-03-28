@@ -23,16 +23,19 @@ export function updateTimeChart({ dataset, optionSelected }) {
   let rootThis = this;
   const timeSeriesContainer = d3.select("#timeSeriesContainer");
   const width = this.vizWidth;
-  const height = 560/800 * this.vizWidth;
-    let margin
+  let height = 560/800 * this.vizWidth;
+  let margin
   if(this.vizWidth < 800) {
+    height += 170;
     margin = { top: 20, right: 15, bottom: 50, left: 40 };
   } else {
     margin = { top: 20, right: 220, bottom: 50, left: 50 };
   }
   const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-
+  let innerHeight = height - margin.top - margin.bottom;
+  if(this.vizWidth < 800) {
+    innerHeight -=170;
+  }
   const timeVariable = 800;
 
   var isLoading = true;
@@ -116,7 +119,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
     .attr(
       "transform", () => {
         if(width < 800) {
-          return `translate(${margin.left},${height})`
+          return `translate(${margin.left/2},${innerHeight + 70})`
         } else {
           return `translate(${margin.left + innerWidth},${margin.top})`
         }

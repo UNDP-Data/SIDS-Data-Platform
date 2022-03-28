@@ -92,6 +92,18 @@ export function updateVizEngine(indicatorCode) {
         };
         this.updateTimeChart({ dataset, optionSelected });
       }
+    if(this.vizWidth < 800) {
+      if(this.indiSelections["viz"] === "bars") {
+        let vizContainerHeight = (Object.keys(vizElementAttributes).length - Object.keys(noData).length) * 29 + 60;
+        if(this.indiSelections['sortby'] === 'region') {
+          vizContainerHeight+= 29 * 4
+        }
+        this.main_chart_svg
+          .attr("height", vizContainerHeight);
+        this.choro_legend_svg
+          .attr("height", vizContainerHeight);
+      }
+    }
 //
 //       updateVizSliders()//again, just for fun
 }
@@ -177,8 +189,10 @@ export function updateVizBlocks(){
     this.indiSelections["viz"] == "info" ||
     this.indiSelections["viz"] == "series"
   ) {
+    d3.select("#choro_legend_container").style("display", "none");
     d3.select("#choro_map_container").style("display", "none"); //"opacity", "0");
   } else {
+    d3.select("#choro_legend_container").style("display", "block");
     d3.select("#choro_map_container").style("display", "block"); //("opacity", "1");
   }
 }

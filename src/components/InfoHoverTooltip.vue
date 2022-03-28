@@ -5,6 +5,7 @@
     open-delay="200"
     max-width="600"
     close-delay="200"
+    min-width='100%'
     open-on-hover
     content-class="tooltip-content"
     allow-overflow
@@ -23,7 +24,7 @@
           <slot name="content"></slot>
       </div>
       <v-card v-else>
-        <v-card-title><slot name="icon"></slot>{{textContent[contentName].title}}</v-card-title>
+        <v-card-title><slot v-if="hasIconSlot" name="icon"></slot>{{textContent[contentName].title}}</v-card-title>
         <v-card-text v-html="textContent[contentName].content">
         </v-card-text>
       </v-card>
@@ -42,6 +43,9 @@ export default {
     }),
     hasContentSlot() {
       return this.$slots['content']
+    },
+    hasIconSlot() {
+      return this.$slots['icon']
     }
   }
 }
