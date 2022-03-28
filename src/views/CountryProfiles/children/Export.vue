@@ -7,7 +7,7 @@
         :icon="isTablet"
         :fab="!isDesktop && !isTablet"
         :small="isDesktop"
-        class="mt-2 mb-2"
+        class="mt-md-2 mb-md-2"
         :outlined="isTablet"
         v-bind="attrs"
         v-on="on"
@@ -32,7 +32,7 @@
 <script>
   import { mapState } from 'vuex';
   import sizeMixin from '@/mixins/size.mixin'
-  
+
   export default {
     name: 'Export',
     props:['idsList'],

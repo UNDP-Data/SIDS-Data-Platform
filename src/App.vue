@@ -5,10 +5,11 @@
     id="app"
     fluid
   >
+    <nav-menu-mobile v-if="hasTexts" class="d-block d-md-none"/>
     <root-header class="d-none-print" />
     <v-row no-gutters id="content">
       <root-loader v-if="loading"/>
-      <v-col class="menu-col d-none-print" cols="0" md="2">
+      <v-col class="d-none d-md-block menu-col d-none-print" cols="0" md="2">
         <nav-menu />
       </v-col>
       <v-col cols="12" md="10">
@@ -23,6 +24,7 @@ import RootHeader from "@/components/RootHeader.vue";
 import RootFooter from "@/components/RootFooter.vue";
 import RootLoader from "@/components/RootLoader.vue";
 import NavMenu from "@/components/NavMenu.vue";
+import NavMenuMobile from "@/components/NavMenuMobile.vue";
 
 import { mapState } from 'vuex';
 
@@ -33,11 +35,15 @@ export default {
     RootFooter,
     RootLoader,
     NavMenu,
+    NavMenuMobile
   },
   computed: {
     ...mapState({
       loading: state => state.loader.loading
     }),
+    hasTexts() {
+      return this.$route.meta.header
+    }
   }
 };
 </script>

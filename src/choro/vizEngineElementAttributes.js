@@ -110,7 +110,9 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
   cx = bBox[4],
   cy = bBox[5],
   output;
-
+  if(this.vizWidth < 800 && this.vizWidth > 550) {
+    totalWidth = totalWidth - 100;
+  }
   if (this.indiSelections["viz"] == "bars") {
     if (isNumeric(val)) {
       try {
@@ -119,13 +121,11 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
         ); // == "number"))
 
         let sortedData = sort_object(filtered),
-        indicatorValues = Object.values(filtered);
-        let rank,
-        totalVals;
+        indicatorValues = Object.values(filtered),
+        rank;
         if (this.indiSelections["sortby"] == "rank") {
           //this filter removes any empty elements
           rank = sortedData[country];
-          totalVals = indicatorValues.length;
         } else if (this.indiSelections["sortby"] == "region") {
           let countryOrder = Object.keys(sortedData);
           let pacificListSort = countryOrder.filter((item) =>
@@ -144,11 +144,9 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
             pacificListSort
           );
           rank = chosenCountryList.indexOf(country);
-          totalVals = indicatorValues.length + 4;
         }
 
-        let topMargin = 0,
-        margin = 4;
+        let topMargin = 0;
 
         let maxx = Math.max(...indicatorValues),
         minn =  0; //Math.min(...indicatorValues),
@@ -158,13 +156,13 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
         let normValue = (val - minn) / (maxx - minn);
         let x = this.vizWidth < 800 ? 0 : 160;
         let y = this.vizWidth < 800 ?
-        (totalHeight / totalVals) * rank + topMargin + 20 * rank :
-        (totalHeight / totalVals) * rank + topMargin;
+        10 * rank + topMargin + 20 * rank :
+        16 * rank + topMargin;
         output = {
           x: x,
           y,
           width: normValue * totalWidth,
-          height: totalHeight / totalVals - margin,
+          height: 10,
         };
       } catch (error) {
         output = { x: 160, y: 300, width: 0, height: 10 };
@@ -277,14 +275,7 @@ export function textTransform(
   } else if (this.indiSelections["viz"] == "bars") {
     let RTo = this.rectTransform(country, bBox, indicatorDataObj),
     output;
-    if(this.vizWidth < 800 && this.vizMode === 'index') {
-      output =
-        "scale(1,1) translate(" +
-        (-textX + textBBox.width / 2) +
-        "," +
-        (-textY  - 20 + (RTo["y"]) + totalHeight / totalVals / 2) +
-        ")";
-    } else if (this.vizWidth < 800) {
+    if (this.vizWidth < 800) {
       output =
         "scale(1,1) translate(" +
         (-textX + textBBox.width / 2) +

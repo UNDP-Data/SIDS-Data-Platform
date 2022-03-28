@@ -18,7 +18,7 @@ export default {
   bottom: 0;
   position: absolute;
   background: rgba(0,0,0,0.2);
-  z-index: 99999
+  z-index: 99999;
 }
 .lds-ellipsis {
   display: inline-block;
@@ -27,6 +27,7 @@ export default {
   left: 50%;
   width: 80px;
   height: 80px;
+  transform: translate(-50%);
 }
 .lds-ellipsis div {
   position: absolute;

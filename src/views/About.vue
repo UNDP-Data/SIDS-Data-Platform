@@ -1,6 +1,6 @@
 <template>
   <div class="about-page">
-    <v-row class="mt-0" justify="center">
+    <v-row class="d-none d-md-flex mt-0" justify="center">
       <v-col cols="12">
         <h2 class="page-header">About the SIDS Data Visualization Platform</h2>
       </v-col>

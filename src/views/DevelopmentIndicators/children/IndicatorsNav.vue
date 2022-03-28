@@ -25,7 +25,7 @@
       v-if="activeSearch"
       :items="allindicators"
       bench='12'
-      height="calc(100vh - 70px)"
+      :height="inticatorsFullListHeight"
       itemHeight="69"
       >
       <template v-slot:default="{ item }">
@@ -389,9 +389,17 @@ export default {
         }
       })
     },
+    inticatorsFullListHeight() {
+      let height = '100vh',
+      substraction = 130;
+      if(!this.isSmallScreen) {
+        substraction = 78
+      }
+      return `calc(${height} - ${substraction}px)`
+    },
     inticatorsListHeight() {
       let height = '100vh',
-      substraction = 200;
+      substraction = 240;
       if(this.activeIndicator && !this.isSmallScreen) {
         height = '50vh'
         substraction = 128
@@ -521,18 +529,17 @@ export default {
 .list-scrollabe {
   overflow-y: scroll;
 }
-
 .list-datasets {
-  max-height: calc(100vh - 68px);
+  max-height: calc(100% - 68px);
 }
 .list-datasets-active {
   padding: 0;
 }
 .list-indicators {
-  max-height: calc(100vh - 200px);
+  max-height: calc(100% - 200px);
 }
 .list-short {
-  max-height: calc(50vh - 128px);
+  max-height: calc(100% - 128px);
 }
 .list-scrollabe_item {
   height: 66px;

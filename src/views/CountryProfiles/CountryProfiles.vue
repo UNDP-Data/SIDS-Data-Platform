@@ -4,7 +4,7 @@
       <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
         <printout-header :name="activeCountry.name"/>
         <v-row class="mt-0 d-none-print profile-header-row" justify="center" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
-          <v-col cols="12" md="4" offset-lg="2" lg="3">
+          <v-col class="d-none d-md-block" cols="12" md="4" offset-lg="2" lg="3">
             <h2 class="page-header mr-3 country-profile-header text-md-right">Country profile</h2>
           </v-col>
           <v-col cols="7" sm="6" md="4" lg="3" class="offset-sm-1 offset-md-0 select-column">
@@ -43,8 +43,8 @@
               ></v-select>
             </div>
           </v-col>
-          <v-col class="d-none-print d-flex flex-md-column align-md-end align-center justify-start" cols="4" sm="3" md='1' lg='2'>
-            <div class="mr-2 mr-md-0">
+          <v-col class="d-none-print d-flex flex-md-column align-md-end align-center justify-start" cols="2" sm="3" md='1' lg='2'>
+            <div class="d-none d-md-block mr-2 mr-md-0">
               <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
             </div>
             <export :idsList="selectedCountriesIds"/>
@@ -59,7 +59,7 @@
             />
           </v-col>
         </v-row>
-        <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
           <v-col cols="12">
             <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
             <v-row>
@@ -76,18 +76,41 @@
           </v-col>
         </v-row>
         <v-row justify="center" class="d-none-print d-md-none">
-          <v-col cols="11">
-            <v-tabs
+          <v-col cols="9">
+            <v-select
+              class="country-select"
+              rounded
+              hide-details
               v-model="tab"
-              show-arrows
-              center-active
-              grow>
-              <v-tab v-for="tab in tabs" :key="tab">
-                {{ tab }}
-              </v-tab>
-            </v-tabs>
-            <v-tabs-items class="mt-4 graph-tabs" v-model="tab">
-              <v-tab-item  v-for="(pillar, index) in pillars" :key="pillar.name">
+              item-value="name"
+              item-text="tabName"
+              :items="pillars"
+              menu-props='{auto:false}'
+              outlined
+            >
+
+              <template class="v-select__selection--comma" slot="selection" slot-scope="data">
+                <span class="mobile-pillar-selector" :style="getStyleByName(data.item.name)">
+                  {{ data.item.tabName }}
+                </span>
+              </template>
+              <template slot="item" slot-scope="data">
+                <span :style="getStyleByName(data.item.name)">
+                  {{ data.item.tabName }}
+                </span>
+              </template>
+            </v-select>
+          </v-col>
+          <v-col cols="2" class="d-flex align-center justify-end">
+            <info-hover-tooltip :large="true" v-if="graphOptions[tab]" :contentName="getTabPillar(tab).tooltipName">
+              <template v-if="getTabPillar(tab).icon" v-slot:icon>
+                <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${getTabPillar(tab).icon}`"/>
+              </template>
+            </info-hover-tooltip>
+          </v-col>
+          <v-col class="pt-0" cols="11">
+            <div v-for="(pillar, index) in pillars" :key="pillar.name">
+              <div v-if="tab === pillar.name">
                 <template v-if="index < 3">
                   <profiles-spider-chart
                     :graphOptions="graphOptions[pillar.name]"
@@ -99,7 +122,7 @@
                     :ranks="graphRankData[pillar.name]"
                     :values="graphValueData[pillar.name]"/>
                 </template>
-                <template v-else>
+                <template v-else-if="index === 3">
                   <profiles-spider-chart
                     :graphOptions="graphOptions[pillar.name]"
                     :pillarName="pillar.name"
@@ -110,13 +133,12 @@
                     :ranks="graphRankData[pillar.name]"
                     :values="graphValueData[pillar.name]"/>
                 </template>
-              </v-tab-item>
-              <v-tab-item>
-                <profiles-finance
-                  :countryId="activeCountryId"/>
-              </v-tab-item>
-            </v-tabs-items>
-
+                <template v-else>
+                  <profiles-finance
+                      :countryId="activeCountryId"/>
+                </template>
+              </div>
+            </div>
           </v-col>
         </v-row>
         <v-row class="d-none-print" justify="center">
@@ -176,7 +198,7 @@
               </v-select>
             </div>
           </v-col>
-          <v-col cols="2">
+          <v-col cols="2" class="d-flex align-center justify-end">
             <info-hover-tooltip
               :large="true"
               contentName="profileTooltip-radar"
@@ -190,6 +212,36 @@
                   src="@/assets/media/goals-icons/sidsOfferPillars.png"/>
               </template>
             </info-hover-tooltip>
+          </v-col>
+        </v-row>
+        <v-row class="d-md-none d-none-print justify-center">
+          <v-col cols="11">
+            <v-expansion-panels flat accordion>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+                    <h3>{{stat.value}} {{stat.unit}}</h3>
+                    <p class="mb-0">{{stat.title}}</p>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-divider/>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.successesInDevelopment.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-divider/>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </v-col>
         </v-row>
         <v-row class="mb-4 d-none d-md-flex d-print-flex no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
@@ -210,7 +262,7 @@
         </v-row>
       </div>
       <div class="print-page page-break">
-        <v-row class="mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
           <v-col cols="12">
             <h2 class="mb-0 px-4">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
             <div class="px-4" v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
@@ -237,7 +289,7 @@
               :countryId="activeCountryId"/>
           </v-col>
         </v-row>
-        <v-row v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
           <v-col cols="12">
             <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
             <div class="px-4" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
@@ -301,20 +353,27 @@ export default {
     colorScheme: ["#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"],
     pillars:[{
       name: 'Climate',
+      tabName: 'Climate Action',
       tooltipName: 'profileTooltip-climate',
       icon: require(`@/assets/media/goals-icons/pillars/climateAction.png`)
     }, {
       name: 'Blue',
+      tabName: 'Blue Economy',
       tooltipName: 'profiletooltip-blue',
       icon: require(`@/assets/media/goals-icons/pillars/blueEconomy.png`)
     }, {
       name: 'Digital',
+      tabName: 'Digital Transformation',
       tooltipName:'profileTooltip-digital',
       icon: require(`@/assets/media/goals-icons/pillars/digitalTransformation.png`)
     }, {
       name: 'MVI',
+      tabName: 'Multidimensional Vulnerability',
       tooltipName:'profileTooltip-mvi',
       icon: false
+    }, {
+      name: 'Finance',
+      tabName: 'Finance'
     }],
     tab:'Climate',
     tabs:['Climate','Blue Economy','Digital Transformation','Vulnerability','Finance'],
@@ -480,6 +539,12 @@ export default {
     getColor(index) {
       return this.colorScheme[index%4];
     },
+    getStyleByName(name) {
+      return this.graphOptions[name] ? `color:${this.graphOptions[name].textColor}` : '';
+    },
+    getTabPillar(name) {
+      return this.pillars.find(pillar => name === pillar.name)
+    },
     getChipStyle(index) {
       return `background-color:${this.rgbaColorScheme[index%4]}`;
     }
@@ -535,15 +600,10 @@ export default {
     background-color: transparent !important;
   }
  @media all and (max-width:960px) {
-  .country-profile-header {
-    margin: 0px auto 130px;
-    color: #F2F2F3 !important;
-    text-align: center;
-    text-shadow: 0px 0px 2px rgb(0 0 0 / 60%);
-  }
-  .select-column {
-    margin-bottom: 15px;
-  }
+   .profile-header-row {
+     padding-top: 25vh;
+     padding-bottom: 20px;
+   }
  }
  @media print {
    .mvi-print-desc {
@@ -575,5 +635,14 @@ export default {
  .page-single-page {
    max-height: 1340px;
  }
-
+.mobile-pillar-selector {
+  margin: 6px 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profiles-page .v-expansion-panel::after {
+  border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
 </style>
