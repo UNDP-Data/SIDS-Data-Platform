@@ -50,6 +50,7 @@ export default {
 
       this.choro = new Choro({
         viz:this.chartType,
+        widthCached: document.body.clientWidth,
         sidsXML,
         mapLocations,
         indicatorCode:this.indicatorCode,
@@ -60,7 +61,7 @@ export default {
         clickCallback:this.counntryClickCallback,
         selectedIndis:this.mviCodes,
         vizContainerWidth:(document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
-        vizContainerHeight:(document.body.clientWidth - 40) > 800 ? 580 : 1360,
+        vizContainerHeight:(document.body.clientWidth - 40) > 800 ? 580 : 1060,
         mapContainerSelector: '#choro_map_container',
         legendContainerSelector:'#choro_legend_container'
       })
@@ -69,16 +70,19 @@ export default {
       this.$router.push({path:`/country-profiles/${countryCode}`})
     },
     updateScreenSize(){
-      let rootThis = this;
-      if(this.resizeTimeout) {
-        clearTimeout(this.resizeTimeout);
+      if(this.widthCached !== document.body.clientWidth && this.choro) {
+        let rootThis = this;
+        if(this.resizeTimeout) {
+          clearTimeout(this.resizeTimeout);
+        }
+        this.resizeTimeout = setTimeout(async () => {
+          await rootThis.choro.updateSize({
+            vizContainerWidth: (document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
+            vizContainerHeight: (document.body.clientWidth - 40) > 800 ? 580 : 1360
+          })
+        }, 100);
+        this.widthCached = document.body.clientWidth
       }
-      this.resizeTimeout = setTimeout(async () => {
-        await rootThis.choro.updateSize({
-          vizContainerWidth: (document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
-          vizContainerHeight: (document.body.clientWidth - 40) > 800 ? 580 : 1360
-        })
-      }, 100);
     }
   },
   async mounted() {
@@ -496,9 +500,6 @@ export default {
   #timeSeriesContainer {
     width: 100%;
     display:none;
-  }
-  .choro {
-    min-height: 1400px;
   }
 }
 

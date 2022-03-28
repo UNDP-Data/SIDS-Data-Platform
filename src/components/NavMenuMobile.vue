@@ -30,7 +30,7 @@
       v-model="drawer"
       :app="true"
     >
-      <nav-menu :allowScroll="false"/>
+      <nav-menu @drawerClose="drawer = false" :allowScroll="false"/>
     </v-navigation-drawer>
   </div>
 </template>
@@ -68,7 +68,7 @@ export default {
   width: 100%;
   position: sticky;
   top: 0;
-  z-index: 9999;
+  z-index: 999999;
   background-color: #f4f5f8;
   max-height: 64px;
 }

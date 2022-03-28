@@ -103,8 +103,8 @@
           </v-col>
           <v-col cols="2" class="d-flex align-center justify-end">
             <info-hover-tooltip :large="true" v-if="graphOptions[tab]" :contentName="getTabPillar(tab).tooltipName">
-              <template v-if="headerIcon" v-slot:icon>
-                <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${getTabPillar(tab).headerIcon}`"/>
+              <template v-if="getTabPillar(tab).icon" v-slot:icon>
+                <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${getTabPillar(tab).icon}`"/>
               </template>
             </info-hover-tooltip>
           </v-col>
