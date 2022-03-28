@@ -1,43 +1,16 @@
 <template>
   <div class="navigation-container">
-    <button
-      class="navigation-menu-button d-md-none"
-      @click="drawer = !drawer"
-      >
-      <v-icon
-         size="48"
-         color="blue darken-2"
-       >
-         mdi-menu
-       </v-icon>
-    </button>
-    <v-navigation-drawer
-
-      class="navigation-menu-drawer d-md-none"
-      v-model="drawer"
-      fixed
-    >
-      <v-list class="main-menu" dense>
-          <v-list-item
-            v-for="route in routes"
-            :key="route.link"
-            :to="route.link"
-          >
-            <v-list-item-content>
-              <v-list-item-title
-                v-text="route.name">
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
     <v-list
-      class="main-menu-desktop main-menu d-none d-md-block"
+      class="main-menu-desktop main-menu"
+      ref="stickyMenuContainer"
       dense>
-        <div class="border-wrapper">
+        <div
+          class="border-wrapper"
+          ref="stickyMenu"
+          :class="{ 'border-wrapper-fixed': offset }">
           <v-list-item
-
             class="menu-item"
+            @click="emitDrawerClose"
             v-for="route in routes"
             :key="route.link"
             :to="route.link"
@@ -56,17 +29,23 @@
 
 <script>
 
+import sizeMixin from '@/mixins/size.mixin';
+
 export default {
   name: 'NavMenu',
+  mixins:[sizeMixin],
+  props:{
+    allowScroll: {
+      type: Boolean,
+      default: true
+    }
+  },
   data(){
     return {
-      drawer: false
+      offset: 0
     }
   },
   computed: {
-    isMobile() {
-      return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm'
-    },
     routes () {
       return this.$router.options.routes.filter( route => {
         if(this.isMobile) {
@@ -74,10 +53,30 @@ export default {
         }
         return route.path!=='*'
       } )
+    },
+  },
+  methods: {
+    handleScroll () {
+      let containerOffset = this.$refs.stickyMenuContainer.$el.getBoundingClientRect().top;
+      if(containerOffset < 0 ) {
+        this.offset = true;
+      } else {
+        this.offset = false;
+      }
+    },
+    emitDrawerClose(){
+      this.$emit('drawerClose')
     }
   },
-  props: {
-    msg: String
+  created () {
+    if(this.allowScroll) {
+      window.addEventListener('scroll', this.handleScroll);
+    }
+  },
+  destroyed () {
+    if(this.allowScroll) {
+      window.removeEventListener('scroll', this.handleScroll);
+    }
   }
 }
 </script>
@@ -130,12 +129,6 @@ export default {
 .navigation-menu-drawer {
   height: 100vh !important;
 }
-.navigation-menu-button {
-  z-index: 80;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
 .menu-item{
   height: 50px;
   padding-right: 24px;
@@ -164,9 +157,14 @@ export default {
   padding-bottom: 10px;
   padding-top: 10px;
   border-right: 1px solid rgba(10, 11, 49, 0.2) !important;
+  /* transition: top 300ms linear */
+}
+.border-wrapper-fixed {
+  position: fixed;
+  top:20vh;
+  max-width: 16.6666666667%;
 }
 .menu-item.v-list-item--active .menu-item_text {
   color: #E21549;
-
 }
 </style>

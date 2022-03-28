@@ -14,9 +14,9 @@
             >
         </div>
       </v-row>
-      <template v-if="goalsType==='sdgs'">
-        <div class="d-none" v-for="(goal, index) in goals" :id="'goalstooltip'+ index" :key="index">
-          <portfolio-tooltip :year="year" :header="goal.name" :data="tooltipData[goal.name]"/>
+      <template v-if="goalsType==='sdgs' && tooltipData[tooltipGoalName]">
+        <div class="d-none" id="goalTooltip">
+          <portfolio-tooltip :header="tooltipGoalTitle" :data="tooltipData[tooltipGoalName]"/>
         </div>
       </template>
     </div>
@@ -33,9 +33,9 @@
 import sidsdata from '@/mixins/SIDSData.mixin'
 import format from '@/mixins/format.mixin'
 import { mapState } from 'vuex';
-import goalsList from '@/assets/goalsList'
+import { goals } from '@/assets/goalsList'
 import * as d3 from 'd3';
-import PortfolioTooltip from '@/components/PortfolioSDGSTooltip'
+import PortfolioTooltip from './PortfolioSDGSTooltip'
 import tippy from 'tippy.js';
 
 export default {
@@ -48,6 +48,8 @@ export default {
       id: this._uid,
       svg:null,
       goals:[],
+      tooltipGoalTitle: 'No poverty',
+      tooltipGoalName: 'No poverty',
       svgContainer: null,
       barsMargin: { top: 60, right: 10, bottom: 0, left: 10 },
       svgWidth: 1074,
@@ -65,7 +67,8 @@ export default {
   mixins:[sidsdata, format],
   computed: {
     ...mapState({
-      activeGoal: state => state.goals.activeGoal
+      activeGoal: state => state.goals.activeGoal,
+      portfolioData: state => state.sids.portfolioData,
     }),
     barsHeight(){ return this.svgHeight - this.barsMargin.top - this.barsMargin.bottom },
     barWidth() {
@@ -92,16 +95,16 @@ export default {
     },
     barsData() {
       if(this.goalsType === 'samoa') {
-        let barsData = goalsList.samoa.map(() => {
+        let barsData = goals.samoa.map(() => {
           return {
             budget: 0,
             projects: 0
           }
         });
-        this.filteredProjects.map(project => {
+        this.portfolioData.map(project => {
           let projectSdgs = project.sdg.split(",");
           projectSdgs.map((projectSdg) => {
-            const sdgIndex = goalsList.sdgs.findIndex((sdg) => sdg.name === projectSdg);
+            const sdgIndex = goals.sdgs.findIndex((sdg) => sdg.name === projectSdg);
             if(sdgIndex !== -1) {
               let priorities = this.sdgToSamoa[sdgIndex+1];
               priorities.map((priority) => {
@@ -115,7 +118,7 @@ export default {
         return barsData
       }
       let sdgsData = this.goals.map(goal => {
-        return this.filteredProjects.reduce((data, project) => {
+        return this.portfolioData.reduce((data, project) => {
           if(project[goal.type].includes(goal.name)) {
             return {
               projects: data.projects + 1,
@@ -139,7 +142,7 @@ export default {
     tooltipData() {
       let res = {}
       this.goals.map(goal => {
-        res[goal.name] = this.filteredProjects.filter((project) => {
+        res[goal.name] = this.portfolioData.filter((project) => {
           return project.sdg && project.sdg.includes(goal.name)
         });
       })
@@ -422,10 +425,31 @@ export default {
               })
               .attr("opacity", 0)
               .each((data, index, list) => {
+                let showTimer = false;
                 tippy(list[index], {
                   content() {
-                    const template = document.getElementById(`goalstooltip${index}`);
+                    const template = document.getElementById(`goalTooltip`);
                     return template.innerHTML;
+                  },
+                  onTrigger() {
+                    rootThis.tooltipGoalTitle = data.title
+                    rootThis.tooltipGoalName = data.name
+                  },
+                  onShow(instance) {
+                    rootThis.$nextTick(() => {
+                      instance.setContent(() => {
+                        const template = document.getElementById(`goalTooltip`);
+                        return template.innerHTML;
+                      })
+                      rootThis.$nextTick(() => {
+                        showTimer = true
+                        instance.show()
+                      })
+                    })
+                    if(!showTimer) {
+                      showTimer = false;
+                      return false
+                    }
                   },
                   theme: 'light',
                   interactive: true,
@@ -434,8 +458,6 @@ export default {
                   appendTo: () => document.body
                 });
               })
-            } else {
-              enter.remove()
             }
           },
           (update) => {
@@ -450,12 +472,11 @@ export default {
                 })
                 .attr("opacity", 0)
               } else {
-                update.remove()
+                update.attr("height", 0 )
               }
           },
           (exit) => {
-            exit
-              .remove()
+            exit.attr("height", 0)
           }
         )
 
@@ -502,13 +523,13 @@ export default {
     }
   },
   mounted() {
-    this.goals = goalsList[this.goalsType];
+    this.goals = goals[this.goalsType];
     this.initBars();
     this.$nextTick(this.drawBars);
   },
   watch: {
     goalsType() {
-      this.goals = goalsList[this.goalsType];
+      this.goals = goals[this.goalsType];
     },
     barsData() {
       this.$nextTick(this.drawBars);

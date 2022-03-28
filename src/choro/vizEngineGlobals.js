@@ -1,50 +1,13 @@
 
-
-
 ///////////////////////////////////
 //Initializations
 //////////////////////
-
-
-//
 //
 // ///initializations
 //
 export const hues = ["b", "b", "b",]
-// //var hue = "g";	/* b=blue, g=green, r=red colours - from ColorBrewer */
-// var rateById = d3.map();
-// var lastActiveCountry = "";
-// var sidsEngineInit = 0
-// var firstIndicatorInit = 0
-// var sidsMaps;
-// var data;
-// var defaultScale = 1;	/* default scale of map - fits nicely on standard screen */
-// var scale = 3;		/* maximum size to zoom county */
-// var quantize = d3.scale.quantize()
-// var countryJson = [];
-// var sidsXML;
-// var wdiFull;
-// var wdiMeta;
-// var mapLocations;
-// var indicatorGlobal="Region";
-// var bboxDict = {};
-// var textBBoxDict = {};
-// var bboxInit=0;
-export const indexCodes = ["mvi"]//,egov,etc.]
 export const subindexWeights={"mvi":{"Economic":1,"Geographic":1,"Environmental":1,"Financial":1}}
-// var vizMode;
-// d3.select(self.frameElement).style("height", "650px");
-/////
-// const vizContainerWidth = "800";
-// const vizContainerHeight = "580";
-// main_chart_svg=d3.select("#choro_map_container")
-//   .append("svg")
-//   .attr("width", vizContainerWidth)
-//   .attr("height", vizContainerHeight); //'800'//'auto'
-// choro_legend_svg=d3.select("#choro_legend_container")
-//   .append("svg")
-//   .attr("width", vizContainerWidth)
-//   .attr("height", vizContainerHeight);
+
 export const countryListLongitude = ["Belize", "Jamaica", "Cayman Islands", "Cuba", "The Bahamas", "Curaçao", "Aruba", "Haiti", "Dominican Republic",
     "St. Kitts and Nevis", "Sint Maarten","Antigua and Barbuda", "Montserrat", "Dominica", "St. Lucia"
     , "Barbados", "St. Vincent and the Grenadines", "Grenada", "Trinidad and Tobago", "Guyana", "Suriname", "", "",
@@ -80,10 +43,6 @@ export const regionsDict = {
   ais: 'AIS',
   pacific: 'Pacific'
 }
-
-//
-//
-//
 //
 export const isoToIds= {
   "ATG": "antiguaAndBarbuda",
@@ -138,195 +97,39 @@ export const isoToIds= {
   "NIU": "niue"
 }
 //
-//
-//
-//
-//
-//
-//
-// ////////
-// //Old MVI Initializations, should mostly all be abstracted
-// //////////////
-//
-// presetDict = {
-//     evi: [
-//       "agrInst",
-//       "expConc",
-//       "expInst",
-//       "popLECZ",
-//       "popDry",
-//       "remote",
-//       "victims",
-//       "agrGDP",
-//     ],
-//   };
-//
-//   mviIndicatorNames = {
-//     expConc: "Export Concentration",
-//     expInst: "Export Instability",
-//     agrInst: "Agricultural Instability",
-//     agrGDP: "Agriculture & Fishing (% of GDP)",
-//     victims: "Victims of Disasters",
-//     popLECZ: "% Population in Coastal Zones",
-//     remote: "Remoteness", //"popDry": "% Population in Drylands",
-//     tourism: "Tourism Revenue (% of Exports)",
-//     fdi: "FDI Inflows (% of GDP)",
-//     remit: "Remittances (% of GDP)",
-//   };
-//
-export const  mviIndicatorsDict = {
-    expConc: "mvi-ldc-XCON-Index",
-    expInst: "mvi-ldc-XIN-Index",
-    agrInst: "mvi-ldc-AIN-Index",
-    agrGDP: "mvi-ldc-AFF-Index",
-    victims: "mvi-ldc-VIC-Index",
-    popLECZ: "mvi-ldc-LECZ-Index",
-    remote: "mvi-ldc-REM-Index", //"popDry": "%mvi-ldc-DRY-Index-geographic",
-    tourism: "mvi-wdi2-ST.INT.RCPT.XP.ZS",
-    fdi: "mvi-wdi-BX.KLT.DINV.WD.GD.ZS",
-    remit: "mvi-wdi-BX.TRF.PWKR.DT.GD.ZS",
-  };
-//
-export const indexDict = {"mvi":"mvi-index"};
-//
-export const mviDimensionColors = {
-  Financial: "#0DB14B",
-  Economic: "#f0db3a",
-  Geographic: "#CC333F",
-  Environmental: "#00A0B0",
-};
-//
-//
-// mviRecodeDict={
-//
-// }
-//
-export const mviDimensions = {
-    Financial: ["tourism", "remit", "fdi"],
-    Economic: ["agrInst", "expConc", "expInst"],
-    Geographic: ["popLECZ", "remote"], //"popDry",
-    Environmental: ["victims", "agrGDP"],
-  };
-export const mviDimensionList = Object.keys(mviDimensions);
-//
-//   //should compute this automatically
 export const  countryListSpider = [
-    "HTI",
-    "DOM",
-    "ATG",
-    "KNA",
-    "DMA",
-    "LCA",
-    "BRB",
-    "VCT",
-    "GRD",
-    "TTO",
-    "GUY",
-    "SUR",
-    "CPV",
-    "GNB",
-    "STP",
-    "COM",
-    "MUS",
-    "SYC",
-    "MDV",
-    "TLS",
-    "PLW",
-    "PNG",
-    "SLB",
-    "FSM",
-    "MHL",
-    "VUT",
-    "NRU",
-    "KIR",
-    "FJI",
-    "TUV",
-    "TON",
-    "WSM",
-    "BLZ",
-    "JAM",
-  ];
-//
-export const  mviCountryListLongitude = [
-    "Belize",
-    "Jamaica",
-    "Haiti",
-    "Dominican Republic",
-    "Antigua and Barbuda",
-    "St. Kitts and Nevis",
-    "Dominica",
-    "Saint Lucia",
-    "Barbados",
-    "St. Vincent and the Grenadines",
-    "Grenada",
-    "Trinidad and Tobago",
-    "Guyana",
-    "Suriname",
-    "",
-    "",
-    "Cabo Verde",
-    "Guinea-Bissau",
-    "São Tomé and Príncipe",
-    "Comoros",
-    "Mauritius",
-    "Seychelles",
-    "Maldives",
-    "",
-    "",
-    "Timor Leste",
-    "Palau",
-    "Papua New Guinea",
-    "Solomon Islands",
-    "Micronesia",
-    "Marshall Islands",
-    "Vanuatu",
-    "Nauru",
-    "Kiribati",
-    "Fiji",
-    "Tuvalu",
-    "Tonga",
-    "Samoa",
-  ];
-//
-//
-//   // pacificList2 = [
-//   //   "Timor Leste",
-//   //   "Palau",
-//   //   "Papua New Guinea",
-//   //   "Solomon Islands",
-//   //   "Micronesia",
-//   //   "Marshall Islands",
-//   //   "Vanuatu",
-//   //   "Nauru",
-//   //   "Kiribati",
-//   //   "Fiji",
-//   //   "Tuvalu",
-//   //   "Tonga",
-//   //   "Samoa",
-//   // ];
-//   // aisList2 = [
-//   //   "Cabo Verde",
-//   //   "Guinea-Bissau",
-//   //   "São Tomé and Príncipe",
-//   //   "Comoros",
-//   //   "Mauritius",
-//   //   "Seychelles",
-//   //   "Maldives",
-//   // ];
-//   // caribbeanList2 = [
-//   //   "Belize",
-//   //   "Jamaica",
-//   //   "Haiti",
-//   //   "Dominican Republic",
-//   //   "Antigua and Barbuda",
-//   //   "St. Kitts and Nevis",
-//   //   "Dominica",
-//   //   "Saint Lucia",
-//   //   "Barbados",
-//   //   "St. Vincent and the Grenadines",
-//   //   "Grenada",
-//   //   "Trinidad and Tobago",
-//   //   "Guyana",
-//   //   "Suriname",
-//   // ];
-//
+  "HTI",
+  "DOM",
+  "ATG",
+  "KNA",
+  "DMA",
+  "LCA",
+  "BRB",
+  "VCT",
+  "GRD",
+  "TTO",
+  "GUY",
+  "SUR",
+  "CPV",
+  "GNB",
+  "STP",
+  "COM",
+  "MUS",
+  "SYC",
+  "MDV",
+  "TLS",
+  "PLW",
+  "PNG",
+  "SLB",
+  "FSM",
+  "MHL",
+  "VUT",
+  "NRU",
+  "KIR",
+  "FJI",
+  "TUV",
+  "TON",
+  "WSM",
+  "BLZ",
+  "JAM",
+];

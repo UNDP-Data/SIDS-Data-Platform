@@ -59,15 +59,6 @@ export default {
 .indicators-list .v-list-item {
   min-height: 25px;
 }
-.overflow {
-  overflow: hidden;
-}
-.one-line_header {
-  flex: 0 1 auto !important;
-  margin-right: 8px !important;
-  text-overflow: none;
-  overflow:visible;
-}
 .finance-header {
   color: #0018a0;
   justify-content: center;

@@ -1,4 +1,5 @@
 import service from '@/services'
+import sidsList from '@/assets/sidsList'
 
 
 export default {
@@ -8,7 +9,9 @@ export default {
     allKeyData: null,
     fundingCategories: null,
     SIDSDataWithDonors: null,
-    countryList: null
+    portfolioSources:null,
+    countryList: null,
+    portfolioData: null
   },
   mutations: {
     setMetaData(state, data) {
@@ -28,7 +31,12 @@ export default {
     },
     setCountryList(state, data) {
       state.countryList = data;
-      console.log(data)
+    },
+    setPortfolioData(state, data) {
+      state.portfolioData = data;
+    },
+    setPortfolioSources(state, data) {
+      state.portfolioSources = data;
     }
   },
   actions: {
@@ -53,7 +61,6 @@ export default {
             return source.donors && source.donors.includes(category.name)
           })
         })
-        console.log(filteredData);
         commit("setFundingCategories", filteredData);
         dispatch('setFullDonorsInfo');
       }
@@ -61,7 +68,6 @@ export default {
     async setSIDSData({ state, commit }) {
       if(!state.SIDSData){
         const SIDSData = await service.loadSIDSData();
-        console.log(SIDSData)
         commit("setSIDSData", SIDSData);
       }
     },
@@ -97,6 +103,78 @@ export default {
         return project
       })
       commit('setSIDSDataWithDonors', projectsWithDonorInfo)
+    },
+    generatePortfolioData({ state, commit }, {year, region, category, source}) {
+      let sourcesFilteringProjects = [];
+      let filteredData = state.SIDSDataWithDonors.filter(project => {
+        if(region !== 'All' && project.region !== region) {
+          return false
+        }
+        if(year !== 'all' && project.year !== year) {
+          return false
+        }
+        if(category !== 'All') {
+          let res = project.donors.some(donor => {
+            return checkProjectsCategory(project, donor, category)
+          })
+          if(!res) {
+            return false
+          }
+        }
+        sourcesFilteringProjects.push(project)
+        if(source !== 'All Funding Sources') {
+          let res = !project.donors.some((donor) => {
+            return donor.name === source
+          })
+          if(res) {
+            return false
+          }
+        }
+        return true
+      })
+      commit("setPortfolioData", filteredData);
+
+      const projectsString = JSON.stringify(sourcesFilteringProjects);
+      let sources = state.fundingCategories.filter(category => {
+        return projectsString.includes(category.name)
+      })
+      if(category !== 'All') {
+        sources = sources.filter((donor) => checkDonorsCategory(donor, category))
+      }
+      sources.unshift({
+        name:'All Funding Sources',
+        subCategory:'all'
+      })
+      commit("setPortfolioSources", sources);
+      function checkProjectsCategory(project, donor, category) {
+        if(category === 'Programme Countries') {
+          if(donor.category === 'Government' && project.country) {
+            let country = sidsList.find(country => {
+              return project.country === country.iso
+            })
+            return country && country.name === donor.subCategory;
+          }
+        }
+        else if(category === 'Donor Countries') {
+          return project.country  != donor.subCategory;
+        }
+        else {
+          return donor.category === category;
+        }
+      }
+      function checkDonorsCategory(donor, category) {
+        if(category === 'Programme Countries') {
+          return donor.category === 'Government' && sidsList.some((country) =>  {
+            return country.name === donor.subCategory
+          });
+        }
+        else if(category === 'Donor Countries') {
+          return donor.category === 'Government' && sidsList.every(country =>  country.name != donor.subCategory);
+        }
+        else {
+          return donor.category === category;
+        }
+      }
     }
   }
 }

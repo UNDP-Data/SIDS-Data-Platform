@@ -5,6 +5,7 @@ export default {
   namespaced: true,
   state: {
     datasetsList: null,
+    datasetsMeta: null,
     indicatorsCategories: null,
     indicatorsMeta: null,
     profileData: null,
@@ -19,6 +20,9 @@ export default {
     },
     setMeta(state, data) {
       state.indicatorsMeta = data;
+    },
+    setDatasetsMeta(state, data) {
+      state.datasetsMeta = data;
     },
     setProfileData(state, data) {
       state.profileData = data;
@@ -53,7 +57,7 @@ export default {
           return 0;
         });
         commit("setDatasetsList", datasetsList);
-        console.log(datasetsList)
+        commit("setDatasetsMeta", datasetsData);
       }
     },
     async getProfileData({ state, commit }) {
@@ -74,6 +78,18 @@ export default {
         meta = Object.keys(meta)
           .filter( indicatorCode => meta[indicatorCode].indicator)
           .reduce( (res, indicatorCode) => (res[indicatorCode] = meta[indicatorCode], res), {} );
+
+        state.datasetsList.map((dataset) => {
+          for(let category in state.indicatorsCategories[dataset.code]) {
+            for(let subCategory in state.indicatorsCategories[dataset.code][category]) {
+              for(let indicator in state.indicatorsCategories[dataset.code][category][subCategory]) {
+                state.indicatorsCategories[dataset.code][category][subCategory][indicator].map(code => {
+                  meta[code].codesArray = state.indicatorsCategories[dataset.code][category][subCategory][indicator]
+                })
+              }
+            }
+          }
+        })
         commit("setMeta", meta);
       }
     },

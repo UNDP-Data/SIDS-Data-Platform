@@ -28,7 +28,8 @@ export default {
   name: 'IndicatorsChoroChart',
   data: function () {
     return {
-      choro:null
+      choro:null,
+      resizeTimeout: null
     }
   },
   props:['indicatorCode', 'region', 'page', 'chartType', 'sorting', 'mviCodes', 'year'],
@@ -49,6 +50,7 @@ export default {
 
       this.choro = new Choro({
         viz:this.chartType,
+        widthCached: document.body.clientWidth,
         sidsXML,
         mapLocations,
         indicatorCode:this.indicatorCode,
@@ -59,13 +61,28 @@ export default {
         clickCallback:this.counntryClickCallback,
         selectedIndis:this.mviCodes,
         vizContainerWidth:(document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
-        vizContainerHeight:(document.body.clientWidth - 40) > 800 ? 580 : 1360,
+        vizContainerHeight:(document.body.clientWidth - 40) > 800 ? 580 : 1060,
         mapContainerSelector: '#choro_map_container',
         legendContainerSelector:'#choro_legend_container'
       })
     },
     counntryClickCallback(countryCode) {
       this.$router.push({path:`/country-profiles/${countryCode}`})
+    },
+    updateScreenSize(){
+      if(this.widthCached !== document.body.clientWidth && this.choro) {
+        let rootThis = this;
+        if(this.resizeTimeout) {
+          clearTimeout(this.resizeTimeout);
+        }
+        this.resizeTimeout = setTimeout(async () => {
+          await rootThis.choro.updateSize({
+            vizContainerWidth: (document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
+            vizContainerHeight: (document.body.clientWidth - 40) > 800 ? 580 : 1360
+          })
+        }, 100);
+        this.widthCached = document.body.clientWidth
+      }
     }
   },
   async mounted() {
@@ -111,7 +128,13 @@ export default {
         this.choro.updateVizYear(this.year)
       }
     }
-  }
+  },
+  created() {
+    window.addEventListener("resize", this.updateScreenSize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.updateScreenSize);
+  },
 }
 </script>
 

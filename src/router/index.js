@@ -18,14 +18,28 @@ const routes = [
       fundingSource: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
       goalsType: to.params.goalsType || 'sdgs'
     }),
+    meta:{
+      header:'UNDP Portfolio in Small Island Developing States',
+      infoContent:'aboutThis-portfolio'
+    },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Portfolio.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
+      store.commit('loader/setLoading', true);
       await store.dispatch('sids/getAllKeyData');
       await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
+      await store.dispatch('sids/generatePortfolioData', {
+        region: to.query.region || 'All',
+        year: to.query.year || 'all',
+        category: decodeURIComponent(to.query.fundingCategory || 'All') ,
+        source: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
+      });
+      setTimeout(() => {
+        store.commit('loader/setLoading', false);
+      }, 500)
       next()
     }
   },
@@ -33,8 +47,9 @@ const routes = [
     path: '/development-indicators/:indicator?/:year?/:chartType?',
     link: '/development-indicators',
     name: 'Development Indicators',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
+      store.commit('loader/setLoading', true);
       let chartType = to.params.chartType || 'choro',
       indicator = to.params.indicator || 'region',
       year = to.params.year || 'recentValue';
@@ -52,10 +67,20 @@ const routes = [
         year === to.params.year &&
         chartType === to.params.chartType
       ) {
+        setTimeout(() => {
+          store.commit('loader/setLoading', false);
+        }, 500)
         next()
       } else {
+        setTimeout(() => {
+          store.commit('loader/setLoading', false);
+        }, 500)
         next({ path: `/development-indicators/${indicator}/${year}/${chartType}`})
       }
+    },
+    meta:{
+      header:'Development Indicators',
+      infoContent:'aboutThis-indicators'
     },
     props: (to) => (
       {
@@ -70,23 +95,34 @@ const routes = [
     path: '/vulnerability/:indicator?/:chartType?',
     link: '/vulnerability',
     name: 'Vulnerability',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
-      console.log(vuetify)
+      store.commit('loader/setLoading', true);
       let chartType = to.params.chartType || 'spider'
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'
       ) {
         chartType = 'bars'
       }
+      await store.dispatch('indicators/getDatasetsList');
       await store.dispatch('indicators/getCategories');
       await store.dispatch('indicators/getMeta');
       await store.dispatch('indicators/getProfileData');
       if(chartType === to.params.chartType) {
+        setTimeout(() => {
+          store.commit('loader/setLoading', false);
+        }, 500)
         next()
       } else {
+        setTimeout(() => {
+          store.commit('loader/setLoading', false);
+        }, 500)
         next({ path: `/vulnerability/mvi-index/${chartType}`})
       }
+    },
+    meta:{
+      header:'Towards a Multidimensional Vulnerability Index',
+      infoContent:'aboutThis-mvi'
     },
     props: (to) => (
       {
@@ -101,13 +137,24 @@ const routes = [
     path: '/country-profiles/:country?',
     link: '/country-profiles',
     name: 'Country Profiles',
-    component: () => import(/* webpackChunkName: "about" */ '../views/CountryProfiles.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/CountryProfiles/CountryProfiles.vue'),
     beforeEnter: async (to, from, next) => {
+      store.commit('loader/setLoading', true);
       await store.dispatch('profiles/getIndicatorsMetadata');
       if(!to.params.country) {
+        setTimeout(() => {
+          store.commit('loader/setLoading', false);
+        }, 500)
         next({ path: `/country-profiles/caboVerde`})
       }
+      setTimeout(() => {
+        store.commit('loader/setLoading', false);
+      }, 500)
       next();
+    },
+    meta:{
+      header:'Country Profiles',
+      infoContent:'aboutThis-profiles'
     },
     props: (route) => ({
       activeCountryId: route.params.country || '',
@@ -118,12 +165,25 @@ const routes = [
     path: '/geospatial-data',
     link: '/geospatial-data',
     name: 'Geospatial Data',
+    meta:{
+      header:'Geospatial Data'
+    },
     component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData.vue')
   },
   {
     path: '/about',
     link: '/about',
     name: 'About',
+    meta:{
+      header:'About the SIDS Data Visualization Platform'
+    },
+    beforeEnter: async (to, from, next) => {
+      store.commit('loader/setLoading', true);
+      setTimeout(() => {
+        store.commit('loader/setLoading', false);
+      }, 500)
+      next();
+    },
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {

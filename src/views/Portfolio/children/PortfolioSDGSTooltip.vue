@@ -52,7 +52,7 @@ export default {
         { text: 'Project title', value: 'title',
         sortable: false, },
       ];
-      if(this.year === 'all') {
+      if(!this.$route.query.year || this.$route.query.year === 'all') {
         headers.push({
           text: 'Year', value: 'year',
           sortable: false
@@ -69,33 +69,6 @@ export default {
 .tooltip-root {
   max-width: 400px;
   padding: 0;
-}
-.indicators-list {
-  padding-bottom: 0;
-}
-.indicators-list .one-line {
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  padding: 4px 0;
-}
-.indicators-list .v-list-item {
-  min-height: 25px;
-}
-.overflow {
-  overflow: hidden;
-}
-.indicators-list .one-line_subtitle{
-  white-space: normal;
-}
-.one-line_header {
-  align-self: auto;
-  flex: 0 1 auto !important;
-  margin-right: 8px !important;
-  text-overflow: none;
-  overflow:visible;
-}
-.p-0 {
-  padding: 0 !important;
 }
 .tableContainer {
   margin: 0 -9px 0;
