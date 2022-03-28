@@ -144,7 +144,6 @@ import IndicatorsNav from './children/IndicatorsNav.vue'
 import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
-import IndicatorsML from './children/IndicatorsML.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
 
@@ -232,7 +231,6 @@ export default {
     MviIndicatorsNav:MVIIndicatorsNav,
     IndicatorsMobileNav,
     MviMobileNav,
-    IndicatorsML
   },
   computed: {
     ...mapState({
