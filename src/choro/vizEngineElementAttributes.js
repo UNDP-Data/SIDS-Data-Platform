@@ -110,7 +110,6 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
   cx = bBox[4],
   cy = bBox[5],
   output;
-  if(this.vizWidth < 800)
   if (this.indiSelections["viz"] == "bars") {
     if (isNumeric(val)) {
       try {
