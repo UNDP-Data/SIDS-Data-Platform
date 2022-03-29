@@ -863,15 +863,12 @@ export function updateRegionLables() {
             aisY: 300,
           };
         }
+        if(this.vizWidth < 800) {
+          regionTitleVals.opacity = 0;
+        }
         // }
       } else if (this.indiSelections["sortby"] == "region") {
-        if(this.vizWidth < 550) {
-          console.log(regionTitleVals,
-            this.vizWidth,
-          allVals,
-          indicatorDataYear,
-          countryListLength,
-          regionCountries)
+        if(this.vizWidth < 800) {
           let aisOffset = regionCountries.caribbean.reduce((offset, iso) => {
             if(indicatorDataYear[iso] !== "No Data") {
               offset+=30
