@@ -867,6 +867,7 @@ export function updateRegionLables() {
       } else if (this.indiSelections["sortby"] == "region") {
         if(this.vizWidth < 550) {
           console.log(regionTitleVals,
+            this.vizWidth,
           allVals,
           indicatorDataYear,
           countryListLength,

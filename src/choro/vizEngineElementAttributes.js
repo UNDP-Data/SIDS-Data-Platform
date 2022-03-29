@@ -144,7 +144,7 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
             ["", ""],
             pacificListSort
           );
-          if(this.vizWidth < 500) {
+          if(this.vizWidth < 550) {
             chosenCountryList.unshift(["", ""])
           }
           rank = chosenCountryList.indexOf(country);
