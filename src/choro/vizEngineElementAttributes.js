@@ -137,12 +137,16 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           let caribbeanListSort = countryOrder.filter((item) =>
             regionCountries["caribbean"].includes(item)
           );
+          console.log(pacificListSort)
           let chosenCountryList = caribbeanListSort.concat(
             ["", ""],
             aisListSort,
             ["", ""],
             pacificListSort
           );
+          if(this.vizWidth < 500) {
+            chosenCountryList.unshift(["", ""])
+          }
           rank = chosenCountryList.indexOf(country);
         }
 

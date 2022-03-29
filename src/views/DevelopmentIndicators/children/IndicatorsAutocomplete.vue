@@ -22,7 +22,7 @@
                 {{item.indicator}}
               </v-list-item-title>
               <v-list-item-subtitle class="inicator-item_description">
-                {{datasetsMeta[item.dataset] && datasetsMeta[item.dataset].datasetName}}
+              {{item.dataset}}  {{datasetsMeta[item.dataset] && datasetsMeta[item.dataset].datasetName}}
               </v-list-item-subtitle>
               <!-- <v-list-item-subtitle class="inicator-item_description">
                 {{item.def}}

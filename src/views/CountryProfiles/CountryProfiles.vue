@@ -21,6 +21,16 @@
               outlined
               hide-details
             >
+
+              <template slot="selection" slot-scope="data">
+                <div class="mobile-pillar-selector">
+                  <i
+                    class="flag-icon select_icon"
+                    :class="'flag-icon-' + flagCodes[data.item.id]"
+                  ></i>
+                  {{ data.item.name }}
+                </div>
+              </template>
               <template  slot="item" slot-scope="data">
                 <div>
                   <i
@@ -73,6 +83,36 @@
                 </div>
               </v-col>
             </v-row>
+          </v-col>
+        </v-row>
+        <v-row class="d-md-none d-none-print justify-center">
+          <v-col cols="11">
+            <v-expansion-panels flat accordion>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+                    <h3>{{stat.value}} {{stat.unit}}</h3>
+                    <p class="mb-0">{{stat.title}}</p>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-divider/>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.successesInDevelopment.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-divider/>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </v-col>
         </v-row>
         <v-row justify="center" class="d-none-print d-md-none">
@@ -212,36 +252,6 @@
                   src="@/assets/media/goals-icons/sidsOfferPillars.png"/>
               </template>
             </info-hover-tooltip>
-          </v-col>
-        </v-row>
-        <v-row class="d-md-none d-none-print justify-center">
-          <v-col cols="11">
-            <v-expansion-panels flat accordion>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
-                  <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-                    <h3>{{stat.value}} {{stat.unit}}</h3>
-                    <p class="mb-0">{{stat.title}}</p>
-                  </div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.successesInDevelopment.title}}</v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
           </v-col>
         </v-row>
         <v-row class="mb-4 d-none d-md-flex d-print-flex no-page-break" v-if="graphRankData && graphValueData" justify="space-between">

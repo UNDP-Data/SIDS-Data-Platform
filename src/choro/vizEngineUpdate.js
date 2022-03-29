@@ -94,9 +94,9 @@ export function updateVizEngine(indicatorCode) {
       }
     if(this.vizWidth < 800) {
       if(this.indiSelections["viz"] === "bars") {
-        let vizContainerHeight = (Object.keys(vizElementAttributes).length - Object.keys(noData).length) * 29 + 60;
-        if(this.indiSelections['sortby'] === 'region') {
-          vizContainerHeight+= 29 * 4
+        let vizContainerHeight = (Object.keys(vizElementAttributes).length - Object.keys(noData).length) * 30;
+        if(this.indiSelections["sortby"] === 'region') {
+          vizContainerHeight+= 30 * 6
         }
         this.main_chart_svg
           .attr("height", vizContainerHeight);
@@ -865,15 +865,44 @@ export function updateRegionLables() {
         }
         // }
       } else if (this.indiSelections["sortby"] == "region") {
-        regionTitleVals = {
-          opacity: 1,
-          pacificX: 715,
-          pacificY: 450,
-          caribbeanX: 700,
-          caribbeanY: 110,
-          aisX: 725,
-          aisY: 300,
-        };
+        if(this.vizWidth < 550) {
+          console.log(regionTitleVals,
+          allVals,
+          indicatorDataYear,
+          countryListLength,
+          regionCountries)
+          let aisOffset = regionCountries.caribbean.reduce((offset, iso) => {
+            if(indicatorDataYear[iso] !== "No Data") {
+              offset+=30
+            }
+            return offset
+          }, 30*2);
+          let pacificOffset = regionCountries.ais.reduce((offset, iso) => {
+            if(indicatorDataYear[iso] !== "No Data") {
+              offset+=30
+            }
+            return offset
+          }, aisOffset + 30*2);
+          regionTitleVals = {
+            opacity: 1,
+            pacificX: 0,
+            pacificY: pacificOffset,
+            caribbeanX: 0,
+            caribbeanY: 0,
+            aisX: 0,
+            aisY: aisOffset,
+          };
+        } else {
+          regionTitleVals = {
+            opacity: 1,
+            pacificX: 715,
+            pacificY: 450,
+            caribbeanX: 700,
+            caribbeanY: 110,
+            aisX: 725,
+            aisY: 300,
+          };
+        }
       }
     } else if (this.indiSelections["viz"] == "global") {
       regionTitleVals = {
