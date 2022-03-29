@@ -128,7 +128,7 @@
       </v-row>
       <v-row v-if="chartType === 'ml'" dense>
         <v-col cols='12'>
-          <indicators-m-l v-if='!noData' :year="year" :indicatorCode="indicator"/>
+          <indicators-m-l v-if='!noData' @yearChange="yearUpdate" :year="year" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
         </v-col>
       </v-row>

@@ -26,6 +26,7 @@
             item-value="id"
             item-text="name"
             :value="year"
+            @change="emitYearChange"
             :items="years"
             outlined
           ></v-select>
@@ -34,7 +35,7 @@
     </v-row>
     <v-row class="justify-center">
       <v-col cols="12">
-        <h4 class="choro-title text-center" v-if="page!=='global'">
+        <h4 class="choro-title text-center">
           {{activeIndicatorsMeta.indicator}}
           ({{activeIndicatorsMeta.units}})
         </h4>
@@ -48,7 +49,9 @@
             rounded
             dense
             hide-details
-            :value="imputer"
+            v-model="imputer"
+            item-text="name"
+            item-value="id"
             :items="imputers"
             outlined
           ></v-select>
@@ -68,7 +71,7 @@
             rounded
             dense
             hide-details
-            :value="predictor"
+            v-model="predictor"
             :items="predictors"
             outlined
           ></v-select>
@@ -82,11 +85,27 @@
     </v-row>
     <v-row class="justify-center">
       <v-col cols="12 d-flex">
-        <div class="select">
+        <div class="select" v-if="predictor === 'Manual'">
+          <label class="input-label">Select predictors</label>
+          <v-autocomplete
+            rounded
+            dense
+            v-model="inPredicor"
+            multiple
+            item-text="indicator"
+            item-value="indicatorCode"
+            :items="allIndicators"
+            hide-details
+            outlined
+          ></v-autocomplete>
+        </div>
+        <div class="select" v-else>
           <label class="input-label">Select predictors</label>
           <v-select
             rounded
             dense
+            v-model="nPredicor"
+            :items="nPredicors"
             hide-details
             outlined
           ></v-select>
@@ -101,7 +120,7 @@
             rounded
             dense
             hide-details
-            :value="estimator"
+            v-model="estimator"
             :items="estimators"
             outlined
           ></v-select>
@@ -121,7 +140,9 @@
             rounded
             dense
             hide-details
-            :value="emodel"
+            v-model="emodel"
+            item-text="name"
+            item-value="id"
             :items="emodels"
             outlined
           ></v-select>
@@ -134,8 +155,10 @@
             rounded
             dense
             hide-details
-            :value="pinterval"
+            v-model="pinterval"
             :items="pintervals"
+            item-text="name"
+            item-value="id"
             outlined
           ></v-select>
         </div>
@@ -145,9 +168,11 @@
       <v-col cols="12">
         <v-btn
           color="primary"
+          @click="getMLData"
           dense
           rounded
         >Train</v-btn>
+        <p></p>
       </v-col>
     </v-row>
   </div>
@@ -156,6 +181,8 @@
 <script>
 
 import { mapState } from 'vuex';
+import service from '@/services'
+
 
 export default {
   name: 'IndicatorsML',
@@ -163,27 +190,45 @@ export default {
     return {
       modelType:'Two Level Imputation',
       modelTypes:['Two Level Imputation'],
-      imputer: 'K Nearest Neighbour Imputer',
-      imputers: ['K Nearest Neighbour Imputer', 'Iterative Imputer', 'Simple Imputer'],
+      imputer: 'KNNImputer',
+      imputers: [
+        {name: 'K Nearest Neighbour Imputer', id:'KNNImputer'},
+        {name: 'Iterative Imputer', id:'?'},
+        {name: 'Simple Imputer', id:'?'}
+      ],
       predictor: 'Automatic via feature selection',
       predictors: ['Automatic via feature selection', 'Automatic via PCA', 'Manual'],
-      estimator: '100',
-      estimators: ['100', '500', '1000'],
-      emodel:'Best Model',
-      emodels:['Random Forest Regressor','Gradient Boost Regressor','Extra Trees Regressor','Best Model'],
-      pinterval:'Quantile',
-      pintervals:['Residual Bootstrap','Quantile']
+      inPredicor: [],
+      nPredicor:10,
+      nPredicors:[5,10,20],
+      estimator: 100,
+      estimators: [10, 100, 500, 1000],
+      emodel:'rfr',
+      emodels:[
+        { name: 'Random Forest Regressor', id:'rfr'},
+        { name: 'Gradient Boost Regressor', id:'gbr'},
+        { name: 'Extra Trees Regressor', id:'etr'},
+        { name: 'Best Model', id:'bm'}
+      ],
+      pinterval:'quantile',
+      pintervals:[{
+        name: 'Residual Bootstrap',
+        id:'resb'
+      },{
+        name:'Quantile',
+        id:'quantile'
+      }]
     }
   },
   props:['indicatorCode', 'year'],
   computed: {
     ...mapState({
       profileData: state => state.indicators.profileData,
-      indicatorMeta: state => state.indicators.indicatorsMeta,
+      indicatorsMeta: state => state.indicators.indicatorsMeta,
       data: state => state.indicators.activeIndicatorData
     }),
     activeIndicatorsMeta() {
-      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
+      return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-137506']
     },
     years(){
       if(this.data && this.data.data) {
@@ -196,8 +241,40 @@ export default {
       } else {
         return []
       }
-    }
+    },
+    allIndicators() {
+      let indicatorsArray = [];
+      for(let indicator in this.indicatorsMeta) {
+        if(this.indicatorsMeta[indicator].dataset !== 'key') {
+          indicatorsArray.push(this.indicatorsMeta[indicator])
+        }
+      }
+      return indicatorsArray;
+    },
   },
+  methods: {
+    async getMLData() {
+      let req = {
+        target:this.indicatorCode,
+        interval: this.pinterval,
+        target_year: this.year,
+        interpolator: this.imputer,
+        scheme: this.predictor,
+        estimators: this.estimator,
+        model: this.emodel
+      };
+      if(this.predictor === 'Manual') {
+        req.manual_predictors = this.inPredicor
+      } else {
+        req.number_predictor = this.nPredicor
+      }
+      let res = await service.loadML(req)
+      console.log(res)
+    },
+    emitYearChange(year) {
+      this.$emit('yearChange', year)
+    }
+  }
 }
 </script>
 
