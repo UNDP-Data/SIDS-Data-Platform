@@ -19,7 +19,7 @@ export const countryListLongitude = ["Belize", "Jamaica", "Cayman Islands", "Cub
 export const regionCountries = {
     "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP"],
     "pacific": ["TLS", "PLW", "PNG", "SLB","TON",
-        "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "ABW", "NIU", "WSM", "TKL", "COK"],
+        "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "NIU", "WSM", "TKL", "COK"],
     "caribbean": ["BLZ", "JAM", "CYM", "CUB", "BMU", "BHS", "ABW", "CUW", "TCA", "HTI", "DOM",
         "KNA", "VGB", "AIA", "SXM", "ATG", "MSR", "DMA", "LCA"
         , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR"]

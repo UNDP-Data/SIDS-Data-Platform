@@ -187,7 +187,7 @@ export default [
   },
   {
     id:'niue',
-    name: 'Nuie',
+    name: 'Niue',
     region:'Pacific',
     iso:'NIU'
   },
