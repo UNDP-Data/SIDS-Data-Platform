@@ -22,7 +22,7 @@
                 {{item.indicator}}
               </v-list-item-title>
               <v-list-item-subtitle class="inicator-item_description">
-              {{item.dataset}}  {{datasetsMeta[item.dataset] && datasetsMeta[item.dataset].datasetName}}
+                {{datasetsMeta[item.dataset] && datasetsMeta[item.dataset].datasetName}}
               </v-list-item-subtitle>
               <!-- <v-list-item-subtitle class="inicator-item_description">
                 {{item.def}}
@@ -87,6 +87,11 @@ export default {
           indicatorsArray.push(this.indicatorsMeta[indicator])
         }
       }
+      indicatorsArray.sort(function(a, b) {
+          var textA = a.indicator.toUpperCase().trim();
+          var textB = b.indicator.toUpperCase().trim();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
       return indicatorsArray;
     },
     activeIndicator() {

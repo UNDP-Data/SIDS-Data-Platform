@@ -1,16 +1,8 @@
 <template>
   <header class="header">
-  <video class="header_video d-none d-lg-block" autoplay muted loop playsinline>
+  <video class="header_video d-none d-lg-block" poster="@/assets/media/videos/video-placeholder.jpeg" autoplay muted loop playsinline>
     <source v-if="!isTesting" src="@/assets/media/videos/header-xl.webm" type="video/webm">
     <source v-if="!isTesting" src="@/assets/media/videos/header-xl.mp4" type="video/mp4">
-  </video>
-  <video class="header_video d-none d-md-block d-lg-none" autoplay muted loop playsinline>
-    <source v-if="!isTesting" src="@/assets/media/videos/header-md.webm" type="video/webm">
-    <source v-if="!isTesting" src="@/assets/media/videos/header-md.mp4" type="video/mp4">
-  </video>
-  <video class="header_video d-block d-md-none" autoplay muted loop playsinline>
-    <source v-if="!isTesting" src="@/assets/media/videos/header-sm.webm" type="video/webm">
-    <source v-if="!isTesting" src="@/assets/media/videos/header-sm.mp4" type="video/mp4">
   </video>
     <div class="d-none d-md-block d-lg-block d-xl-block header-bar">
       <a href="https://data.undp.org/" target="_blank">
