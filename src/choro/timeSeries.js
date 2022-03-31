@@ -641,6 +641,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
     } else {
         g.selectAll("line.link").remove()
         g.selectAll("line.h").remove()
+        g.selectAll("text.legend").remove()
     }
   }
 
