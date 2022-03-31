@@ -87,7 +87,7 @@ export function updateVizEngine(indicatorCode) {
         timeData[this.indicatorCode] = JSON.parse(JSON.stringify(this.indicatorData));
         let dataset = this.parse(timeData);
         let optionSelected = {
-          countryGroupOption: this.countyType,
+          countryGroupOption: this.countryType,
           datasetOption: this.indicatorCode,
         };
         this.updateTimeChart({ dataset, optionSelected });
@@ -291,7 +291,7 @@ export function updateCountrySvgColors(quantize) {
         if (d3.select(this).classed("countryActive")) return;
         if (rootThis.indiSelections.viz!=='choro') return;
         d3.select(this).attr("class", function () {
-          /* reset county color to quantize range */
+          /* reset country color to quantize range */
           let  stat = indicatorDataYear[this.id];
 
           if (rootThis.indicatorCode == "Region") {

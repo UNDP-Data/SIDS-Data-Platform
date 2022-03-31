@@ -68,30 +68,38 @@ export default {
       return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
     },
     sidsList() {
-      return sidsList.filter(country => {
-        return (this.activeIndicatorData.data.recentValue[country.iso] &&
-          this.activeIndicatorData.data.recentValue[country.iso] !== 'No Data') && (
-            this.region === 'All' || this.region === country.region || this.compareIdsList.includes(country.id)
-          )
-      })
+      if(this.page !== 'mvi') {
+        return sidsList.filter(country => {
+          return (this.activeIndicatorData.data.recentValue[country.iso] &&
+            this.activeIndicatorData.data.recentValue[country.iso] !== 'No Data') && (
+              this.region === 'All' || this.region === country.region || this.compareIdsList.includes(country.id)
+            ) && !country.average
+        })
+      } else {
+        return this.getMVIavaliableCountrues()
+      }
     }
   },
   components:{
     CountryMultiselect
   },
   methods:{
-    setCompareCountries(countyList) {
-      this.compareIdsList = countyList;
-      let res = sidsList.filter(country => countyList.includes(country.id)).map(county => county.iso);
+    setCompareCountries(countryList) {
+      console.log(this.compareIdsList)
+      this.compareIdsList = countryList;
+      let res = sidsList.filter(country => countryList.includes(country.id)).map(country => country.iso);
       this.choro && this.choro.updateSeriesCountryList(res)
     },
     async initChart() {
       let sidsXML = await service.loadSidsSVG();
       let mapLocations = await service.loadMapLocations();
-      this.compareIdsList = [sidsList.find(counry => {
-        return counry.iso === Object.keys(this.activeIndicatorData.data.recentValue)[0]
-      }).id]
-      let compareISOs = sidsList.filter(country => this.compareIdsList.includes(country.id)).map(county => county.iso)
+      if(this.page !== 'mvi') {
+        this.compareIdsList = [this.sidsList[0].id];
+      }
+      else {
+        this.compareIdsList = [this.getMVIavaliableCountrues()[0].id]
+      }
+      let compareISOs = sidsList.filter(country => this.compareIdsList.includes(country.id)).map(country => country.iso)
       this.choro = new Choro({
         viz:this.chartType,
         widthCached: document.body.clientWidth,
@@ -128,6 +136,14 @@ export default {
         }, 100);
         this.widthCached = document.body.clientWidth
       }
+    },
+    getMVIavaliableCountrues() {
+      let res = sidsList.filter(country => {
+        return !this.mviCodes.some((code) => {
+          return this.activeIndicatorData[code].data.recentValue[country.iso] === 'No Data'
+        }) && !country.average
+      })
+      return res
     }
   },
   async mounted() {
@@ -149,6 +165,12 @@ export default {
       }
     },
     indicatorCode() {
+      let countryList;
+      if(this.page !== 'mvi') {
+        countryList = [this.sidsList[0].id]
+      }
+      else countryList = [this.getMVIavaliableCountrues()[0].id];
+      this.setCompareCountries(countryList)
       if(this.choro && this.page === this.choro.page) {
         this.choro.updateVizData(this.indicatorCode, this.activeIndicatorData);
       }

@@ -450,8 +450,8 @@ export default {
     graphValueData() {
       let result = {};
       this.pillars.map(pillar => {
-        result[pillar.name] = this.selectedCountriesIds.map(countyId => {
-          let countyAxes = this.profiles[countyId][pillar.name].map(axis => {
+        result[pillar.name] = this.selectedCountriesIds.map(countryId => {
+          let countryAxes = this.profiles[countryId][pillar.name].map(axis => {
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
               value: axis.value,
@@ -459,8 +459,8 @@ export default {
             }
           })
           return {
-            name: countyId,
-            axes: countyAxes
+            name: countryId,
+            axes: countryAxes
           }
         })
       })
@@ -469,8 +469,8 @@ export default {
     graphRankData() {
       let result = {};
       this.pillars.map(pillar => {
-        result[pillar.name] = this.selectedCountriesIds.map(countyId => {
-          let countyAxes = this.profiles[countyId][pillar.name].map(axis => {
+        result[pillar.name] = this.selectedCountriesIds.map(countryId => {
+          let countryAxes = this.profiles[countryId][pillar.name].map(axis => {
             let rank = this.rankType + 'Rank'
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
@@ -479,8 +479,8 @@ export default {
             }
           })
           return {
-            name: countyId,
-            axes: countyAxes
+            name: countryId,
+            axes: countryAxes
           }
         })
       })
@@ -490,7 +490,7 @@ export default {
       return this.profiles[this.activeCountryId];
     },
     activeCountry() {
-      return this.sidsList.find(county => county.id === this.activeCountryId);
+      return this.sidsList.find(country => country.id === this.activeCountryId);
     },
     selectedCountriesIds() {
       return [this.activeCountryId, ...this.compareIdsList]
