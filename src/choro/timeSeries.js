@@ -5,6 +5,7 @@ import { interpolatePath } from 'd3-interpolate-path';
 paper.setup(document.getElementById("myCanvas"));
 
 import { countryGroupJson, countryColors } from './countryGroup';
+import sidsList from '@/assets/sidsList'
 
 import { nFormatter } from './vizEngineHelperFunctions'
 
@@ -14,8 +15,10 @@ const countryNames = Object.assign({}, ...Object.values(countryGroup));
 export function initTimeSeries() {
     this.timeColor = d3
       .scaleOrdinal()
-      .domain(countryColors.map((d) => d.country))
-      .range(countryColors.map((d) => d.color));
+      .domain(sidsList.map((d) => {
+        return d.iso
+      }))
+      .range(countryColors);
 }
 
 //
@@ -26,16 +29,12 @@ export function updateTimeChart({ dataset, optionSelected }) {
   let height = 560/800 * this.vizWidth;
   let margin
   if(this.vizWidth < 800) {
-    height += 170;
     margin = { top: 20, right: 15, bottom: 50, left: 40 };
   } else {
     margin = { top: 20, right: 220, bottom: 50, left: 50 };
   }
   const innerWidth = width - margin.left - margin.right;
   let innerHeight = height - margin.top - margin.bottom;
-  if(this.vizWidth < 800) {
-    innerHeight -=170;
-  }
   const timeVariable = 800;
 
   var isLoading = true;
@@ -46,7 +45,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
   const lineHoverWidth = lineStrokWidth * 3;
 
   //data
-  const timeData = dataFilter(dataset);
+  const timeData = dataFilter(dataset, rootThis.countryList, rootThis.vizWidth);
   if (timeData.length == 0) return;
   const allData = timeData.map((d) => d.data).flat();
 
@@ -599,77 +598,50 @@ export function updateTimeChart({ dataset, optionSelected }) {
         .attr("x2", 40)
         .attr("y1", (d) => d.y)
         .attr("y2", (d) => d.y);
+
+      g.selectAll("text")
+        .data(legendData)
+        .join("text")
+        .attr("class", "legend")
+        .attr("dominant-baseline", "middle")
+        .attr("text-anchor", "start")
+        .attr("fill", (d) => rootThis.timeColor(d.country))
+        //this is the font size for the country names in the legend
+        .attr("font-size", 10)
+        .attr("x", () => {
+          return 49
+        })
+        .attr("y", (d) => {
+          return d.y
+        })
+        .attr("cursor", "pointer")
+        .text((d) => countryNames[d.country]);
+
+        g.selectAll("text")
+        .attr("x", () => {
+          return 49
+        })
+        .attr('opacity', () => {
+          if(width < 800) {
+            return 0
+          }
+          return 1
+        })
+        .attr("y", (d) => {
+          return d.y
+        })
+
+      g.selectAll("text")
+        .on("mouseenter", function (dd) {
+          lineMouseEnter(dd);
+        })
+        .on("mouseleave", function () {
+          lineMouseLeave();
+        });
     } else {
         g.selectAll("line.link").remove()
         g.selectAll("line.h").remove()
     }
-
-    g.selectAll("text")
-      .data(legendData)
-      .join("text")
-      .attr("class", "legend")
-      .attr("dominant-baseline", "middle")
-      .attr("text-anchor", "start")
-      .attr("fill", (d) => rootThis.timeColor(d.country))
-      //this is the font size for the country names in the legend
-      .attr("font-size", 10)
-      .attr("x", () => {
-        if(width < 800) {
-          return 0;
-        }
-        return 49
-      })
-      .attr("y", (d) => {
-        if(width < 800) {
-          return 0;
-        }
-        return d.y
-
-      })
-      .attr("cursor", "pointer")
-      .text((d) => countryNames[d.country]);
-
-      g.selectAll("text")
-      .attr("x", (d,i,k) => {
-        if(width < 800) {
-          let res = Array.from(k).reduce((padding, node, index) => {
-            if(index >= i) {
-              return padding
-            }
-            if(padding + node.getComputedTextLength() + 10 > width - 120) {
-              return 0;
-            } else {
-              return padding + node.getComputedTextLength() + 10
-            }
-          }, 0);
-          return res;
-        }
-        return 49
-      })
-      .attr("y", (d,i,k) => {
-        if(width < 800) {
-          let res = Array.from(k).reduce(([w,h], node, index) => {
-            if(index >= i) {
-              return [w,h]
-            }
-            if(w + node.getComputedTextLength() + 10 < width - 120) {
-              return [w + node.getComputedTextLength() + 10, h];
-            } else {
-              return [0,(h + 16)]
-            }
-          }, [0,0]);
-          return res[1];
-        }
-        return d.y
-      })
-
-    g.selectAll("text")
-      .on("mouseenter", function (dd) {
-        lineMouseEnter(dd);
-      })
-      .on("mouseleave", function () {
-        lineMouseLeave();
-      });
   }
 
   function xAxis(g) {
@@ -688,10 +660,12 @@ export function updateTimeChart({ dataset, optionSelected }) {
     g.selectAll(".domain").attr("stroke", "grey");
   }
 
-  function dataFilter(dataset) {
+  function dataFilter(dataset, countryList, vizWidth) {
     const { datasetOption, countryGroupOption } = optionSelected;
-    const filtered0 = dataset[datasetOption]["data"];
-
+    let filtered0 = dataset[datasetOption]["data"];
+    if(countryList.length !== 0 && vizWidth<800) {
+      return filtered0.filter((d) => countryList.includes(d.country)) || []
+    }
     if (countryGroupOption == "All") {
       return filtered0;
     } else {

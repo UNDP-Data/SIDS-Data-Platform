@@ -183,41 +183,13 @@
         </v-row>
         <v-row class="d-none-print" justify="center">
           <v-col cols="11" md="6">
-            <div class="select">
-              <v-select
-                rounded
-                :value="compareIdsList"
-                :items="sidsListFiltered"
-                item-text="name"
-                item-value="id"
-                placeholder="Overlay countries to compare indicator rank"
-                @change="setCompareCountries"
-                chips
-                outlined
-                hide-selected
-                multiple
-                dense
-                hide-details
-              >
-                <template #selection="{ item, index }">
-                  <v-chip
-                    class="muliselect-chip"
-                    close
-                    @click:close="removeCountry(item.id)"
-                    :style="getChipStyle(index)"
-                    :color="getColor(index)">
-                    {{item.name}}
-                  </v-chip>
-                </template>
-                <template slot="item" slot-scope="data">
-                <i
-                  class="flag-icon select_icon"
-                  :class="'flag-icon-' + flagCodes[data.item.id]"
-                ></i>
-                {{ data.item.name }}
-                </template>
-              </v-select>
-            </div>
+            <country-multiselect
+              placeholder="Overlay countries to compare indicator rank"
+              :countryActiveIdsList="compareIdsList"
+              :countriesToCompare="sidsListFiltered"
+              :colorScheme="colorScheme"
+              @countryChange="setCompareCountries"
+            />
           </v-col>
           <v-col cols="3" class="d-flex align-center" md="1">
             <p class="mt-auto mb-auto">among</p>
@@ -325,6 +297,7 @@ import ProfilesSpiderChart from './children/ProfilesSpiderChart.vue'
 
 import InfoButton from '@/components/InfoButton.vue'
 import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
+import CountryMultiselect from '@/components/CountryMultiselect.vue'
 import * as d3 from 'd3';
 import store from '@/store'
 import sizeMixin from '@/mixins/size.mixin'
@@ -341,7 +314,8 @@ export default {
     ProfilesSpiderChart,
     ProfilesFinance,
     InfoHoverTooltip,
-    InfoButton
+    InfoButton,
+    CountryMultiselect
   },
   data: () => ({
     flagCodes,
@@ -387,7 +361,6 @@ export default {
     }],
     tab:'Climate',
     tabs:['Climate','Blue Economy','Digital Transformation','Vulnerability','Finance'],
-    rgbaColorScheme:['rgba(237, 201, 81, 0.4)','rgba(204, 51, 63, 0.4)','rgba(0, 160, 176, 0.4)','rgba(255, 255, 255, 0.4)'],
     graphOptions:{
       Climate: {
         header:'Climate Action',
@@ -546,18 +519,12 @@ export default {
     removeCountry(countryId) {
       this.setCompareCountries(this.compareIdsList.filter(compareCountryId => compareCountryId !== countryId))
     },
-    getColor(index) {
-      return this.colorScheme[index%4];
-    },
     getStyleByName(name) {
       return this.graphOptions[name] ? `color:${this.graphOptions[name].textColor}` : '';
     },
     getTabPillar(name) {
       return this.pillars.find(pillar => name === pillar.name)
     },
-    getChipStyle(index) {
-      return `background-color:${this.rgbaColorScheme[index%4]}`;
-    }
   },
   async beforeRouteEnter(to, from, next) {
     try {
@@ -598,10 +565,6 @@ export default {
   .select_icon {
     display: inline-block;
     margin-right: 10px;
-  }
-  .muliselect-chip {
-    border-style: solid;
-    border-width: 2px;
   }
   .profile-header-row {
     background-size: cover;

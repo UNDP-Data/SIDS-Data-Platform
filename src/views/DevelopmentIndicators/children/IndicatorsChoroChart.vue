@@ -16,20 +16,45 @@
     <div id="timeSeriesContainer">
       <!-- <div class="timeSeriesTooltip"></div> -->
     </div>
+    <v-row class="justify-center">
+      <v-col cols="11">
+        <div v-if="chartType === 'series' && choro && choro.vizWidth < 800">
+          <country-multiselect
+            placeholder="Select countries display on chart"
+            :countryActiveIdsList="compareIdsList"
+            :countriesToCompare="sidsList"
+            :colorScheme="colorScheme"
+            :leaveOne="true"
+            @countryChange="setCompareCountries"
+          />
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
+
+import sidsList from '@/assets/sidsList'
+import { countryColors } from '@/choro/countryGroup';
 import service from '@/services'
 import { mapState } from 'vuex';
 import Choro from '@/choro';
+import CountryMultiselect from '@/components/CountryMultiselect';
 
 export default {
   name: 'IndicatorsChoroChart',
   data: function () {
     return {
       choro:null,
-      resizeTimeout: null
+      resizeTimeout: null,
+      compareIdsList:[],
+      colorScheme:sidsList.map((counry, index) => {
+        return {
+          iso:counry.iso,
+          color:countryColors[index%countryColors.length]
+        }
+      }),
     }
   },
   props:['indicatorCode', 'region', 'page', 'chartType', 'sorting', 'mviCodes', 'year'],
@@ -41,13 +66,32 @@ export default {
     }),
     activeIndicatorsMeta() {
       return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
+    },
+    sidsList() {
+      return sidsList.filter(country => {
+        return (this.activeIndicatorData.data.recentValue[country.iso] &&
+          this.activeIndicatorData.data.recentValue[country.iso] !== 'No Data') && (
+            this.region === 'All' || this.region === country.region || this.compareIdsList.includes(country.id)
+          )
+      })
     }
   },
+  components:{
+    CountryMultiselect
+  },
   methods:{
+    setCompareCountries(countyList) {
+      this.compareIdsList = countyList;
+      let res = sidsList.filter(country => countyList.includes(country.id)).map(county => county.iso);
+      this.choro && this.choro.updateSeriesCountryList(res)
+    },
     async initChart() {
       let sidsXML = await service.loadSidsSVG();
       let mapLocations = await service.loadMapLocations();
-
+      this.compareIdsList = [sidsList.find(counry => {
+        return counry.iso === Object.keys(this.activeIndicatorData.data.recentValue)[0]
+      }).id]
+      let compareISOs = sidsList.filter(country => this.compareIdsList.includes(country.id)).map(county => county.iso)
       this.choro = new Choro({
         viz:this.chartType,
         widthCached: document.body.clientWidth,
@@ -58,6 +102,7 @@ export default {
         page:this.page,
         year: this.year,
         data: this.activeIndicatorData,
+        countryList: compareISOs,
         clickCallback:this.counntryClickCallback,
         selectedIndis:this.mviCodes,
         vizContainerWidth:(document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
