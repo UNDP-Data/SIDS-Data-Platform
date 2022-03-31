@@ -73,6 +73,9 @@
             hide-details
             v-model="predictor"
             :items="predictors"
+
+            item-text="name"
+            item-value="id"
             outlined
           ></v-select>
         </div>
@@ -193,11 +196,15 @@ export default {
       imputer: 'KNNImputer',
       imputers: [
         {name: 'K Nearest Neighbour Imputer', id:'KNNImputer'},
-        {name: 'Iterative Imputer', id:'?'},
-        {name: 'Simple Imputer', id:'?'}
+        {name: 'Iterative Imputer', id:'IterativeImputer'},
+        {name: 'Simple Imputer', id:'SimpleImputer'}
       ],
-      predictor: 'Automatic via feature selection',
-      predictors: ['Automatic via feature selection', 'Automatic via PCA', 'Manual'],
+      predictor: 'AFS',
+      predictors: [
+        { id:'AFS', name: 'Automatic via feature selection'},
+        { id: 'PCA', name: 'Automatic via PCA'},
+        { id:'MANUAL', name: 'Manual'}
+      ],
       inPredicor: [],
       nPredicor:10,
       nPredicors:[5,10,20],
@@ -208,12 +215,12 @@ export default {
         { name: 'Random Forest Regressor', id:'rfr'},
         { name: 'Gradient Boost Regressor', id:'gbr'},
         { name: 'Extra Trees Regressor', id:'etr'},
-        { name: 'Best Model', id:'bm'}
+        { name: 'Best Model', id:'all'}
       ],
       pinterval:'quantile',
       pintervals:[{
         name: 'Residual Bootstrap',
-        id:'resb'
+        id:'bootstrap'
       },{
         name:'Quantile',
         id:'quantile'
