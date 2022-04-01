@@ -10,7 +10,11 @@ import sidsList from '@/assets/sidsList'
 import { nFormatter } from './vizEngineHelperFunctions'
 
 const countryGroup = countryGroupJson;
-const countryNames = Object.assign({}, ...Object.values(countryGroup));
+const countryNames = Object.assign({
+  AIS : 'AIS average',
+  Caribbean : 'Caribbean average',
+  Pacific : 'Pacific average'
+}, ...Object.values(countryGroup));
 
 export function initTimeSeries() {
     this.timeColor = d3
@@ -708,6 +712,12 @@ export function updateTimeChart({ dataset, optionSelected }) {
     }
     if (countryGroupOption == "All") {
       return filtered0;
+    } else if (countryGroupOption == "Regional average") {
+      let res = [];
+      res.push(computeAverage('AIS', filtered0))
+      res.push(computeAverage('Caribbean', filtered0))
+      res.push(computeAverage('Pacific', filtered0))
+      return res
     } else {
       const countries = Object.keys(countryGroup[countryGroupOption]);
       return filtered0.filter((d) => countries.includes(d.country));

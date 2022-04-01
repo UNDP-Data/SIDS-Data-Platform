@@ -114,7 +114,7 @@
             dense
             hide-details
             v-model="region"
-            :items="regions"
+            :items="regionsDesctop"
             outlined
           ></v-select>
           </div>
@@ -178,6 +178,13 @@ export default {
         'AIS',
         'Caribbean',
         'Pacific'
+      ],
+      regionsDesctop:[
+        'All',
+        'AIS',
+        'Caribbean',
+        'Pacific',
+        'Regional average'
       ],
       sorting:0,
       menuBar:{
@@ -297,6 +304,9 @@ export default {
       this.resizeTimeout = setTimeout(async () => {
         if(rootThis.isMobile && !(rootThis.chartType === 'bars' || rootThis.chartType === 'series')) {
           rootThis.transitionTo('bars')
+        }
+        if(rootThis.isMobile) {
+          rootThis.region = 'All'
         }
       }, 100);
     }
