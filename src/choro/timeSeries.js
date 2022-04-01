@@ -46,7 +46,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
 
   //data
   const timeData = dataFilter(dataset, rootThis.countryList, rootThis.vizWidth);
-  if (timeData.length == 0) return;
+  // if (timeData.length == 0) return;
   const allData = timeData.map((d) => d.data).flat();
 
   //scale
@@ -660,11 +660,50 @@ export function updateTimeChart({ dataset, optionSelected }) {
     g.selectAll("line").attr("stroke", "grey");
     g.selectAll(".domain").attr("stroke", "grey");
   }
-
+  function computeAverage(code, data) {
+    let isoCodes = Object.keys(countryGroupJson[code])
+    let years = data.reduce((years, country) => {
+        if(isoCodes.includes(country.country)) {
+          return country.data.reduce((yearsinner, data) => {
+            if(!yearsinner.includes(data.year)) {
+              yearsinner.push(data.year)
+            }
+            return yearsinner
+          },years)
+        }
+        return years
+    },[])
+    years.sort()
+    let computedData = years.map((year) => {
+      let avgValues = isoCodes.reduce((reducer, country) => {
+        let countryData = data.find(dataItem => dataItem.country === country)
+        if(countryData) {
+          let yearData = countryData.data.find(dataItem => dataItem.year === year)
+          if(yearData) {
+            reducer[0] += yearData.value
+            reducer[1] += 1
+          }
+        }
+        return reducer
+      },[0,0]);
+      return {
+        country: code,
+        year,
+        value:avgValues[0]/avgValues[1]
+      }
+    })
+    return {
+      country: code,
+      data: computedData
+    }
+  }
   function dataFilter(dataset, countryList, vizWidth) {
     const { datasetOption, countryGroupOption } = optionSelected;
     let filtered0 = dataset[datasetOption]["data"];
-    if(countryList.length !== 0 && vizWidth<800) {
+    filtered0.push(computeAverage('AIS', filtered0))
+    filtered0.push(computeAverage('Caribbean', filtered0))
+    filtered0.push(computeAverage('Pacific', filtered0))
+    if(vizWidth<800) {
       return filtered0.filter((d) => countryList.includes(d.country)) || []
     }
     if (countryGroupOption == "All") {
