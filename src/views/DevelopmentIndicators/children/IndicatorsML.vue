@@ -290,71 +290,70 @@ export default {
         req.number_predictor = this.nPredicor
       }
       let res = await service.loadML(req)
-      res = {
-        "rmse_deviation": 0.41889601752837874,
-        "rmse": 32.216311478716804,
-        "model_feature_importance": [
-          1,
-          0.5
-        ],
-        "model_feature_names": [
-          "wdi-AG.LND.AGRI.K2",
-          "wdi-AG.LND.AGRI.K4"
-        ],
-        "prediction": {
-          "country": {
-            "0": "Anguilla",
-            "1": "American Samoa",
-            "2": "Cook Islands",
-            "3": "Cabo Verde",
-            "4": "Curaçao",
-            "5": "Guinea-Bissau",
-            "6": "Kiribati",
-            "7": "Montserrat",
-            "8": "Niue",
-            "9": "Tuvalu"
-          },
-          "prediction": {
-            "0": 60.251274591521906,
-            "1": 96.91603165525441,
-            "2": 60.251274591521906,
-            "3": 71.06048781159562,
-            "4": 70.95096646904064,
-            "5": 87.29235701815934,
-            "6": 91.34565122601724,
-            "7": 60.251274591521906,
-            "8": 60.251274591521906,
-            "9": 98.8995139415924
-          },
-          "lower": {
-            "0": 44.256487591885254,
-            "1": 94.0839119085,
-            "2": 44.256487591885254,
-            "3": 7.53202343,
-            "4": 37.10776216492857,
-            "5": 74.93097030383393,
-            "6": 83.70707951896154,
-            "7": 44.256487591885254,
-            "8": 44.256487591885254,
-            "9": 96.7769181081923
-          },
-          "upper": {
-            "0": 76.83304496869289,
-            "1": 100,
-            "2": 76.83304496869289,
-            "3": 99.48411083024999,
-            "4": 86.04106028134687,
-            "5": 99.4663613455,
-            "6": 99.04810676564286,
-            "7": 76.83304496869289,
-            "8": 76.83304496869289,
-            "9": 100
-          }
-        }
-      }
-      console.log(res)
+      // res = {
+        // "rmse_deviation": 0.41889601752837874,
+        // "rmse": 32.216311478716804,
+        // "model_feature_importance": [
+        //   1,
+        //   0.5
+        // ],
+        // "model_feature_names": [
+        //   "wdi-AG.LND.AGRI.K2",
+        //   "wdi-AG.LND.AGRI.K4"
+        // ],
+        // "prediction": {
+        //   "country": {
+        //     "0": "Anguilla",
+        //     "1": "American Samoa",
+        //     "2": "Cook Islands",
+        //     "3": "Cabo Verde",
+        //     "4": "Curaçao",
+        //     "5": "Guinea-Bissau",
+        //     "6": "Kiribati",
+        //     "7": "Montserrat",
+        //     "8": "Niue",
+        //     "9": "Tuvalu"
+        //   },
+        //   "prediction": {
+        //     "0": 60.251274591521906,
+        //     "1": 96.91603165525441,
+        //     "2": 60.251274591521906,
+        //     "3": 71.06048781159562,
+        //     "4": 70.95096646904064,
+        //     "5": 87.29235701815934,
+        //     "6": 91.34565122601724,
+        //     "7": 60.251274591521906,
+        //     "8": 60.251274591521906,
+        //     "9": 98.8995139415924
+        //   },
+        //   "lower": {
+        //     "0": 44.256487591885254,
+        //     "1": 94.0839119085,
+        //     "2": 44.256487591885254,
+        //     "3": 7.53202343,
+        //     "4": 37.10776216492857,
+        //     "5": 74.93097030383393,
+        //     "6": 83.70707951896154,
+        //     "7": 44.256487591885254,
+        //     "8": 44.256487591885254,
+        //     "9": 96.7769181081923
+        //   },
+        //   "upper": {
+        //     "0": 76.83304496869289,
+        //     "1": 100,
+        //     "2": 76.83304496869289,
+        //     "3": 99.48411083024999,
+        //     "4": 86.04106028134687,
+        //     "5": 99.4663613455,
+        //     "6": 99.04810676564286,
+        //     "7": 76.83304496869289,
+        //     "8": 76.83304496869289,
+        //     "9": 100
+        //   }
+        // }
+      // }
       this.drawChart(Object.values(res.prediction.prediction), Object.values(res.prediction.country), Object.values(res.prediction.upper), Object.values(res.prediction.lower))
-      this.drawImportanceimportance(res.model_feature_names, res.model_feature_importance)
+      this.drawImportanceimportance(res.model_feature_names.map(code => this.indicatorsMeta[code].indicator), res.model_feature_importance)
     },
     drawChart(prediction, country, upper, lower) {
       var traces = [{
