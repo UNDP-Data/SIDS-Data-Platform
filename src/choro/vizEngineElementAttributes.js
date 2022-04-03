@@ -285,7 +285,7 @@ export function textTransform(
         "scale(1,1) translate(" +
         (-textX + 140 - textBBox.width / 2) +
         "," +
-        (-textY + RTo["y"] + totalHeight / totalVals / 2) +
+        (-textY + RTo["y"] + 8) +
         ")";
     }
 
