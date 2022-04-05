@@ -79,6 +79,7 @@ export default {
         // profile.code = codes[country]
         countryList.push(profile);
       }
+      console.log(countryList.map(c => c.Country))
       commit("setCountryList", countryList);
     },
     setFullDonorsInfo({ state, commit }) {

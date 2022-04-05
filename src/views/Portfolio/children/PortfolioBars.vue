@@ -16,16 +16,10 @@
       </v-row>
       <template v-if="goalsType==='sdgs' && tooltipData[tooltipGoalName]">
         <div class="d-none" id="goalTooltip">
-          <portfolio-tooltip :header="tooltipGoalTitle" :data="tooltipData[tooltipGoalName]"/>
+          <portfolio-tooltip :maxWidth="400" :header="tooltipGoalTitle" :data="tooltipData[tooltipGoalName]"/>
         </div>
       </template>
     </div>
-    <v-col class="d-block d-lg-none text-center block-subheader" cols='12'>
-      {{projectCount[activeGoal]}} projects
-    </v-col>
-    <v-col class="d-block d-lg-none text-center block-subheader" cols='12'>
-      {{nFormatter(budgetCount[activeGoal])}} budget
-    </v-col>
   </v-row>
 </template>
 <script>
@@ -67,7 +61,6 @@ export default {
   mixins:[sidsdata, format],
   computed: {
     ...mapState({
-      activeGoal: state => state.goals.activeGoal,
       portfolioData: state => state.sids.portfolioData,
     }),
     barsHeight(){ return this.svgHeight - this.barsMargin.top - this.barsMargin.bottom },
