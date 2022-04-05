@@ -93,7 +93,9 @@ export default {
     projectsFundning() {
       let funding = 0;
       this.projects.map(project => {
-        funding = funding + parseInt(project.budget);
+        if(this.checkGoalValidity(project)) {
+          funding = funding + parseInt(project.budget);
+        }
       })
       return this.nFormatter(funding)
     }
