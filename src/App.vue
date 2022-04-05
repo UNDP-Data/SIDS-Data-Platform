@@ -6,7 +6,7 @@
     fluid
   >
     <nav-menu-mobile v-if="hasTexts" class="d-block d-md-none"/>
-    <root-header class="d-none-print" />
+    <root-header v-if="!scrolledToContent" class="d-none-print" />
     <v-row no-gutters id="content">
       <root-loader v-if="loading"/>
       <v-col class="d-none d-md-block menu-col d-none-print" cols="0" md="2">
@@ -37,6 +37,11 @@ export default {
     NavMenu,
     NavMenuMobile
   },
+  data() {
+    return {
+      scrolledToContent: false
+    }
+  },
   computed: {
     ...mapState({
       loading: state => state.loader.loading
@@ -44,7 +49,17 @@ export default {
     hasTexts() {
       return this.$route.meta.header
     }
+  },
+  methods: {
+    methods: {
+    handleScroll (event) {
+      console.log(event)
+    }
   }
+  }
+  created () {
+    window.addEventListener('scroll', this.handleScroll);
+  },
 };
 </script>
 <style>

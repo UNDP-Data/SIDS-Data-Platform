@@ -258,15 +258,8 @@ export function textTransform(
 ) {
   let textX = bBox[4],
   textY = bBox[2] - 11,
-  totalHeight = 500,
-  totalVals = 0,
   x,
   y;
-  for (let cou in indicatorDataObj) {
-    if (typeof indicatorDataObj[cou] == "number") {
-      totalVals += 1;
-    }
-  }
 
   if (this.indiSelections["viz"] == "choro") {
     return "scale(1,1) translate(0,0)";
