@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <p :style="{visibility: noData ? 'visible' : 'hidden'}">
+    <p :style="{display: noData ? 'block' : 'none'}">
       No data for selected filters
     </p>
     <div :style="{visibility: !noData ? 'visible' : 'hidden'}" class="pie-chart" :id="chartName + postfix">

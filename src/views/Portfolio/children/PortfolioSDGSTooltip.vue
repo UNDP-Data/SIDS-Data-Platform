@@ -1,14 +1,14 @@
 <template>
-  <div class="tooltip-root">
+  <div class="tooltip-root" :style="`max-width:${maxWidth}px`">
     <h4 class="block-subheader">{{header}}</h4>
     <div class="tableContainer">
 
         <v-data-table
           :headers="headers"
           :items="dataWithIDs"
-          height="200"
+          :height="maxWidth ? 200 : 300"
           fixed-header
-          width="370"
+          :width="maxWidth ? 370 : 'auto'"
           hide-default-footer
           :items-per-page="9999"
           item-key="subId"
@@ -27,7 +27,7 @@ import format from '@/mixins/format.mixin'
 export default {
   name: 'PortfolioSDGSTooltip',
   mixins:[format],
-  props: ['header','data', 'year'],
+  props: ['header','data', 'year', 'maxWidth'],
   data() {
     return {
     }
@@ -67,7 +67,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .tooltip-root {
-  max-width: 400px;
   padding: 0;
 }
 .tableContainer {
