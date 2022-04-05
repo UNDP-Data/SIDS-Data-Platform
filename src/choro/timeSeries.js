@@ -693,7 +693,21 @@ export function updateTimeChart({ dataset, optionSelected }) {
       return {
         country: code,
         year,
-        value:avgValues[0]/avgValues[1]
+        summ:avgValues[0],
+        countries:avgValues[1]
+      }
+    })
+    console.log(computedData.length)
+    computedData = computedData.filter(dataitem => {
+      if(dataitem.countries > 2) {
+        return true
+      }
+      return false
+    }).map(dataitem => {
+      return {
+        country: dataitem.code,
+        year: dataitem.year,
+        value: dataitem.summ / dataitem.countries
       }
     })
     return {
