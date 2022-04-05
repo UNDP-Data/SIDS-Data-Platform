@@ -3,9 +3,8 @@
     eager
     transition="none"
     open-delay="200"
-    max-width="600"
+    :max-width="maxWidth"
     close-delay="200"
-    min-width='100%'
     open-on-hover
     content-class="tooltip-content"
     allow-overflow
@@ -33,10 +32,12 @@
 
 <script>
 import { mapState } from 'vuex';
+import size from '@/mixins/size.mixin';
 
 export default {
   name: 'InfoHoverTooltip',
   props:['contentName', 'large', 'disabled'],
+  mixins:[size],
   computed: {
     ...mapState({
       textContent: (state) => state.texts.textContent
@@ -46,6 +47,9 @@ export default {
     },
     hasIconSlot() {
       return this.$slots['icon']
+    },
+    maxWidth() {
+      return this.isMobile ? '80%' : '600px'
     }
   }
 }
