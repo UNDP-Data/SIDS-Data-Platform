@@ -31,3 +31,9 @@
   margin-right: 8px !important;
   text-overflow: none;
 }
+.one-line_header_full {
+  align-self: auto;
+  overflow: visible !important;
+  margin-right: 8px !important;
+  text-overflow: none;
+}
