@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 const API_URL = 'https://raw.githubusercontent.com/Ben-Keller/smallislands/main/data';
 const NEW_API_URl = 'https://raw.githubusercontent.com/SIDS-Dashboard/SIDSDataPlatform/main'
 const NEW_API_URl_2 = 'https://raw.githubusercontent.com/SIDS-Dashboard/api/main/data'
-const ML_API_URL = 'http://20.88.191.216';
+const ML_API_URL = 'https://20.88.191.216';
 export default {
   loadAllKeyData,
   loadMetaData,

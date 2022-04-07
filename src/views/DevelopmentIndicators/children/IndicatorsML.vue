@@ -206,7 +206,7 @@
         <h2 class="block-subheader">Visualizing Imputations</h2>
         <p>It is important to note that the prediction intervals provide additional information on the of the uncertainity in the predictions</p>
       </v-col>
-      <v-col cols="10">
+      <v-col cols="12">
         <div id="pre-bar">
         </div>
       </v-col>
@@ -380,7 +380,9 @@ export default {
       }];
       poltly.newPlot('pre-bar', traces, {
         autosize: true,
-        margin: {l: 200},
+        margin: {l: 0, r:0, b:0, t:0},
+        plot_bgcolor:"rgba(0,0,0,0)",
+        paper_bgcolor:"rgba(0,0,0,0)",
         xaxis:{
           tickfont:{size:10}
         },
@@ -393,10 +395,10 @@ export default {
       let traces = [{
         x: feature_names.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          if(indi.length > 15) {
-            let spaceindex = indi.indexOf(" ", 10)
-            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          }
+          // if(indi.length > 15) {
+          //   let spaceindex = indi.indexOf(" ", 10)
+          //   indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          // }
           return indi
         }),
         y: importance_values,
@@ -406,6 +408,8 @@ export default {
       var layout = {
         autosize: true,
         margin: {b: 200, r:100},
+        plot_bgcolor:"rgba(0,0,0,0)",
+        paper_bgcolor:"rgba(0,0,0,0)",
         xaxis:{
           tickfont:{size:10}
         },
@@ -420,18 +424,18 @@ export default {
         z: corrData.data,
         x: corrData.index.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          if(indi.length > 15) {
-            let spaceindex = indi.indexOf(" ", 10)
-            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          }
+          // if(indi.length > 15) {
+          //   let spaceindex = indi.indexOf(" ", 10)
+          //   indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          // }
           return indi
         }),
         y: corrData.columns.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          if(indi.length > 15) {
-            let spaceindex = indi.indexOf(" ", 10)
-            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          }
+          // if(indi.length > 15) {
+          //   let spaceindex = indi.indexOf(" ", 10)
+          //   indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          // }
           return indi
         }),
         type: 'heatmap'
@@ -439,6 +443,8 @@ export default {
       var layout = {
         autosize: true,
         margin: {l: 200, b:200},
+        plot_bgcolor:"rgba(0,0,0,0)",
+        paper_bgcolor:"rgba(0,0,0,0)",
         xaxis:{
           tickfont:{size:10}
         },
@@ -454,7 +460,10 @@ export default {
         labels: pieData.category,
         values: pieData.value
       }
-      poltly.newPlot('imp-pie', [trace])
+      poltly.newPlot('imp-pie', [trace], {
+        plot_bgcolor:"rgba(0,0,0,0)",
+        paper_bgcolor:"rgba(0,0,0,0)",
+      })
     },
     emitYearChange(year) {
       this.$emit('yearChange', year)
