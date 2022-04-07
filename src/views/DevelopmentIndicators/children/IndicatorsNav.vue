@@ -42,6 +42,7 @@
               class="inicator-item"
               v-bind="attrs"
               v-on="on"
+              :disabled="getDimensionAvaliability(item.indicatorCode)"
               @click="emitindicatorChange(item['indicatorCode'])"
             >
               <v-list-item-title class="inicator-item_header mt-2">
@@ -170,6 +171,7 @@
                 :class="{'blue lighten-5': item['indicatorCode'] === activeIndicatorCode}"
                 v-bind="attrs"
                 v-on="on"
+                :disabled="getDimensionAvaliability(item.indicatorCode)"
                 @click="emitindicatorChange(item['indicatorCode'])"
               >
                 <v-list-item-title class="inicator-item_header mt-2">
@@ -203,7 +205,7 @@
           :value="year"
           item-text="name"
           item-value="id"
-          :disabled="playingYear"
+          :disabled="playingYear || chartType === 'ml'"
           @change="emitYearChange"
           label="Year"
           dense
@@ -221,6 +223,7 @@
           :items="activeIndicatorDimensions"
           :value="activeIndicatorCode"
           item-text="dimension"
+          :item-disabled="getDimensionAvaliability"
           item-value="code"
           :disabled="playingYear"
           @change="emitindicatorChange"
@@ -243,7 +246,7 @@ import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
 export default {
   name: 'indicatorsNav',
-  props:['activeIndicatorCode', 'year'],
+  props:['activeIndicatorCode', 'year', 'chartType'],
   data() {
     return {
       activeSearch: false,
@@ -502,6 +505,12 @@ export default {
       } else {
         clearTimeout(this.playInterval)
       }
+    },
+    getDimensionAvaliability(code) {
+      if(this.chartType !== 'ml') {
+        return false
+      }
+      return Object.values(JSON.parse(this.indicatorsMeta[code].yearValueCounts.replace(/'/g,'"'))).some(v=>v > 189);
     },
     pausePlayYear() {
       clearTimeout(this.playInterval)
