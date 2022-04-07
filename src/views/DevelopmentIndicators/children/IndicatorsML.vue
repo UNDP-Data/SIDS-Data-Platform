@@ -363,7 +363,7 @@ export default {
         res.prediction.lower)
       this.correlation(res.correlation)
       this.pie(res.feature_importance_pie)
-      this.drawImportanceimportance(res.model_feature_names.map(code => this.indicatorsMeta[code].indicator), res.model_feature_importance)
+      this.drawImportanceimportance(res.model_feature_names, res.model_feature_importance)
     },
     drawChart(prediction, country, upper, lower) {
       var traces = [{
@@ -391,7 +391,14 @@ export default {
     },
     drawImportanceimportance(feature_names, importance_values){
       let traces = [{
-        x: feature_names,
+        x: feature_names.map(code => {
+          let indi = this.indicatorsMeta[code].indicator
+          if(indi.length > 15) {
+            let spaceindex = indi.indexOf(" ", 10)
+            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          }
+          return indi
+        }),
         y: importance_values,
         type: "bar",
         orientation: 'v'
@@ -411,8 +418,22 @@ export default {
     correlation(corrData){
       var trace = {
         z: corrData.data,
-        x: corrData.index.map(code => this.indicatorsMeta[code].indicator),
-        y: corrData.columns.map(code => this.indicatorsMeta[code].indicator),
+        x: corrData.index.map(code => {
+          let indi = this.indicatorsMeta[code].indicator
+          if(indi.length > 15) {
+            let spaceindex = indi.indexOf(" ", 10)
+            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          }
+          return indi
+        }),
+        y: corrData.columns.map(code => {
+          let indi = this.indicatorsMeta[code].indicator
+          if(indi.length > 15) {
+            let spaceindex = indi.indexOf(" ", 10)
+            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          }
+          return indi
+        }),
         type: 'heatmap'
       }
       var layout = {
