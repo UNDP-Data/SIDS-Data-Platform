@@ -5,6 +5,7 @@ import * as d3 from 'd3';
 const API_URL = 'https://raw.githubusercontent.com/Ben-Keller/smallislands/main/data';
 const NEW_API_URl = 'https://raw.githubusercontent.com/SIDS-Dashboard/SIDSDataPlatform/main'
 const NEW_API_URl_2 = 'https://raw.githubusercontent.com/SIDS-Dashboard/api/main/data'
+const ML_API_URL = 'http://20.88.191.216';
 export default {
   loadAllKeyData,
   loadMetaData,
@@ -19,7 +20,8 @@ export default {
   loadCountryProfile,
   loadProfileIndicarotsMetadata,
   loadDatasetsList,
-  loadTextContent
+  loadTextContent,
+  loadML
 }
 
 
@@ -97,4 +99,18 @@ async function loadIndicatorData (apiCode) {
 async function loadTextContent () {
   const resp = await axios.get(`${NEW_API_URl_2}/cms/englishText.json`)
   return resp.data
+}
+
+
+async function loadML (data) {
+  try {
+    const resp = await axios.post(`${ML_API_URL}/imputation/predict`, data, {
+      headers: {
+        'Access-Control-Allow-Origin': "*"
+      }
+    })
+    return resp.data
+  } catch (e) {
+    console.log(e)
+  }
 }

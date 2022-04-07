@@ -697,7 +697,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
         countries:avgValues[1]
       }
     })
-    console.log(computedData.length)
     computedData = computedData.filter(dataitem => {
       if(dataitem.countries > 2) {
         return true
@@ -721,6 +720,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
     filtered0.push(computeAverage('AIS', filtered0))
     filtered0.push(computeAverage('Caribbean', filtered0))
     filtered0.push(computeAverage('Pacific', filtered0))
+    filtered0.filter(c => c.data.length > 0)
     if(vizWidth<800) {
       return filtered0.filter((d) => countryList.includes(d.country)) || []
     }
@@ -731,6 +731,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
       res.push(computeAverage('AIS', filtered0))
       res.push(computeAverage('Caribbean', filtered0))
       res.push(computeAverage('Pacific', filtered0))
+      res.filter(c => c.data.length > 0)
       return res
     } else {
       const countries = Object.keys(countryGroup[countryGroupOption]);

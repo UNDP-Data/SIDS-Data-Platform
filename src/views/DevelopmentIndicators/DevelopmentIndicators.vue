@@ -2,7 +2,7 @@
   <div class="mt-md-5">
   <v-row dense>
     <v-col  class="d-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
-      <indicators-nav :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
+      <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
     </v-col>
     <v-col  class="d-none d-lg-block" v-else cols='3'>
       <mvi-indicators-nav @MviIndicatorsChange="MVIindicatorUpdate"/>
@@ -14,7 +14,7 @@
       content-class="dialog-box"
       transition="dialog-right-transition"
     >
-      <indicators-nav @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
+      <indicators-nav :chartType="chartType" @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
       <mvi-indicators-nav v-else @close="dialog = !dialog" @MviIndicatorsChange="MVIindicatorUpdate"/>
     </v-dialog>
 
@@ -90,7 +90,7 @@
             }"
             class="tabs tabs-small"
           >
-            <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
+            <v-tab v-for="(tab, index) in tabs" :disabled="tab.chartType === 'ml' && !mlAvaliable" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
           </v-tabs>
         </v-col>
       </v-row>
@@ -128,7 +128,7 @@
       </v-row>
       <v-row v-if="chartType === 'ml'" dense>
         <v-col cols='12'>
-          <indicators-m-l v-if='!noData' :year="year" :indicatorCode="indicator"/>
+          <indicators-m-l v-if='!noData' @yearChange="yearUpdate" :year="year" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
         </v-col>
       </v-row>
@@ -145,6 +145,7 @@ import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
+import IndicatorsML from './children/IndicatorsML.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
 
 import InfoButton from '@/components/InfoButton.vue'
@@ -204,11 +205,11 @@ export default {
           chartType:'series',
           mobile: true
         },
-        // {
-        //   name:'Machine Learning',
-        //   chartType:'ml',
-        //   mobile: false
-        // }
+        {
+          name:'Machine Learning',
+          chartType:'ml',
+          mobile: false
+        }
       ],
         mvi: [{
           name:'Spider',
@@ -238,10 +239,12 @@ export default {
     MviIndicatorsNav:MVIIndicatorsNav,
     IndicatorsMobileNav,
     MviMobileNav,
+    IndicatorsML
   },
   computed: {
     ...mapState({
-      activeIndicatorData: state => state.indicators.activeIndicatorData
+      activeIndicatorData: state => state.indicators.activeIndicatorData,
+      indicatorsMeta: state => state.indicators.indicatorsMeta
     }),
     sortingName() {
       if(this.sorting === 0) {
@@ -266,6 +269,12 @@ export default {
     },
     activeTab() {
       return this.tabs.findIndex(menuItem => menuItem.chartType === this.chartType)
+    },
+    activeIndicatorsMeta() {
+      return this.indicatorsMeta[this.indicator]
+    },
+    mlAvaliable() {
+      return Object.values(JSON.parse(this.activeIndicatorsMeta.yearValueCounts.replace(/'/g,'"'))).some(v=>v > 189);
     }
   },
   methods: {

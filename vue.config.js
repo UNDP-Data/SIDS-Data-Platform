@@ -9,6 +9,12 @@ module.exports = {
       entry: 'src/main.js',
       title: 'UNDP SIDS Data Platform'
     }
+  },
+  configureWebpack: {
+    devServer: {
+      proxy: 'http://20.88.191.216/',
+      headers: { "Access-Control-Allow-Origin": "*" }
+    }
   }
 }
 
