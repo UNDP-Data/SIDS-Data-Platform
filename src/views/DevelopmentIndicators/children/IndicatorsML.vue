@@ -393,7 +393,7 @@ export default {
       let traces = [{
         x: feature_names.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          if(indi.length > 10) {
+          if(indi.length > 15) {
             let spaceindex = indi.indexOf(" ", 10)
             indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
           }
@@ -420,7 +420,7 @@ export default {
         z: corrData.data,
         x: corrData.index.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          if(indi.length > 10) {
+          if(indi.length > 15) {
             let spaceindex = indi.indexOf(" ", 10)
             indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
           }
@@ -428,7 +428,7 @@ export default {
         }),
         y: corrData.columns.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          if(indi.length > 10) {
+          if(indi.length > 15) {
             let spaceindex = indi.indexOf(" ", 10)
             indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
           }
