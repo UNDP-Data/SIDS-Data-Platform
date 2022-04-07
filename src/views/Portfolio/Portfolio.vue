@@ -24,11 +24,11 @@
       :projects="portfolioData"
       :goalType="goalsType"
       :goal="goal"
-      class="d-md-none"
+      class="d-md-none mt-sm-6"
     />
 
-    <v-row dense class=" d-md-none" justify="center">
-      <v-col cols="11">
+    <v-row dense class="mt-sm-6 d-md-none" justify="center">
+      <v-col cols="11" sm="5">
         <portfolio-pie-chart
           @changeFilter="changeFilter"
           :data="regionFundingMobile"
@@ -37,7 +37,7 @@
           :colorScheme="regionColors"
         ></portfolio-pie-chart>
       </v-col>
-      <v-col cols="11">
+      <v-col cols="11" sm="5">
         <portfolio-pie-chart
           @changeFilter="changeFilter"
           :data="sourcesFundingMobile"
@@ -117,7 +117,7 @@
       </v-col>
       <v-col class="selects-col margin-wrap-right">
         <v-row dense justify="center">
-          <v-col cols='5' md="6" lg="12">
+          <v-col cols='5' md="5" lg="12">
             <div class="select">
             <label class="input-label">Years</label>
             <v-select
@@ -131,7 +131,7 @@
             ></v-select>
             </div>
           </v-col>
-          <v-col cols='5'  md="6" lg="12">
+          <v-col cols='5'  md="5" lg="12">
             <v-divider class="mt-2 d-none d-lg-block mb-2"></v-divider>
             <div class="select">
               <label class="input-label">Funding categories</label>
@@ -159,7 +159,7 @@
           </v-col>
         </v-row> -->
         <v-row dense justify="center">
-          <v-col class="d-block d-lg-none"  cols='5'  md="6" lg="12">
+          <v-col class="d-block d-lg-none"  cols='5'  md="5" lg="12">
             <div class="select">
               <label class="input-label">Region</label>
               <v-select
@@ -173,7 +173,7 @@
               ></v-select>
             </div>
           </v-col>
-          <v-col cols='5'  md="6" lg="12">
+          <v-col cols='5'  md="5" lg="12">
             <div class="select">
               <label class="input-label">Funding sources</label>
               <v-autocomplete
@@ -192,7 +192,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <portfolio-projects class="d-md-none" :goalType="goalsType" :goal="goal"/>
+    <portfolio-projects class="d-lg-none" :goalType="goalsType" :goal="goal"/>
   </div>
 </template>
 

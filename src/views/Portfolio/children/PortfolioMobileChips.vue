@@ -2,30 +2,28 @@
   <v-row class="justify-center">
     <v-col cols="11">
       <v-row dense class="justify-center">
-        <v-col cols="6" class="d-flex justify-end">
+        <v-col cols="6" sm="3" class="d-flex justify-end justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="projectsNumber"
             :title="'SIDS with UNDP Projects'"
           />
         </v-col>
-        <v-col cols="6" class="d-flex justify-start">
+        <v-col cols="6" sm="3" class="d-flex justify-start justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="memberStates"
             :title="'UN Member States'"
           />
         </v-col>
-      </v-row>
-      <v-row dense class="justify-center">
-        <v-col cols="6" class="d-flex justify-end">
+        <v-col cols="6" sm="3" class="d-flex justify-end justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="UNDPprojectsNumber"
             :title="'UNDP Projects'"
           />
         </v-col>
-        <v-col cols="6" class="d-flex justify-start">
+        <v-col cols="6" sm="3" class="d-flex justify-start justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="projectsFundning"

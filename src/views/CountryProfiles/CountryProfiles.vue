@@ -572,7 +572,7 @@ export default {
   .graph-tabs {
     background-color: transparent !important;
   }
- @media all and (max-width:960px) {
+ @media all and (max-width:959px) {
    .profile-header-row {
      padding-top: 25vh;
      padding-bottom: 20px;

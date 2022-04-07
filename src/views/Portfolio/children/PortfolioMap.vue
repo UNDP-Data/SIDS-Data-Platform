@@ -211,7 +211,7 @@ export default {
 }
 
 
-@media all and (min-width:961px) {
+@media all and (min-width:960px) {
   .map {
     min-height: 350px;
     max-height: calc(100vh - 460px);
@@ -268,7 +268,7 @@ export default {
   }
 }
 
-@media all and (max-width:960px) {
+@media all and (max-width:959px) {
   .map {
     background-image:none !important;
     height: auto;

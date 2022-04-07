@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-  <video class="header_video d-none d-lg-block" poster="@/assets/media/videos/video-placeholder.jpeg" autoplay muted loop playsinline>
+  <video class="header_video d-block" poster="@/assets/media/videos/video-placeholder.jpeg" autoplay muted loop playsinline>
     <source v-if="!isTesting" src="@/assets/media/videos/header-xl.webm" type="video/webm">
     <source v-if="!isTesting" src="@/assets/media/videos/header-xl.mp4" type="video/mp4">
   </video>

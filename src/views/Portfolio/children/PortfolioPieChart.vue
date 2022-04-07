@@ -279,7 +279,7 @@ export default {
 .slices:hover .slice:hover {
     opacity: 1;
 }
-@media all and (max-width:600px) {
+@media all and (max-width:959px) {
   .pie-chart svg {
     max-width: 310px;
     margin: auto;
