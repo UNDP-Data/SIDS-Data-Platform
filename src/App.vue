@@ -5,8 +5,8 @@
     id="app"
     fluid
   >
-    <nav-menu-mobile v-if="hasTexts" class="d-block d-md-none"/>
-    <root-header v-if="!scrolledToContent" class="d-none-print" />
+    <nav-menu-mobile v-if="hasTexts" class="d-block d-print-none d-md-none"/>
+    <root-header v-if="!scrolledToContent" id="headerElement" class="d-none-print" />
     <v-row no-gutters id="content">
       <root-loader v-if="loading"/>
       <v-col class="d-none d-md-block menu-col d-none-print" cols="0" md="2">
@@ -95,7 +95,7 @@ body,
   font-family: "Proxima Nova", sans-serif !important;
 }
 
-@media all and (max-width: 960px) {
+@media all and (max-width: 959px) {
   #content {
     min-height: calc(100vh);
   }

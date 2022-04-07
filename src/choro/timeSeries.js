@@ -5,17 +5,24 @@ import { interpolatePath } from 'd3-interpolate-path';
 paper.setup(document.getElementById("myCanvas"));
 
 import { countryGroupJson, countryColors } from './countryGroup';
+import sidsList from '@/assets/sidsList'
 
 import { nFormatter } from './vizEngineHelperFunctions'
 
 const countryGroup = countryGroupJson;
-const countryNames = Object.assign({}, ...Object.values(countryGroup));
+const countryNames = Object.assign({
+  AIS : 'AIS average',
+  Caribbean : 'Caribbean average',
+  Pacific : 'Pacific average'
+}, ...Object.values(countryGroup));
 
 export function initTimeSeries() {
     this.timeColor = d3
       .scaleOrdinal()
-      .domain(countryColors.map((d) => d.country))
-      .range(countryColors.map((d) => d.color));
+      .domain(sidsList.map((d) => {
+        return d.iso
+      }))
+      .range(countryColors);
 }
 
 //
@@ -23,16 +30,15 @@ export function updateTimeChart({ dataset, optionSelected }) {
   let rootThis = this;
   const timeSeriesContainer = d3.select("#timeSeriesContainer");
   const width = this.vizWidth;
-  const height = 560/800 * this.vizWidth;
-    let margin
+  let height = 560/800 * this.vizWidth;
+  let margin
   if(this.vizWidth < 800) {
     margin = { top: 20, right: 15, bottom: 50, left: 40 };
   } else {
     margin = { top: 20, right: 220, bottom: 50, left: 50 };
   }
   const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-
+  let innerHeight = height - margin.top - margin.bottom;
   const timeVariable = 800;
 
   var isLoading = true;
@@ -43,8 +49,8 @@ export function updateTimeChart({ dataset, optionSelected }) {
   const lineHoverWidth = lineStrokWidth * 3;
 
   //data
-  const timeData = dataFilter(dataset);
-  if (timeData.length == 0) return;
+  const timeData = dataFilter(dataset, rootThis.countryList, rootThis.vizWidth);
+  // if (timeData.length == 0) return;
   const allData = timeData.map((d) => d.data).flat();
 
   //scale
@@ -116,7 +122,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
     .attr(
       "transform", () => {
         if(width < 800) {
-          return `translate(${margin.left},${height})`
+          return `translate(${margin.left/2},${innerHeight + 70})`
         } else {
           return `translate(${margin.left + innerWidth},${margin.top})`
         }
@@ -596,77 +602,51 @@ export function updateTimeChart({ dataset, optionSelected }) {
         .attr("x2", 40)
         .attr("y1", (d) => d.y)
         .attr("y2", (d) => d.y);
+
+      g.selectAll("text")
+        .data(legendData)
+        .join("text")
+        .attr("class", "legend")
+        .attr("dominant-baseline", "middle")
+        .attr("text-anchor", "start")
+        .attr("fill", (d) => rootThis.timeColor(d.country))
+        //this is the font size for the country names in the legend
+        .attr("font-size", 10)
+        .attr("x", () => {
+          return 49
+        })
+        .attr("y", (d) => {
+          return d.y
+        })
+        .attr("cursor", "pointer")
+        .text((d) => countryNames[d.country]);
+
+        g.selectAll("text")
+        .attr("x", () => {
+          return 49
+        })
+        .attr('opacity', () => {
+          if(width < 800) {
+            return 0
+          }
+          return 1
+        })
+        .attr("y", (d) => {
+          return d.y
+        })
+
+      g.selectAll("text")
+        .on("mouseenter", function (dd) {
+          lineMouseEnter(dd);
+        })
+        .on("mouseleave", function () {
+          lineMouseLeave();
+        });
     } else {
         g.selectAll("line.link").remove()
         g.selectAll("line.h").remove()
+        g.selectAll("text.legend").remove()
     }
-
-    g.selectAll("text")
-      .data(legendData)
-      .join("text")
-      .attr("class", "legend")
-      .attr("dominant-baseline", "middle")
-      .attr("text-anchor", "start")
-      .attr("fill", (d) => rootThis.timeColor(d.country))
-      //this is the font size for the country names in the legend
-      .attr("font-size", 10)
-      .attr("x", () => {
-        if(width < 800) {
-          return 0;
-        }
-        return 49
-      })
-      .attr("y", (d) => {
-        if(width < 800) {
-          return 0;
-        }
-        return d.y
-
-      })
-      .attr("cursor", "pointer")
-      .text((d) => countryNames[d.country]);
-
-      g.selectAll("text")
-      .attr("x", (d,i,k) => {
-        if(width < 800) {
-          let res = Array.from(k).reduce((padding, node, index) => {
-            if(index >= i) {
-              return padding
-            }
-            if(padding + node.getComputedTextLength() + 10 > width - 120) {
-              return 0;
-            } else {
-              return padding + node.getComputedTextLength() + 10
-            }
-          }, 0);
-          return res;
-        }
-        return 49
-      })
-      .attr("y", (d,i,k) => {
-        if(width < 800) {
-          let res = Array.from(k).reduce(([w,h], node, index) => {
-            if(index >= i) {
-              return [w,h]
-            }
-            if(w + node.getComputedTextLength() + 10 < width - 120) {
-              return [w + node.getComputedTextLength() + 10, h];
-            } else {
-              return [0,(h + 16)]
-            }
-          }, [0,0]);
-          return res[1];
-        }
-        return d.y
-      })
-
-    g.selectAll("text")
-      .on("mouseenter", function (dd) {
-        lineMouseEnter(dd);
-      })
-      .on("mouseleave", function () {
-        lineMouseLeave();
-      });
   }
 
   function xAxis(g) {
@@ -684,13 +664,74 @@ export function updateTimeChart({ dataset, optionSelected }) {
     g.selectAll("line").attr("stroke", "grey");
     g.selectAll(".domain").attr("stroke", "grey");
   }
-
-  function dataFilter(dataset) {
+  function computeAverage(code, data) {
+    let isoCodes = Object.keys(countryGroupJson[code])
+    let years = data.reduce((years, country) => {
+        if(isoCodes.includes(country.country)) {
+          return country.data.reduce((yearsinner, data) => {
+            if(!yearsinner.includes(data.year)) {
+              yearsinner.push(data.year)
+            }
+            return yearsinner
+          },years)
+        }
+        return years
+    },[])
+    years.sort()
+    let computedData = years.map((year) => {
+      let avgValues = isoCodes.reduce((reducer, country) => {
+        let countryData = data.find(dataItem => dataItem.country === country)
+        if(countryData) {
+          let yearData = countryData.data.find(dataItem => dataItem.year === year)
+          if(yearData) {
+            reducer[0] += yearData.value
+            reducer[1] += 1
+          }
+        }
+        return reducer
+      },[0,0]);
+      return {
+        country: code,
+        year,
+        summ:avgValues[0],
+        countries:avgValues[1]
+      }
+    })
+    console.log(computedData.length)
+    computedData = computedData.filter(dataitem => {
+      if(dataitem.countries > 2) {
+        return true
+      }
+      return false
+    }).map(dataitem => {
+      return {
+        country: dataitem.code,
+        year: dataitem.year,
+        value: dataitem.summ / dataitem.countries
+      }
+    })
+    return {
+      country: code,
+      data: computedData
+    }
+  }
+  function dataFilter(dataset, countryList, vizWidth) {
     const { datasetOption, countryGroupOption } = optionSelected;
-    const filtered0 = dataset[datasetOption]["data"];
-
+    let filtered0 = dataset[datasetOption]["data"];
+    filtered0.push(computeAverage('AIS', filtered0))
+    filtered0.push(computeAverage('Caribbean', filtered0))
+    filtered0.push(computeAverage('Pacific', filtered0))
+    if(vizWidth<800) {
+      return filtered0.filter((d) => countryList.includes(d.country)) || []
+    }
     if (countryGroupOption == "All") {
       return filtered0;
+    } else if (countryGroupOption == "Regional average") {
+      let res = [];
+      res.push(computeAverage('AIS', filtered0))
+      res.push(computeAverage('Caribbean', filtered0))
+      res.push(computeAverage('Pacific', filtered0))
+      return res
     } else {
       const countries = Object.keys(countryGroup[countryGroupOption]);
       return filtered0.filter((d) => countries.includes(d.country));

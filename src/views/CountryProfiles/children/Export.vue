@@ -16,7 +16,7 @@
         <v-icon v-else>mdi-export-variant</v-icon>
       </v-btn>
     </template>
-    <v-list dense>
+    <v-list class="d-print-none" dense>
       <v-list-item-group>
         <v-list-item @click="exportCSV">
           <v-list-item-title>Summary CSV</v-list-item-title>

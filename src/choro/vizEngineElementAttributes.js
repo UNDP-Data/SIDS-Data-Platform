@@ -108,9 +108,9 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
   totalHeight = 500,
   totalWidth = this.vizWidth < 800 ? this.vizWidth - 40 : 440,
   cx = bBox[4],
+  totalVals,
   cy = bBox[5],
   output;
-
   if (this.indiSelections["viz"] == "bars") {
     if (isNumeric(val)) {
       try {
@@ -124,6 +124,7 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
         if (this.indiSelections["sortby"] == "rank") {
           //this filter removes any empty elements
           rank = sortedData[country];
+          totalVals = indicatorValues.length;
         } else if (this.indiSelections["sortby"] == "region") {
           let countryOrder = Object.keys(sortedData);
           let pacificListSort = countryOrder.filter((item) =>
@@ -135,13 +136,18 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           let caribbeanListSort = countryOrder.filter((item) =>
             regionCountries["caribbean"].includes(item)
           );
+          console.log(pacificListSort)
           let chosenCountryList = caribbeanListSort.concat(
             ["", ""],
             aisListSort,
             ["", ""],
             pacificListSort
           );
+          if(this.vizWidth < 800) {
+            chosenCountryList.unshift(["", ""])
+          }
           rank = chosenCountryList.indexOf(country);
+          totalVals = indicatorValues.length + 4;
         }
 
         let topMargin = 0;
@@ -155,12 +161,12 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
         let x = this.vizWidth < 800 ? 0 : 160;
         let y = this.vizWidth < 800 ?
         10 * rank + topMargin + 20 * rank :
-        16 * rank + topMargin;
+        (totalHeight / totalVals) * rank + topMargin;
         output = {
           x: x,
           y,
           width: normValue * totalWidth,
-          height: 10,
+          height: this.vizWidth < 800 ? 10 : totalHeight / totalVals - 4,
         };
       } catch (error) {
         output = { x: 160, y: 300, width: 0, height: 10 };

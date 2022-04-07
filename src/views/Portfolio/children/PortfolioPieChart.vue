@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <p :style="{visibility: noData ? 'visible' : 'hidden'}">
+    <p :style="{display: noData ? 'block' : 'none'}">
       No data for selected filters
     </p>
     <div :style="{visibility: !noData ? 'visible' : 'hidden'}" class="pie-chart" :id="chartName + postfix">
@@ -279,7 +279,7 @@ export default {
 .slices:hover .slice:hover {
     opacity: 1;
 }
-@media all and (max-width:600px) {
+@media all and (max-width:959px) {
   .pie-chart svg {
     max-width: 310px;
     margin: auto;

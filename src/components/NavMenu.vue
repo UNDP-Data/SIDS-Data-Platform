@@ -10,6 +10,7 @@
           :class="{ 'border-wrapper-fixed': offset }">
           <v-list-item
             class="menu-item"
+            @click="emitDrawerClose"
             v-for="route in routes"
             :key="route.link"
             :to="route.link"
@@ -62,6 +63,9 @@ export default {
       } else {
         this.offset = false;
       }
+    },
+    emitDrawerClose(){
+      this.$emit('drawerClose')
     }
   },
   created () {

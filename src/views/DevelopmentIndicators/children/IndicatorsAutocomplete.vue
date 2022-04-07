@@ -87,6 +87,11 @@ export default {
           indicatorsArray.push(this.indicatorsMeta[indicator])
         }
       }
+      indicatorsArray.sort(function(a, b) {
+          var textA = a.indicator.toUpperCase().trim();
+          var textB = b.indicator.toUpperCase().trim();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
       return indicatorsArray;
     },
     activeIndicator() {

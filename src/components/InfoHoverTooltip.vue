@@ -3,7 +3,7 @@
     eager
     transition="none"
     open-delay="200"
-    max-width="600"
+    :max-width="maxWidth"
     close-delay="200"
     open-on-hover
     content-class="tooltip-content"
@@ -23,7 +23,7 @@
           <slot name="content"></slot>
       </div>
       <v-card v-else>
-        <v-card-title><slot name="icon"></slot>{{textContent[contentName].title}}</v-card-title>
+        <v-card-title><slot v-if="hasIconSlot" name="icon"></slot>{{textContent[contentName].title}}</v-card-title>
         <v-card-text v-html="textContent[contentName].content">
         </v-card-text>
       </v-card>
@@ -32,16 +32,24 @@
 
 <script>
 import { mapState } from 'vuex';
+import size from '@/mixins/size.mixin';
 
 export default {
   name: 'InfoHoverTooltip',
   props:['contentName', 'large', 'disabled'],
+  mixins:[size],
   computed: {
     ...mapState({
       textContent: (state) => state.texts.textContent
     }),
     hasContentSlot() {
       return this.$slots['content']
+    },
+    hasIconSlot() {
+      return this.$slots['icon']
+    },
+    maxWidth() {
+      return this.isMobile ? '80%' : '600px'
     }
   }
 }

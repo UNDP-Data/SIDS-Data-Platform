@@ -87,11 +87,23 @@ export function updateVizEngine(indicatorCode) {
         timeData[this.indicatorCode] = JSON.parse(JSON.stringify(this.indicatorData));
         let dataset = this.parse(timeData);
         let optionSelected = {
-          countryGroupOption: this.countyType,
+          countryGroupOption: this.countryType,
           datasetOption: this.indicatorCode,
         };
         this.updateTimeChart({ dataset, optionSelected });
       }
+    if(this.vizWidth < 800) {
+      if(this.indiSelections["viz"] === "bars") {
+        let vizContainerHeight = (Object.keys(vizElementAttributes).length - Object.keys(noData).length) * 30;
+        if(this.indiSelections["sortby"] === 'region') {
+          vizContainerHeight+= 30 * 6
+        }
+        this.main_chart_svg
+          .attr("height", vizContainerHeight);
+        this.choro_legend_svg
+          .attr("height", vizContainerHeight);
+      }
+    }
 //
 //       updateVizSliders()//again, just for fun
 }
@@ -177,8 +189,10 @@ export function updateVizBlocks(){
     this.indiSelections["viz"] == "info" ||
     this.indiSelections["viz"] == "series"
   ) {
+    d3.select("#choro_legend_container").style("display", "none");
     d3.select("#choro_map_container").style("display", "none"); //"opacity", "0");
   } else {
+    d3.select("#choro_legend_container").style("display", "block");
     d3.select("#choro_map_container").style("display", "block"); //("opacity", "1");
   }
 }
@@ -277,7 +291,7 @@ export function updateCountrySvgColors(quantize) {
         if (d3.select(this).classed("countryActive")) return;
         if (rootThis.indiSelections.viz!=='choro') return;
         d3.select(this).attr("class", function () {
-          /* reset county color to quantize range */
+          /* reset country color to quantize range */
           let  stat = indicatorDataYear[this.id];
 
           if (rootThis.indicatorCode == "Region") {
@@ -849,17 +863,44 @@ export function updateRegionLables() {
             aisY: 300,
           };
         }
+        if(this.vizWidth < 800) {
+          regionTitleVals.opacity = 0;
+        }
         // }
       } else if (this.indiSelections["sortby"] == "region") {
-        regionTitleVals = {
-          opacity: 1,
-          pacificX: 715,
-          pacificY: 450,
-          caribbeanX: 700,
-          caribbeanY: 110,
-          aisX: 725,
-          aisY: 300,
-        };
+        if(this.vizWidth < 800) {
+          let aisOffset = regionCountries.caribbean.reduce((offset, iso) => {
+            if(indicatorDataYear[iso] !== "No Data") {
+              offset+=30
+            }
+            return offset
+          }, 30*2);
+          let pacificOffset = regionCountries.ais.reduce((offset, iso) => {
+            if(indicatorDataYear[iso] !== "No Data") {
+              offset+=30
+            }
+            return offset
+          }, aisOffset + 30*2);
+          regionTitleVals = {
+            opacity: 1,
+            pacificX: 0,
+            pacificY: pacificOffset,
+            caribbeanX: 0,
+            caribbeanY: 0,
+            aisX: 0,
+            aisY: aisOffset,
+          };
+        } else {
+          regionTitleVals = {
+            opacity: 1,
+            pacificX: 715,
+            pacificY: 450,
+            caribbeanX: 700,
+            caribbeanY: 110,
+            aisX: 725,
+            aisY: 300,
+          };
+        }
       }
     } else if (this.indiSelections["viz"] == "global") {
       regionTitleVals = {

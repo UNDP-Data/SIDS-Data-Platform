@@ -114,7 +114,7 @@
             dense
             hide-details
             v-model="region"
-            :items="regions"
+            :items="regionsDesctop"
             outlined
           ></v-select>
           </div>
@@ -144,7 +144,6 @@ import IndicatorsNav from './children/IndicatorsNav.vue'
 import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
-import IndicatorsML from './children/IndicatorsML.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
 
@@ -179,6 +178,13 @@ export default {
         'AIS',
         'Caribbean',
         'Pacific'
+      ],
+      regionsDesctop:[
+        'All',
+        'AIS',
+        'Caribbean',
+        'Pacific',
+        'Regional average'
       ],
       sorting:0,
       menuBar:{
@@ -232,7 +238,6 @@ export default {
     MviIndicatorsNav:MVIIndicatorsNav,
     IndicatorsMobileNav,
     MviMobileNav,
-    IndicatorsML
   },
   computed: {
     ...mapState({
@@ -299,6 +304,9 @@ export default {
       this.resizeTimeout = setTimeout(async () => {
         if(rootThis.isMobile && !(rootThis.chartType === 'bars' || rootThis.chartType === 'series')) {
           rootThis.transitionTo('bars')
+        }
+        if(rootThis.isMobile) {
+          rootThis.region = 'All'
         }
       }, 100);
     }

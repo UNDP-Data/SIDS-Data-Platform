@@ -42,7 +42,7 @@
             <div class="select min-0">
               <label class="input-label">Year</label>
               <v-select
-                :disabled="chartType !== 'bars'"
+                :disabled="chartType !== 'bars' || years.length === 1"
                 rounded
                 dense
                 hide-details
@@ -56,8 +56,8 @@
             </div>
             <v-btn
                 class="ml-2 filter-sm-button"
+                :disabled="chartType !== 'bars' || years.length === 1"
                 rounded
-                :disabled="chartType !== 'bars'"
                 @click="toggleYearPlay"
                 fab
                 color="primary"
@@ -164,12 +164,17 @@ export default {
         }]
       }
       if(this.data && this.data.data) {
-        return Object.keys(this.data.data).filter(year => year !== 'recentYear').map(year => {
+        let res = Object.keys(this.data.data).filter(year => year !== 'recentYear').map(year => {
           return {
             name: year === 'recentValue' ? 'Recent value' : year,
             id: year
           }
         }).reverse()
+        if(res.length === 2) {
+          res.shift()
+          res[0].id = 'recentValue';
+        }
+        return res
       } else {
         return []
       }

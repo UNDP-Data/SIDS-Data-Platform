@@ -21,6 +21,16 @@
               outlined
               hide-details
             >
+
+              <template slot="selection" slot-scope="data">
+                <div class="mobile-pillar-selector">
+                  <i
+                    class="flag-icon select_icon"
+                    :class="'flag-icon-' + flagCodes[data.item.id]"
+                  ></i>
+                  {{ data.item.name }}
+                </div>
+              </template>
               <template  slot="item" slot-scope="data">
                 <div>
                   <i
@@ -75,6 +85,36 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-row class="d-md-none d-none-print justify-center">
+          <v-col cols="11">
+            <v-expansion-panels flat accordion>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+                    <h3>{{stat.value}} {{stat.unit}}</h3>
+                    <p class="mb-0">{{stat.title}}</p>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-divider/>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.successesInDevelopment.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-divider/>
+              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment">
+                <v-expansion-panel-header>{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-col>
+        </v-row>
         <v-row justify="center" class="d-none-print d-md-none">
           <v-col cols="9">
             <v-select
@@ -103,8 +143,8 @@
           </v-col>
           <v-col cols="2" class="d-flex align-center justify-end">
             <info-hover-tooltip :large="true" v-if="graphOptions[tab]" :contentName="getTabPillar(tab).tooltipName">
-              <template v-if="headerIcon" v-slot:icon>
-                <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${getTabPillar(tab).headerIcon}`"/>
+              <template v-if="getTabPillar(tab).icon" v-slot:icon>
+                <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${getTabPillar(tab).icon}`"/>
               </template>
             </info-hover-tooltip>
           </v-col>
@@ -143,41 +183,13 @@
         </v-row>
         <v-row class="d-none-print" justify="center">
           <v-col cols="11" md="6">
-            <div class="select">
-              <v-select
-                rounded
-                :value="compareIdsList"
-                :items="sidsListFiltered"
-                item-text="name"
-                item-value="id"
-                placeholder="Overlay countries to compare indicator rank"
-                @change="setCompareCountries"
-                chips
-                outlined
-                hide-selected
-                multiple
-                dense
-                hide-details
-              >
-                <template #selection="{ item, index }">
-                  <v-chip
-                    class="muliselect-chip"
-                    close
-                    @click:close="removeCountry(item.id)"
-                    :style="getChipStyle(index)"
-                    :color="getColor(index)">
-                    {{item.name}}
-                  </v-chip>
-                </template>
-                <template slot="item" slot-scope="data">
-                <i
-                  class="flag-icon select_icon"
-                  :class="'flag-icon-' + flagCodes[data.item.id]"
-                ></i>
-                {{ data.item.name }}
-                </template>
-              </v-select>
-            </div>
+            <country-multiselect
+              placeholder="Overlay countries to compare indicator rank"
+              :countryActiveIdsList="compareIdsList"
+              :countriesToCompare="sidsListFiltered"
+              :colorScheme="colorScheme"
+              @countryChange="setCompareCountries"
+            />
           </v-col>
           <v-col cols="3" class="d-flex align-center" md="1">
             <p class="mt-auto mb-auto">among</p>
@@ -212,36 +224,6 @@
                   src="@/assets/media/goals-icons/sidsOfferPillars.png"/>
               </template>
             </info-hover-tooltip>
-          </v-col>
-        </v-row>
-        <v-row class="d-md-none d-none-print justify-center">
-          <v-col cols="11">
-            <v-expansion-panels flat accordion>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
-                  <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-                    <h3>{{stat.value}} {{stat.unit}}</h3>
-                    <p class="mb-0">{{stat.title}}</p>
-                  </div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.successesInDevelopment.title}}</v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
           </v-col>
         </v-row>
         <v-row class="mb-4 d-none d-md-flex d-print-flex no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
@@ -315,6 +297,7 @@ import ProfilesSpiderChart from './children/ProfilesSpiderChart.vue'
 
 import InfoButton from '@/components/InfoButton.vue'
 import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
+import CountryMultiselect from '@/components/CountryMultiselect.vue'
 import * as d3 from 'd3';
 import store from '@/store'
 import sizeMixin from '@/mixins/size.mixin'
@@ -331,7 +314,8 @@ export default {
     ProfilesSpiderChart,
     ProfilesFinance,
     InfoHoverTooltip,
-    InfoButton
+    InfoButton,
+    CountryMultiselect
   },
   data: () => ({
     flagCodes,
@@ -377,7 +361,6 @@ export default {
     }],
     tab:'Climate',
     tabs:['Climate','Blue Economy','Digital Transformation','Vulnerability','Finance'],
-    rgbaColorScheme:['rgba(237, 201, 81, 0.4)','rgba(204, 51, 63, 0.4)','rgba(0, 160, 176, 0.4)','rgba(255, 255, 255, 0.4)'],
     graphOptions:{
       Climate: {
         header:'Climate Action',
@@ -467,8 +450,8 @@ export default {
     graphValueData() {
       let result = {};
       this.pillars.map(pillar => {
-        result[pillar.name] = this.selectedCountriesIds.map(countyId => {
-          let countyAxes = this.profiles[countyId][pillar.name].map(axis => {
+        result[pillar.name] = this.selectedCountriesIds.map(countryId => {
+          let countryAxes = this.profiles[countryId][pillar.name].map(axis => {
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
               value: axis.value,
@@ -476,8 +459,8 @@ export default {
             }
           })
           return {
-            name: countyId,
-            axes: countyAxes
+            name: countryId,
+            axes: countryAxes
           }
         })
       })
@@ -486,8 +469,8 @@ export default {
     graphRankData() {
       let result = {};
       this.pillars.map(pillar => {
-        result[pillar.name] = this.selectedCountriesIds.map(countyId => {
-          let countyAxes = this.profiles[countyId][pillar.name].map(axis => {
+        result[pillar.name] = this.selectedCountriesIds.map(countryId => {
+          let countryAxes = this.profiles[countryId][pillar.name].map(axis => {
             let rank = this.rankType + 'Rank'
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
@@ -496,8 +479,8 @@ export default {
             }
           })
           return {
-            name: countyId,
-            axes: countyAxes
+            name: countryId,
+            axes: countryAxes
           }
         })
       })
@@ -507,7 +490,7 @@ export default {
       return this.profiles[this.activeCountryId];
     },
     activeCountry() {
-      return this.sidsList.find(county => county.id === this.activeCountryId);
+      return this.sidsList.find(country => country.id === this.activeCountryId);
     },
     selectedCountriesIds() {
       return [this.activeCountryId, ...this.compareIdsList]
@@ -536,18 +519,12 @@ export default {
     removeCountry(countryId) {
       this.setCompareCountries(this.compareIdsList.filter(compareCountryId => compareCountryId !== countryId))
     },
-    getColor(index) {
-      return this.colorScheme[index%4];
-    },
     getStyleByName(name) {
       return this.graphOptions[name] ? `color:${this.graphOptions[name].textColor}` : '';
     },
     getTabPillar(name) {
       return this.pillars.find(pillar => name === pillar.name)
     },
-    getChipStyle(index) {
-      return `background-color:${this.rgbaColorScheme[index%4]}`;
-    }
   },
   async beforeRouteEnter(to, from, next) {
     try {
@@ -589,17 +566,13 @@ export default {
     display: inline-block;
     margin-right: 10px;
   }
-  .muliselect-chip {
-    border-style: solid;
-    border-width: 2px;
-  }
   .profile-header-row {
     background-size: cover;
   }
   .graph-tabs {
     background-color: transparent !important;
   }
- @media all and (max-width:960px) {
+ @media all and (max-width:959px) {
    .profile-header-row {
      padding-top: 25vh;
      padding-bottom: 20px;
