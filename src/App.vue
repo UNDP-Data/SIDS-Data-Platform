@@ -51,12 +51,13 @@ export default {
     }
   },
   methods: {
-    methods: {
-    handleScroll (event) {
-      console.log(event)
+    handleScroll () {
+      if(window.scrollY > document.getElementById('headerElement').offsetHeight) {
+        window.removeEventListener('scroll', this.handleScroll);
+        this.scrolledToContent = true
+      }
     }
-  }
-  }
+  },
   created () {
     window.addEventListener('scroll', this.handleScroll);
   },
