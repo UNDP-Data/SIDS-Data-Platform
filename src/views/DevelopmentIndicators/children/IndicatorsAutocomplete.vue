@@ -149,11 +149,6 @@ export default {
   max-width: 60%;
   margin-right: 0;
 }
-.active-indicator-info {
-  padding-top: 8px !important;
-  max-height: calc(50vh - 70px);
-  overflow-y: scroll;
-}
 .autocomplete-select {
   font-size: 14px !important;
   font-weight: bold;

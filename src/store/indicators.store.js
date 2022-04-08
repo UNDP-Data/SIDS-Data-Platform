@@ -9,7 +9,9 @@ export default {
     indicatorsCategories: null,
     indicatorsMeta: null,
     profileData: null,
-    activeIndicatorData:null
+    activeIndicatorData:null,
+    MLTargetSize:null,
+    MLPredictorSize:null
   },
   mutations: {
     setDatasetsList(state, data) {
@@ -29,6 +31,12 @@ export default {
     },
     setActiveIndicator(state, data) {
       state.activeIndicatorData = data;
+    },
+    setMLTargetSize(state, data) {
+      state.MLTargetSize = data;
+    },
+    setMLPredictorSize(state, data) {
+      state.MLPredictorSize = data;
     },
   },
   actions: {
@@ -108,6 +116,18 @@ export default {
       let indicatorData = await service.loadIndicatorData(APIcode);
       indicatorData = Object.keys(indexCodes).includes(indicatorCode) ? indicatorData : indicatorData[code];
       return commit('setActiveIndicator', indicatorData)
-    }
+    },
+    async getMLTargetSize({ state, commit }) {
+      if(!state.MLTargetSize){
+        const MLTargetSize = await service.loadMLTargetSize();
+        commit("setMLTargetSize", MLTargetSize);
+      }
+    },
+    async getMLPredictorSize({ state, commit }) {
+      if(!state.MLPredictorSize){
+        const MLPredictorSize = await service.loadMLPredictorSize();
+        commit("setMLPredictorSize", MLPredictorSize);
+      }
+    },
   }
 }

@@ -158,15 +158,16 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           maxx+=1;
         }
         let normValue = (val - minn) / (maxx - minn);
+        let barsHeight = totalHeight / totalVals > 80 ? 80 : totalHeight / totalVals;
         let x = this.vizWidth < 800 ? 0 : 160;
         let y = this.vizWidth < 800 ?
         10 * rank + topMargin + 20 * rank :
-        (totalHeight / totalVals) * rank + topMargin;
+        barsHeight * rank + topMargin;
         output = {
           x: x,
           y,
           width: normValue * totalWidth,
-          height: this.vizWidth < 800 ? 10 : totalHeight / totalVals - 4,
+          height: this.vizWidth < 800 ? 10 : barsHeight - 4,
         };
       } catch (error) {
         output = { x: 160, y: 300, width: 0, height: 10 };
@@ -212,20 +213,15 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           maxx+=1;
         }
         let normValue = (val - minn) / (maxx - minn);
-
-          output = {
-            y: totalHeight * 0.85 - (normValue * totalHeight) / 2.5,
-            x: (650 / totalVals) * rank + leftMargin,
-            width: totalWidth / totalVals - margin,
-            height: (normValue * totalHeight) / 2.5,
-          }; //,"color":color};
-          if (output["y"] > totalHeight * 0.85) {
-            output["y"] = totalHeight * 0.85;
-          } //so that they don't emerge from the bottom on next animation
-
-        // else if (indiSelections["page"] == "mviTab") {
-        //     output= columnBase
-        // }
+        output = {
+          y: totalHeight * 0.85 - (normValue * totalHeight) / 2.5,
+          x: (650 / totalVals) * rank + leftMargin,
+          width: totalWidth / totalVals - margin,
+          height: (normValue * totalHeight) / 2.5,
+        }; //,"color":color};
+        if (output["y"] > totalHeight * 0.85) {
+          output["y"] = totalHeight * 0.85;
+        }
       } catch (error) {
         output = columnBase;
       }
@@ -266,7 +262,11 @@ export function textTransform(
   textY = bBox[2] - 11,
   x,
   y;
-
+  var filtered = Object.fromEntries(
+    Object.entries(indicatorDataObj).filter(([, v]) => isNumeric(v))
+  );
+  let indicatorValues = Object.values(filtered)
+  let barHeight = (500/indicatorValues.length) > 80 ? 80 : 500/indicatorValues.length
   if (this.indiSelections["viz"] == "choro") {
     return "scale(1,1) translate(0,0)";
   } else if (this.indiSelections["viz"] == "bars") {
@@ -284,7 +284,7 @@ export function textTransform(
         "scale(1,1) translate(" +
         (-textX + 140 - textBBox.width / 2) +
         "," +
-        (-textY + RTo["y"] + 8) +
+        (-textY + RTo["y"] + barHeight/2) +
         ")";
     }
 

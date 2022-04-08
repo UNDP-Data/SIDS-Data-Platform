@@ -65,6 +65,8 @@ const routes = [
       await store.dispatch('indicators/getCategories');
       await store.dispatch('indicators/getMeta');
       await store.dispatch('indicators/getProfileData');
+      await store.dispatch('indicators/getMLTargetSize');
+      await store.dispatch('indicators/getMLPredictorSize');
       if(
         indicator === to.params.indicator &&
         year === to.params.year &&

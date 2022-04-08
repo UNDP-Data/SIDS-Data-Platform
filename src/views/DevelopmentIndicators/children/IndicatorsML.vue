@@ -289,7 +289,9 @@ export default {
     ...mapState({
       profileData: state => state.indicators.profileData,
       indicatorsMeta: state => state.indicators.indicatorsMeta,
-      data: state => state.indicators.activeIndicatorData
+      data: state => state.indicators.activeIndicatorData,
+      MLTargetSize: state => state.indicators.MLTargetSize,
+      MLPredictorSize: state => state.indicators.MLPredictorSize
     }),
     activeIndicatorsMeta() {
       return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-137506']
@@ -300,16 +302,19 @@ export default {
       return 'green'
     },
     years(){
+      let res = []
       if(this.data && this.data.data) {
-        return Object.keys(this.data.data).filter(year => year !== 'recentYear').map(year => {
-          return {
-            name: year,
-            id: year
+        let yearsObj = JSON.parse(this.indicatorsMeta[this.indicatorCode].yearValueCounts.replace(/'/g,'"'))
+        for (let year in yearsObj) {
+          if(yearsObj[year] >= this.MLTargetSize && year>2000) {
+            res.push({
+              name: year,
+              id: year
+            })
           }
-        }).reverse().filter(year=>year.id > 2000)
-      } else {
-        return []
+        }
       }
+      return res.reverse()
     },
     allIndicators() {
       let indicatorsArray = [];
@@ -470,7 +475,9 @@ export default {
     }
   },
   mounted() {
-    this.emitYearChange(this.years[0].id)
+    if(this.years.findIndex(y => y.id === this.year) === -1) {
+      this.emitYearChange(this.years[0].id)
+    }
   }
 }
 </script>
