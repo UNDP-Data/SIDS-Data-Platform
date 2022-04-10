@@ -100,7 +100,13 @@
             :items="allIndicators"
             hide-details
             outlined
-          ></v-autocomplete>
+          >
+            <template v-slot:item="{ item }">
+              <v-list-item-content>
+                {{item.indicator}} <template v-if="item.dim !=='none'">{{item.dim}}</template>
+              </v-list-item-content>
+            </template>
+          </v-autocomplete>
         </div>
         <div class="select" v-else>
           <label class="input-label">Select predictors</label>
@@ -319,7 +325,9 @@ export default {
     allIndicators() {
       let indicatorsArray = [];
       for(let indicator in this.indicatorsMeta) {
-        if(this.indicatorsMeta[indicator].dataset !== 'key') {
+        if(this.indicatorsMeta[indicator].dataset !== 'key' &&
+          this.indicatorsMeta[indicator].yearValueCounts[this.year] >= this.MLPredictorSize
+        ) {
           indicatorsArray.push(this.indicatorsMeta[indicator])
         }
       }
