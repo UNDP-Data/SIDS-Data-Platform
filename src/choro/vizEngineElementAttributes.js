@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import {getBoundingBox, isNumeric, sort_object} from './vizEngineHelperFunctions';
+import {getBoundingBox, isNumeric, sort_object, regionColors} from './vizEngineHelperFunctions';
 import { regionCountries, countryListLongitude, sidsDict } from './vizEngineGlobals';
 
 
@@ -12,6 +12,68 @@ export function processVizElementAttributes() {
   let vizElementAttributes = {};
   let rootThis = this;
   ////problem code, doesn't work in init so moved here instead.
+  let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
+  let avgs = ['AIS', 'Caribbean', 'Pacific']
+
+  if(this.indiSelections["viz"] === 'bars') {
+    for (let i = 0; i < avgs.length; i++) {
+      let avg = Object.keys(indicatorDataObj).reduce((avg, country) => {
+        if(this.profileData[country].Region === avgs[i] && indicatorDataObj[country] !== 'No Data') {
+          avg[0] += 1;
+          avg[1] += indicatorDataObj[country]
+        }
+        return avg
+      }, [0,0])
+      if(avg[0] > 2) {
+        avg = avg[1]/avg[0]
+        indicatorDataObj[avgs[i]] = avg
+        this.profileData[avgs[i]] = {
+          Region: avgs[i]
+        }
+        if(d3.select(`#${avgs[i]}`).empty()) {
+          let g = d3.select(this.sidsMaps)
+            .append("g")
+            .attr('id', avgs[i])
+            g.append('path')
+              .attr('id', avgs[i])
+            g.append('rect')
+              .attr("x", 160)
+              .attr("y", 300)
+              .attr("width", 0)
+              .attr("height", 0)
+              .classed("choroRect", true)
+              .style("fill", function () {
+                return (
+                  "#" +
+                  regionColors(rootThis.profileData[avgs[i]].Region, "Y").substring(1)
+                );
+              }) //
+            g.append('text')
+              .attr("font-size", 10)
+              .text(avgs[i] + ' average')
+              .attr("x", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
+              })
+              .attr("y", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
+              })
+              .classed("choroText", true);
+            g.append('text')
+              .attr("font-size", 10)
+              .classed("countryLabel", true);
+          }
+        } else {
+          d3.select(`g#${avgs[i]}`)
+            .remove()
+        }
+    }
+  } else {
+    for (let i = 0; i < avgs.length; i++) {
+      d3.select(`g#${avgs[i]}`)
+        .remove()
+      delete this.bboxDict[avgs[i]]
+    }
+  }
   d3.select(this.sidsMaps)
     .selectAll("path")
     .each(function () {
@@ -25,7 +87,6 @@ export function processVizElementAttributes() {
   });
   this.bboxInit = 1;
   ////////////////////
-  let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
   for (let country in this.bboxDict) {
     //rename to iso since the svg uses the old codes
     let bBox = this.bboxDict[country],
@@ -117,7 +178,6 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
         var filtered = Object.fromEntries(
           Object.entries(indicatorDataObj).filter(([, v]) => isNumeric(v))
         ); // == "number"))
-
         let sortedData = sort_object(filtered),
         indicatorValues = Object.values(filtered),
         rank;
@@ -136,7 +196,6 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           let caribbeanListSort = countryOrder.filter((item) =>
             regionCountries["caribbean"].includes(item)
           );
-          console.log(pacificListSort)
           let chosenCountryList = caribbeanListSort.concat(
             ["", ""],
             aisListSort,

@@ -304,9 +304,9 @@ export default {
     years(){
       let res = []
       if(this.data && this.data.data) {
-        let yearsObj = JSON.parse(this.indicatorsMeta[this.indicatorCode].yearValueCounts.replace(/'/g,'"'))
+        let yearsObj = this.indicatorsMeta[this.indicatorCode].yearValueCounts
         for (let year in yearsObj) {
-          if(yearsObj[year] >= this.MLTargetSize && year>2000) {
+          if(parseInt(yearsObj[year]) >= this.MLTargetSize && year>2000) {
             res.push({
               name: year,
               id: year

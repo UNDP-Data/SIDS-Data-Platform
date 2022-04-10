@@ -200,18 +200,19 @@
     <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
     <v-card-text class="pt-2">
       <div class="mb-1 d-flex">
-        <v-select class='dimensions-select' v-if="activeIndicatorYears.length > 2"
+        <v-select class='dimensions-select'
           :items="activeIndicatorYears"
           :value="year"
           item-text="name"
           item-value="id"
-          :disabled="playingYear || chartType === 'ml'"
+          :disabled="playingYear || chartType === 'ml' || activeIndicatorYears.length < 3"
           @change="emitYearChange"
           label="Year"
           dense
         ></v-select>
         <v-btn
           @click="toggleYearPlay"
+          :disabled="chartType === 'ml' || activeIndicatorYears.length < 3"
           icon
           >
           <v-icon v-if="playingYear">mdi-pause</v-icon>
@@ -508,10 +509,12 @@ export default {
       }
     },
     getDimensionAvaliability(code) {
+      let codeParsed = code.code || code;
       if(this.chartType !== 'ml') {
         return false
       }
-      return !Object.values(JSON.parse(this.indicatorsMeta[code].yearValueCounts.replace(/'/g,'"'))).some(v=>v >= this.MLTargetSize);
+
+      return !Object.values(this.indicatorsMeta[codeParsed].yearValueCounts).some(v=>v >= this.MLTargetSize);
     },
     pausePlayYear() {
       clearTimeout(this.playInterval)

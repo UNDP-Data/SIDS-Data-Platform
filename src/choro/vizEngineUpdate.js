@@ -60,15 +60,14 @@ export function updateVizEngine(indicatorCode) {
   }
 
   let quantize = quantizeData(this.indicatorData,this.indiSelections),
+  vizElementAttributes = this.processVizElementAttributes(),
   noData = this.countriesWithNoData();
-
+  console.log(vizElementAttributes)
     if(!this.firstIndicatorInit){
       this.initChoroLegend(quantize);// require data to be loaded
       this.initXAxis()//messes chorolegend if it is too soon
       this.firstIndicatorInit=1;
     }
-
-    let vizElementAttributes = this.processVizElementAttributes();
 
     this.updateCountrySvgColors(quantize);//currently color data is computed here (quantize)
     this.updateCountryPositions(vizElementAttributes);
@@ -770,7 +769,6 @@ export function updateRegionLables() {
     regionTitleVals,
     allVals,
     countryListLength,
-    regionTitleHeight,
     indicatorDataYear = this.indicatorData["data"][this.indiSelections["year"]];
     countryMaps.each(function () {
       let region = this.id.replace("RegionTitle", ""),
@@ -834,23 +832,23 @@ export function updateRegionLables() {
           aisX: 785,
           aisY: 250,
         };
-        regionTitleHeight = 400;
 
         countryListLength = allVals.length;
+        let regionRanks = [regionRank["pacific"],regionRank["caribbean"],regionRank["ais"]].sort();
         if (countryListLength > 0) {
           regionTitleVals = {
             opacity: 1,
             pacificX: 715,
             pacificY:
-              regionTitleHeight * (regionRank["pacific"] / countryListLength) +
+              40 * (regionRanks.findIndex(v => v === regionRank["pacific"])) +
               60,
             caribbeanX: 700,
             caribbeanY:
-              regionTitleHeight * (regionRank["caribbean"] / countryListLength) +
+              40 * (regionRanks.findIndex(v => v === regionRank["caribbean"])) +
               60,
             aisX: 725,
             aisY:
-              regionTitleHeight * (regionRank["ais"] / countryListLength) + 60,
+              40 * (regionRanks.findIndex(v => v === regionRank["ais"])) + 60,
           };
         } else {
           regionTitleVals = {

@@ -275,7 +275,7 @@ export default {
       return this.indicatorsMeta[this.indicator]
     },
     mlAvaliable() {
-      return Object.values(JSON.parse(this.activeIndicatorsMeta.yearValueCounts.replace(/'/g,'"'))).some(v=>v >= this.MLTargetSize);
+      return Object.values(this.activeIndicatorsMeta.yearValueCounts).some(v=>v >= this.MLTargetSize);
     }
   },
   methods: {
