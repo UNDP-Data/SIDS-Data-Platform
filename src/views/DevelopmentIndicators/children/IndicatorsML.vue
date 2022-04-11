@@ -100,7 +100,13 @@
             :items="allIndicators"
             hide-details
             outlined
-          ></v-autocomplete>
+          >
+            <template v-slot:item="{ item }">
+              <v-list-item-content>
+                {{item.indicator}} <template v-if="item.dim !=='none'">{{item.dim}}</template>
+              </v-list-item-content>
+            </template>
+          </v-autocomplete>
         </div>
         <div class="select" v-else>
           <label class="input-label">Select predictors</label>
@@ -289,7 +295,9 @@ export default {
     ...mapState({
       profileData: state => state.indicators.profileData,
       indicatorsMeta: state => state.indicators.indicatorsMeta,
-      data: state => state.indicators.activeIndicatorData
+      data: state => state.indicators.activeIndicatorData,
+      MLTargetSize: state => state.indicators.MLTargetSize,
+      MLPredictorSize: state => state.indicators.MLPredictorSize
     }),
     activeIndicatorsMeta() {
       return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-137506']
@@ -300,21 +308,26 @@ export default {
       return 'green'
     },
     years(){
+      let res = []
       if(this.data && this.data.data) {
-        return Object.keys(this.data.data).filter(year => year !== 'recentYear').map(year => {
-          return {
-            name: year,
-            id: year
+        let yearsObj = this.indicatorsMeta[this.indicatorCode].yearValueCounts
+        for (let year in yearsObj) {
+          if(parseInt(yearsObj[year]) >= this.MLTargetSize && year>2000) {
+            res.push({
+              name: year,
+              id: year
+            })
           }
-        }).reverse().filter(year=>year.id > 2000)
-      } else {
-        return []
+        }
       }
+      return res.reverse()
     },
     allIndicators() {
       let indicatorsArray = [];
       for(let indicator in this.indicatorsMeta) {
-        if(this.indicatorsMeta[indicator].dataset !== 'key') {
+        if(this.indicatorsMeta[indicator].dataset !== 'key' &&
+          this.indicatorsMeta[indicator].yearValueCounts[this.year] >= this.MLPredictorSize
+        ) {
           indicatorsArray.push(this.indicatorsMeta[indicator])
         }
       }
@@ -470,7 +483,9 @@ export default {
     }
   },
   mounted() {
-    this.emitYearChange(this.years[0].id)
+    if(this.years.findIndex(y => y.id === this.year) === -1) {
+      this.emitYearChange(this.years[0].id)
+    }
   }
 }
 </script>

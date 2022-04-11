@@ -17,12 +17,12 @@ export const countryListLongitude = ["Belize", "Jamaica", "Cayman Islands", "Cub
     "Micronesia", "Marshall Islands", "Vanuatu", "Nauru", "Kiribati", "Fiji", "Tuvalu", "Tonga", "Niue", "Samoa", "Cook Islands"]
 //
 export const regionCountries = {
-    "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP"],
+    "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP", "AIS"],
     "pacific": ["TLS", "PLW", "PNG", "SLB","TON",
-        "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "NIU", "WSM", "TKL", "COK"],
+        "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "NIU", "WSM", "TKL", "COK", "Pacific"],
     "caribbean": ["BLZ", "JAM", "CYM", "CUB", "BMU", "BHS", "ABW", "CUW", "TCA", "HTI", "DOM",
         "KNA", "VGB", "AIA", "SXM", "ATG", "MSR", "DMA", "LCA"
-        , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR"]
+        , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR", "Caribbean"]
 }
 //
 export const totalIndexRectangles =4;
@@ -36,7 +36,7 @@ export const sidsDict = {"ATG":"Antigua and Barbuda", "ABW":"Aruba","BHS":"The B
 "KNA":"St. Kitts and Nevis","VCT": "St. Vincent and the Grenadines","LCA":"St. Lucia",
 "SUR":"Suriname","TLS": "Timor Leste","TTO":"Trinidad and Tobago", "TON": "Tonga",
 "TUV":"Tuvalu","TCA":"Turks and Caicos Islands","VUT": "Vanuatu","AIA":"Anguilla",
-"COK":"Cook Islands","MSR":"Montserrat","TKL":"Tokelau","NIU": "Niue"}
+"COK":"Cook Islands","MSR":"Montserrat","TKL":"Tokelau","NIU": "Niue", 'AIS': 'AIS average', 'Caribbean': 'Caribbean average', 'Pacific': 'Pacific average'}
 
 export const regionsDict = {
   caribbean: 'Caribbean',

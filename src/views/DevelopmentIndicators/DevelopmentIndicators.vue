@@ -244,7 +244,8 @@ export default {
   computed: {
     ...mapState({
       activeIndicatorData: state => state.indicators.activeIndicatorData,
-      indicatorsMeta: state => state.indicators.indicatorsMeta
+      indicatorsMeta: state => state.indicators.indicatorsMeta,
+      MLTargetSize: state => state.indicators.MLTargetSize
     }),
     sortingName() {
       if(this.sorting === 0) {
@@ -274,7 +275,7 @@ export default {
       return this.indicatorsMeta[this.indicator]
     },
     mlAvaliable() {
-      return Object.values(JSON.parse(this.activeIndicatorsMeta.yearValueCounts.replace(/'/g,'"'))).some(v=>v > 189);
+      return Object.values(this.activeIndicatorsMeta.yearValueCounts).some(v=>v >= this.MLTargetSize);
     }
   },
   methods: {

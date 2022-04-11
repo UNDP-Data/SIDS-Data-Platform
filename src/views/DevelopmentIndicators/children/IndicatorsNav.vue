@@ -196,22 +196,23 @@
         </template>
     </v-virtual-scroll>
   </v-card>
-  <v-card flat class="mt-2" v-if="activeIndicator && !isSmallScreen">
+  <v-card flat class="mt-2 active-indicator-info" v-if="activeIndicator && !isSmallScreen">
     <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
-    <v-card-text class="active-indicator-info">
+    <v-card-text class="pt-2">
       <div class="mb-1 d-flex">
-        <v-select class='dimensions-select' v-if="activeIndicatorYears.length > 2"
+        <v-select class='dimensions-select'
           :items="activeIndicatorYears"
           :value="year"
           item-text="name"
           item-value="id"
-          :disabled="playingYear || chartType === 'ml'"
+          :disabled="playingYear || chartType === 'ml' || activeIndicatorYears.length < 3"
           @change="emitYearChange"
           label="Year"
           dense
         ></v-select>
         <v-btn
           @click="toggleYearPlay"
+          :disabled="chartType === 'ml' || activeIndicatorYears.length < 3"
           icon
           >
           <v-icon v-if="playingYear">mdi-pause</v-icon>
@@ -286,7 +287,8 @@ export default {
     ...mapState({
       indicatorsCategories: state => state.indicators.indicatorsCategories,
       indicatorsMeta: state => state.indicators.indicatorsMeta,
-      data: state => state.indicators.activeIndicatorData
+      data: state => state.indicators.activeIndicatorData,
+      MLTargetSize: state => state.indicators.MLTargetSize
     }),
     activeDataset() {
       if(this.dataset) {
@@ -507,10 +509,12 @@ export default {
       }
     },
     getDimensionAvaliability(code) {
+      let codeParsed = code.code || code;
       if(this.chartType !== 'ml') {
         return false
       }
-      return Object.values(JSON.parse(this.indicatorsMeta[code].yearValueCounts.replace(/'/g,'"'))).some(v=>v > 189);
+
+      return !Object.values(this.indicatorsMeta[codeParsed].yearValueCounts).some(v=>v >= this.MLTargetSize);
     },
     pausePlayYear() {
       clearTimeout(this.playInterval)
@@ -539,16 +543,16 @@ export default {
   overflow-y: scroll;
 }
 .list-datasets {
-  max-height: calc(100% - 68px);
+  max-height: calc(100vh - 68px);
 }
 .list-datasets-active {
   padding: 0;
 }
 .list-indicators {
-  max-height: calc(100% - 200px);
+  max-height: calc(100vh - 200px);
 }
 .list-short {
-  max-height: calc(100% - 128px);
+  max-height: calc(100vh - 128px);
 }
 .list-scrollabe_item {
   height: 66px;
@@ -585,8 +589,7 @@ export default {
   margin-right: 0;
 }
 .active-indicator-info {
-  padding-top: 8px !important;
-  max-height: calc(50vh - 70px);
+  max-height: calc(50vh - 50px);
   overflow-y: scroll;
 }
 .indicators-nav {
@@ -613,5 +616,10 @@ export default {
 .search-input .v-input__prepend-outer{
   margin: auto 0px auto 0 !important;
   padding-top: 7px;
+}
+@media (max-width:959px) {
+  .list-datasets {
+    max-height: calc(100vh - 128px)
+  }
 }
 </style>
