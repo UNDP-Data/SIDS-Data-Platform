@@ -583,6 +583,8 @@ export default {
 .active-indicator_header {
   padding-bottom: 0.5em;
   word-break: break-word;
+  font-size: 16px !important;
+  line-height: 22px !important;
 }
 .dimensions-select{
   max-width: 60%;
