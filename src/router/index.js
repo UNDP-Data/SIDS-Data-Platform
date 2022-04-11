@@ -20,7 +20,8 @@ const routes = [
     }),
     meta:{
       header:'UNDP Portfolio in Small Island Developing States',
-      infoContent:'aboutThis-portfolio'
+      infoContent:'aboutThis-portfolio',
+      icon:'portfolio'
     },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -85,7 +86,8 @@ const routes = [
     },
     meta:{
       header:'Development Indicators',
-      infoContent:'aboutThis-indicators'
+      infoContent:'aboutThis-indicators',
+      icon:'indicators'
     },
     props: (to) => (
       {
@@ -127,7 +129,8 @@ const routes = [
     },
     meta:{
       header:'Towards a Multidimensional Vulnerability Index',
-      infoContent:'aboutThis-mvi'
+      infoContent:'aboutThis-mvi',
+      icon:'MVI'
     },
     props: (to) => (
       {
@@ -159,7 +162,8 @@ const routes = [
     },
     meta:{
       header:'Country Profiles',
-      infoContent:'aboutThis-profiles'
+      infoContent:'aboutThis-profiles',
+      icon:'profiles'
     },
     props: (route) => ({
       activeCountryId: route.params.country || '',
@@ -171,7 +175,8 @@ const routes = [
     link: '/geospatial-data',
     name: 'Geospatial Data',
     meta:{
-      header:'Geospatial Data'
+      header:'Geospatial Data',
+      icon:'GIS'
     },
     component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData.vue')
   },
@@ -180,7 +185,8 @@ const routes = [
     link: '/about',
     name: 'About',
     meta:{
-      header:'About the SIDS Data Visualization Platform'
+      header:'About the SIDS Data Visualization Platform',
+      icon:'about'
     },
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
