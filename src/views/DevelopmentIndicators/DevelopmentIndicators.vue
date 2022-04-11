@@ -70,9 +70,23 @@
         @toggleDialog="dialog = !dialog"
       />
       <v-row dense class="d-none d-md-flex nav-tabs-row justify-center">
-        <v-col>
+        <v-col class="d-flex">
+          <div class="ma-auto">
+            <v-tabs
+              v-if="!isMobile && (indicator!=='region' || page==='mvi')"
+              :value="activeTab"
+              :grow="isMobile"
+              :class="{
+                'indicators-tabs' : page!=='mvi',
+                'mvi-tabs' : page==='mvi'
+              }"
+              class="tabs tabs-small"
+            >
+              <v-tab v-for="(tab, index) in tabs" :disabled="tab.chartType === 'ml' && !mlAvaliable" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
+            </v-tabs>
+          </div>
           <v-btn
-              class="float-right filter-button d-lg-none"
+              class="filter-button d-lg-none ml-2"
               rounded
               @click="dialog=!dialog"
               fab
@@ -80,18 +94,6 @@
             >
             <v-icon>mdi-filter</v-icon>
           </v-btn>
-          <v-tabs
-            v-if="!isMobile && (indicator!=='region' || page==='mvi')"
-            :value="activeTab"
-            :grow="isMobile"
-            :class="{
-              'indicators-tabs' : page!=='mvi',
-              'mvi-tabs' : page==='mvi'
-            }"
-            class="tabs tabs-small"
-          >
-            <v-tab v-for="(tab, index) in tabs" :disabled="tab.chartType === 'ml' && !mlAvaliable" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
-          </v-tabs>
         </v-col>
       </v-row>
       <v-row class="nav-filter-row" dense justify="end">
@@ -354,12 +356,6 @@ export default {
   .nav-tabs-row {
     margin-top: -10px !important;;
   }
-  .indicators-tabs {
-    margin-bottom: auto;
-    max-width: 638px;
-    margin-left: auto;
-    margin-right: auto;
-  }
   .mvi-tabs {
     margin-bottom: auto;
     max-width: 680px;
@@ -405,23 +401,5 @@ export default {
   .description {
     position: relative;
     z-index: 1;
-  }
-  @media all and (max-width:960px) {
-    .indicators-tabs, .mvi-tabs {
-      min-width: none;
-      min-width: auto;
-      max-width: 90%;
-    }
-    .sorting, .tabs-slider-label {
-      position: static;
-    }
-    .sorting-row {
-      width: auto;
-      margin-left: auto;
-      margin-right: 0
-    }
-    .nav-filter-row {
-      padding: 10px 5%;
-    }
   }
 </style>
