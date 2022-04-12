@@ -3,7 +3,7 @@
     v-model="dialog"
     transition="dialog-bottom-transition"
     :fullscreen="isMobile"
-    width="500"
+    width="800"
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
