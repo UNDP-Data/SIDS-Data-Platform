@@ -1,15 +1,16 @@
 <template>
   <div class="graph-container">
-      <h4 v-if="postfix!== 'mobile'" class="block-subheader text-center"
-        :style="{color: graphOptions.textColor}">
-        {{graphOptions.header}}
-
-        <info-hover-tooltip v-if="tooltipContentName" :contentName="tooltipContentName">
-          <template v-if="headerIcon" v-slot:icon>
-            <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${headerIcon}`"/>
-          </template>
-        </info-hover-tooltip>
-      </h4>
+      <info-hover-tooltip v-if="tooltipContentName" :contentName="tooltipContentName">
+        <template v-if="headerIcon" v-slot:icon>
+          <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${headerIcon}`"/>
+        </template>
+        <template v-if="postfix!== 'mobile'" v-slot:button>
+          <h4 class="block-subheader text-center"
+            :style="{color: graphOptions.textColor}">
+            {{graphOptions.header}}
+          </h4>
+        </template>
+      </info-hover-tooltip>
       <div class="d-none" v-for="(axis, index) in ranks[0].axes" :id="`${pillarName}${index}`" :key="index">
         <profiles-spider-chart-tooltip
           :header="axis.axis"
