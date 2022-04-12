@@ -3,7 +3,7 @@
     v-model="dialog"
     transition="dialog-bottom-transition"
     :fullscreen="isMobile"
-    width="500"
+    width="800"
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
@@ -30,7 +30,7 @@
     </template>
     <template>
       <v-card v-if="textContent">
-        <v-card-title class="justify-space-between">
+        <v-card-title class="info-title justify-space-between">
           {{textContent[contentName].title}}
           <v-btn
             color="normal"
@@ -40,7 +40,7 @@
             <v-icon >mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text v-html="textContent[contentName].content">
+        <v-card-text class="info-content" v-html="textContent[contentName].content">
         </v-card-text>
       </v-card>
     </template>
@@ -73,6 +73,23 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+.info-title{
+  position: relative;
+  padding-bottom: 40px !important;
+  background: #fff;
+}
+.info-title::before {
+  content: '';
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(13,177,75,1) 0%, rgba(13,177,75,1) 33%, rgba(245,130,32,1) 33%, rgba(245,130,32,1) 66%, rgba(11,198,255,1) 66%, rgba(0,212,255,1) 100%);
+}
+.info-title {
+  position: sticky;
+  top: 0;
+}
 </style>
