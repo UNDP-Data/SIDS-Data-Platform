@@ -6,11 +6,22 @@
     :max-width="maxWidth"
     close-delay="200"
     open-on-hover
-    content-class="tooltip-content"
     allow-overflow
-    bottom>
+    :max-height="maxHeight"
+    top
+    nudge-top="50"
+    :content-class="'tooltip-content ' + contentClass"
+    >
       <template v-slot:activator="{ on, attrs }">
+        <div
+          v-if="hasButtonSlot"
+          v-bind="attrs"
+          v-on="on">
+          <slot  name="button"
+          ></slot>
+        </div>
         <v-icon
+          v-else
           v-bind="attrs"
           :disabled="disabled"
           v-on="on"
@@ -36,7 +47,7 @@ import size from '@/mixins/size.mixin';
 
 export default {
   name: 'InfoHoverTooltip',
-  props:['contentName', 'large', 'disabled'],
+  props:['contentName', 'large', 'disabled', 'contentClass'],
   mixins:[size],
   computed: {
     ...mapState({
@@ -45,11 +56,17 @@ export default {
     hasContentSlot() {
       return this.$slots['content']
     },
+    hasButtonSlot() {
+      return this.$slots['button']
+    },
     hasIconSlot() {
       return this.$slots['icon']
     },
     maxWidth() {
-      return this.isMobile ? '80%' : '600px'
+      return this.isMobile ? '95%' : '800px'
+    },
+    maxHeight() {
+      return this.isMobile ? '60%' : 'auto'
     }
   }
 }

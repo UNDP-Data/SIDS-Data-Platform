@@ -45,6 +45,10 @@
 
 .tooltip-content {
   background: none !important;
-  
+
   padding: 0 !important;
+}
+.tooltip-center {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
 }

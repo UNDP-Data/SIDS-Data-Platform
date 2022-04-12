@@ -213,6 +213,7 @@
           <v-col cols="2" class="d-flex align-center justify-end">
             <info-hover-tooltip
               :large="true"
+              contentClass="tooltip-center"
               contentName="profileTooltip-radar"
             >
               <template v-slot:icon>
