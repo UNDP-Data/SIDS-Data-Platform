@@ -30,6 +30,7 @@ export function getIndexValues(indexData) {
   let allValues = this.computeSubindexValues(indexData, indexWeights, indexYears, minMaxObj)
 
   allValues.index = { data: this.computeIndexValues(allValues,indexWeights,indexYears) };
+  console.log(allValues)
   return allValues;
 }
 

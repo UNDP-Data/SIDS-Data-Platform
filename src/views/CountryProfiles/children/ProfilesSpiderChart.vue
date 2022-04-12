@@ -400,8 +400,12 @@ export default {
             .append("circle")
             .attr("class", "radarCircle")
             .attr("r", rootThis.fullGraphOptions.dotRadius)
-            .attr("cx", (d, i) => rScale(d.value) * Math.cos(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin))
-            .attr("cy", (d, i) => rScale(d.value) * Math.sin(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin))
+            .attr("cx", (d, i) => {
+              let value = d.value === 'No Data' ? 0 : d.value;
+              return rScale(value) * Math.cos(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin)})
+            .attr("cy", (d, i) => {
+              let value = d.value === 'No Data' ? 0 : d.value;
+              return rScale(value) * Math.sin(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin)})
             .style("fill", "#ffffff")//(d) => this.fullGraphOptions.color(d.id))
             .style("fill-opacity", 0.8)
             .style("pointer-events","none");
@@ -429,8 +433,12 @@ export default {
         .enter().append("circle")
         .attr("class", "radarInvisibleCircle")
         .attr("r", rootThis.fullGraphOptions.dotRadius * 1.5)
-        .attr("cx", (d, i) => rScale(d.value) * Math.cos(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin))
-        .attr("cy", (d, i) => rScale(d.value) * Math.sin(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin))
+        .attr("cx", (d, i) => {
+          let value = d.value === 'No Data' ? 0 : d.value;
+          return rScale(value) * Math.cos(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin)})
+        .attr("cy", (d, i) => {
+          let value = d.value === 'No Data' ? 0 : d.value;
+          return rScale(value) * Math.sin(angleSlice * i - HALF_PI - rootThis.fullGraphOptions.spin)})
         .style("fill", "none")
         .style("pointer-events", "all")
         .on("mouseover", function (d) {
@@ -440,7 +448,13 @@ export default {
             if (rootThis.pillarName == "MVI") {
               tooltip.transition()
                 .style('display', 'block')
-                .text(rootThis.nFormatter(d.value,2));
+                .text(()=>{
+                  if(isNaN(d.value)) {
+                    return d.value;
+                  } else {
+                    return rootThis.nFormatter(d.value,2)
+                  }
+                });
             } else if (rootThis.pillarName=="customIndex") {
               tooltip.transition()
                 .style('display', 'block')

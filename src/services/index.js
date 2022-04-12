@@ -114,11 +114,11 @@ async function loadML (data) {
 }
 
 async function loadMLTargetSize () {
-  const resp = await axios.get(`${ML_API_URL}/imputation/target_sample_size`)
-  return resp.data
+  // const resp = await axios.get(`${ML_API_URL}/imputation/target_sample_size`)
+  return 25
 }
 
 async function loadMLPredictorSize () {
-  const resp = await axios.get(`${ML_API_URL}/imputation/predictor_sample_size`)
-  return resp.data
+  // const resp = await axios.get(`${ML_API_URL}/imputation/predictor_sample_size`)
+  return 25
 }
