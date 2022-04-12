@@ -15,7 +15,7 @@ export function processVizElementAttributes() {
   let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
   let avgs = ['AIS', 'Caribbean', 'Pacific']
 
-  if(this.indiSelections["viz"] === 'bars') {
+  if(this.indiSelections["viz"] === 'bars' && this.vizMode !== 'index') {
     for (let i = 0; i < avgs.length; i++) {
       let avg = Object.keys(indicatorDataObj).reduce((avg, country) => {
         if(this.profileData[country].Region === avgs[i] && indicatorDataObj[country] !== 'No Data') {

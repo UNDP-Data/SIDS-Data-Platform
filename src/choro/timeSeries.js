@@ -51,6 +51,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
   //data
   const timeData = dataFilter(dataset, rootThis.countryList, rootThis.vizWidth);
   // if (timeData.length == 0) return;
+  console.log(timeData)
   const allData = timeData.map((d) => d.data).flat();
 
   //scale
@@ -720,7 +721,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
     filtered0.push(computeAverage('AIS', filtered0))
     filtered0.push(computeAverage('Caribbean', filtered0))
     filtered0.push(computeAverage('Pacific', filtered0))
-    filtered0.filter(c => c.data.length > 0)
+    filtered0 = filtered0.filter(c => c.data.length > 0)
     if(vizWidth<800) {
       return filtered0.filter((d) => countryList.includes(d.country)) || []
     }
@@ -728,10 +729,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
       return filtered0;
     } else if (countryGroupOption == "Regional average") {
       let res = [];
-      res.push(computeAverage('AIS', filtered0))
-      res.push(computeAverage('Caribbean', filtered0))
-      res.push(computeAverage('Pacific', filtered0))
-      res.filter(c => c.data.length > 0)
       return res
     } else {
       const countries = Object.keys(countryGroup[countryGroupOption]);

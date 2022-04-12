@@ -62,7 +62,6 @@ export function updateVizEngine(indicatorCode) {
   let quantize = quantizeData(this.indicatorData,this.indiSelections),
   vizElementAttributes = this.processVizElementAttributes(),
   noData = this.countriesWithNoData();
-  console.log(vizElementAttributes)
     if(!this.firstIndicatorInit){
       this.initChoroLegend(quantize);// require data to be loaded
       this.initXAxis()//messes chorolegend if it is too soon
@@ -311,7 +310,7 @@ export function updateCountrySvgColors(quantize) {
       });
   } else {
     d3.select("#choro_map_container")
-      .selectAll("path") /* Map  counties to  data */
+      .selectAll("path.countrySvg") /* Map  counties to  data */
       .attr("class", function () {
         try {
           return (
@@ -402,12 +401,13 @@ export function updateCountryTitles(
           ) {
             let scale
             d3.select(this).attr('fill-opacity', 0);
-            if (rootThis.indiSelections["viz"] == "bars") {
-              scale = 1;
-            } //.05
-            else if (rootThis.indiSelections["viz"] == "choro") {
+            if (rootThis.indiSelections["viz"] == "bars"
+              || rootThis.indiSelections["viz"] == "choro"
+              || rootThis.indiSelections["viz"] == "global"
+              || rootThis.indiSelections["viz"] == "spider") {
               scale = 1;
             }
+            console.log(scale, rootThis.indiSelections["viz"])
             d3.select(this)
               .transition()
               .duration(1200)
