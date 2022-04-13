@@ -20,7 +20,7 @@
 
     <v-col md='12' lg='9'>
       <v-row class="d-none d-md-flex nav-filter-row" >
-        <v-col cols='8' sm="10" lg="10" offset="2" class="offset-sm-1 offset-lg-2">
+        <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
           <h2 v-if="page!=='mvi'" class="page-header">
             Development Indicators
           </h2>
