@@ -20,9 +20,9 @@
           <v-tab :value="2">Custom</v-tab>
         </v-tabs>
       </v-col>
-      <v-col class="flex-grow-0">
+      <v-col class="flex-grow-0 d-md-none">
         <v-btn
-            class="d-block dense d-md-none"
+            class="d-block dense "
             icon
             @click="$emit('close')"
             color="primary"

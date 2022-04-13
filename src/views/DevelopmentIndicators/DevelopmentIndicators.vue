@@ -4,7 +4,7 @@
     <v-col  class="d-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
       <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
     </v-col>
-    <v-col  class="d-none d-lg-block" v-else cols='3'>
+    <v-col  class="d-none d-lg-block pt-14" v-else cols='3'>
       <mvi-indicators-nav :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
     </v-col>
     <v-dialog
@@ -20,11 +20,11 @@
 
     <v-col md='12' lg='9'>
       <v-row class="d-none d-md-flex nav-filter-row" >
-        <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
+        <v-col cols='8' sm="10" lg="10" offset="2" class="offset-sm-1 offset-lg-2">
           <h2 v-if="page!=='mvi'" class="page-header">
             Development Indicators
           </h2>
-          <h2 v-else class="page-header">
+          <h2 v-else class="page-header text-left">
             Multidimensional Vulnerability Index
           </h2>
         </v-col>
