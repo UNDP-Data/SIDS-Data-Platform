@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <v-col cols="11">
         <v-row>
-          <v-expansion-panels flat dense>
+          <v-expansion-panels accordion flat dense>
             <v-expansion-panel
               v-for="(indicatorCatery,i) in catIndicators"
               :key="i"
