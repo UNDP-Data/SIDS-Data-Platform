@@ -50,7 +50,11 @@ export default {
     projectData() {
       return this.portfolioData.filter((project) => {
         return this.checkGoalValidity(project);
-      });
+      }).sort((p1,p2) => {
+        if(p1.title.trim() < p2.title.trim()) { return -1; }
+        if(p1.title.trim() > p2.title.trim()) { return 1; }
+        return 0;
+      })
     }
   },
   methods: {
