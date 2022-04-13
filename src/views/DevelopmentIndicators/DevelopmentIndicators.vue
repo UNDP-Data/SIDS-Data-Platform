@@ -4,8 +4,8 @@
     <v-col  class="d-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
       <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
     </v-col>
-    <v-col  class="d-none d-lg-block" v-else cols='3'>
-      <mvi-indicators-nav @MviIndicatorsChange="MVIindicatorUpdate"/>
+    <v-col  class="d-none d-lg-block pt-14" v-else cols='3'>
+      <mvi-indicators-nav :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
     </v-col>
     <v-dialog
       v-model="dialog"
@@ -15,17 +15,17 @@
       transition="dialog-right-transition"
     >
       <indicators-nav :chartType="chartType" @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
-      <mvi-indicators-nav v-else @close="dialog = !dialog" @MviIndicatorsChange="MVIindicatorUpdate"/>
+      <mvi-indicators-nav v-else @close="dialog = !dialog" :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
     </v-dialog>
 
     <v-col md='12' lg='9'>
       <v-row class="d-none d-md-flex nav-filter-row" >
-        <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
+        <v-col cols='8' sm="10" lg="10" offset="2" class="offset-sm-1 offset-lg-2">
           <h2 v-if="page!=='mvi'" class="page-header">
             Development Indicators
           </h2>
-          <h2 v-else class="page-header">
-            Towards a Multidimensional Vulnerability Index
+          <h2 v-else class="page-header text-left">
+            Multidimensional Vulnerability Index
           </h2>
         </v-col>
         <v-col cols='2' sm="1" lg="2">
@@ -163,17 +163,18 @@ export default {
     return {
       dialog:false,
       resizeTimeout:null,
-      mviCodes:["mvi-ldc-VIC-Index"
-                ,"mvi-ldc-AFF-Index"
-                ,"mvi-ldc-REM-Index"
-                ,"mvi-ldc-LECZ-Index"
-                ,"popDry"
-                ,"mvi-ldc-XCON-Index"
-                ,"mvi-ldc-XIN-Index"
-                ,"mvi-ldc-AIN-Index"
-                ,"mvi-wdi2-ST.INT.RCPT.XP.ZS"
-                ,"mvi-wdi-BX.TRF.PWKR.DT.GD.ZS"
-                ,"mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
+      mviCodes:[
+        "mvi-ldc-VIC-Index"
+        ,"mvi-ldc-AFF-Index"
+        ,"mvi-ldc-REM-Index"
+        ,"mvi-ldc-LECZ-Index"
+        ,'mvi-ldc-DRY-Index'
+        ,"mvi-ldc-XCON-Index"
+        ,"mvi-ldc-XIN-Index"
+        ,"mvi-ldc-AIN-Index"
+        ,"mvi-wdi2-ST.INT.RCPT.XP.ZS"
+        ,"mvi-wdi-BX.TRF.PWKR.DT.GD.ZS"
+        ,"mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
       ],
       region: 'All',
       regions:[
