@@ -185,7 +185,7 @@ const routes = [
     link: '/about',
     name: 'About',
     meta:{
-      header:'About the SIDS Data Visualization Platform',
+      header:'About the SIDS Data Platform',
       icon:'about'
     },
     beforeEnter: async (to, from, next) => {
