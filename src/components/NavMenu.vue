@@ -1,29 +1,36 @@
 <template>
-  <div class="navigation-container">
-    <v-list
-      class="main-menu-desktop main-menu"
-      ref="stickyMenuContainer"
-      dense>
-        <div
-          class="border-wrapper"
-          ref="stickyMenu"
-          :class="{ 'border-wrapper-fixed': offset }">
-          <v-list-item
-            class="menu-item"
-            @click="emitDrawerClose"
-            v-for="route in routes"
-            :key="route.link"
-            :to="route.link"
-          >
-            <v-list-item-content>
-              <v-list-item-title
-                class="menu-item_text"
-                v-text="route.name">
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-    </v-list>
+  <div class="navigation-container"
+    ref="stickyMenuContainer">
+    <div
+      class="d-flex sticky-menu-container flex-column"
+      :class="{ 'border-wrapper-fixed': offset }"
+    >
+      <div class="nav-logo-block pa-4 mt-0">
+        <img class="nav-logo-block_image" src="@/assets/media/RFSIDS-dark.png" alt="">
+        <h3 class="block-subheader nav-logo-block_text">Data Platform</h3>
+      </div>
+      <v-list
+        class="main-menu-desktop main-menu mt-10"
+        dense>
+          <div
+            class="border-wrapper">
+            <v-list-item
+              class="menu-item"
+              @click="emitDrawerClose"
+              v-for="route in routes"
+              :key="route.link"
+              :to="route.link"
+            >
+              <v-list-item-content>
+                <v-list-item-title
+                  class="menu-item_text"
+                  v-text="route.name">
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+      </v-list>
+    </div>
   </div>
 </template>
 
@@ -57,7 +64,7 @@ export default {
   },
   methods: {
     handleScroll () {
-      let containerOffset = this.$refs.stickyMenuContainer.$el.getBoundingClientRect().top;
+      let containerOffset = this.$refs.stickyMenuContainer.getBoundingClientRect().top;
       if(containerOffset < 0 ) {
         this.offset = true;
       } else {
@@ -84,8 +91,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .main-menu {
-  height: 100%;
-  padding-top: 20vh;
   text-transform: uppercase;
   text-align: right;
 }
@@ -161,10 +166,19 @@ export default {
 }
 .border-wrapper-fixed {
   position: fixed;
-  top:20vh;
-  max-width: 16.6666666667%;
+  top:0px;
+  max-width: 16.66667%
 }
 .menu-item.v-list-item--active .menu-item_text {
   color: #E21549;
+}
+.nav-logo-block {
+  width: 100%;
+}
+.nav-logo-block_image {
+  max-width: 100%;
+}
+.sticky-menu-container {
+  height: 100vh;
 }
 </style>
