@@ -92,7 +92,11 @@
                 class="tabs portfolio-slider"
                 v-model="activePage"
               >
-                <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">{{page.name}}</v-tab>
+                <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">
+                  <info-hover-tooltip :contentName="page.contentName">
+                    <template v-slot:button>{{page.name}}</template>
+                  </info-hover-tooltip>
+                </v-tab>
               </v-tabs>
           </v-col>
         </v-row>
@@ -205,6 +209,7 @@ import PortfolioExport from './children/PortfolioExport';
 import PortfolioPieChart from './children/PortfolioPieChart';
 import PortfolioMobileNav from './children/PortfolioMobileNav';
 import PortfolioMobileChips from './children/PortfolioMobileChips';
+import InfoHoverTooltip from '@/components/InfoHoverTooltip';
 import { goals } from '@/assets/goalsList'
 import PortfolioProjects from './children/PortfolioProjects';
 
@@ -230,7 +235,8 @@ export default {
     PortfolioMobileNav,
     PortfolioBars,
     PortfolioMobileChips,
-    PortfolioProjects
+    PortfolioProjects,
+    InfoHoverTooltip
   },
   props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
   mixins:[sidsdata, sizeMixin],

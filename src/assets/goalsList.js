@@ -299,13 +299,16 @@ export const goalTypes = [
   {
     name: "SAMOA Pathway",
     value: "samoa",
+    contentName:"portfolioTooltip-samoa"
   },
   {
     name: "Sustainable Development Goals",
     value: "sdgs",
+    contentName:"portfolioTooltip-sdgs"
   },
   {
     name: "Signature solutions",
     value: "signature-solutions",
+    contentName:"portfolioTooltip-solutions"
   }
 ]
