@@ -7,8 +7,16 @@
           grow
           class="mb-2 mvi-nav-tabs tabs tabs-small"
         >
-          <v-tab :value="0" @change="setPreset('MVI')">MVI</v-tab>
-          <v-tab :value="1" @change="setPreset('EVI')">EVI</v-tab>
+          <v-tab :value="0" @change="setPreset('MVI')">
+            <info-hover-tooltip :bottom="true" contentName="mviSelectTooltip">
+              <template v-slot:button>MVI</template>
+            </info-hover-tooltip>
+          </v-tab>
+          <v-tab :value="1" @change="setPreset('EVI')">
+            <info-hover-tooltip :bottom="true" contentName="eviSelectTooltip">
+              <template v-slot:button>EVI</template>
+            </info-hover-tooltip>
+          </v-tab>
           <v-tab :value="2">Custom</v-tab>
         </v-tabs>
       </v-col>
@@ -35,9 +43,9 @@
       >
         <v-list-item-action>
           <v-checkbox
-            v-model="selectedIndicators"
-            @change="updateValue()"
+            :input-value="mviCodes"
             :value="indicator.code"
+            @change="updateValue"
             :ripple="false"
           ></v-checkbox>
         </v-list-item-action>
@@ -50,27 +58,16 @@
   </div>
 </template>
 <script>
-// import { mapState } from 'vuex';
+import InfoHoverTooltip from '@/components/InfoHoverTooltip';
 
 export default {
   name: 'MBIIndicatorsNav',
-  // props:['activeIndicatorCode'],
+  props:['mviCodes'],
+  components:{
+    InfoHoverTooltip
+  },
   data() {
     return {
-      activePreset : 0,
-      selectedIndicators:[
-        "mvi-ldc-VIC-Index" ,
-        "mvi-ldc-AFF-Index" ,
-        "mvi-ldc-DRY-Index" ,
-        "mvi-ldc-REM-Index" ,
-        "mvi-ldc-LECZ-Index",
-        "mvi-ldc-XCON-Index",
-        "mvi-ldc-XIN-Index",
-        "mvi-ldc-AIN-Index",
-        "mvi-wdi2-ST.INT.RCPT.XP.ZS",
-        "mvi-wdi-BX.TRF.PWKR.DT.GD.ZS",
-        "mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
-      ],
       MVI:[
         "mvi-ldc-VIC-Index" ,
         "mvi-ldc-AFF-Index" ,
@@ -151,33 +148,27 @@ export default {
     }
   },
   computed: {
-  },
-  methods:{
-    updateValue() {
-      this.updatePreset();
-      this.emitValue()
-    },
-    emitValue() {
-      return this.$emit('MviIndicatorsChange', this.selectedIndicators)
-    },
-    updatePreset() {
-      if(this.selectedIndicators.length === 11) {
-        return this.activePreset = 0;
+    activePreset() {
+      if(this.mviCodes.length === 11) {
+        return 0;
       }
-      let hasFinance = this.selectedIndicators.every(indicator => !indicator.includes('-financial'))
-      if (this.selectedIndicators.length === 8 && hasFinance) {
-        return this.activePreset = 1;
+      let hasFinance = this.mviCodes.every(indicator => !indicator.includes('-financial'))
+      if (this.mviCodes.length === 8 && hasFinance) {
+        return 1;
       }
-      return this.activePreset = 2;
-
-    },
-    setPreset(presetName) {
-      this.selectedIndicators = this[presetName];
-      this.emitValue();
+      return 2;
     }
   },
-  mounted() {
-    this.emitValue()
+  methods:{
+    updateValue(value) {
+      this.emitValue(value)
+    },
+    emitValue(value) {
+      return this.$emit('MviIndicatorsChange', value)
+    },
+    setPreset(presetName) {
+      this.emitValue(this[presetName]);
+    }
   }
 }
 </script>

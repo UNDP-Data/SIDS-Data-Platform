@@ -128,7 +128,7 @@ const routes = [
       }
     },
     meta:{
-      header:'Towards a Multidimensional Vulnerability Index',
+      header:'Multidimensional Vulnerability Index',
       infoContent:'aboutThis-mvi',
       icon:'MVI'
     },

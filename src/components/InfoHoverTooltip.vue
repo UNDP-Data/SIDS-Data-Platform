@@ -8,8 +8,10 @@
     open-on-hover
     allow-overflow
     :max-height="maxHeight"
-    top
-    nudge-top="50"
+    :top="bottom ? false : true"
+    :bottom="bottom ? true : false"
+    :nudge-top="bottom ? 0 : 50"
+    :nudge-bottom="bottom ? 50 : 0"
     :content-class="'tooltip-content ' + contentClass"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -47,7 +49,7 @@ import size from '@/mixins/size.mixin';
 
 export default {
   name: 'InfoHoverTooltip',
-  props:['contentName', 'large', 'disabled', 'contentClass'],
+  props:['contentName', 'large', 'disabled', 'contentClass', 'bottom'],
   mixins:[size],
   computed: {
     ...mapState({
