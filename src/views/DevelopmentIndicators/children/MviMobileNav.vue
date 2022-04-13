@@ -2,6 +2,42 @@
   <div class="indicators-mvi-nav">
     <v-row class="justify-center">
       <v-col cols="11">
+        <v-row>
+          <v-expansion-panels flat dense>
+            <v-expansion-panel
+              v-for="(indicatorCatery,i) in catIndicators"
+              :key="i"
+            >
+              <v-expansion-panel-header class="font-weight-bold"
+                :color="indicatorCatery.color"
+              >
+                {{indicatorCatery.category}}
+              </v-expansion-panel-header>
+              <v-expansion-panel-content
+              >
+                <v-list dense flat>
+                  <v-list-item
+                    dense
+                    v-for="indicator in indicatorCatery.indicators"
+                    :key="indicator.name"
+                  >
+                    <v-list-item-action class="ma-0">
+                      <v-checkbox
+                        :input-value="mviCodes"
+                        :value="indicator.code"
+                        @change="emitMviIndicatorsChange"
+                        :ripple="false"
+                      ></v-checkbox>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>{{indicator.name}}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-row>
         <v-row class="justify-center">
           <v-col cols="10">
             <v-row class="justify-center">
@@ -70,11 +106,16 @@
   </div>
 </template>
 <script>
+import { mviIndicators, mviPreset, eviPreset } from '@/assets/goalsList';
+
 export default {
   name: 'MviMobileNav',
-  props:['sortingType', 'chartType', 'chartTypes', 'region' ,'regions'],
+  props:['sortingType', 'chartType', 'chartTypes', 'region' ,'regions', 'mviCodes'],
   data(){
     return {
+      catIndicators:mviIndicators,
+      MVI: mviPreset,
+      EVI:eviPreset,
       sortingTypes:[{
         value: 'rank',
         text: 'Rank'
@@ -96,7 +137,10 @@ export default {
     },
     emitToggleDialog() {
       this.$emit('toggleDialog')
-    }
+    },
+    emitMviIndicatorsChange(value) {
+      return this.$emit('MviIndicatorsChange', value)
+    },
   },
 }
 </script>

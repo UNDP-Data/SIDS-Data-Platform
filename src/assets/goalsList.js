@@ -312,3 +312,83 @@ export const goalTypes = [
     contentName:"portfolioTooltip-solutions"
   }
 ]
+
+export const mviIndicators = [
+  {
+    category:'Environmental',
+    color:'rgba(0, 160, 176, 0.7)',
+    indicators:[{
+      code:'mvi-ldc-VIC-Index',
+      name:'Victims of Disasters'
+    },{
+      code:'mvi-ldc-AFF-Index',
+      name:'Agriculture and Fishing (% of GDP)'
+    }]
+  },{
+    category:'Geographic',
+    color: 'rgba(204, 51, 63, 0.7)',
+    indicators:[{
+      code:'mvi-ldc-REM-Index',
+      name:'Remoteness'
+    },
+    {
+      code:'mvi-ldc-DRY-Index',
+      name:'Population in Drylands',
+    },
+    {
+      code:'mvi-ldc-LECZ-Index',
+      name:'% Population in Coastal Zones'
+    }]
+  },{
+    category:'Economic',
+    color:'rgba(240, 219, 58, 0.7)',
+    indicators:[{
+      code:'mvi-ldc-XCON-Index',
+      name:'Export Concentration'
+    },{
+      code:'mvi-ldc-XIN-Index',
+      name:'Export Instability'
+    },{
+      code:'mvi-ldc-AIN-Index',
+      name:'Agricultural Instability'
+    }]
+  },{
+    category:'Financial',
+    color:'rgba(13, 177, 75, 0.7)',
+    indicators:[{
+      code:'mvi-wdi2-ST.INT.RCPT.XP.ZS',
+      name:'Tourism Revenue (% of Exports)'
+    },{
+      code:'mvi-wdi-BX.TRF.PWKR.DT.GD.ZS',
+      name:'Remittances (% of GDP)'
+    },{
+      code:'mvi-wdi-BX.KLT.DINV.WD.GD.ZS',
+      name:'FDI Inflows (% of GDP)'
+    }]
+  }
+]
+
+export const mviPreset = [
+  "mvi-ldc-VIC-Index" ,
+  "mvi-ldc-AFF-Index" ,
+  "mvi-ldc-DRY-Index" ,
+  "mvi-ldc-REM-Index" ,
+  "mvi-ldc-LECZ-Index",
+  "mvi-ldc-XCON-Index",
+  "mvi-ldc-XIN-Index",
+  "mvi-ldc-AIN-Index",
+  "mvi-wdi2-ST.INT.RCPT.XP.ZS",
+  "mvi-wdi-BX.TRF.PWKR.DT.GD.ZS",
+  "mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
+]
+
+export const eviPreset = [
+  "mvi-ldc-VIC-Index" ,
+  "mvi-ldc-AFF-Index" ,
+  "mvi-ldc-DRY-Index" ,
+  "mvi-ldc-REM-Index" ,
+  "mvi-ldc-LECZ-Index",
+  "mvi-ldc-XCON-Index",
+  "mvi-ldc-XIN-Index",
+  "mvi-ldc-AIN-Index"
+]
