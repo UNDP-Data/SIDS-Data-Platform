@@ -68,6 +68,8 @@
         @sortingChange="sortingUpdate"
         @regionChange="regionUpdate"
         @toggleDialog="dialog = !dialog"
+        :mviCodes="mviCodes"
+        @MviIndicatorsChange="MVIindicatorUpdate"
       />
       <v-row dense class="d-none d-md-flex nav-tabs-row justify-center">
         <v-col class="d-flex">
