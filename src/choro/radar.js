@@ -4,7 +4,7 @@ import { sidsDict } from './vizEngineGlobals'
 
 export function RadarChart(parent_selector, options, countryList, pillar, dataFull) {
 	let data = dataFull[pillar]
-
+	console.log(data)
 	const wrap = (text, width) => {
 		text.each(function () {
 			var text = d3.select(this),

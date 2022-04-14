@@ -43,7 +43,9 @@ import {
     labelTransform,
     circleTransform,
     textTransform,
-    multiRectTransform
+    multiRectTransform,
+    updateCountryAVGbars,
+    updateCountryAVGMVIbars
   } from './vizEngineElementAttributes'
 
 import {
@@ -234,3 +236,5 @@ Choro.prototype.updateTimeChart = updateTimeChart;
 Choro.prototype.parse = parse;
 Choro.prototype.updateRegionLables = updateRegionLables;
 Choro.prototype.initVizEngineTooltips = initVizEngineTooltips;
+Choro.prototype.updateCountryAVGbars = updateCountryAVGbars;
+Choro.prototype.updateCountryAVGMVIbars = updateCountryAVGMVIbars;
