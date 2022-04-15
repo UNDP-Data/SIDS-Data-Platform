@@ -54,7 +54,6 @@ export function updateVizEngine(indicatorCode) {
     this.indexWeights = JSON.parse(JSON.stringify(indexWeightsDict[this.indicatorCode]));//deep copy
     this.countryOrder = this.getIndexCountryList()
     let spiderData = this.processSpiderData()
-
     this.spiderData=spiderData
     this.drawIndexSpider()
   }
@@ -407,7 +406,6 @@ export function updateCountryTitles(
               || rootThis.indiSelections["viz"] == "spider") {
               scale = 1;
             }
-            console.log(scale, rootThis.indiSelections["viz"])
             d3.select(this)
               .transition()
               .duration(1200)

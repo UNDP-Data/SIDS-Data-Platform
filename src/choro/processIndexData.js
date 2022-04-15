@@ -30,7 +30,6 @@ export function getIndexValues(indexData) {
   let allValues = this.computeSubindexValues(indexData, indexWeights, indexYears, minMaxObj)
 
   allValues.index = { data: this.computeIndexValues(allValues,indexWeights,indexYears) };
-  console.log(allValues)
   return allValues;
 }
 
@@ -259,7 +258,6 @@ export function getIndexCountryList() {
     let mviValues = this.indexData["index"]["data"]["recentValue"],
     sortedMviData = sort_object(mviValues),
     sortedCountryList = Object.keys(sortedMviData);
-
     //this filter removes any empty elements
     chosenCountryList = sortedCountryList.filter((item) => item); //mviCountryList for regional, fixed value
   }
