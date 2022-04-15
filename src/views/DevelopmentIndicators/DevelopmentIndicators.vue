@@ -372,16 +372,16 @@ export default {
   }
   .tabs-slider-label{
     position: absolute;
-    right: 143px;
-    top: 12px;
+    right: 140px;
+    top: 35px;
   }
   .sorting-tabs {
-    top: 28px;
+    top: 50px;
   }
   .sorting{
     position: absolute;
     width: auto;
-    right: 4px;
+    right: 0px;
   }
   .sorting-select {
     top: 12px;
