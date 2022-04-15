@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
-import {getBoundingBox, isNumeric, sort_object} from './vizEngineHelperFunctions';
+import { indexColors } from './index-data'
+import {getBoundingBox, isNumeric, sort_object, regionColors} from './vizEngineHelperFunctions';
 import { regionCountries, countryListLongitude, sidsDict } from './vizEngineGlobals';
 
 
@@ -12,6 +13,9 @@ export function processVizElementAttributes() {
   let vizElementAttributes = {};
   let rootThis = this;
   ////problem code, doesn't work in init so moved here instead.
+  let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
+  this.updateCountryAVGbars(indicatorDataObj)
+  this.updateCountryAVGMVIbars(indicatorDataObj)
   d3.select(this.sidsMaps)
     .selectAll("path")
     .each(function () {
@@ -25,7 +29,6 @@ export function processVizElementAttributes() {
   });
   this.bboxInit = 1;
   ////////////////////
-  let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
   for (let country in this.bboxDict) {
     //rename to iso since the svg uses the old codes
     let bBox = this.bboxDict[country],
@@ -63,11 +66,173 @@ export function processVizElementAttributes() {
 
   return vizElementAttributes;
 }
+export function updateCountryAVGbars(dataObj) {
 
+  let rootThis = this;
+  let avgs = ['AIS', 'Caribbean', 'Pacific']
+
+  if(this.indiSelections["viz"] === 'bars' && this.vizMode !== 'index') {
+    for (let i = 0; i < avgs.length; i++) {
+      let avg = Object.keys(dataObj).reduce((avg, country) => {
+        if(this.profileData[country].Region === avgs[i] && dataObj[country] !== 'No Data') {
+          avg[0] += 1;
+          avg[1] += dataObj[country]
+        }
+        return avg
+      }, [0,0])
+      if(avg[0] > 2) {
+        avg = avg[1]/avg[0]
+        dataObj[avgs[i]] = avg
+        this.profileData[avgs[i]] = {
+          Region: avgs[i]
+        }
+        if(d3.select(`#${avgs[i]}`).empty()) {
+          let g = d3.select(this.sidsMaps)
+            .append("g")
+            .attr('id', avgs[i])
+            g.append('path')
+              .attr('id', avgs[i])
+            g.append('rect')
+              .attr("x", 160)
+              .attr("y", 300)
+              .attr("width", 0)
+              .attr("height", 0)
+              .classed("choroRect", true)
+              .style("fill", function () {
+                return (
+                  "#" +
+                  regionColors(rootThis.profileData[avgs[i]].Region, "Y").substring(1)
+                );
+              }) //
+            g.append('text')
+              .attr("font-size", 10)
+              .text(avgs[i] + ' average')
+              .attr("x", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
+              })
+              .attr("y", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
+              })
+              .classed("choroText", true);
+            g.append('text')
+              .attr("font-size", 10)
+              .classed("countryLabel", true);
+          }
+        } else {
+          d3.select(`g#${avgs[i]}`)
+            .remove()
+        }
+    }
+  } else {
+    for (let i = 0; i < avgs.length; i++) {
+      d3.select(`g#${avgs[i]}`)
+        .remove()
+      delete this.bboxDict[avgs[i]]
+    }
+  }
+}
 /////////////////////////
 ////Transform functions
 ////////////////////////////////
 //
+export function updateCountryAVGMVIbars(dataObj) {
+
+    // let rootThis = this;
+    let avgs = ['AIS', 'Caribbean', 'Pacific']
+
+    if(this.indiSelections["viz"] === 'bars' && this.vizMode === 'index') {
+      for (let i = 0; i < avgs.length; i++) {
+        let avg = Object.keys(dataObj).reduce((avg, country) => {
+          if(this.profileData[country].Region === avgs[i] && dataObj[country] !== 'No Data') {
+            avg[0] += 1;
+            avg[1] += dataObj[country]
+          }
+          return avg
+        }, [0,0])
+        if(avg[0] > 2) {
+          avg = avg[1]/avg[0]
+          dataObj[avgs[i]] = avg
+          this.profileData[avgs[i]] = {
+            Region: avgs[i]
+          }
+          Object.keys(this.indexData).map(indexName => {
+            let indexDataObject = this.indexData[indexName].data.recentValue
+            let avg = Object.keys(indexDataObject).reduce((avg, country) => {
+              if(this.profileData[country].Region === avgs[i] && indexDataObject[country] !== 'No Data') {
+                avg[0] += 1;
+                avg[1] += indexDataObject[country]
+              }
+              return avg
+            }, [0,0])
+            this.indexData[indexName].data.recentValue[avgs[i]] = avg[1]/avg[0];
+          })
+          this.indexData.index.data.recentValue[avgs[i]] = Object.keys(this.indexData).reduce((val, indexName) => {
+            if(indexName !=='index') {
+              val+=this.indexData[indexName].data.recentValue[avgs[i]]
+            }
+            return val
+          },0)
+          if(d3.select(`#${avgs[i]}`).empty()) {
+            let g = d3.select(this.sidsMaps)
+              .append("g")
+              .attr('id', avgs[i])
+              g.append('path')
+                .attr('id', avgs[i])
+              g.append("rect")
+                .style("fill", indexColors["mvi-index"]["Financial"])
+                .attr("x", 160)
+                .attr("y", 100)
+                .attr("width", 0)
+                .attr("height", 0)
+                .classed("choroRect0 choroRectMvi", true);
+              g.append("rect")
+                .style("fill", indexColors["mvi-index"]["Economic"])
+                .attr("x", 160)
+                .attr("y", 200)
+                .attr("width", 0)
+                .attr("height", 0)
+                .classed("choroRect1 choroRectMvi", true);
+              g.append("rect")
+                .style("fill", indexColors["mvi-index"]["Geographic"])
+                .attr("x", 160)
+                .attr("y", 300)
+                .attr("width", 0)
+                .attr("height", 0)
+                .classed("choroRect2 choroRectMvi", true);
+              g.append("rect")
+                .style("fill", indexColors["mvi-index"]["Environmental"])
+                .attr("x", 160)
+                .attr("y", 400)
+                .attr("width", 0)
+                .attr("height", 0)
+                .classed("choroRect3 choroRectMvi", true);
+              g.append('text')
+                .attr("font-size", 10)
+                .text(avgs[i] + ' average')
+                .attr("x", function () {
+                  return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
+                })
+                .attr("y", function () {
+                  return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
+                })
+                .classed("choroText", true);
+              g.append('text')
+                .attr("font-size", 10)
+                .classed("countryLabel", true);
+            }
+          } else {
+            d3.select(`g#${avgs[i]}`)
+              .remove()
+          }
+      }
+    } else {
+      for (let i = 0; i < avgs.length; i++) {
+        d3.select(`g#${avgs[i]}`)
+          .remove()
+        delete this.bboxDict[avgs[i]]
+      }
+    }
+}
 export function circleTransform(country, bBox, indicatorDataObj, indiSelections) {
   let VT = this.vizTransform(country, bBox, indicatorDataObj, indiSelections);
 
@@ -108,24 +273,22 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
   totalHeight = 500,
   totalWidth = this.vizWidth < 800 ? this.vizWidth - 40 : 440,
   cx = bBox[4],
+  totalVals,
   cy = bBox[5],
   output;
-  if(this.vizWidth < 800 && this.vizWidth > 550) {
-    totalWidth = totalWidth - 100;
-  }
   if (this.indiSelections["viz"] == "bars") {
     if (isNumeric(val)) {
       try {
         var filtered = Object.fromEntries(
           Object.entries(indicatorDataObj).filter(([, v]) => isNumeric(v))
         ); // == "number"))
-
         let sortedData = sort_object(filtered),
         indicatorValues = Object.values(filtered),
         rank;
         if (this.indiSelections["sortby"] == "rank") {
           //this filter removes any empty elements
           rank = sortedData[country];
+          totalVals = indicatorValues.length;
         } else if (this.indiSelections["sortby"] == "region") {
           let countryOrder = Object.keys(sortedData);
           let pacificListSort = countryOrder.filter((item) =>
@@ -143,7 +306,11 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
             ["", ""],
             pacificListSort
           );
+          if(this.vizWidth < 800) {
+            chosenCountryList.unshift(["", ""])
+          }
           rank = chosenCountryList.indexOf(country);
+          totalVals = indicatorValues.length + 4;
         }
 
         let topMargin = 0;
@@ -154,15 +321,16 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           maxx+=1;
         }
         let normValue = (val - minn) / (maxx - minn);
+        let barsHeight = totalHeight / totalVals > 80 ? 80 : totalHeight / totalVals;
         let x = this.vizWidth < 800 ? 0 : 160;
         let y = this.vizWidth < 800 ?
         10 * rank + topMargin + 20 * rank :
-        16 * rank + topMargin;
+        barsHeight * rank + topMargin;
         output = {
           x: x,
           y,
           width: normValue * totalWidth,
-          height: 10,
+          height: this.vizWidth < 800 ? 10 : barsHeight - 4,
         };
       } catch (error) {
         output = { x: 160, y: 300, width: 0, height: 10 };
@@ -208,20 +376,15 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
           maxx+=1;
         }
         let normValue = (val - minn) / (maxx - minn);
-
-          output = {
-            y: totalHeight * 0.85 - (normValue * totalHeight) / 2.5,
-            x: (650 / totalVals) * rank + leftMargin,
-            width: totalWidth / totalVals - margin,
-            height: (normValue * totalHeight) / 2.5,
-          }; //,"color":color};
-          if (output["y"] > totalHeight * 0.85) {
-            output["y"] = totalHeight * 0.85;
-          } //so that they don't emerge from the bottom on next animation
-
-        // else if (indiSelections["page"] == "mviTab") {
-        //     output= columnBase
-        // }
+        output = {
+          y: totalHeight * 0.85 - (normValue * totalHeight) / 2.5,
+          x: (650 / totalVals) * rank + leftMargin,
+          width: totalWidth / totalVals - margin,
+          height: (normValue * totalHeight) / 2.5,
+        }; //,"color":color};
+        if (output["y"] > totalHeight * 0.85) {
+          output["y"] = totalHeight * 0.85;
+        }
       } catch (error) {
         output = columnBase;
       }
@@ -260,16 +423,13 @@ export function textTransform(
 ) {
   let textX = bBox[4],
   textY = bBox[2] - 11,
-  totalHeight = 500,
-  totalVals = 0,
   x,
   y;
-  for (let cou in indicatorDataObj) {
-    if (typeof indicatorDataObj[cou] == "number") {
-      totalVals += 1;
-    }
-  }
-
+  var filtered = Object.fromEntries(
+    Object.entries(indicatorDataObj).filter(([, v]) => isNumeric(v))
+  );
+  let indicatorValues = Object.values(filtered)
+  let barHeight = (500/indicatorValues.length) > 80 ? 80 : 500/indicatorValues.length
   if (this.indiSelections["viz"] == "choro") {
     return "scale(1,1) translate(0,0)";
   } else if (this.indiSelections["viz"] == "bars") {
@@ -287,7 +447,7 @@ export function textTransform(
         "scale(1,1) translate(" +
         (-textX + 140 - textBBox.width / 2) +
         "," +
-        (-textY + RTo["y"] + totalHeight / totalVals / 2) +
+        (-textY + RTo["y"] + barHeight/2) +
         ")";
     }
 

@@ -252,11 +252,67 @@ export default [
     unMeber: true
   },
   {
+    id:'a-samoa',
+    name: 'American Samoa',
+    region:'Pacific',
+    iso:'ASM',
+    unMeber: true
+  },
+  {
+    id:'guam',
+    name: 'Guam',
+    region:'Pacific',
+    iso:'GUM',
+    unMeber: true
+  },
+  {
+    id:'guam',
+    name: 'Guam',
+    region:'Pacific',
+    iso:'GUM',
+    unMeber: true
+  },
+  {
+    id:'nmisl',
+    name: 'Northern Mariana Islands',
+    region:'Pacific',
+    iso:'MNP',
+    unMeber: false
+  },
+  {
+    id:'ncal',
+    name: 'New Caledonia',
+    region:'Pacific',
+    iso:'NCL',
+    unMeber: false
+  },
+  {
     id:'saoTomeAndPrincipe',
     name: 'Sao Tome and Principe',
     region:'AIS',
     iso:'STP',
     unMeber: true
+  },
+  {
+    id:'pric',
+    name: 'Puerto Rico',
+    region:'Pacific',
+    iso:'PRI',
+    unMeber: false
+  },
+  {
+    id:'fpol',
+    name: 'French Polynesia',
+    region:'Pacific',
+    iso:'PYF',
+    unMeber: false
+  },
+  {
+    id:'usvi',
+    name: 'U.S. Virgin Islands',
+    region:'Pacific',
+    iso:'VIR',
+    unMeber: false
   },
   {
     id:'seychelles',

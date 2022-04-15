@@ -2,10 +2,10 @@
   <div class="mt-md-5">
   <v-row dense>
     <v-col  class="d-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
-      <indicators-nav :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
+      <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
     </v-col>
-    <v-col  class="d-none d-lg-block" v-else cols='3'>
-      <mvi-indicators-nav @MviIndicatorsChange="MVIindicatorUpdate"/>
+    <v-col  class="d-none d-lg-block pt-14" v-else cols='3'>
+      <mvi-indicators-nav :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
     </v-col>
     <v-dialog
       v-model="dialog"
@@ -14,8 +14,8 @@
       content-class="dialog-box"
       transition="dialog-right-transition"
     >
-      <indicators-nav @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
-      <mvi-indicators-nav v-else @close="dialog = !dialog" @MviIndicatorsChange="MVIindicatorUpdate"/>
+      <indicators-nav :chartType="chartType" @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
+      <mvi-indicators-nav v-else @close="dialog = !dialog" :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
     </v-dialog>
 
     <v-col md='12' lg='9'>
@@ -24,8 +24,8 @@
           <h2 v-if="page!=='mvi'" class="page-header">
             Development Indicators
           </h2>
-          <h2 v-else class="page-header">
-            Towards a Multidimensional Vulnerability Index
+          <h2 v-else class="page-header text-left">
+            Multidimensional Vulnerability Index
           </h2>
         </v-col>
         <v-col cols='2' sm="1" lg="2">
@@ -68,11 +68,27 @@
         @sortingChange="sortingUpdate"
         @regionChange="regionUpdate"
         @toggleDialog="dialog = !dialog"
+        :mviCodes="mviCodes"
+        @MviIndicatorsChange="MVIindicatorUpdate"
       />
       <v-row dense class="d-none d-md-flex nav-tabs-row justify-center">
-        <v-col>
+        <v-col class="d-flex">
+          <div class="ma-auto">
+            <v-tabs
+              v-if="!isMobile && (indicator!=='region' || page==='mvi')"
+              :value="activeTab"
+              :grow="isMobile"
+              :class="{
+                'indicators-tabs' : page!=='mvi',
+                'mvi-tabs' : page==='mvi'
+              }"
+              class="tabs tabs-small"
+            >
+              <v-tab v-for="(tab, index) in tabs" :disabled="tab.chartType === 'ml' && !mlAvaliable" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
+            </v-tabs>
+          </div>
           <v-btn
-              class="float-right filter-button d-lg-none"
+              class="filter-button d-lg-none ml-2"
               rounded
               @click="dialog=!dialog"
               fab
@@ -80,18 +96,6 @@
             >
             <v-icon>mdi-filter</v-icon>
           </v-btn>
-          <v-tabs
-            v-if="!isMobile && (indicator!=='region' || page==='mvi')"
-            :value="activeTab"
-            :grow="isMobile"
-            :class="{
-              'indicators-tabs' : page!=='mvi',
-              'mvi-tabs' : page==='mvi'
-            }"
-            class="tabs tabs-small"
-          >
-            <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
-          </v-tabs>
         </v-col>
       </v-row>
       <v-row class="nav-filter-row" dense justify="end">
@@ -114,7 +118,7 @@
             dense
             hide-details
             v-model="region"
-            :items="regions"
+            :items="regionsDesctop"
             outlined
           ></v-select>
           </div>
@@ -128,7 +132,7 @@
       </v-row>
       <v-row v-if="chartType === 'ml'" dense>
         <v-col cols='12'>
-          <indicators-m-l v-if='!noData' :year="year" :indicatorCode="indicator"/>
+          <indicators-m-l v-if='!noData' @yearChange="yearUpdate" :year="year" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
         </v-col>
       </v-row>
@@ -145,6 +149,7 @@ import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
+import IndicatorsML from './children/IndicatorsML.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
 
 import InfoButton from '@/components/InfoButton.vue'
@@ -160,17 +165,18 @@ export default {
     return {
       dialog:false,
       resizeTimeout:null,
-      mviCodes:["mvi-ldc-VIC-Index"
-                ,"mvi-ldc-AFF-Index"
-                ,"mvi-ldc-REM-Index"
-                ,"mvi-ldc-LECZ-Index"
-                ,"popDry"
-                ,"mvi-ldc-XCON-Index"
-                ,"mvi-ldc-XIN-Index"
-                ,"mvi-ldc-AIN-Index"
-                ,"mvi-wdi2-ST.INT.RCPT.XP.ZS"
-                ,"mvi-wdi-BX.TRF.PWKR.DT.GD.ZS"
-                ,"mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
+      mviCodes:[
+        "mvi-ldc-VIC-Index"
+        ,"mvi-ldc-AFF-Index"
+        ,"mvi-ldc-REM-Index"
+        ,"mvi-ldc-LECZ-Index"
+        ,'mvi-ldc-DRY-Index'
+        ,"mvi-ldc-XCON-Index"
+        ,"mvi-ldc-XIN-Index"
+        ,"mvi-ldc-AIN-Index"
+        ,"mvi-wdi2-ST.INT.RCPT.XP.ZS"
+        ,"mvi-wdi-BX.TRF.PWKR.DT.GD.ZS"
+        ,"mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
       ],
       region: 'All',
       regions:[
@@ -178,6 +184,13 @@ export default {
         'AIS',
         'Caribbean',
         'Pacific'
+      ],
+      regionsDesctop:[
+        'All',
+        'AIS',
+        'Caribbean',
+        'Pacific',
+        'Regional average'
       ],
       sorting:0,
       menuBar:{
@@ -197,11 +210,11 @@ export default {
           chartType:'series',
           mobile: true
         },
-        // {
-        //   name:'Machine Learning',
-        //   chartType:'ml',
-        //   mobile: false
-        // }
+        {
+          name:'Machine Learning',
+          chartType:'ml',
+          mobile: false
+        }
       ],
         mvi: [{
           name:'Spider',
@@ -231,10 +244,13 @@ export default {
     MviIndicatorsNav:MVIIndicatorsNav,
     IndicatorsMobileNav,
     MviMobileNav,
+    IndicatorsML
   },
   computed: {
     ...mapState({
-      activeIndicatorData: state => state.indicators.activeIndicatorData
+      activeIndicatorData: state => state.indicators.activeIndicatorData,
+      indicatorsMeta: state => state.indicators.indicatorsMeta,
+      MLTargetSize: state => state.indicators.MLTargetSize
     }),
     sortingName() {
       if(this.sorting === 0) {
@@ -259,6 +275,12 @@ export default {
     },
     activeTab() {
       return this.tabs.findIndex(menuItem => menuItem.chartType === this.chartType)
+    },
+    activeIndicatorsMeta() {
+      return this.indicatorsMeta[this.indicator]
+    },
+    mlAvaliable() {
+      return Object.values(this.activeIndicatorsMeta.yearValueCounts).some(v=>v >= this.MLTargetSize);
     }
   },
   methods: {
@@ -298,6 +320,9 @@ export default {
         if(rootThis.isMobile && !(rootThis.chartType === 'bars' || rootThis.chartType === 'series')) {
           rootThis.transitionTo('bars')
         }
+        if(rootThis.isMobile) {
+          rootThis.region = 'All'
+        }
       }, 100);
     }
   },
@@ -333,12 +358,6 @@ export default {
 <style media="screen">
   .nav-tabs-row {
     margin-top: -10px !important;;
-  }
-  .indicators-tabs {
-    margin-bottom: auto;
-    max-width: 638px;
-    margin-left: auto;
-    margin-right: auto;
   }
   .mvi-tabs {
     margin-bottom: auto;
@@ -385,23 +404,5 @@ export default {
   .description {
     position: relative;
     z-index: 1;
-  }
-  @media all and (max-width:960px) {
-    .indicators-tabs, .mvi-tabs {
-      min-width: none;
-      min-width: auto;
-      max-width: 90%;
-    }
-    .sorting, .tabs-slider-label {
-      position: static;
-    }
-    .sorting-row {
-      width: auto;
-      margin-left: auto;
-      margin-right: 0
-    }
-    .nav-filter-row {
-      padding: 10px 5%;
-    }
   }
 </style>

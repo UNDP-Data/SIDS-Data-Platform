@@ -1,14 +1,62 @@
 <template>
   <div class="">
-    <v-row>
+    <portfolio-mobile-nav
+      class="d-md-none"
+      :region="region"
+      :regions="regionsToSelect"
+      :goalType="goalsType"
+      :year="year"
+      :years="years"
+      :goal="goal"
+      :fundingCategory="fundingCategory"
+      :fundingCategories="fundingCategoriesTypes"
+      :fundingSource="fundingSource"
+      :fundingSources="portfolioSources"
+      @sourceChange="setSource"
+      @categoryChange="setCategory"
+      @yearChange="setYear"
+      @regionChange="updateRegion"
+      @goalTypeChange="transitionTo"
+      @goalChange="updateGoal"
+    />
+    <portfolio-mobile-chips
+      :region="region"
+      :projects="portfolioData"
+      :goalType="goalsType"
+      :goal="goal"
+      class="d-md-none mt-sm-6"
+    />
+
+    <v-row dense class="mt-sm-6 d-md-none" justify="center">
+      <v-col cols="11" sm="5">
+        <portfolio-pie-chart
+          @changeFilter="changeFilter"
+          :data="regionFundingMobile"
+          chartName="region"
+          postfix="1"
+          :colorScheme="regionColors"
+        ></portfolio-pie-chart>
+      </v-col>
+      <v-col cols="11" sm="5">
+        <portfolio-pie-chart
+          @changeFilter="changeFilter"
+          :data="sourcesFundingMobile"
+          chartName="sources"
+          postfix="1"
+          :colorScheme="sourcesColor"
+        ></portfolio-pie-chart>
+      </v-col>
+    </v-row>
+    <v-row class="d-none d-md-flex">
       <v-col cols="12">
         <portfolio-map
           :region="region"
           @updateRegion="updateRegion"
           :projects="portfolioData"
+
         >
           <template v-slot:header>
-            <v-row class="d-none d-lg-flex">
+            <v-row lass="d-none d-lg-flex">
               <v-col class="offset-lg-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2" cols="8" sm="8" md='10' lg='8' xl="10">
                 <h2 class="page-header mt-md-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
               </v-col>
@@ -35,7 +83,7 @@
     <v-row  v-if="isDesktop" class="d-block mb-3 mt-negative">
       <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
     </v-row>
-    <v-row class="flex-lg-nowrap" justify="center">
+    <v-row class="d-none d-md-flex flex-lg-nowrap" justify="center">
       <v-col class="d-none d-lg-block margin-wrap-right"></v-col>
       <v-col class="d-none d-md-block tabs-column">
         <v-row class="d-none d-lg-flex" justify="center">
@@ -44,7 +92,11 @@
                 class="tabs portfolio-slider"
                 v-model="activePage"
               >
-                <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">{{page.name}}</v-tab>
+                <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">
+                  <info-hover-tooltip :contentName="page.contentName">
+                    <template v-slot:button>{{page.name}}</template>
+                  </info-hover-tooltip>
+                </v-tab>
               </v-tabs>
           </v-col>
         </v-row>
@@ -69,7 +121,7 @@
       </v-col>
       <v-col class="selects-col margin-wrap-right">
         <v-row dense justify="center">
-          <v-col cols='5' md="6" lg="12">
+          <v-col cols='5' md="5" lg="12">
             <div class="select">
             <label class="input-label">Years</label>
             <v-select
@@ -83,7 +135,7 @@
             ></v-select>
             </div>
           </v-col>
-          <v-col cols='5'  md="6" lg="12">
+          <v-col cols='5'  md="5" lg="12">
             <v-divider class="mt-2 d-none d-lg-block mb-2"></v-divider>
             <div class="select">
               <label class="input-label">Funding categories</label>
@@ -99,7 +151,7 @@
             </div>
           </v-col>
         </v-row>
-        <v-row class="d-flex d-md-none" justify="center">
+        <!-- <v-row class="d-flex d-md-none" justify="center">
           <v-col cols="10">
               <portfolio-pie-chart
                 @changeFilter="changeFilter"
@@ -109,9 +161,9 @@
                 :colorScheme="regionColors"
               ></portfolio-pie-chart>
           </v-col>
-        </v-row>
+        </v-row> -->
         <v-row dense justify="center">
-          <v-col class="d-block d-lg-none"  cols='5'  md="6" lg="12">
+          <v-col class="d-block d-lg-none"  cols='5'  md="5" lg="12">
             <div class="select">
               <label class="input-label">Region</label>
               <v-select
@@ -125,7 +177,7 @@
               ></v-select>
             </div>
           </v-col>
-          <v-col cols='5'  md="6" lg="12">
+          <v-col cols='5'  md="5" lg="12">
             <div class="select">
               <label class="input-label">Funding sources</label>
               <v-autocomplete
@@ -142,29 +194,9 @@
             </div>
           </v-col>
         </v-row>
-        <v-row class="d-flex d-md-none" justify="center">
-          <v-col cols="10">
-            <portfolio-pie-chart
-              @changeFilter="changeFilter"
-              :data="sourcesFunding"
-              chartName="sources"
-              postfix="1"
-              :colorScheme="sourcesColor"
-            ></portfolio-pie-chart>
-          </v-col>
-        </v-row>
       </v-col>
     </v-row>
-    <v-row v-if="!isDesktop">
-      <v-col>
-        <v-card flat>
-          <goals-selector class="d-flex d-lg-none" @changeType="transitionTo($event.type)" :activeGoalType="activeGoalType" />
-          <v-row>
-            <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
+    <portfolio-projects class="d-lg-none" :goalType="goalsType" :goal="goal"/>
   </div>
 </template>
 
@@ -175,7 +207,11 @@ import PortfolioMap from './children/PortfolioMap';
 import PortfolioBars from './children/PortfolioBars';
 import PortfolioExport from './children/PortfolioExport';
 import PortfolioPieChart from './children/PortfolioPieChart';
-import GoalsSelector from './children/GoalsSelector';
+import PortfolioMobileNav from './children/PortfolioMobileNav';
+import PortfolioMobileChips from './children/PortfolioMobileChips';
+import InfoHoverTooltip from '@/components/InfoHoverTooltip';
+import { goals } from '@/assets/goalsList'
+import PortfolioProjects from './children/PortfolioProjects';
 
 
 import InfoButton from '@/components/InfoButton.vue'
@@ -195,9 +231,12 @@ export default {
     PortfolioMap,
     PortfolioPieChart,
     PortfolioExport,
-    GoalsSelector,
     InfoButton,
-    PortfolioBars
+    PortfolioMobileNav,
+    PortfolioBars,
+    PortfolioMobileChips,
+    PortfolioProjects,
+    InfoHoverTooltip
   },
   props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
   mixins:[sidsdata, sizeMixin],
@@ -249,6 +288,8 @@ export default {
         {value: "All", text:'All SIDS'},
       ],
       sidsList,
+      sdgToSamoa: { 1: [1], 2: [6], 3: [11], 4: [12, 13], 5: [13], 6: [7], 7: [3], 8: [1], 9: [1, 8], 10: [12, 13], 11: [1, 4, 8, 10], 12: [9, 10], 13: [2, 4], 14: [5, 10, 14], 15: [10, 15], 16: [1, 13], 17: [16] },
+      goal:'all',
       regions: ["Caribbean", "AIS", "Pacific"],
       regionColors: d3.scaleOrdinal()
         .domain(["Caribbean", "AIS", "Pacific"])
@@ -283,6 +324,24 @@ export default {
       })
       return funding
     },
+    regionFundingMobile() {
+       let funding = this.regions.map(region => {
+        return {
+          category: region,
+          value: this.portfolioData.reduce((budget, project) => {
+              if(project.region === region &&
+                (this.fundingCategory === 'All' ||
+                project.donors.some((donor) =>this.checkProjectsCategory(project, donor))
+              ) && this.checkGoalValidity(project)
+              ) {
+                return budget + parseInt(project.budget)
+              }
+              return budget
+          }, 0)
+        }
+      })
+      return funding
+    },
     sourcesFunding() {
       let labels = this.sourcesColor.domain().map(label => {
         return {
@@ -290,7 +349,48 @@ export default {
           value: this.portfolioData.reduce((budget, project) => {
             let financing = project.donors.reduce((finance, donor, index, donors )=> {
               if(this.fundingCategory === 'All' || donors.some((donor) => this.checkProjectsCategory(project, donor))) {
-                return finance + (project.budget / donors.length)
+                if (label == "Programme Countries") {
+                  if (donor.category == "Government" && project.country == donor.subCategory) {
+                    return finance + (project.budget / donors.length)
+                  }
+                }
+                else if (label == "Donor Countries") {
+                  if (donor.category == "Government" && donor.subCategory != project.country) {
+                    return finance + (project.budget / donors.length)
+                  }
+                }
+                else if (donor.category == label) {
+                  return finance + (project.budget / donors.length)
+                }
+              }
+              return finance
+            }, 0)
+            return budget + financing
+          }, 0)
+        }
+      });
+      return labels
+    },
+    sourcesFundingMobile() {
+      let labels = this.sourcesColor.domain().map(label => {
+        return {
+          category: label,
+          value: this.portfolioData.reduce((budget, project) => {
+            let financing = project.donors.reduce((finance, donor, index, donors )=> {
+              if((this.fundingCategory === 'All' || donors.some((donor) => this.checkProjectsCategory(project, donor))) && this.checkGoalValidity(project)) {
+                if (label == "Programme Countries") {
+                  if (donor.category == "Government" && project.country == donor.subCategory) {
+                    return finance + (project.budget / donors.length)
+                  }
+                }
+                else if (label == "Donor Countries") {
+                  if (donor.category == "Government" && donor.subCategory != project.country) {
+                    return finance + (project.budget / donors.length)
+                  }
+                }
+                else if (donor.category == label) {
+                  return finance + (project.budget / donors.length)
+                }
               }
               return finance
             }, 0)
@@ -354,6 +454,32 @@ export default {
     transitionTo(to) {
       this.activePage = this.pages.findIndex((goal) => goal.value === to);
       this.$router.push({path:`/portfolio/${to}`, query: this.$route.query})
+    },
+    updateGoal(goal) {
+      this.goal = goal;
+    },
+    checkGoalValidity(project) {
+      if(this.goalsType === 'sdgs') {
+        if(this.goal === 'all') {
+          return project.sdg !== ''
+        }
+        return project.sdg.includes(this.goal)
+      } else if (this.goalsType === 'signature-solutions') {
+        if(this.goal === 'all') {
+          return project.solution !== ''
+        }
+        return project.solution.includes(this.goal)
+      } else {
+        if(this.goal === 'all') {
+          return project.sdg !== ''
+        }
+        let samoaNumber = goals.samoa.findIndex(goal => goal.name === this.goal) + 1,
+        sdgNumbers = this.sdgToSamoa[samoaNumber]
+
+        return sdgNumbers.some(number => {
+          return project.sdg.includes(goals.sdgs[number].name)
+        })
+      }
     }
   },
   async beforeRouteUpdate(to, from, next){

@@ -7,14 +7,22 @@
           grow
           class="mb-2 mvi-nav-tabs tabs tabs-small"
         >
-          <v-tab :value="0" @change="setPreset('MVI')">MVI</v-tab>
-          <v-tab :value="1" @change="setPreset('EVI')">EVI</v-tab>
+          <v-tab :value="0" @change="setPreset('MVI')">
+            <info-hover-tooltip :bottom="true" contentName="mviSelectTooltip">
+              <template v-slot:button>MVI</template>
+            </info-hover-tooltip>
+          </v-tab>
+          <v-tab :value="1" @change="setPreset('EVI')">
+            <info-hover-tooltip :bottom="true" contentName="eviSelectTooltip">
+              <template v-slot:button>EVI</template>
+            </info-hover-tooltip>
+          </v-tab>
           <v-tab :value="2">Custom</v-tab>
         </v-tabs>
       </v-col>
-      <v-col class="flex-grow-0">
+      <v-col class="flex-grow-0 d-md-none">
         <v-btn
-            class="d-block dense d-md-none"
+            class="d-block dense "
             icon
             @click="$emit('close')"
             color="primary"
@@ -35,9 +43,9 @@
       >
         <v-list-item-action>
           <v-checkbox
-            v-model="selectedIndicators"
-            @change="updateValue()"
+            :input-value="mviCodes"
             :value="indicator.code"
+            @change="updateValue"
             :ripple="false"
           ></v-checkbox>
         </v-list-item-action>
@@ -50,134 +58,45 @@
   </div>
 </template>
 <script>
-// import { mapState } from 'vuex';
+
+import { mviIndicators, mviPreset, eviPreset } from '@/assets/goalsList'
+import InfoHoverTooltip from '@/components/InfoHoverTooltip';
 
 export default {
   name: 'MBIIndicatorsNav',
-  // props:['activeIndicatorCode'],
+  props:['mviCodes'],
+  components:{
+    InfoHoverTooltip
+  },
   data() {
     return {
-      activePreset : 0,
-      selectedIndicators:[
-        "mvi-ldc-VIC-Index" ,
-        "mvi-ldc-AFF-Index" ,
-        "mvi-ldc-DRY-Index" ,
-        "mvi-ldc-REM-Index" ,
-        "mvi-ldc-LECZ-Index",
-        "mvi-ldc-XCON-Index",
-        "mvi-ldc-XIN-Index",
-        "mvi-ldc-AIN-Index",
-        "mvi-wdi2-ST.INT.RCPT.XP.ZS",
-        "mvi-wdi-BX.TRF.PWKR.DT.GD.ZS",
-        "mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
-      ],
-      MVI:[
-        "mvi-ldc-VIC-Index" ,
-        "mvi-ldc-AFF-Index" ,
-        "mvi-ldc-DRY-Index" ,
-        "mvi-ldc-REM-Index" ,
-        "mvi-ldc-LECZ-Index",
-        "mvi-ldc-XCON-Index",
-        "mvi-ldc-XIN-Index",
-        "mvi-ldc-AIN-Index",
-        "mvi-wdi2-ST.INT.RCPT.XP.ZS",
-        "mvi-wdi-BX.TRF.PWKR.DT.GD.ZS",
-        "mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
-      ],
-      EVI: [
-        "mvi-ldc-VIC-Index" ,
-        "mvi-ldc-AFF-Index" ,
-        "mvi-ldc-DRY-Index" ,
-        "mvi-ldc-REM-Index" ,
-        "mvi-ldc-LECZ-Index",
-        "mvi-ldc-XCON-Index",
-        "mvi-ldc-XIN-Index",
-        "mvi-ldc-AIN-Index"
-      ],
-      catIndicators:[
-        {
-          category:'Environmental',
-          color:'rgba(0, 160, 176, 0.7)',
-          indicators:[{
-            code:'mvi-ldc-VIC-Index',
-            name:'Victims of Disasters'
-          },{
-            code:'mvi-ldc-AFF-Index',
-            name:'Agriculture and Fishing (% of GDP)'
-          }]
-        },{
-          category:'Geographic',
-          color: 'rgba(204, 51, 63, 0.7)',
-          indicators:[{
-            code:'mvi-ldc-REM-Index',
-            name:'Remoteness'
-          },
-          {
-            code:'mvi-ldc-DRY-Index',
-            name:'Population in Drylands',
-          },
-          {
-            code:'mvi-ldc-LECZ-Index',
-            name:'% Population in Coastal Zones'
-          }]
-        },{
-          category:'Economic',
-          color:'rgba(240, 219, 58, 0.7)',
-          indicators:[{
-            code:'mvi-ldc-XCON-Index',
-            name:'Export Concentration'
-          },{
-            code:'mvi-ldc-XIN-Index',
-            name:'Export Instability'
-          },{
-            code:'mvi-ldc-AIN-Index',
-            name:'Agricultural Instability'
-          }]
-        },{
-          category:'Financial',
-          color:'rgba(13, 177, 75, 0.7)',
-          indicators:[{
-            code:'mvi-wdi2-ST.INT.RCPT.XP.ZS',
-            name:'Tourism Revenue (% of Exports)'
-          },{
-            code:'mvi-wdi-BX.TRF.PWKR.DT.GD.ZS',
-            name:'Remittances (% of GDP)'
-          },{
-            code:'mvi-wdi-BX.KLT.DINV.WD.GD.ZS',
-            name:'FDI Inflows (% of GDP)'
-          }]
-        }
-      ]
+      catIndicators:mviIndicators,
+      MVI: mviPreset,
+      EVI:eviPreset
     }
   },
   computed: {
-  },
-  methods:{
-    updateValue() {
-      this.updatePreset();
-      this.emitValue()
-    },
-    emitValue() {
-      return this.$emit('MviIndicatorsChange', this.selectedIndicators)
-    },
-    updatePreset() {
-      if(this.selectedIndicators.length === 11) {
-        return this.activePreset = 0;
+    activePreset() {
+      if(this.mviCodes.length === 11) {
+        return 0;
       }
-      let hasFinance = this.selectedIndicators.every(indicator => !indicator.includes('-financial'))
-      if (this.selectedIndicators.length === 8 && hasFinance) {
-        return this.activePreset = 1;
+      let hasFinance = this.mviCodes.every(indicator => !indicator.includes('-financial'))
+      if (this.mviCodes.length === 8 && hasFinance) {
+        return 1;
       }
-      return this.activePreset = 2;
-
-    },
-    setPreset(presetName) {
-      this.selectedIndicators = this[presetName];
-      this.emitValue();
+      return 2;
     }
   },
-  mounted() {
-    this.emitValue()
+  methods:{
+    updateValue(value) {
+      this.emitValue(value)
+    },
+    emitValue(value) {
+      return this.$emit('MviIndicatorsChange', value)
+    },
+    setPreset(presetName) {
+      this.emitValue(this[presetName]);
+    }
   }
 }
 </script>

@@ -3,30 +3,26 @@
     <slot name="header" />
     <v-row class="justify-md-end justify-center" >
       <v-col class="chips-container justify-md-end justify-center">
-        <v-card
-          class="ma-2 portfolio-chip"
-        >
-          <v-card-title class="custom-chip_header">{{projectsNumber}}</v-card-title>
-          <v-card-text class="custom-chip_text">SIDS with UNDP Projects</v-card-text>
-        </v-card>
-        <v-card
-          class="ma-2 portfolio-chip"
-        >
-          <v-card-title class="custom-chip_header">{{memberStates}}</v-card-title>
-          <v-card-text class="custom-chip_text">UN Member States</v-card-text>
-        </v-card>
-        <v-card
-          class="ma-2 portfolio-chip"
-        >
-          <v-card-title class="custom-chip_header">{{UNDPprojectsNumber}}</v-card-title>
-          <v-card-text class="custom-chip_text">UNDP Projects</v-card-text>
-        </v-card>
-        <v-card
-          class="ma-2 portfolio-chip"
-        >
-          <v-card-title class="custom-chip_header">{{projectsFundning}}</v-card-title>
-          <v-card-text class="custom-chip_text">Total Project Funding</v-card-text>
-        </v-card>
+        <portfolio-indicator-box
+          class="portfolio-chip"
+          :value="projectsNumber"
+          :title="'SIDS with UNDP Projects'"
+        />
+        <portfolio-indicator-box
+          class="portfolio-chip"
+          :value="memberStates"
+          :title="'UN Member States'"
+        />
+        <portfolio-indicator-box
+          class="portfolio-chip"
+          :value="UNDPprojectsNumber"
+          :title="'UNDP Projects'"
+        />
+        <portfolio-indicator-box
+          class="portfolio-chip"
+          :value="projectsFundning"
+          :title="'Total Project Funding'"
+        />
       </v-col>
     </v-row>
     <v-row class="map_zones d-none d-md-flex">
@@ -46,6 +42,7 @@
 </template>
 
 <script>
+import PortfolioIndicatorBox from './PortfolioIndicatorBox'
 import format from '@/mixins/format.mixin'
 
 export default {
@@ -60,6 +57,9 @@ export default {
       default:'All',
       type:String
     }
+  },
+  components:{
+    PortfolioIndicatorBox
   },
   data() {
     return {
@@ -211,7 +211,7 @@ export default {
 }
 
 
-@media all and (min-width:961px) {
+@media all and (min-width:960px) {
   .map {
     min-height: 350px;
     max-height: calc(100vh - 460px);
@@ -268,7 +268,7 @@ export default {
   }
 }
 
-@media all and (max-width:960px) {
+@media all and (max-width:959px) {
   .map {
     background-image:none !important;
     height: auto;
