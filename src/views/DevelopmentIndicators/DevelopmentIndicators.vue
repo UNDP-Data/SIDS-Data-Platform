@@ -104,6 +104,7 @@
             Sort by:
           </div>
             <v-tabs
+              :grow="false"
               v-model="sorting"
               class="tabs tabs-small tabs-slider sorting sorting-tabs"
             >
@@ -371,7 +372,7 @@ export default {
   }
   .tabs-slider-label{
     position: absolute;
-    left: calc(100% - 222px);
+    right: 143px;
     top: 12px;
   }
   .sorting-tabs {
@@ -379,7 +380,7 @@ export default {
   }
   .sorting{
     position: absolute;
-    max-width: 224px;
+    width: auto;
     right: 4px;
   }
   .sorting-select {
