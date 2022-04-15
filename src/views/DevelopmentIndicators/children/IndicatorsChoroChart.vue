@@ -1,6 +1,6 @@
 <template>
   <div class="choro">
-    <h4 class="choro-title text-center" v-if="page!=='global'">
+    <h4 class="choro-title mb-md-5 text-center" v-if="page!=='global'">
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>

@@ -384,7 +384,7 @@ export default {
     right: 0px;
   }
   .sorting-select {
-    top: 12px;
+    top: 25px;
   }
   .nav-tabs-row {
     min-height: 38px;
