@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       catIndicators:mviIndicators,
-      MVI: mviPreset,
+      MVI:mviPreset,
       EVI:eviPreset
     }
   },
@@ -80,8 +80,7 @@ export default {
       if(this.mviCodes.length === 11) {
         return 0;
       }
-      let hasFinance = this.mviCodes.every(indicator => !indicator.includes('-financial'))
-      if (this.mviCodes.length === 8 && hasFinance) {
+      if (this.mviCodes.length === 8 && this.mviCodes.every(code => this.EVI.includes(code))) {
         return 1;
       }
       return 2;
