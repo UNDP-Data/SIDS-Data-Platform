@@ -11,9 +11,9 @@ import { nFormatter } from './vizEngineHelperFunctions'
 
 const countryGroup = countryGroupJson;
 const countryNames = Object.assign({
-  AIS : 'AIS average',
-  Caribbean : 'Caribbean average',
-  Pacific : 'Pacific average'
+  AIS : 'AIS Average',
+  Caribbean : 'Caribbean Average',
+  Pacific : 'Pacific Average'
 }, ...Object.values(countryGroup));
 
 export function initTimeSeries() {

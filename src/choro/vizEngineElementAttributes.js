@@ -106,7 +106,7 @@ export function updateCountryAVGbars(dataObj) {
               }) //
             g.append('text')
               .attr("font-size", 10)
-              .text(avgs[i] + ' average')
+              .text(avgs[i] + ' Average')
               .attr("x", function () {
                 return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
               })
@@ -123,7 +123,7 @@ export function updateCountryAVGbars(dataObj) {
             .remove()
         }
     }
-  } else {
+  } else  if (this.vizMode !== 'index'){
     for (let i = 0; i < avgs.length; i++) {
       d3.select(`g#${avgs[i]}`)
         .remove()
@@ -208,7 +208,7 @@ export function updateCountryAVGMVIbars(dataObj) {
                 .classed("choroRect3 choroRectMvi", true);
               g.append('text')
                 .attr("font-size", 10)
-                .text(avgs[i] + ' average')
+                .text(avgs[i] + ' Average')
                 .attr("x", function () {
                   return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
                 })
@@ -225,7 +225,7 @@ export function updateCountryAVGMVIbars(dataObj) {
               .remove()
           }
       }
-    } else {
+    } else if (this.vizMode === 'index') {
       for (let i = 0; i < avgs.length; i++) {
         d3.select(`g#${avgs[i]}`)
           .remove()
