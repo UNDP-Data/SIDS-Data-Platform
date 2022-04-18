@@ -832,21 +832,22 @@ export function updateRegionLables() {
         };
 
         countryListLength = allVals.length;
-        let regionRanks = [regionRank["pacific"],regionRank["caribbean"],regionRank["ais"]].sort();
+        let regionRanks = [regionRank["pacific"]+'p',regionRank["caribbean"]+'c',regionRank["ais"]+'a'].sort();
+        console.log(regionRanks)
         if (countryListLength > 0) {
           regionTitleVals = {
             opacity: 1,
             pacificX: 715,
             pacificY:
-              40 * (regionRanks.findIndex(v => v === regionRank["pacific"])) +
+              40 * (regionRanks.findIndex(v => v === regionRank["pacific"]+'p')) +
               60,
             caribbeanX: 700,
             caribbeanY:
-              40 * (regionRanks.findIndex(v => v === regionRank["caribbean"])) +
+              40 * (regionRanks.findIndex(v => v === regionRank["caribbean"]+'c')) +
               60,
             aisX: 725,
             aisY:
-              40 * (regionRanks.findIndex(v => v === regionRank["ais"])) + 60,
+              40 * (regionRanks.findIndex(v => v === regionRank["ais"]+'a')) + 60,
           };
         } else {
           regionTitleVals = {

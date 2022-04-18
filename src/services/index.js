@@ -8,6 +8,7 @@ const NEW_API_URl_2 = 'https://raw.githubusercontent.com/SIDS-Dashboard/api/main
 const ML_API_URL = 'https://ml-aks-ingress.eastus.cloudapp.azure.com';
 export default {
   loadAllKeyData,
+  loadMLestimate,
   loadMetaData,
   loadFundingCategories,
   loadSIDSData,
@@ -105,13 +106,23 @@ async function loadTextContent () {
 
 
 async function loadML (data) {
-  const resp = await axios.post(`${ML_API_URL}/imputation/predict`, data, {
+  const resp = await axios.post(`${ML_API_URL}/twolvlImp/predict`, data, {
     headers: {
       'Access-Control-Allow-Origin': "*"
     }
   })
   return resp.data
 }
+
+async function loadMLestimate (data) {
+  const resp = await axios.post(`${ML_API_URL}/twolvlImp/estimate`, data, {
+    headers: {
+      'Access-Control-Allow-Origin': "*"
+    }
+  })
+  return resp.data
+}
+
 
 async function loadMLTargetSize () {
   // const resp = await axios.get(`${ML_API_URL}/imputation/target_sample_size`)
