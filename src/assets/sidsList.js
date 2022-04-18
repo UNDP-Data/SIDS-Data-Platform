@@ -369,5 +369,12 @@ export default [
     region:'Pacific',
     average: true,
     iso:'Pacific'
+  },
+  {
+    id:'Global',
+    name: 'Global average',
+    region:'Global',
+    average: true,
+    iso:'Global'
   }
 ]
