@@ -73,7 +73,7 @@ export default {
             return (typeof this.activeIndicatorData.data.recentValue[country.iso] !== 'undefined' &&
               this.activeIndicatorData.data.recentValue[country.iso] !== 'No Data') &&
               (this.region === 'All' || this.region === country.region || this.compareIdsList.includes(country.id))
-          } else {
+          } else if (countryGroupJson[country.iso]) {
             return Object.keys(countryGroupJson[country.iso]).some((iso) => {
               return typeof this.activeIndicatorData.data.recentValue[iso] !== 'undefined' &&
                 this.activeIndicatorData.data.recentValue[iso] !== 'No Data'

@@ -128,23 +128,29 @@ export default {
             lineHeight = 1.4, // ems
             y = text.attr("y"),
             x = text.attr("x"),
-
+            bodyText = d3.select(document.body).append('svg').append('text')
+            .style("font-size", "10px"),
             dy = parseFloat(text.attr("dy")),
-            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
-          word  =  words.pop();
-
+            tspan = bodyText.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+            word  =  words.pop();
+            text.text(null)
           text.attr("width", '80px')
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
+            console.log(tspan.node().getComputedTextLength)
             if (tspan.node().getComputedTextLength() > 80) {
               line.pop();
               tspan.text(line.join(" "));
               line = [word];
-              tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+              tspan = bodyText.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
             }
             word  =  words.pop();
           }
+          bodyText.selectAll('tspan').each((i,k,f) => {
+            text.append(() => {return f[k]})
+          })
+          d3.selectAll('body > svg').remove()
         });
       }
 
