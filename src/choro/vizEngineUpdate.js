@@ -832,7 +832,9 @@ export function updateRegionLables() {
         };
 
         countryListLength = allVals.length;
-        let regionRanks = [regionRank["pacific"]+'p',regionRank["caribbean"]+'c',regionRank["ais"]+'a'].sort();
+        let regionRanks = [regionRank["pacific"]+'p',regionRank["caribbean"]+'c',regionRank["ais"]+'a'].sort(function(a, b) {
+          return parseInt(a) - parseInt(b);
+        });
         console.log(regionRanks)
         if (countryListLength > 0) {
           regionTitleVals = {

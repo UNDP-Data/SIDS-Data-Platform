@@ -100,9 +100,6 @@
       </v-row>
       <v-row class="nav-filter-row" dense justify="end">
         <div v-if="!isMobile && (chartType === 'bars' || chartType === 'spider')" class="sorting-row">
-          <div class="input-label tabs-slider-label">
-            Sort by:
-          </div>
             <v-tabs
               :grow="false"
               v-model="sorting"
@@ -370,13 +367,8 @@ export default {
     position: relative;
     width: 100%;
   }
-  .tabs-slider-label{
-    position: absolute;
-    right: 140px;
-    top: 35px;
-  }
   .sorting-tabs {
-    top: 50px;
+    top: 30px;
   }
   .sorting{
     position: absolute;
