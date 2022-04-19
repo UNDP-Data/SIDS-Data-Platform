@@ -633,10 +633,6 @@ export default {
 }
 
 /* to keep the nav drawer above the geospatial data components */
-.v-navigation-drawer,
-.navigation-container {
-  z-index: 3000;
-}
 
 .landscape-enforcer {
   display: block;
