@@ -83,9 +83,9 @@
     <v-row  v-if="isDesktop" class="d-block mb-3 mt-negative">
       <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
     </v-row>
-    <v-row class="d-none d-md-flex flex-lg-nowrap" justify="center">
+    <v-row class="d-none d-md-flex mt-md-0 mt-lg-2 flex-lg-nowrap" justify="center">
       <v-col class="d-none d-lg-block margin-wrap-right"></v-col>
-      <v-col class="d-none d-md-block tabs-column">
+      <v-col class="d-none d-md-block pt-md-0 pb-md-0 pt-lg-4 pb-lg-4 tabs-column">
         <v-row class="d-none d-lg-flex" justify="center">
           <v-col cols="12">
               <v-tabs
@@ -100,7 +100,7 @@
               </v-tabs>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex" justify="center">
+        <v-row class="d-none d-md-flex mt-md-0 mt-lg-2" justify="center">
           <v-col cols="6" md="5" lg="6">
             <portfolio-pie-chart
               @changeFilter="changeFilter"
@@ -119,7 +119,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="selects-col margin-wrap-right">
+      <v-col class="selects-col d-none d-lg-block margin-wrap-right">
         <v-row dense justify="center">
           <v-col cols='5' md="5" lg="12">
             <div class="select">
@@ -151,17 +151,6 @@
             </div>
           </v-col>
         </v-row>
-        <!-- <v-row class="d-flex d-md-none" justify="center">
-          <v-col cols="10">
-              <portfolio-pie-chart
-                @changeFilter="changeFilter"
-                :data="regionFunding"
-                chartName="region"
-                postfix="1"
-                :colorScheme="regionColors"
-              ></portfolio-pie-chart>
-          </v-col>
-        </v-row> -->
         <v-row dense justify="center">
           <v-col class="d-block d-lg-none"  cols='5'  md="5" lg="12">
             <div class="select">
@@ -196,6 +185,25 @@
         </v-row>
       </v-col>
     </v-row>
+    <portfolio-mobile-nav
+      class="d-none d-md-flex mt-2 mb-4 d-lg-none"
+      :region="region"
+      :regions="regionsToSelect"
+      :goalType="goalsType"
+      :year="year"
+      :years="years"
+      :goal="goal"
+      :fundingCategory="fundingCategory"
+      :fundingCategories="fundingCategoriesTypes"
+      :fundingSource="fundingSource"
+      :fundingSources="portfolioSources"
+      @sourceChange="setSource"
+      @categoryChange="setCategory"
+      @yearChange="setYear"
+      @regionChange="updateRegion"
+      @goalTypeChange="transitionTo"
+      @goalChange="updateGoal"
+    />
     <portfolio-projects class="d-lg-none" :goalType="goalsType" :goal="goal"/>
   </div>
 </template>
@@ -512,9 +520,9 @@ export default {
     min-width: 170px;
     margin-right: auto;
   }
-  @media all and (max-width:1264px) {
+  @media all and (max-width:1263px) {
     .tabs-column {
-      min-width: none;
+      min-width: 100%;
     }
     .margin-wrap-right {
       max-width: none;
