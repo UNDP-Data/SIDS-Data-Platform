@@ -36,13 +36,13 @@
       </v-row>
       <indicators-autocomplete
         v-if="page !== 'mvi'"
-        class="d-flex d-md-none"
+        class="d-flex d-lg-none"
         @toggleDialog="dialog = !dialog"
         @indicatorChange="indicatorUpdate"
         :activeIndicatorCode="indicator"/>
       <indicators-mobile-nav
         v-if="page !== 'mvi'"
-        class="d-block d-md-none"
+        class="d-block mb-md-4 d-lg-none"
         @chartTypeChange="transitionTo"
         @yearChange="yearUpdate"
         @sortingChange="sortingUpdate"
@@ -57,7 +57,7 @@
         :regions="regions"
       />
       <mvi-mobile-nav
-        class="mt-5 d-flex d-md-none"
+        class="mt-5 d-flex d-lg-none"
         v-if="page === 'mvi'"
         :sortingType="sortingName"
         :chartType="chartType"
@@ -71,7 +71,7 @@
         :mviCodes="mviCodes"
         @MviIndicatorsChange="MVIindicatorUpdate"
       />
-      <v-row dense class="d-none d-md-flex nav-tabs-row justify-center">
+      <v-row dense class="d-none d-lg-flex nav-tabs-row justify-center">
         <v-col class="d-flex">
           <div class="ma-auto">
             <v-tabs
@@ -87,19 +87,10 @@
               <v-tab v-for="(tab, index) in tabs" :disabled="tab.chartType === 'ml' && !mlAvaliable" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
             </v-tabs>
           </div>
-          <v-btn
-              class="filter-button d-lg-none ml-2"
-              rounded
-              @click="dialog=!dialog"
-              fab
-              color="primary"
-            >
-            <v-icon>mdi-filter</v-icon>
-          </v-btn>
         </v-col>
       </v-row>
-      <v-row class="nav-filter-row" dense justify="end">
-        <div v-if="!isMobile && (chartType === 'bars' || chartType === 'spider')" class="sorting-row">
+      <v-row class="nav-filter-row d-none d-lg-flex" dense justify="end">
+        <div v-if="(chartType === 'bars' || chartType === 'spider')" class="sorting-row">
             <v-tabs
               :grow="false"
               v-model="sorting"
@@ -109,7 +100,7 @@
               <v-tab key="region" value="region">Region</v-tab>
             </v-tabs>
         </div>
-        <div v-if="!isMobile && chartType === 'series'" class="sorting-row">
+        <div v-if="chartType === 'series'" class="sorting-row">
           <div class="select sorting sorting-select">
           <v-select
             rounded
