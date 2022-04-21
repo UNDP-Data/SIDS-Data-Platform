@@ -36,24 +36,34 @@ npm run ci
 
 ## Git workflow
 
-                    
 ```mermaid
-Fork feature branch->Fork staging branch: Pull request (publish to fork pages)
-Fork staging branch->Main repo staging branch: Pull request  (publish to main pages)
-Main repo staging branch->Main repo production branch: Pull request (publish to data.undp server)
+  journey
+    title Git workflow
+    section Fork
+      Checkout feature branch:8: Manual
+      Commit changes:7: Manual
+      Send PR to staging: 6: Manual
+      Publish to pages: 5: Manual, Automated
+      Send pr to main repo staging: 4: Manual
+    section Main repo
+      Merge pr to staging: 8: Manual
+      Publish to pages: 7: Automated
+      Send pr to production: 6: Manual
+      Test with Percy.io: 6: Automated
+      Merge pr to production: 5: Manual
+      Publish to hosting: 5: Automated
 ```
-
 ## Code base highlites
 
 ## Key vendors
 
-###[Vue](https://vuejs.org/)
+[Vue](https://vuejs.org/)
 SPA framework that project built on - version 2 is used.
 
-###[Vueitfy](https://vuetifyjs.com/)
+[Vueitfy](https://vuetifyjs.com/)
 Component library used for moust of the ui. Some default styles are overwriten and can be found in assests/styles folder.
 
-###[d3.js](https://d3js.org/)
+[d3.js](https://d3js.org/)
 Data visualisation library - version 5 is used.
 
 ## File structure
@@ -101,12 +111,12 @@ Github secret - FTP_PASSWORD , ftp password.
 
 ## Cloud vendors
 
-###[percy.io](https://percy.io/)
+[percy.io](https://percy.io/)
 Testing tool based on screenshot comparaion
 
-###[Sentry.io](https://Sentry.io/)
+[Sentry.io](https://Sentry.io/)
 Error logging tool, enebled only for [production](data.undp.org/sids) environment
 Intialized in /src/main.js file
 
-###[Google analytics](https://analytics.google.com/)
+Google analytics](https://analytics.google.com/)
 Site analytics tool, initialized in /public/index.html, enebled only for [production](data.undp.org/sids) environment
