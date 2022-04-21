@@ -37,7 +37,7 @@ npm run ci
 ## Git workflow
 
                     
-```seq
+```mermaid
 Fork feature branch->Fork staging branch: Pull request (publish to fork pages)
 Fork staging branch->Main repo staging branch: Pull request  (publish to main pages)
 Main repo staging branch->Main repo production branch: Pull request (publish to data.undp server)
