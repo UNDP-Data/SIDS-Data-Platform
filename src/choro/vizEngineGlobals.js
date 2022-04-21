@@ -36,7 +36,7 @@ export const sidsDict = {"ATG":"Antigua and Barbuda", "ABW":"Aruba","BHS":"The B
 "KNA":"St. Kitts and Nevis","VCT": "St. Vincent and the Grenadines","LCA":"St. Lucia",
 "SUR":"Suriname","TLS": "Timor Leste","TTO":"Trinidad and Tobago", "TON": "Tonga",
 "TUV":"Tuvalu","TCA":"Turks and Caicos Islands","VUT": "Vanuatu","AIA":"Anguilla",
-"COK":"Cook Islands","MSR":"Montserrat","TKL":"Tokelau","NIU": "Niue", 'AIS': 'AIS average', 'Caribbean': 'Caribbean average', 'Pacific': 'Pacific average'}
+"COK":"Cook Islands","MSR":"Montserrat","TKL":"Tokelau","NIU": "Niue", 'AIS': 'AIS Average', 'Caribbean': 'Caribbean Average', 'Pacific': 'Pacific Average'}
 
 export const regionsDict = {
   caribbean: 'Caribbean',

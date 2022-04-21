@@ -12,6 +12,7 @@
             item-text="name"
             :value="modelType"
             :items="modelTypes"
+            @change="getMLestimate"
             outlined
           ></v-select>
         </div>
@@ -53,6 +54,7 @@
             item-text="name"
             item-value="id"
             :items="imputers"
+            @change="getMLestimate"
             outlined
           ></v-select>
         </div>
@@ -74,6 +76,7 @@
             v-model="predictor"
             :items="predictors"
 
+            @change="getMLestimate"
             item-text="name"
             item-value="id"
             outlined
@@ -98,6 +101,7 @@
             item-text="indicator"
             item-value="indicatorCode"
             :items="allIndicators"
+            @change="getMLestimate"
             hide-details
             outlined
           >
@@ -115,6 +119,7 @@
             dense
             v-model="nPredicor"
             :items="nPredicors"
+            @change="getMLestimate"
             hide-details
             outlined
           ></v-select>
@@ -130,6 +135,7 @@
             dense
             hide-details
             v-model="estimator"
+            @change="getMLestimate"
             :items="estimators"
             outlined
           ></v-select>
@@ -152,6 +158,7 @@
             v-model="emodel"
             item-text="name"
             item-value="id"
+            @change="getMLestimate"
             :items="emodels"
             outlined
           ></v-select>
@@ -166,6 +173,7 @@
             hide-details
             v-model="pinterval"
             :items="pintervals"
+            @change="getMLestimate"
             item-text="name"
             item-value="id"
             outlined
@@ -175,6 +183,9 @@
     </v-row>
     <v-row>
       <v-col cols="12">
+        <p class="mb-4" v-if="estimate">
+          Estimated time of training {{estimate}} seconds
+        </p>
         <v-btn
           color="primary"
           @click="getMLData"
@@ -287,7 +298,8 @@ export default {
       }],
       loading:false,
       rmse:null,
-      error: null
+      error: null,
+      estimate: null
     }
   },
   props:['indicatorCode', 'year'],
@@ -335,6 +347,24 @@ export default {
     },
   },
   methods: {
+    async getMLestimate() {
+      let req = {
+        target:this.indicatorCode,
+        interval: this.pinterval,
+        target_year: this.year,
+        interpolator: this.imputer,
+        scheme: this.predictor,
+        estimators: this.estimator,
+        model: this.emodel,
+        dataset: this.indicatorsMeta[this.indicatorCode].dataset
+      };
+      if(this.predictor === 'MANUAL') {
+        req.manual_predictors = this.inPredicor
+      } else {
+        req.number_predictor = this.nPredicor
+      }
+      this.estimate = await service.loadMLestimate(req);
+    },
     async getMLData() {
       let req = {
         target:this.indicatorCode,
@@ -357,7 +387,8 @@ export default {
       try {
         res = await service.loadML(req)
       } catch (e) {
-        return this.error = 'Computation failed'
+        this.error = 'Computation failed'
+        return this.loading = false;
       }
       this.loading = false;
       this.rmse = Math.ceil(res.rmse_deviation,2);
@@ -482,10 +513,16 @@ export default {
       this.$emit('yearChange', year)
     }
   },
+  watch:{
+    async year() {
+      await this.getMLestimate()
+    }
+  },
   mounted() {
     if(this.years.findIndex(y => y.id === this.year) === -1) {
       this.emitYearChange(this.years[0].id)
     }
+    this.getMLestimate()
   }
 }
 </script>

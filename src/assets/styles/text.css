@@ -37,3 +37,6 @@
   margin-right: 8px !important;
   text-overflow: none;
 }
+.v-card__title {
+  word-break: normal !important;
+}

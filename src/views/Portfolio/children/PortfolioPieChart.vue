@@ -261,7 +261,7 @@ export default {
 }
 .pie-chart svg {
   width: auto;
-  min-height: 150px;
+  height: 130px;
   overflow: visible;
 }
 .pie-chart polyline {

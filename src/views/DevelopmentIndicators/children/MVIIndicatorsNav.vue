@@ -34,10 +34,13 @@
     <v-card flat>
       <v-list dense v-for="indicatorCatery in catIndicators"
         :key="indicatorCatery.category"
+        class="pt-0 pb-0"
         flat
       >
       <v-subheader :style="'background-color:'+indicatorCatery.color" class="block-subheader">{{indicatorCatery.category}}</v-subheader>
-      <v-list-item dense
+      <v-list-item
+      class="mvi-indi-list_item"
+        dense
         v-for="indicator in indicatorCatery.indicators"
         :key="indicator.name"
       >
@@ -71,7 +74,7 @@ export default {
   data() {
     return {
       catIndicators:mviIndicators,
-      MVI: mviPreset,
+      MVI:mviPreset,
       EVI:eviPreset
     }
   },
@@ -80,8 +83,7 @@ export default {
       if(this.mviCodes.length === 11) {
         return 0;
       }
-      let hasFinance = this.mviCodes.every(indicator => !indicator.includes('-financial'))
-      if (this.mviCodes.length === 8 && hasFinance) {
+      if (this.mviCodes.length === 8 && this.mviCodes.every(code => this.EVI.includes(code))) {
         return 1;
       }
       return 2;
@@ -111,5 +113,8 @@ export default {
 }
 .mvi-indicators-nav .nav-row {
   max-width: 100%;
+}
+.mvi-indi-list_item {
+  min-height: 38px !important;
 }
 </style>

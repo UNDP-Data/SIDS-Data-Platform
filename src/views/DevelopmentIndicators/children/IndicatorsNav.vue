@@ -29,10 +29,13 @@
       itemHeight="69"
       >
       <template v-slot:default="{ item }">
-        <v-tooltip
+        <v-menu
           right
+          offset-x
+          nudge-right="20"
           open-delay="300"
-          max-width="250"
+          close-delay="300"
+          :internal-activator="true"
           transition="none"
           :key="item.indicator"
           content-class="tooltip-content"
@@ -64,7 +67,7 @@
               <a :href="item.link" target="_blank">Link</a>
             </v-card-text>
           </v-card>
-        </v-tooltip>
+        </v-menu>
       </template>
     </v-virtual-scroll>
     <v-list v-if="!activeSearch" dense :class="{'list-datasets-active':dataset}" class="list-datasets list-scrollabe">
@@ -156,12 +159,15 @@
       itemHeight="69"
     >
     <template v-slot:default="{ item, index }">
-
-          <v-tooltip
+          <v-menu
             right
+            offset-x
+            nudge-right="20"
             open-delay="300"
+            close-delay="300"
             transition="none"
             max-width="250"
+            open-on-hover
             :key="item['indicatorCode']"
             content-class="tooltip-content"
            >
@@ -189,10 +195,10 @@
                 <div class="mb-1">{{item.dim}}</div>
                 <v-divider class="mb-1 mt-1"></v-divider>
                 <b>Source:</b>{{item.source}} <br/>
-                <a :href="item.Link" target="_blank">Link</a>
+                <a :href="item.link" target="_blank">Link</a>
               </v-card-text>
             </v-card>
-          </v-tooltip>
+          </v-menu>
         </template>
     </v-virtual-scroll>
   </v-card>
