@@ -92,18 +92,18 @@ Percy configuration can be found on cloud platform.
 
 ## Github actions
 
-###publish-to-pages
+### publish-to-pages
 
 Triggers on merge to staging, publishes new vesion to github pages of the main repo
 
 
-###CI-percy
+### CI-percy
 
 Triggers on pull request to production, makes creenshot comparation of a new and old versions, if there are differences requres approval on percy cloud platform for PR to me merged.
 
 Github secret - PERCY_TOKEN, authorisation token for percy platform
 
-###Publish production to ftp 
+### Publish production to ftp 
 
 Builds project with --production flag and uploads files to the data.undp.org hosting via ftp.
 
@@ -118,5 +118,5 @@ Testing tool based on screenshot comparaion
 Error logging tool, enebled only for [production](data.undp.org/sids) environment
 Intialized in /src/main.js file
 
-Google analytics](https://analytics.google.com/)
+[Google analytics](https://analytics.google.com/)
 Site analytics tool, initialized in /public/index.html, enebled only for [production](data.undp.org/sids) environment
