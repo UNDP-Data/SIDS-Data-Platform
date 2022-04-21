@@ -4,32 +4,32 @@
 
 ## npm commands
 
-#### Project setup
+### Project setup
 ```
 npm install
 ```
 
-#### Compiles and hot-reloads for development
+### Compiles and hot-reloads for development
 ```
 npm run serve
 ```
 
-#### Compiles and minifies for production
+### Compiles and minifies for production
 ```
 npm run build
 ```
 
-#### Lints and fixes files
+### Lints and fixes files
 ```
 npm run lint
 ```
 
-#### Start server in testing mode
+### Start server in testing mode
 ```
 npm run start-server
 ```
 
-#### Start auto testing
+### Start auto testing
 ```
 npm run ci
 ```
@@ -45,18 +45,18 @@ Main repo staging branch->Main repo production branch: Pull request (publish to 
 
 ## Code base highlites
 
-### Key vendors
+## Key vendors
 
-####[Vue](https://vuejs.org/)
+###[Vue](https://vuejs.org/)
 SPA framework that project built on - version 2 is used.
 
-####[Vueitfy](https://vuetifyjs.com/)
+###[Vueitfy](https://vuetifyjs.com/)
 Component library used for moust of the ui. Some default styles are overwriten and can be found in assests/styles folder.
 
-####[d3.js](https://d3js.org/)
+###[d3.js](https://d3js.org/)
 Data visualisation library - version 5 is used.
 
-### File structure
+## File structure
 + /assets - static files (images, icons, videos), root styles, fonts, files with root static vatiables (sdg goals, country codes etc)
 + /choro - key self-written vendor,used to generates charts on profiles & MVI views moust of d3 code is here
 + /services/index.js - API calls (backend endpoints, configs and API call functions)
