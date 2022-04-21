@@ -43,7 +43,7 @@ npm run ci
       Checkout feature branch:8: Manual
       Commit changes:7: Manual
       Send PR to staging: 6: Manual
-      Publish to pages: 5: Manual, Automated
+      Publish to pages: 5: Automated
       Send pr to main repo staging: 4: Manual
     section Main repo
       Merge pr to staging: 8: Manual
