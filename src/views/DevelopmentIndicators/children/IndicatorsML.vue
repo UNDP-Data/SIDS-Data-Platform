@@ -1,6 +1,6 @@
 <template>
   <div class="pl-5 ml-container">
-    <v-row class="justify-center">
+    <v-row>
       <v-col cols="6">
         <div class="select">
           <label class="input-label">Model</label>
@@ -13,22 +13,6 @@
             :value="modelType"
             :items="modelTypes"
             @change="getMLestimate"
-            outlined
-          ></v-select>
-        </div>
-      </v-col>
-      <v-col cols="6">
-        <div class="select">
-          <label class="input-label">Year</label>
-          <v-select
-            rounded
-            dense
-            hide-details
-            item-value="id"
-            item-text="name"
-            :value="year"
-            @change="emitYearChange"
-            :items="years"
             outlined
           ></v-select>
         </div>
@@ -257,6 +241,7 @@ import { mapState } from 'vuex';
 import service from '@/services'
 import sidsList from '@/assets/sidsListFull'
 import poltly from 'plotly.js-dist/plotly'
+import store from '@/store'
 
 export default {
   name: 'IndicatorsML',
@@ -309,7 +294,9 @@ export default {
       indicatorsMeta: state => state.indicators.indicatorsMeta,
       data: state => state.indicators.activeIndicatorData,
       MLTargetSize: state => state.indicators.MLTargetSize,
-      MLPredictorSize: state => state.indicators.MLPredictorSize
+      MLPredictorSize: state => state.indicators.MLPredictorSize,
+      mlData: state => state.ml.mlData,
+      mlModel: state => state.ml.mlModel
     }),
     activeIndicatorsMeta() {
       return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-137506']
@@ -318,21 +305,6 @@ export default {
       if(this.rmse > 0.7) return 'red'
       if(this.rmse > 0.3) return 'yellow'
       return 'green'
-    },
-    years(){
-      let res = []
-      if(this.data && this.data.data) {
-        let yearsObj = this.indicatorsMeta[this.indicatorCode].yearValueCounts
-        for (let year in yearsObj) {
-          if(parseInt(yearsObj[year]) >= this.MLTargetSize && year>2000) {
-            res.push({
-              name: year,
-              id: year
-            })
-          }
-        }
-      }
-      return res.reverse()
     },
     allIndicators() {
       let indicatorsArray = [];
@@ -363,7 +335,8 @@ export default {
       } else {
         req.number_predictor = this.nPredicor
       }
-      this.estimate = await service.loadMLestimate(req);
+      let estimate = await service.loadMLestimate(req);
+      this.estimate = `${Math.floor(estimate/60)}:${Math.floor(estimate%60)}`
     },
     async getMLData() {
       let req = {
@@ -383,31 +356,35 @@ export default {
       }
       this.loading = true;
       this.error = false
-      let res
       try {
-        res = await service.loadML(req)
+        await store.dispatch('ml/loadModel', req);
       } catch (e) {
-        this.error = 'Computation failed'
+        if(e.message !== 'user cancel') {
+          this.error = 'Computation failed'
+        }
         return this.loading = false;
       }
       this.loading = false;
-      this.rmse = Math.ceil(res.rmse_deviation,2);
-      let countryList = res.prediction['Country Code'].map(code => {
+    },
+    drawData(){
+      let countryList = this.mlData.prediction['Country Code'].map(code => {
         try {
           return sidsList.find( c => {
             return c.iso === code}
           ).name
         } catch (e) {
           return code
-        }})
+        }
+      })
+      this.rmse = Math.ceil(this.mlData.rmse_deviation,2);
       this.drawChart(
-        res.prediction.prediction,
+        this.mlData.prediction.prediction,
         countryList,
-        res.prediction.upper,
-        res.prediction.lower)
-      this.correlation(res.correlation)
-      this.pie(res.feature_importance_pie)
-      this.drawImportanceimportance(res.model_feature_names, res.model_feature_importance)
+        this.mlData.prediction.upper,
+        this.mlData.prediction.lower)
+      this.correlation(this.mlData.correlation)
+      this.pie(this.mlData.feature_importance_pie)
+      this.drawImportanceimportance(this.mlData.model_feature_names, this.mlData.model_feature_importance)
     },
     drawChart(prediction, country, upper, lower) {
       var traces = [{
@@ -516,13 +493,30 @@ export default {
   watch:{
     async year() {
       await this.getMLestimate()
+    },
+    mlData() {
+      if(this.mlData) {
+        this.drawData()
+        store.dispatch('ml/clearModel');
+      }
     }
   },
   mounted() {
-    if(this.years.findIndex(y => y.id === this.year) === -1) {
-      this.emitYearChange(this.years[0].id)
-    }
     this.getMLestimate()
+    if(this.mlData && this.mlModel.target === this.indicatorCode && this.mlModel.target_year === this.year) {
+      this.pinterval = this.mlModel.interval
+      this.imputer = this.mlModel.interpolator
+      this.predictor = this.mlModel.scheme
+      this.estimator = this.mlModel.estimators
+      this.emodel = this.mlModel.model
+      if(this.predictor === 'MANUAL') {
+        this.inPredicor = this.mlModel.manual_predictors
+      } else {
+        this.nPredicor = this.mlModel.number_predictor
+      }
+      store.dispatch('ml/clearModel');
+      this.drawData()
+    }
   }
 }
 </script>

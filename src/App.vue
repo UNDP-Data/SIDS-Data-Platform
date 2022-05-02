@@ -18,12 +18,14 @@
       </v-col>
     </v-row>
     <root-footer class="d-none d-md-flex d-none-print" />
+    <indicators-ml-popup/>
   </v-container>
 </template>
 <script>
 import RootHeader from "@/components/RootHeader.vue";
 import RootFooter from "@/components/RootFooter.vue";
 import RootLoader from "@/components/RootLoader.vue";
+import indicatorsMlPopup from "@/views/DevelopmentIndicators/children/indicatorsMlPopup.vue";
 import NavMenu from "@/components/NavMenu.vue";
 import NavHeaderMobile from "@/components/NavHeaderMobile.vue";
 import NavMenuMobile from "@/components/NavMenuMobile.vue";
@@ -37,6 +39,7 @@ export default {
     RootFooter,
     RootLoader,
     NavMenu,
+    indicatorsMlPopup,
     NavMenuMobile,
     NavHeaderMobile
   },

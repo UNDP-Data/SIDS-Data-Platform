@@ -117,12 +117,8 @@
         <v-col cols='12'>
           <indicators-choro-chart v-if='!noData' :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
-        </v-col>
-      </v-row>
-      <v-row v-if="chartType === 'ml'" dense>
-        <v-col cols='12'>
-          <indicators-m-l v-if='!noData' @yearChange="yearUpdate" :year="year" :indicatorCode="indicator"/>
-          <h4 class="text-center" v-else>No data for selected indicator</h4>
+          <indicators-m-l v-if="mlMode" :indicator="indicator" @close="mlMode=false" :year="year"/>
+          <v-btn rounded small class="float-right" v-else color="primary" @click="mlMode=true">AI Mode</v-btn>
         </v-col>
       </v-row>
     </v-col>
@@ -138,7 +134,7 @@ import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
-import IndicatorsML from './children/IndicatorsML.vue'
+import indicatorsMLmodels from './children/indicatorsMLmodels.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
 
 import InfoButton from '@/components/InfoButton.vue'
@@ -154,6 +150,7 @@ export default {
     return {
       dialog:false,
       resizeTimeout:null,
+      mlMode:false,
       mviCodes:[
         "mvi-ldc-VIC-Index"
         ,"mvi-ldc-AFF-Index"
@@ -198,11 +195,6 @@ export default {
           name:'Time series',
           chartType:'series',
           mobile: true
-        },
-        {
-          name:'Machine Learning',
-          chartType:'ml',
-          mobile: false
         }
       ],
         mvi: [{
@@ -233,13 +225,15 @@ export default {
     MviIndicatorsNav:MVIIndicatorsNav,
     IndicatorsMobileNav,
     MviMobileNav,
-    IndicatorsML
+    indicatorsML:indicatorsMLmodels
   },
   computed: {
     ...mapState({
       activeIndicatorData: state => state.indicators.activeIndicatorData,
       indicatorsMeta: state => state.indicators.indicatorsMeta,
-      MLTargetSize: state => state.indicators.MLTargetSize
+      MLTargetSize: state => state.indicators.MLTargetSize,
+      mlData: state => state.ml.mlData,
+      mlModel: state => state.ml.mlModel
     }),
     sortingName() {
       if(this.sorting === 0) {
@@ -316,6 +310,9 @@ export default {
     }
   },
   created() {
+    if(this.mlData && this.mlModel.target === this.indicator && this.mlModel.target_year === this.year) {
+      this.mlMode = true;
+    }
     window.addEventListener("resize", this.updateScreenSize);
   },
   destroyed() {
