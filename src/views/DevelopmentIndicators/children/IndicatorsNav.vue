@@ -211,14 +211,13 @@
           :value="year"
           item-text="name"
           item-value="id"
-          :disabled="playingYear || chartType === 'ml' || activeIndicatorYears.length < 3"
+          :disabled="playingYear"
           @change="emitYearChange"
           label="Year"
           dense
         ></v-select>
         <v-btn
           @click="toggleYearPlay"
-          :disabled="chartType === 'ml' || activeIndicatorYears.length < 3"
           icon
           >
           <v-icon v-if="playingYear">mdi-pause</v-icon>

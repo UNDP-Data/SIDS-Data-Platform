@@ -9,6 +9,7 @@ const ML_API_URL = 'https://ml-aks-ingress.eastus.cloudapp.azure.com';
 export default {
   loadAllKeyData,
   loadMLestimate,
+  loadMLindicatorData,
   loadMetaData,
   loadFundingCategories,
   loadSIDSData,
@@ -36,14 +37,6 @@ async function loadProfileIndicarotsMetadata() {
   const resp = await axios.get(`${NEW_API_URl_2}/profiles/countryProfileMetadata.json`)
   return resp.data;
 }
-
-
-
-
-
-
-
-
 
 async function loadAllKeyData () {
   const resp = await axios.get(`${API_URL}/exports/allKeyData.json`)
@@ -105,14 +98,22 @@ async function loadTextContent () {
 }
 
 
-async function loadML (data) {
+async function loadML (data,source) {
   const resp = await axios.post(`${ML_API_URL}/twolvlImp/predict`, data, {
+    cancelToken: source.token,
     headers: {
       'Access-Control-Allow-Origin': "*"
     }
   })
   return resp.data
 }
+
+
+async function loadMLindicatorData ({model, indicator, dataset}) {
+  const resp = await axios.get(`${NEW_API_URl_2}/ml/model${model}/${dataset}/${indicator}.json`)
+  return resp.data
+}
+
 
 async function loadMLestimate (data) {
   const resp = await axios.post(`${ML_API_URL}/twolvlImp/estimate`, data, {
