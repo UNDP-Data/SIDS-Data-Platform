@@ -503,7 +503,7 @@ export default {
   },
   mounted() {
     this.getMLestimate()
-    if(this.mlData && this.mlModel.target === this.indicatorCode && this.mlModel.target_year === this.year) {
+    if(this.mlData && this.mlModel && this.mlModel.target === this.indicatorCode && this.mlModel.target_year === this.year) {
       this.pinterval = this.mlModel.interval
       this.imputer = this.mlModel.interpolator
       this.predictor = this.mlModel.scheme

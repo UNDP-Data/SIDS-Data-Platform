@@ -310,7 +310,7 @@ export default {
     }
   },
   created() {
-    if(this.mlData && this.mlModel.target === this.indicator && this.mlModel.target_year === this.year) {
+    if(this.mlData && this.mlModel && this.mlModel.target === this.indicator && this.mlModel.target_year === this.year) {
       this.mlMode = true;
     }
     window.addEventListener("resize", this.updateScreenSize);

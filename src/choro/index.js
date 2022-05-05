@@ -33,7 +33,8 @@ import {
   updateBarAxis,
   updateYAxis,
   updateRegionLables,
-  updateVizBlocks
+  updateVizBlocks,
+  updateErrorLines
 } from './vizEngineUpdate';
 
   import {
@@ -238,3 +239,4 @@ Choro.prototype.updateRegionLables = updateRegionLables;
 Choro.prototype.initVizEngineTooltips = initVizEngineTooltips;
 Choro.prototype.updateCountryAVGbars = updateCountryAVGbars;
 Choro.prototype.updateCountryAVGMVIbars = updateCountryAVGMVIbars;
+Choro.prototype.updateErrorLines = updateErrorLines;
