@@ -57,7 +57,6 @@ export function updateVizEngine(indicatorCode) {
     this.spiderData=spiderData
     this.drawIndexSpider()
   }
-
   let quantize = quantizeData(this.indicatorData,this.indiSelections),
   vizElementAttributes = this.processVizElementAttributes(),
   noData = this.countriesWithNoData();
@@ -71,14 +70,14 @@ export function updateVizEngine(indicatorCode) {
     this.updateCountryPositions(vizElementAttributes);
     this.updateCountryTitles(vizElementAttributes, noData);
     this.updateRectangles(vizElementAttributes);
-    this.updateIndexRectangles(vizElementAttributes)
+    this.updateIndexRectangles(vizElementAttributes);
     this.updateLabels(vizElementAttributes, noData); //selectedPage, selectedViz, selectedYear,selectedSortby, indicatorData, noData)
     this.updateCircles(vizElementAttributes);
 // //    updateCountryLines(vizElementAttributes);
-      this.updateRegionLables(noData);
-      this.updateChoroLegend(quantize);
-      this.updateBarAxis();
-      this.updateYAxis();
+    this.updateRegionLables(noData);
+    this.updateChoroLegend(quantize);
+    this.updateBarAxis();
+    this.updateYAxis();
       if (this.indiSelections["viz"] == "series") {
         let timeData={};
         timeData[this.indicatorCode] = JSON.parse(JSON.stringify(this.indicatorData));
@@ -101,6 +100,7 @@ export function updateVizEngine(indicatorCode) {
           .attr("height", vizContainerHeight);
       }
     }
+    this.updateErrorLines(vizElementAttributes);
 //
 //       updateVizSliders()//again, just for fun
 }
@@ -138,6 +138,218 @@ function quantizeData(indicatorData,indiSelections){
    return quantize
 }
 //
+export function updateErrorLines(vizElementAttributes) {
+  // let rootThis = this;
+  let rootThis = this;
+  if(this.indicatorData.confidenceIntervals) {
+    if(rootThis.indiSelections["viz"] == "bars") {
+      d3.select("#allSids")
+        .selectAll("g")
+        .append("line")
+        .classed("errorLine", true)
+        .style("stroke", "black")
+        .style("stroke-width", 3)
+        .attr("x1", function() {
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] !== 'No Data' &&
+            rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id]) {
+            return vizElementAttributes[this.parentNode.id].RT.x + vizElementAttributes[this.parentNode.id].RT.width
+          }
+          return 0
+        })
+        .attr("y1", function() {
+          return vizElementAttributes[this.parentNode.id].RT.y + vizElementAttributes[this.parentNode.id].RT.height/2
+        })
+        .attr("x2", function() {
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] !== 'No Data' && rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id]) {
+            let quant = rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] / vizElementAttributes[this.parentNode.id].RT.width;
+            return vizElementAttributes[this.parentNode.id].RT.x + vizElementAttributes[this.parentNode.id].RT.width +  rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id] / quant
+          }
+          return 0
+        })
+        .attr("y2", function() {
+          // console.log(this,a,b,c)
+          return vizElementAttributes[this.parentNode.id].RT.y + vizElementAttributes[this.parentNode.id].RT.height/2
+        })
+        .select(function() { return this.parentNode; })
+        .append("line")
+        .classed("errorLine", true)
+        .style("stroke", "black")
+        .style("stroke-width", 2)
+        .attr("x1", function() {
+          let id = this.parentNode.id
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+            rootThis.indicatorData.confidenceIntervals &&
+            rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+            return vizElementAttributes[id].RT.x + vizElementAttributes[id].RT.width
+          }
+          return 0
+        })
+        .attr("y1", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.y + vizElementAttributes[id].RT.height/2 - 4
+            }
+        })
+        .attr("x2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.x + vizElementAttributes[id].RT.width
+            }
+            return 0
+        })
+        .attr("y2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.y + vizElementAttributes[id].RT.height/2 + 4
+            }
+        })
+        .select(function() { return this.parentNode; })
+        .append("line")
+        .classed("errorLine", true)
+        .style("stroke", "black")
+        .style("stroke-width", 2)
+        .attr("x1", function() {
+          let id = this.parentNode.id
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+            rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              let quant = rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] / vizElementAttributes[this.parentNode.id].RT.width;
+              return vizElementAttributes[this.parentNode.id].RT.x + vizElementAttributes[this.parentNode.id].RT.width +  rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id] / quant
+          }
+          return 0
+        })
+        .attr("y1", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.y + vizElementAttributes[id].RT.height/2 - 4
+            }
+        })
+        .attr("x2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+                let quant = rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] / vizElementAttributes[this.parentNode.id].RT.width;
+                return vizElementAttributes[this.parentNode.id].RT.x + vizElementAttributes[this.parentNode.id].RT.width +  rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id] / quant
+            }
+            return 0
+        })
+        .attr("y2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.y + vizElementAttributes[id].RT.height/2 + 4
+            }
+        })
+    } else if (rootThis.indiSelections["viz"] == "global") {
+      d3.select("#allSids")
+        .selectAll("g")
+        .append("line")
+        .classed("errorLine", true)
+        .style("stroke", "black")
+        .style("stroke-width", 3)
+        .attr("y1", function() {
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] !== 'No Data' &&
+            rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id]) {
+            return vizElementAttributes[this.parentNode.id].RT.y
+          }
+          return 0
+        })
+        .attr("x1", function() {
+          return vizElementAttributes[this.parentNode.id].RT.x + vizElementAttributes[this.parentNode.id].RT.width/2
+        })
+        .attr("y2", function() {
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] !== 'No Data' && rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id]) {
+            let quant = rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] / vizElementAttributes[this.parentNode.id].RT.height;
+            return vizElementAttributes[this.parentNode.id].RT.y - rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id] / quant
+          }
+          return 0
+        })
+        .attr("x2", function() {
+          // console.log(this,a,b,c)
+          return vizElementAttributes[this.parentNode.id].RT.x + vizElementAttributes[this.parentNode.id].RT.width/2
+        })
+        .select(function() { return this.parentNode; })
+        .append("line")
+        .classed("errorLine", true)
+        .style("stroke", "black")
+        .style("stroke-width", 2)
+        .attr("y1", function() {
+          let id = this.parentNode.id
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+            rootThis.indicatorData.confidenceIntervals &&
+            rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+            return vizElementAttributes[id].RT.y
+          }
+          return 0
+        })
+        .attr("x1", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.x + vizElementAttributes[id].RT.width/2 - 4
+            }
+        })
+        .attr("y2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.y
+            }
+            return 0
+        })
+        .attr("x2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.x + vizElementAttributes[id].RT.width/2 + 4
+            }
+        })
+        .select(function() { return this.parentNode; })
+        .append("line")
+        .classed("errorLine", true)
+        .style("stroke", "black")
+        .style("stroke-width", 2)
+        .attr("y1", function() {
+          let id = this.parentNode.id
+          if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+            rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              let quant = rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] / vizElementAttributes[this.parentNode.id].RT.height;
+              return vizElementAttributes[this.parentNode.id].RT.y - rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id] / quant
+          }
+          return 0
+        })
+        .attr("x1", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.x + vizElementAttributes[id].RT.width/2 - 4
+            }
+        })
+        .attr("y2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+                let quant = rootThis.indicatorData.data[rootThis.indiSelections.year][this.parentNode.id] / vizElementAttributes[this.parentNode.id].RT.height;
+                return vizElementAttributes[this.parentNode.id].RT.y - rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][this.parentNode.id] / quant
+            }
+            return 0
+        })
+        .attr("x2", function() {
+          let id = this.parentNode.id
+            if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+              rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]) {
+              return vizElementAttributes[id].RT.x + vizElementAttributes[id].RT.width/2 + 4
+            }
+        })
+    }
+  }
+}
+
 export function countriesWithNoData() {
   let rootThis = this,
     /// make list of counties with no data (this should probably be refactored to create a list of countries with data)? Or just simplify this
@@ -442,6 +654,12 @@ export function updateLabels(vizElementAttributes, noData) {
         if(rootThis.vizWidth >= 800) {
           val +=160;
         }
+        let id = this.parentNode.id
+        if(rootThis.indicatorData.data[rootThis.indiSelections.year][id] !== 'No Data' &&
+          rootThis.indiSelections["viz"] == "bars" && rootThis.indicatorData.confidenceIntervals &&
+          rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections.year][id]){
+          return val - 35
+        }
         return val;
       })
       .attr("y", function () {
@@ -490,6 +708,15 @@ export function updateRectangles(vizElementAttributes) {
         if(rootThis.vizMode=="index"){
             return 0;
         }
+    })
+    .style('opacity', function () {
+      if(rootThis.indicatorData.confidenceIntervals &&
+          rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections["year"]] &&
+          rootThis.indicatorData.confidenceIntervals[rootThis.indiSelections["year"]][this.parentNode.id]
+      ) {
+        return  0.5
+      }
+      return 1
     })
     .attr("height", function () {
       return vizElementAttributes[this.parentNode.id]["RT"]["height"];

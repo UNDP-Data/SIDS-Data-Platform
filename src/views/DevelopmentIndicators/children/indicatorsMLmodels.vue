@@ -75,6 +75,7 @@ import service from '@/services';
 import poltly from 'plotly.js-dist/plotly';
 import { mapState } from 'vuex';
 import IndicatorsML from './IndicatorsML';
+import store from '@/store';
 
 export default {
   name: 'indicatorsMLmodels',
@@ -124,6 +125,8 @@ export default {
           model:this.activePanel+1,
           dataset:this.indicator.split('-')[0]
         })
+        res[this.indicator].confidenceIntervals = res.confidenceIntervals;
+        store.dispatch('ml/loadMlPredictionData', res[this.indicator])
         this.initPieChart(index, res.featureImportances.categories)
         this.initBarChart(index, res.featureImportances.indicators)
       }
@@ -172,7 +175,7 @@ export default {
     }
   },
   created() {
-    if(this.mlData && this.mlModel.target === this.indicator && this.mlModel.target_year === this.year) {
+    if(this.mlData && this.mlModel && this.mlModel.target === this.indicator && this.mlModel.target_year === this.year) {
       this.autoMode = false;
     }
   },
@@ -185,6 +188,12 @@ export default {
     indicator() {
       if(this.designErr) {
         this.autoMode = true
+        this.activePanel = undefined;
+      }
+    },
+    activePanel() {
+      if(!this.activePanel) {
+        store.dispatch('ml/clearMlPredictionData')
       }
     }
   }
