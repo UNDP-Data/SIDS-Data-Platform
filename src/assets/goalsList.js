@@ -292,7 +292,30 @@ export const goals = {
       color: "#EF412C",
       type:'solution'
     }
-  ]
+  ],
+  pillars: [
+    {
+      name: "Blue Economy",
+      icon: require("@/assets/media/goals-icons/pillars/blueEconomy.png"),
+      type:'pillar',
+      content:
+        "Harnessing the blue economy through an integrated approach rooted in sustainable finance and development.",
+    },
+    {
+      name: "Climate Action",
+      icon: require("@/assets/media/goals-icons/pillars/climateAction.png"),
+      type:'pillar',
+      content:
+        "Promoting decarbonized and resilient societies through scaled up climate action and enhanced efforts to mobilize climate finance.",
+    },
+    {
+      name: "Digital transformation",
+      icon: require("@/assets/media/goals-icons/pillars/digitalTransformation.png"),
+      type:'pillar',
+      content:
+        "Accelerating digital transformation through a whole-of-society approach that puts people at the centre for inclusive societies and resilient economies.",
+    },
+  ],
 }
 
 export const goalTypes = [
@@ -312,7 +335,29 @@ export const goalTypes = [
     contentName:"portfolioTooltip-solutions"
   }
 ]
-
+export const goalTypesGis = [
+  {
+    name: "SIDS offer Pillars",
+    value: "pillars",
+    headerImg: require("@/assets/media/goals-icons/sidsOfferPillars.png"),
+    description:
+      "UNDP’s SIDS offer – Rising Up for SIDS – presents an integrated approach for tapping into areas with potential to accelerate green recovery and transform societies based on three interconnected pillars and responds to the ambitions and demands SIDS expressed during the 2019 midterm review of the S.A.M.O.A. Pathway.",
+  },
+  {
+    name: "SDGs",
+    value: "sdgs",
+    headerImg: require("@/assets/media/goals-icons/SDGs.png"),
+    description:
+      "The Global Goals designed to guide development for a better and more sustainable future for all, set up by the UNGA in 2015 and are intended to be achieved in 2030, as per Agenda 2030.",
+  },
+  {
+    name: "SAMOA Pathway",
+    value: "samoa",
+    headerImg: require("@/assets/media/goals-icons/samoaPathway.png"),
+    description:
+      "The SAMOA Pathway (SIDS Accelerated Modalities of Action) reaffirms that SIDS remain a special case for sustainable development, recognizing SIDS's ownership and leadership in overcoming these challenges.",
+  }
+]
 export const mviIndicators = [
   {
     category:'Environmental',
