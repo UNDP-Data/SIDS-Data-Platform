@@ -4,7 +4,6 @@ import { sidsDict } from './vizEngineGlobals'
 
 export function RadarChart(parent_selector, options, countryList, pillar, dataFull) {
 	let data = dataFull[pillar]
-
 	const wrap = (text, width) => {
 		text.each(function () {
 			var text = d3.select(this),
@@ -330,7 +329,6 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 				}
 				else if (d.name == "Geographic") {
 					parent.selectAll(".radarArea").filter(function (d) {
-						console.log(d)
 						return d.name == "Geographic" || d.name == "Environmental"
 					})
 						.transition().duration(200)
@@ -384,8 +382,6 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 			.style("fill-opacity", cfg.opacityArea)
 			.style("pointer-events","auto")
 			.on('mouseover', function () {
-
-				console.log("job=gsdfsdf")
 
 				//Dim all blobs
 				parent.selectAll(".radarArea")
@@ -495,7 +491,6 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 					.text(function () {
 						let value = dataFull[pillar.slice(0, -4)][0].axes.filter(obj => { return obj.axis === d.axis })[0].value
 						if (isNaN(value)) {
-							console.log(value)
 							return ""
 
 						}

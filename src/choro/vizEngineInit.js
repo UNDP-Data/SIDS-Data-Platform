@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import tippy from 'tippy.js';
+import tippy, {delegate} from 'tippy.js';
 
 import { indexColors } from './index-data'
 import {regionColors, getBoundingBox, nFormatter} from './vizEngineHelperFunctions'
@@ -369,7 +369,8 @@ export function appendCountryRectangles() {
 export function initVizEngineTooltips() {
   let rootThis = this;
 
-  tippy('.countrySvg, .choroCircle, .choroRectMvi, .choroRect', {
+  delegate('#choro_map_container', {
+    target:'.countrySvg, .choroCircle, .choroRectMvi, .choroRect',
     theme: 'light',
     delay: 300,
     onShow: function(instance) {

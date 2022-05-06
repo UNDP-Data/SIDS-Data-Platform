@@ -2,7 +2,7 @@
   <div class="about-page">
     <v-row class="d-none d-md-flex mt-0" justify="center">
       <v-col cols="12">
-        <h2 class="page-header">About the SIDS Data Visualization Platform</h2>
+        <h2 class="page-header">About the SIDS Data Platform</h2>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -50,10 +50,10 @@
           </v-expansion-panel>
           <v-divider/>
           <v-expansion-panel>
-            <v-expansion-panel-header>What is the SIDS Data Visualization Platform? </v-expansion-panel-header>
+            <v-expansion-panel-header>What is the SIDS Data Platform? </v-expansion-panel-header>
             <v-expansion-panel-content>
               <p>
-                The UNDP Data Visualization Platform for Small Island Developing States, a digital tool for accelerating development in SIDS by providing policymakers, research institutions, and country offices with access to updated, standardized, and comprehensive data. As a central component of the UNDP’s SIDS Offer, the visualization and analytics features of this platform will help SIDS to respond to the SAMOA Pathway and the 2030 agenda by rising up to the urgent challenges of climate change and their green and blue transition. By focusing on the needs of SIDS, this tool has been designed specifically to feature datasets about Digital Transformation, Blue Economy, and Climate Action.  There are three main types of data within the SIDS data platform, including data on the UNDP portfolio of projects and investment in SIDS, country-level development indicators, and geospatial data. For each data type we have developed interfaces within the platform to visualize, analyze, and export these data.
+                The UNDP Data Platform for Small Island Developing States, a digital tool for accelerating development in SIDS by providing policymakers, research institutions, and country offices with access to updated, standardized, and comprehensive data. As a central component of the UNDP’s SIDS Offer, the visualization and analytics features of this platform will help SIDS to respond to the SAMOA Pathway and the 2030 agenda by rising up to the urgent challenges of climate change and their green and blue transition. By focusing on the needs of SIDS, this tool has been designed specifically to feature datasets about Digital Transformation, Blue Economy, and Climate Action.  There are three main types of data within the SIDS data platform, including data on the UNDP portfolio of projects and investment in SIDS, country-level development indicators, and geospatial data. For each data type we have developed interfaces within the platform to visualize, analyze, and export these data.
               </p>
             </v-expansion-panel-content>
           </v-expansion-panel>

@@ -3,15 +3,27 @@
     eager
     transition="none"
     open-delay="200"
-    max-width="600"
+    :max-width="maxWidth"
     close-delay="200"
-    min-width='100%'
     open-on-hover
-    content-class="tooltip-content"
     allow-overflow
-    bottom>
+    :max-height="maxHeight"
+    :top="bottom ? false : true"
+    :bottom="bottom ? true : false"
+    :nudge-top="bottom ? 0 : 50"
+    :nudge-bottom="bottom ? 50 : 0"
+    :content-class="'tooltip-content ' + contentClass"
+    >
       <template v-slot:activator="{ on, attrs }">
+        <div
+          v-if="hasButtonSlot"
+          v-bind="attrs"
+          v-on="on">
+          <slot  name="button"
+          ></slot>
+        </div>
         <v-icon
+          v-else
           v-bind="attrs"
           :disabled="disabled"
           v-on="on"
@@ -33,10 +45,12 @@
 
 <script>
 import { mapState } from 'vuex';
+import size from '@/mixins/size.mixin';
 
 export default {
   name: 'InfoHoverTooltip',
-  props:['contentName', 'large', 'disabled'],
+  props:['contentName', 'large', 'disabled', 'contentClass', 'bottom'],
+  mixins:[size],
   computed: {
     ...mapState({
       textContent: (state) => state.texts.textContent
@@ -44,8 +58,17 @@ export default {
     hasContentSlot() {
       return this.$slots['content']
     },
+    hasButtonSlot() {
+      return this.$slots['button']
+    },
     hasIconSlot() {
       return this.$slots['icon']
+    },
+    maxWidth() {
+      return this.isMobile ? '95%' : '800px'
+    },
+    maxHeight() {
+      return this.isMobile ? '60%' : 'auto'
     }
   }
 }

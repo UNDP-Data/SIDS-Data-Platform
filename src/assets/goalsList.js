@@ -292,20 +292,148 @@ export const goals = {
       color: "#EF412C",
       type:'solution'
     }
-  ]
+  ],
+  pillars: [
+    {
+      name: "Blue Economy",
+      icon: require("@/assets/media/goals-icons/pillars/blueEconomy.png"),
+      type:'pillar',
+      content:
+        "Harnessing the blue economy through an integrated approach rooted in sustainable finance and development.",
+    },
+    {
+      name: "Climate Action",
+      icon: require("@/assets/media/goals-icons/pillars/climateAction.png"),
+      type:'pillar',
+      content:
+        "Promoting decarbonized and resilient societies through scaled up climate action and enhanced efforts to mobilize climate finance.",
+    },
+    {
+      name: "Digital transformation",
+      icon: require("@/assets/media/goals-icons/pillars/digitalTransformation.png"),
+      type:'pillar',
+      content:
+        "Accelerating digital transformation through a whole-of-society approach that puts people at the centre for inclusive societies and resilient economies.",
+    },
+  ],
 }
 
 export const goalTypes = [
   {
     name: "SAMOA Pathway",
     value: "samoa",
+    contentName:"portfolioTooltip-samoa"
   },
   {
     name: "Sustainable Development Goals",
     value: "sdgs",
+    contentName:"portfolioTooltip-sdgs"
   },
   {
     name: "Signature solutions",
     value: "signature-solutions",
+    contentName:"portfolioTooltip-solutions"
   }
+]
+export const goalTypesGis = [
+  {
+    name: "SIDS offer Pillars",
+    value: "pillars",
+    headerImg: require("@/assets/media/goals-icons/sidsOfferPillars.png"),
+    description:
+      "UNDP’s SIDS offer – Rising Up for SIDS – presents an integrated approach for tapping into areas with potential to accelerate green recovery and transform societies based on three interconnected pillars and responds to the ambitions and demands SIDS expressed during the 2019 midterm review of the S.A.M.O.A. Pathway.",
+  },
+  {
+    name: "SDGs",
+    value: "sdgs",
+    headerImg: require("@/assets/media/goals-icons/SDGs.png"),
+    description:
+      "The Global Goals designed to guide development for a better and more sustainable future for all, set up by the UNGA in 2015 and are intended to be achieved in 2030, as per Agenda 2030.",
+  },
+  {
+    name: "SAMOA Pathway",
+    value: "samoa",
+    headerImg: require("@/assets/media/goals-icons/samoaPathway.png"),
+    description:
+      "The SAMOA Pathway (SIDS Accelerated Modalities of Action) reaffirms that SIDS remain a special case for sustainable development, recognizing SIDS's ownership and leadership in overcoming these challenges.",
+  }
+]
+export const mviIndicators = [
+  {
+    category:'Environmental',
+    color:'rgba(0, 160, 176, 0.7)',
+    indicators:[{
+      code:'mvi-ldc-VIC-Index',
+      name:'Victims of Disasters'
+    },{
+      code:'mvi-ldc-AFF-Index',
+      name:'Agriculture and Fishing (% of GDP)'
+    }]
+  },{
+    category:'Geographic',
+    color: 'rgba(204, 51, 63, 0.7)',
+    indicators:[{
+      code:'mvi-ldc-REM-Index',
+      name:'Remoteness'
+    },
+    {
+      code:'mvi-ldc-DRY-Index',
+      name:'Population in Drylands',
+    },
+    {
+      code:'mvi-ldc-LECZ-Index',
+      name:'% Population in Coastal Zones'
+    }]
+  },{
+    category:'Economic',
+    color:'rgba(240, 219, 58, 0.7)',
+    indicators:[{
+      code:'mvi-ldc-XCON-Index',
+      name:'Export Concentration'
+    },{
+      code:'mvi-ldc-XIN-Index',
+      name:'Export Instability'
+    },{
+      code:'mvi-ldc-AIN-Index',
+      name:'Agricultural Instability'
+    }]
+  },{
+    category:'Financial',
+    color:'rgba(13, 177, 75, 0.7)',
+    indicators:[{
+      code:'mvi-wdi2-ST.INT.RCPT.XP.ZS',
+      name:'Tourism Revenue (% of Exports)'
+    },{
+      code:'mvi-wdi-BX.TRF.PWKR.DT.GD.ZS',
+      name:'Remittances (% of GDP)'
+    },{
+      code:'mvi-wdi-BX.KLT.DINV.WD.GD.ZS',
+      name:'FDI Inflows (% of GDP)'
+    }]
+  }
+]
+
+export const mviPreset = [
+  "mvi-ldc-VIC-Index" ,
+  "mvi-ldc-AFF-Index" ,
+  "mvi-ldc-DRY-Index" ,
+  "mvi-ldc-REM-Index" ,
+  "mvi-ldc-LECZ-Index",
+  "mvi-ldc-XCON-Index",
+  "mvi-ldc-XIN-Index",
+  "mvi-ldc-AIN-Index",
+  "mvi-wdi2-ST.INT.RCPT.XP.ZS",
+  "mvi-wdi-BX.TRF.PWKR.DT.GD.ZS",
+  "mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
+]
+
+export const eviPreset = [
+  "mvi-ldc-VIC-Index" ,
+  "mvi-ldc-AFF-Index" ,
+  "mvi-ldc-DRY-Index" ,
+  "mvi-ldc-REM-Index" ,
+  "mvi-ldc-LECZ-Index",
+  "mvi-ldc-XCON-Index",
+  "mvi-ldc-XIN-Index",
+  "mvi-ldc-AIN-Index"
 ]

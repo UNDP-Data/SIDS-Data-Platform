@@ -1,5 +1,5 @@
 <template>
-  <v-row class="d-flex d-md-none justify-center">
+  <v-row class="d-flex justify-center">
     <v-col class="d-flex" cols="8">
       <div class="select indicators-autocomplete">
         <label class="input-label">Indicator</label>
@@ -87,6 +87,11 @@ export default {
           indicatorsArray.push(this.indicatorsMeta[indicator])
         }
       }
+      indicatorsArray.sort(function(a, b) {
+          var textA = a.indicator.toUpperCase().trim();
+          var textB = b.indicator.toUpperCase().trim();
+          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
       return indicatorsArray;
     },
     activeIndicator() {
@@ -143,11 +148,6 @@ export default {
 .dimensions-select{
   max-width: 60%;
   margin-right: 0;
-}
-.active-indicator-info {
-  padding-top: 8px !important;
-  max-height: calc(50vh - 70px);
-  overflow-y: scroll;
 }
 .autocomplete-select {
   font-size: 14px !important;

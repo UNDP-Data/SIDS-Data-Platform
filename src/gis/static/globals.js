@@ -3,14 +3,34 @@ import constants from "@/gis/static/constants.js";
 //taken from old code
 
 const globals = {
-  compareMode: null,
+  bivariateMode: false, //null,
+  bivariateLayerState: {
+    color: null,
+    /**Object {X_breaks, Y_breaks}; breaks for  the two data layers;
+     * legacy code only had a few layer possibilities, mainly hex# and ocean
+     */
+    breaks: { X: null, Y: null },
+    /**Array; ids of the two data layers;
+     * legacy code only had a few layer possibilities, mainly hex# and ocean
+     */
+    dataLayer: [null, null],
+    /**String; id of the current data layer;
+     * legacy code only had a few layer possibilities, mainly hex# and ocean
+     */
+    hexSize: "bivariate",
+    lastActive: { dataset: [null, null], layer: [null, null] },
+  },
+  myBivariateScatterChart: null, //store chart instance
+  bivariateScaleTypes: { Y: "logarithmic", X: "linear" },
+  compareMode: false, //null,
   drawingMode: null,
   firstSymbolId: "tunnel-oneway-arrow-blue",
   basemapLabels: [], //current basemap labels, for use in addLabels -> the toggling of the labels of a current basemap style
   //current layer state manager
   precision: null, //modified in changeDataOnMap and recolor etc; TODO deglobalize this
-  myHistogram: null,
+  myHistogram: null, //global storage for modifying main histogram html element by updates and recreation
   lastActive: { dataset: null, layer: null },
+  lastActiveComparison: { dataset: null, layer: null },
   opacity: 0.8,
   /* //were unused; obsoleted by passing these through emits when required
   activeDataset: null,
@@ -24,6 +44,17 @@ const globals = {
      * legacy code only had a few layer possibilities, mainly hex# and ocean
      */
     hexSize: "hex5",
+    lastActive: { dataset: null, layer: null },
+  },
+  comparisonLayerState: {
+    color: null,
+    breaks: null,
+    dataLayer: null,
+    /**String; id of the current data layer;
+     * legacy code only had a few layer possibilities, mainly hex# and ocean
+     */
+    hexSize: "hex5",
+    lastActive: { dataset: null, layer: null },
   },
   sources: {
     //{...ID:{SOURCE OBJECT}} USED WHEN ADDING LAYERSOURCES
@@ -38,7 +69,7 @@ const globals = {
       promoteId: "hexid",
       tiles: [constants.sourceURLs.hex5],
       //'minzoom': 3,
-      maxzoom: 12,
+      maxzoom: 20, //13.5,
     },
     hex5clipped: {
       type: "vector",
@@ -55,25 +86,25 @@ const globals = {
       promoteId: "GID_1",
       tiles: [constants.sourceURLs.admin1],
       //'minzoom': 3,
-      maxzoom: 12,
+      maxzoom: 20, //13.5,
     },
     admin2: {
       type: "vector",
       promoteId: "GID_2",
       tiles: [constants.sourceURLs.admin2],
       //'minzoom': 3,
-      maxzoom: 12,
+      maxzoom: 20, //13.5,
     },
     ocean: {
       type: "vector",
       tiles: [constants.sourceURLs.ocean],
-      maxzoom: 10,
+      maxzoom: 20, //13.5,
     },
     allsids: {
       type: "vector",
       //'url': ocean
       tiles: [constants.sourceURLs.allSids],
-      maxzoom: 12,
+      maxzoom: 20, //13.5,
     },
   },
   sourceData: {

@@ -7,25 +7,38 @@
       </v-row>
       <v-row class="mt-0 bars-container" justify="center">
         <div class="sdg-goal" v-for="(goal, index) in goals" :key="goal.name">
-          <img
-            :src="require(`@/assets/media/goals-icons/${goalsType}/${index+1}.png`)"
-            height="56"
-            :width="barWidth"
-            >
+          <v-tooltip
+            top
+            transition="none"
+            content-class="tooltip-content"
+            maxWidth="400"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <img
+                :src="require(`@/assets/media/goals-icons/${goalsType}/${index+1}.png`)"
+                height="56"
+                :width="barWidth"
+                v-bind="attrs"
+                v-on="on"
+                >
+            </template>
+            <v-card>
+              <v-card-title>
+                {{goal.name}}
+              </v-card-title>
+              <v-card-text v-if="goal.content">
+                {{goal.content}}
+              </v-card-text>
+            </v-card>
+          </v-tooltip>
         </div>
       </v-row>
       <template v-if="goalsType==='sdgs' && tooltipData[tooltipGoalName]">
         <div class="d-none" id="goalTooltip">
-          <portfolio-tooltip :header="tooltipGoalTitle" :data="tooltipData[tooltipGoalName]"/>
+          <portfolio-tooltip :maxWidth="400" :header="tooltipGoalTitle" :data="tooltipData[tooltipGoalName]"/>
         </div>
       </template>
     </div>
-    <v-col class="d-block d-lg-none text-center block-subheader" cols='12'>
-      {{projectCount[activeGoal]}} projects
-    </v-col>
-    <v-col class="d-block d-lg-none text-center block-subheader" cols='12'>
-      {{nFormatter(budgetCount[activeGoal])}} budget
-    </v-col>
   </v-row>
 </template>
 <script>
@@ -67,7 +80,6 @@ export default {
   mixins:[sidsdata, format],
   computed: {
     ...mapState({
-      activeGoal: state => state.goals.activeGoal,
       portfolioData: state => state.sids.portfolioData,
     }),
     barsHeight(){ return this.svgHeight - this.barsMargin.top - this.barsMargin.bottom },

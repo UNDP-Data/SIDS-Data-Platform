@@ -20,7 +20,8 @@ const routes = [
     }),
     meta:{
       header:'UNDP Portfolio in Small Island Developing States',
-      infoContent:'aboutThis-portfolio'
+      infoContent:'aboutThis-portfolio',
+      icon:'portfolio'
     },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -53,6 +54,9 @@ const routes = [
       let chartType = to.params.chartType || 'choro',
       indicator = to.params.indicator || 'region',
       year = to.params.year || 'recentValue';
+      if(document.body.clientWidth - 40 < 800 && indicator === 'region') {
+        indicator = 'hdr-137506'
+      }
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'
       ) {
@@ -62,6 +66,8 @@ const routes = [
       await store.dispatch('indicators/getCategories');
       await store.dispatch('indicators/getMeta');
       await store.dispatch('indicators/getProfileData');
+      await store.dispatch('indicators/getMLTargetSize');
+      await store.dispatch('indicators/getMLPredictorSize');
       if(
         indicator === to.params.indicator &&
         year === to.params.year &&
@@ -80,7 +86,8 @@ const routes = [
     },
     meta:{
       header:'Development Indicators',
-      infoContent:'aboutThis-indicators'
+      infoContent:'aboutThis-indicators',
+      icon:'indicators'
     },
     props: (to) => (
       {
@@ -121,8 +128,9 @@ const routes = [
       }
     },
     meta:{
-      header:'Towards a Multidimensional Vulnerability Index',
-      infoContent:'aboutThis-mvi'
+      header:'Multidimensional Vulnerability Index',
+      infoContent:'aboutThis-mvi',
+      icon:'MVI'
     },
     props: (to) => (
       {
@@ -154,7 +162,8 @@ const routes = [
     },
     meta:{
       header:'Country Profiles',
-      infoContent:'aboutThis-profiles'
+      infoContent:'aboutThis-profiles',
+      icon:'profiles'
     },
     props: (route) => ({
       activeCountryId: route.params.country || '',
@@ -166,7 +175,14 @@ const routes = [
     link: '/geospatial-data',
     name: 'Geospatial Data',
     meta:{
-      header:'Geospatial Data'
+      header:'Geospatial Data',
+      icon:'GIS'
+    },
+    beforeEnter: async (to, from, next) => {
+      setTimeout(() => {
+        store.commit('loader/setLoading', false);
+      }, 500)
+      next();
     },
     component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData.vue')
   },
@@ -175,7 +191,8 @@ const routes = [
     link: '/about',
     name: 'About',
     meta:{
-      header:'About the SIDS Data Visualization Platform'
+      header:'About the SIDS Data Platform',
+      icon:'about'
     },
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);

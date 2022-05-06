@@ -1,9 +1,6 @@
 <template>
   <div class="">
     <v-card class="mb-1 background-transparent">
-      <!--       <button class="printout debug" @click="">
-        Printout Datasets to Console
-      </button> -->
       <v-row>
         <v-col cols="6">
           <v-list class="background-none" dense>
@@ -43,7 +40,7 @@
                     ></v-img>
                   </v-card-title>
                   <v-card-text class="tooltip-card_text">
-                    {{ item.description }}
+                    {{ item.content }}
                   </v-card-text>
                 </v-card>
               </v-tooltip>
@@ -59,7 +56,7 @@
             <v-list-item-group v-model="activePillar" mandatory>
               <v-tooltip
                 right
-                v-for="(item, i) in pillars"
+                v-for="(item, i) in goals.pillars"
                 :key="i"
                 eager
                 open-delay="200"
@@ -114,8 +111,8 @@
             ref="slider"
           >
             <v-slide-item
-              v-for="(n, index) in activeGoalTypes"
-              :key="n"
+              v-for="(n, index) in activeGoals"
+              :key="n.name"
               :value="index + 1"
             >
               <v-menu
@@ -136,8 +133,8 @@
                 <div class="goals-tooltip-content">
                   <v-tooltip
                     right
-                    v-for="(n, index) in activeGoalTypes"
-                    :key="n"
+                    v-for="(n, index) in activeGoals"
+                    :key="n.name"
                     eager
                     transition="none"
                     open-delay="300"
@@ -160,10 +157,10 @@
                     </template>
                     <v-card>
                       <v-card-title class="coal-title">
-                        {{ goalDescriptions[n].title }}
+                        {{ n.name }}
                       </v-card-title>
                       <v-card-text>
-                        {{ goalDescriptions[n].content }}
+                        {{ n.content }}
                       </v-card-text>
                     </v-card>
                   </v-tooltip>
@@ -173,6 +170,7 @@
           </v-slide-group>
         </v-col>
       </v-row>
+
       <v-row dense>
         <v-col>
           <v-autocomplete
@@ -184,8 +182,8 @@
             :items="filteredDatasets"
             item-text="name"
             item-value="name"
-            label="Dataset"
-            @input="onInput"
+            :label="dualModeEnabled ? 'Left Dataset' : 'Dataset'"
+            @change="onInput"
             outlined
           ></v-autocomplete>
         </v-col>
@@ -205,8 +203,8 @@
             item-text="Description"
             item-value="Description"
             :items="activeDataset.layers"
-            label="Layer"
-            @input="onInput"
+            :label="dualModeEnabled ? 'Left Layer' : 'Layer'"
+            @change="onInput"
             outlined
           ></v-select>
         </v-col>
@@ -225,34 +223,40 @@
             step="1"
             ticks="always"
             tick-size="4"
-            @input="onInput"
+            @change="onInput"
           ></v-slider>
         </v-col>
       </v-row>
       <v-row v-else class="spacing-row"> </v-row>
-
-      <!-- DUPLICATE START for dualmode selector -->
-      <!-- <v-row dense v-show="dualModeEnabled">
+      <v-row
+        id="modeInfoBox"
+        v-show="dualModeEnabled"
+        class="row row--dense"
+        style="padding: 0 1em 1em 1em"
+        >Comparison Slider enabled: Compare the leftmost and rightmost
+        tabs</v-row
+      >
+      <v-row dense v-show="bivariateModeEnabled">
         <v-col>
           <v-select
             rounded
             class="map-input"
             dense
             hide-details
-            v-model="comparisonDatasetName"
+            v-model="bivariateDatasetName"
             :items="filteredDatasets"
             item-text="name"
             item-value="name"
-            label="Dataset"
-            @input="emitComparisonUpdate"
+            label="Second Dataset"
+            @change="emitBivariateUpdate"
             outlined
           ></v-select>
         </v-col>
       </v-row>
       <v-row
-        v-show="dualModeEnabled"
+        v-show="bivariateModeEnabled"
         class="spacing-row"
-        v-if="comparisonDataset && comparisonDataset.type === 'layers'"
+        v-if="bivariateDataset && bivariateDataset.type === 'layers'"
         dense
       >
         <v-col>
@@ -261,40 +265,47 @@
             dense
             hide-details
             class="map-input"
-            v-model="comparisonLayerName"
+            v-model="bivariateLayerName"
             item-text="Description"
             item-value="Description"
-            :items="comparisonDataset.layers"
-            label="Layer"
-            @input="emitComparisonUpdate"
+            :items="bivariateDataset.layers"
+            :label="
+              bivariateModeEnabled ? 'Second Layer' : 'Should Not Be Displayed'
+            "
+            @change="emitBivariateUpdate"
             outlined
           ></v-select>
         </v-col>
       </v-row>
       <v-row
-        v-show="dualModeEnabled"
+        v-show="bivariateModeEnabled"
         class="spacing-row"
-        v-else-if="comparisonDataset && comparisonDataset.type === 'temporal'"
+        v-else-if="bivariateDataset && bivariateDataset.type === 'temporal'"
         dense
       >
         <v-col>
           <v-slider
             class="map-input"
-            v-model="comparisonLayerName"
-            :tick-labels="comparisonTicksLabels"
-            :max="comparisonDataset.layers.length - 1"
+            v-model="bivariateLayerName"
+            :tick-labels="bivariateTicksLabels"
+            :max="bivariateDataset.layers.length - 1"
             step="1"
             ticks="always"
             tick-size="4"
-            @input="emitComparisonUpdate"
+            @change="emitBivariateUpdate"
           ></v-slider>
         </v-col>
       </v-row>
-      <v-row v-else class="spacing-row" v-show="dualModeEnabled"> </v-row> -->
+      <v-row v-else class="spacing-row" v-show="bivariateModeEnabled"> </v-row>
       <!-- DUPLICATE END -->
+      <v-row
+        id="modeInfoBox"
+        v-show="dualModeEnabled || bivariateModeEnabled"
+        class="row row--dense"
+        style="padding: 0 1em 1em 1em"
+        >BIVARIATE MODE ENABLED: Select the pair of datasets
+      </v-row>
     </v-card>
-
-    <!-- TESTING - FLEXBOX TO CONTROL TABS AND ADDTAB BUTTON LAYOUT -->
     <div
       class="tab-system-box"
       v-bind:style="{
@@ -319,18 +330,11 @@
         @dragend="handleDragEnd"
         @remove="handleRemove"
       >
-        <!-- <button
-                id="chrome-tabs-slot-button"
-                class="chrome-tabs-slot-button"
-                @click="addTab"
-                slot="after"
-              >
-                ➕
-              </button> -->
       </vue-tabs-chrome>
       <button class="tab-add" @click="addEmptyTab">+</button>
       <!-- ➕ -->
     </div>
+
     <!-- INFO CARD -->
     <v-card class="mb-1 block-info background-grey">
       <button
@@ -361,23 +365,18 @@
         This map visualizes data for the SIDS at different resolutions. Select a
         dataset above or a country to view spatial data about that region.
       </v-card-text>
-      <!-- TESTING - BUTTONS TO ADD/REMOVE TABS FOR DEBUG -->
-      <!-- <div class="btns">
-        <button @click="addTab">New Tab</button>
-        <button @click="removeTab">Remove active Tab</button>
-      </div> -->
     </v-card>
-
-    <!-- New Legend/Histogram -->
-    <!-- <v-card v-if="displayLegend" class="histogram_frame"> -->
     <v-card v-show="displayLegend" class="background-grey histogram_frame">
       <div
         v-show="activeLayer"
         id="histogram_frame"
         class="pic app-body population-per-km col-flex"
       >
-        <div class="row-flex space-evenly" id="legendTitle"></div>
-        <div class="row-flex space-evenly" id="updateLegend"></div>
+        <div class="row-flex space-evenly legend-title" id="legendTitle"></div>
+        <div
+          class="row-flex space-evenly legend main-legend"
+          id="updateLegend"
+        ></div>
         <canvas
           ref="canvas_histogram"
           id="histogram"
@@ -389,13 +388,41 @@
         Select a Dataset and Layer to view data on the map.
       </v-card-text>
     </v-card>
+    <v-card class="background-grey bivariate_frame display-none">
+      <div id="bivariate_frame" class="pic app-body col-flex">
+        <canvas
+          ref="canvas_bivariate"
+          id="bivariate_canvas"
+          width="320"
+          height="200"
+        ></canvas>
+        <div class="toggleScaleTypeButtonWrapper">
+          <div id="XType">default</div>
+          <button
+            @click="toggleScaleType('bivariate', 'X')"
+            class="toggleScaleType"
+          >
+            Toggle X Scale
+          </button>
+          <div id="YType">default</div>
+          <button
+            @click="toggleScaleType('bivariate', 'Y')"
+            class="toggleScaleType"
+          >
+            Toggle Y Scale
+          </button>
+        </div>
+      </div>
+    </v-card>
   </div>
 </template>
 
 <script>
 // import { gis_store } from "../gis/gis_store.js";
+import globals from "@/gis/static/globals.js";
 import datasets from "@/gis/static/layers";
 import VueTabsChrome from "vue-tabs-chrome";
+import { goalTypesGis, goals } from '@/assets/goalsList'
 
 export default {
   name: "MapDatasetController",
@@ -403,302 +430,31 @@ export default {
     VueTabsChrome,
   },
   props: [
-    "displayLegend", //"map"
-    "dualModeEnabled",
+    "map", //map class instance
+    "displayLegend",
+    "dualModeEnabled", //bool value
+    "bivariateModeEnabled", //bool value
   ],
   data() {
     return {
-      // TESTING - TAB SYSTEM
-      // tabSystem: null, //used for v-model of tabs/tab-items
-      // tabsAreVisible: this.tabs.length <= 1 ? "hidden" : "visible",
-      // currentTabInstance: null, //obsoleted by directly accessing via $refs..._props.tabs
-      tab: "starting-tab", //"google",
+      tab: "starting-tab",
       tabs: [
-        /*  {
-          label: "info",
-          key: "info",
-          // closable: false,
-        },
-        {
-          label: "google",
-          key: "google",
-          favicon: require("../assets/testing/google.jpg"),
-        }, */
-        /* {
-          label: "New Tab",
-          key: "starting-tab",
-          data: {
-            dataset: null,
-            layer: null,
-            filters: {
-              //intended to facilitate resetting the filter
-              pillar: null, //int
-              goal: null, ///int
-              goalType: null, //str
-            },
-          },
-        }, */
       ],
+      bivariateDatasetName: null,
+      bivariateLayerName: null,
       //
       comparisonDatasetName: null,
       comparisonLayerName: null,
+      toggle_comparisonButtons: null, //v-model state for left 0/right 1 buttons
       //
       activeGoal: 1,
-      activeDatasetName: null,
-      activeLayerName: null,
+      activeDatasetName: null, //this.mainDatasetName,
+      activeLayerName: null, //this.mainLayerName,
       datasets,
       activeGoalType: "sdgs",
-      goalTypes: [
-        {
-          name: "SIDS offer Pillars",
-          value: "pillars",
-          headerImg: require("@/assets/media/goals-icons/sidsOfferPillars.png"),
-          description:
-            "UNDP’s SIDS offer – Rising Up for SIDS – presents an integrated approach for tapping into areas with potential to accelerate green recovery and transform societies based on three interconnected pillars and responds to the ambitions and demands SIDS expressed during the 2019 midterm review of the S.A.M.O.A. Pathway.",
-        },
-        {
-          name: "SDGs",
-          value: "sdgs",
-          headerImg: require("@/assets/media/goals-icons/SDGs.png"),
-          description:
-            "The Global Goals designed to guide development for a better and more sustainable future for all, set up by the UNGA in 2015 and are intended to be achieved in 2030, as per Agenda 2030.",
-        },
-        {
-          name: "SAMOA Pathway",
-          value: "samoaPriorities",
-          headerImg: require("@/assets/media/goals-icons/samoaPathway.png"),
-          description:
-            "The SAMOA Pathway (SIDS Accelerated Modalities of Action) reaffirms that SIDS remain a special case for sustainable development, recognizing SIDS's ownership and leadership in overcoming these challenges.",
-        },
-      ],
+      goalTypes: goalTypesGis,
+      goals,
       activePillar: 1,
-      pillars: [
-        {
-          name: "Blue Economy",
-          value: "blue",
-          icon: require("@/assets/media/goals-icons/pillars/blueEconomy.png"),
-          description:
-            "Harnessing the blue economy through an integrated approach rooted in sustainable finance and development.",
-        },
-        {
-          name: "Climate Action",
-          value: "climate",
-          icon: require("@/assets/media/goals-icons/pillars/climateAction.png"),
-          description:
-            "Promoting decarbonized and resilient societies through scaled up climate action and enhanced efforts to mobilize climate finance.",
-        },
-        {
-          name: "Digital transformation",
-          value: "digital",
-          icon: require("@/assets/media/goals-icons/pillars/digitalTransformation.png"),
-          description:
-            "Accelerating digital transformation through a whole-of-society approach that puts people at the centre for inclusive societies and resilient economies.",
-        },
-      ],
-      sdgs: [
-        "No poverty",
-        "Zero hunger",
-        "Good health and well-being",
-        "Quality education",
-        "Gender equality",
-        "Clean water and sanitation",
-        "Affordable and clean energy",
-        "Decent work and economic growth",
-        "Industry, innovation and infrastructure",
-        "Reduced inequalities",
-        "Sustainable cities and communities",
-        "Responsible consumption and production",
-        "Climate action",
-        "Life below water",
-        "Life on Land",
-        "Peace, justice, and strong institutions",
-        "Partnerships for the goals",
-      ],
-      samoaPriorities: [
-        "Sustainable, inclusive and equitable economic growth",
-        "Climate Change",
-        "Sustainable Energy",
-        "Disaster Risk Reduction",
-        "Oceans and Seas",
-        "Food Security and Nutrition",
-        "Water and Sanitation",
-        "Sustainable Transportation",
-        "Sustainable Consumption and Production",
-        "Chemical and Waste management",
-        "Health and NCDs",
-        "Gender Equality",
-        "Social Development",
-        "Biodiversity",
-        "Invasive species",
-        "Means of Implementation",
-      ],
-      goalDescriptions: {
-        "No poverty": {
-          title: "Goal 1 - No Poverty",
-          content:
-            "To end poverty in all its forms, everywhere, through a powerful commitment to leave no one behind and to reach those fathest behind first.",
-        },
-        "Zero hunger": {
-          title: "Goal 2 - Zero Hunger",
-          content:
-            "To end hunger, achieve food security and improve nutrition and promote sustainable agriculture.",
-        },
-        "Good health and well-being": {
-          title: "Goal 3 - Good Health and Well-Being",
-          content:
-            "To ensure healthy lives and promote well-being for all at all ages.",
-        },
-        "Quality education": {
-          title: "Goal 4 - Quality Education",
-          content:
-            "To ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.",
-        },
-        "Gender equality": {
-          title: "Goal 5 - Gender Equality",
-          content:
-            "To achieve gender equality and empower all women and girls.",
-        },
-        "Clean water and sanitation": {
-          title: "Goal 6 - Clean Water and Sanitation",
-          content:
-            "To ensure availability and sustainable management of water and sanitation for all.",
-        },
-        "Affordable and clean energy": {
-          title: "Goal 7 - Affordable and Clean Energy",
-          content:
-            "To ensure access to affordable, reliable, sustainable and modern energy for all.",
-        },
-        "Decent work and economic growth": {
-          title: "Goal 8 - Decent Work and Economic Growth",
-          content:
-            "To foster sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all.",
-        },
-        "Industry, innovation and infrastructure": {
-          title: "Goal 9 - Industry, Innovation, and Infrastructure",
-          content:
-            "To build resilient infrastructure, promote inclusive and sustainable industrialization, and foster innovation",
-        },
-        "Reduced inequalities": {
-          title: "Goal 10 - Reduced Inequality",
-          content: "To reduce income inequality within and among countries.",
-        },
-        "Sustainable cities and communities": {
-          title: "Goal 11 - Sustainable cities and communities",
-          content:
-            "To make cities and human settlements inclusive, safe, resilient, and sustainable.",
-        },
-        "Responsible consumption and production": {
-          title: "Goal 12 - Responsible consumption and production",
-          content: "To ensure sustainable consumption and production patterns",
-        },
-        "Climate action": {
-          title: "Goal 13 - Climate Action",
-          content:
-            "To take urgent action to combat climate change and its impacts by regulating emissions and promoting developments in renewable energy",
-        },
-        "Life below water": {
-          title: "Goal 14 - Life Below Water",
-          content:
-            "To conserve and sustainably use the oceans, seas and marine resources for sustainable development.",
-        },
-        "Life on Land": {
-          title: "Goal 15 - Life on Land",
-          content:
-            "To protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss",
-        },
-        "Peace, justice, and strong institutions": {
-          title: "Goal 16 - Peace, justice and strong institutions",
-          content:
-            "To promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels.",
-        },
-        "Partnerships for the goals": {
-          title: "Goal 17 - Partnership for the goals",
-          content:
-            "To strengthen the means of implementation and revitalize the global partnership for sustainable development.",
-        },
-        "Sustainable, inclusive and equitable economic growth": {
-          title:
-            "1. Sustained and sustainable, inclusive and equitable economic growth with decent work for all",
-          content:
-            "To support SIDS to achieve sustained, inclusive and equitable growth with full and productive employment, social protection and the creation of decent work for all.",
-        },
-        "Climate Change": {
-          title: "2. Climate Change",
-          content:
-            "To help SIDS with climate adaptation, including persistent drought and extreme weather events, sea-level rise, coastal erosion and ocean acidification.",
-        },
-        "Sustainable Energy": {
-          title: "3. Sustainable Energy",
-          content:
-            "To address challenges in accessing sustainable energy in the SIDS including enhanced accessibility to modern energy services, energy efficiency and use of economically viable and environmentally sound technology",
-        },
-        "Disaster Risk Reduction": {
-          title: "4. Disaster risk reduction",
-          content:
-            "To address the critical need to build resilience, strengthen monitoring and prevention, reduce vulnerability, raise awareness and increase preparedness to respond to and recover from disasters in SIDS",
-        },
-        "Oceans and Seas": {
-          title: "5. Oceans and seas",
-          content:
-            "To support healthy, productive and resilient oceans and coasts are critical for, inter alia, poverty eradication, access to sufficient, safe and nutritious food, livelihoods, economic development, essential ecosystem services, and identity and culture in SIDS.",
-        },
-        "Food Security and Nutrition": {
-          title: "6. Food security and nutrition",
-          content:
-            "To support the right to have access to safe, sufficient and nutritious food, the eradication of hunger and the provision of livelihoods while conserving, protecting and ensuring the sustainable use of land, soil, forests, water, plants and animals, biodiversity and ecosystems.",
-        },
-        "Water and Sanitation": {
-          title: "7. Water and sanitation",
-          content:
-            "To support the efforts of small island developing States to develop capacities for the effective, inclusive and sustainable implementation of the integrated management of water resources and related ecosystems",
-        },
-        "Sustainable Transportation": {
-          title: "8. Sustainable transportation",
-          content:
-            "To support SIDS to gain access to environmentally sound, safe, affordable, sustainable and well-maintained transportation",
-        },
-        "Sustainable Consumption and Production": {
-          title: "9. Sustainable consumption and production",
-          content:
-            "To support SIDS on sustainable consumption and production patterns to advance sustainable consumption and production, with an emphasis on MSMEs, sustainable tourism, waste management, food and nutrition, lifestyles, and rural supply chains.",
-        },
-        "Chemical and Waste management": {
-          title:
-            "10. Management of chemicals and waste, including hazardous waste",
-          content:
-            "To support SIDS in sound management of chemicals throughout their life cycle and of waste is crucial for the protection of human health and the environment",
-        },
-        "Health and NCDs": {
-          title: "11. Health and non-communicable diseases",
-          content:
-            "To support prevention, treatment, care, and education in health as well as support the national actions of SIDS in addressing communicable and non-communicable diseases.",
-        },
-        "Gender Equality": {
-          title: "12. Gender Equality and women’s empowerment",
-          content:
-            "To support gender equality and women’s empowerment and the full realization of human rights for women and girls have a transformative and multiplier effect on sustainable development and is a driver of economic growth in SIDS.",
-        },
-        "Social Development": {
-          title: "13. Social Development",
-          content:
-            "To support efforts to enhance social protection and inclusion, to improve well-being and to guarantee opportunities for the most vulnerable and disadvantaged to have equal access to education, health, food, water and sanitation, and productive resources.",
-        },
-        Biodiversity: {
-          title: "14. Biodiversity",
-          content:
-            "To suport the conservation and sustainable use of biodiversity, as well as their access to and the fair and equitable sharing of benefits arising from the utilization of genetic resources, with the vision of living in harmony with nature",
-        },
-        "Invasive species": {
-          title: "15. Invasive alien species",
-          content:
-            "To help multisectoral collaboration in SIDS to address invasive alien species in order to protect biodiversity and livelihoods, preserve and maintain ocean resources and ecosystem resiliency, and enhance food security and adapt to climate change",
-        },
-        "Means of Implementation": {
-          title: "16. Means of implementation, including partnerships",
-          content:
-            "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
-        },
-      },
       layers: [],
     };
   },
@@ -714,7 +470,7 @@ export default {
           filtered.layers = filtered.layers.filter((layer) =>
             layer.SDG.includes(this.activeGoal)
           );
-        } else if (this.activeGoalType === "samoaPriorities") {
+        } else if (this.activeGoalType === "samoa") {
           filtered.layers = filtered.layers.filter((layer) =>
             layer.samoa_pathway.includes(this.activeGoal)
           );
@@ -725,8 +481,12 @@ export default {
         return array;
       }, []);
     },
+    activeGoals() {
+      console.log(this.goals[this.activeGoalType])
+      return this.goals[this.activeGoalType];
+    },
     activeGoalTypes() {
-      return this[this.activeGoalType];
+      return this.goals[this.activeGoalType];
     },
     ticksLabels() {
       return this.activeDataset.layers.map((layer) => layer.Temporal);
@@ -750,7 +510,6 @@ export default {
     },
 
     comparisonLayer() {
-      console.log(this.comparisonDataset);
       if (!this.comparisonDataset || this.comparisonDataset === "info")
         return null;
       if (this.comparisonDataset.type === "temporal") {
@@ -764,22 +523,53 @@ export default {
         return this.comparisonDataset.layers[0];
       }
     },
-    comparisonTicksLabels() {
-      console.log("comparisonTicksLabels()");
-      return this.comparisonDataset.layers.map((layer) => layer.Temporal);
-    },
     comparisonDataset() {
-      console.log("comparisonDataset()");
       return this.filteredDatasets.find(
         (dataset) => dataset.name === this.comparisonDatasetName
       );
+    },
+    comparisonTicksLabels() {
+      console.log("comparisonTicksLabels()");
+      return this.comparisonDataset.layers.map((layer) => layer.Temporal);
     },
 
     tabsAreVisible() {
       return this.tabs.length <= 0 ? false : true;
     },
+
+    bivariateDataset() {
+      return this.filteredDatasets.find(
+        (dataset) => dataset.name === this.bivariateDatasetName
+      );
+    },
+    bivariateLayer() {
+      if (!this.bivariateDataset || this.bivariateDataset === "info")
+        return null;
+      if (this.bivariateDataset.type === "temporal") {
+        return this.bivariateDataset.layers[this.bivariateLayerName];
+      } else if (this.bivariateDataset.type === "layers") {
+        return this.bivariateDataset.layers.find(
+          (layer) => layer.Description === this.bivariateLayerName
+        );
+      } else {
+        return this.bivariateDataset.layers[0];
+      }
+    },
+    bivariateTicksLabels() {
+      return this.bivariateDataset.layers.map((layer) => layer.Temporal);
+    },
   },
   methods: {
+    toggleScaleType(chartName, axisName) {
+      let chart;
+      if (chartName === "bivariate") {
+        chart = globals.myBivariateScatterChart;
+      } else {
+        console.warn("unexpected chartName passed, doing nothing");
+        return;
+      }
+      this.map.toggleScaleType(chart, [axisName]); //call class function
+    },
     //TESTING - TAB SYSTEM
     replaceCurrentTab() {
       //find current tab by looking through .getTabs() for matching this.tab key and overwrite the data and label values
@@ -788,7 +578,12 @@ export default {
       let tabList = this.$refs.tab._props.tabs; //directly accessing the storage of tab instances
       console.info("currentTabKey", currentTabKey, "tabList:", tabList);
 
-      for (const tab of tabList) {
+      //for (const tab of tabList)
+      let index = null;
+      for (let i = 0; i < tabList.length; i++) {
+        let tab = tabList[i];
+        index = i;
+
         console.log(
           `${currentTabKey} vs
           ${tab.key},`
@@ -809,6 +604,8 @@ export default {
             currentTabKey
           );
       }
+
+      return index; //
 
       /* let tab = this.currentTabInstance;
       console.log("current tab; overwriting", tab);
@@ -892,51 +689,110 @@ export default {
       console.log("getTabs", this.$refs.tab.getTabs());
     },
     handleSwap(tab, targetTab) {
+      // tab, targetTab
+      // console.info("swap", tab, targetTab);
       console.info("swap", tab, targetTab);
+      this.handleDragEnd(null, tab); //sort of a hack that solves two issues noticed right now
+      //1) dragend does not seem to always trigger
+      //2) comparison data layer/map instance/comparisonDataset and comparisonLayer not updating until a second attempt
     },
     handleDragStart(e, tab, index) {
       console.info("dragstart", e, tab, index);
-      this.handleTabClick(e, tab, index); //to trigger auto select
+      //disable for dual mode, allowing dragend logic to take over updating map with data
+      // let tabs = this.$refs.tab.getTabs();
+      if (!this.dualModeEnabled) {
+        //check if it's the first or last tab, trigger to update
+        this.handleTabClick(e, tab, index); //to trigger auto select
+      }
+      // else if (this.dualModeEnabled && index === tabs.length - 1) {
+      //   //index indicates it's the last tab, do comparison update
+      //   console.log("last tab dragging update");
+      //   this.handleTabClick(e, tab, index, true); //to trigger auto select
+      // } else if (this.dualModeEnabled && index === 0) {
+      //   //index indicates it's the first tab, do normal update
+      //   console.log("first tag dragging update");
+      //   this.handleTabClick(e, tab, index); //to trigger auto select
+      // }
+      else {
+        console.log("dragstart skipped due to dualmode on");
+        this.updateControllerFromTab(tab);
+      }
     },
-    handleDragging(e, tab, index) {
-      console.info("dragging", e, tab, index);
+
+    handleDragging() {
+      // e, tab, index
+      // console.info("dragging", e, tab, index);
     },
-    handleDragEnd(e, tab, index) {
-      console.info("dragend", e, tab, index);
-    },
-    handleRemove(e, tab, index) {
-      console.info("remove", e, tab, index);
-      //on close, if length of tabs is 1, get that tab and call handleClick to select that layer automatically
-      let tabs = this.$refs.tab.getTabs();
-      if (tabs.length === 1) {
-        console.log("only 1 tab, defaulting to that tab's layer");
-        let loneTab = tabs[0];
-        this.handleTabClick(e, loneTab, 0);
-      } else if (tabs.length < 1) {
-        console.warn(
-          "! last tab removed, needs handling; maybe default infobox content"
+
+    handleDragEnd(e, tab) {
+      console.info("dragend", e, tab);
+
+      //dual mode tab logic
+      //check position the tab has been placed in
+      if (this.dualModeEnabled) {
+        console.log("dualmode-dragend start");
+        let key = tab.key;
+        let tabs = this.$refs.tab.getTabs();
+        //check if it's first or last of all tabs
+        if (key === tabs[0].key) {
+          //it's the first, update main map
+          console.log(
+            "tab dragged into first place -> updating main/left map instance"
+          );
+          let index = 0;
+          this.handleTabClick(e, tab, index, false);
+        } else if (key === tabs[tabs.length - 1].key) {
+          //it's the last, update the comparison map
+          console.log(
+            "tab dragged into last place -> updating compare/right map instance"
+          );
+          let index = tabs.length - 1;
+          //update the comparison-related state info, which is used in separate emitComparisonUpdate
+          this.comparisonDatasetName = this.activeDatasetName;
+          this.comparisonLayerName = this.activeLayerName;
+          //trigger update
+          this.handleTabClick(e, tab, index, true);
+        }
+        //CSS styling of first/last tabs in dualmode
+        //get the tabs html nodes
+        this.clearTabStyles();
+        let tabNodeList = document.querySelectorAll(".tabs-content .tabs-item");
+        // tabNodeList.forEach((tabNode) => {
+        //   tabNode.classList.remove(
+        //     "tab-leftmost-highlight",
+        //     "tab-rightmost-highlight"
+        //   );
+        // });
+        //add custom first/last custom styling
+        //TODO add consideration for current number of tabs
+        // if (tabNodeList.length > 1)
+        tabNodeList[0]?.classList.add("tab-leftmost-highlight");
+        tabNodeList[tabNodeList.length - 1]?.classList.add(
+          "tab-rightmost-highlight"
         );
       }
     },
-    handleTabClick(e, tab, index) {
-      //intended to facilitate resetting the filter
+
+    handleRemove(e) {
+      let tabs = this.$refs.tab.getTabs();
+      if (tabs.length === 1) {
+        let loneTab = tabs[0];
+        this.handleTabClick(e, loneTab, 0);
+      }
+    },
+    handleTabClick(e, tab, index, comparison = false) {
       this.activeGoalType = tab.data.filters.goalType; //str
       this.activeGoal = tab.data.filters.goal; ///int
       this.activePillar = tab.data.filters.pillar; //int
-      //should look for the corresponding dataset and layer in filtered datasets
-      //and update the reactive data/computed props in this components:
-      //activeDatasetName and activeLayerName are computed properties and inform activeLayer and activeDataset
-      //which in turn informs the dataset selector and slider
       this.updateControllerFromTab(tab);
-      //update tab instance reference stored for use in replacing current active tab
-      console.info(e, tab, index);
-      this.emitUpdate();
+      if (!comparison) {
+        this.emitUpdate();
+      } else if (comparison === true) {
+        this.emitComparisonUpdate();
+      }
     },
 
     updateControllerFromTab(tab) {
-      console.log("updateControllerFromTab", tab);
-      console.log(tab.data);
-      // let label = tab.label;
       this.activeDatasetName = tab.data.dataset;
       this.activeLayerName = tab.data.layer;
     },
@@ -950,48 +806,61 @@ export default {
       } else if (this.activeDataset.type === "layers" && this.activeLayer) {
         labelString = this.activeLayer.Description;
       } else {
-        console.warn(
-          "Tab label couldn't be created for:",
-          this.activeDataset.name,
-          this.activeLayer.Field_Name
-        );
         return null;
       }
-      console.log("labelString created: ", labelString);
       return labelString;
     },
 
-    onInput() {
-      //interaction handler for dataset and layer selectors of the dataset controller
-      this.replaceCurrentTab();
-      this.emitUpdate();
-      // this.addTab(); //disabled, not desired to add tab on every selection
+    clearTabStyles() {
+      let tabNodeList = document.querySelectorAll(".tabs-content .tabs-item");
+      tabNodeList.forEach((tabNode) => {
+        tabNode.classList.remove(
+          "tab-leftmost-highlight",
+          "tab-rightmost-highlight"
+        );
+      });
     },
-    //
-    /**
-     *passes current dataset+layer selection upwards
-     */
+
+    onInput() {
+      this.$nextTick(()=> {
+        this.replaceCurrentTab();
+        this.emitUpdate();
+      })
+    },
     emitUpdate() {
-      // this.gis_store.testIncrement();
-      // console.log(`emitUpdate of activeDataset and activeLayer`);
-      let active = { dataset: this.activeDataset, layer: this.activeLayer }; //package data to pass to parents with update
-      console.log("$emit update:", active);
+      let active = {
+        dataset: this.activeDataset,
+        layer: this.activeLayer,
+      };
       this.$emit("update", active);
+      if (globals.bivariateMode) {
+        this.emitBivariateUpdate();
+      }
     },
     emitComparisonUpdate() {
-      console.warn("emitComparisonUpdate");
       let active = {
         dataset: this.comparisonDataset,
         layer: this.comparisonLayer,
-      }; //package data to pass to parents with update
+      };
       this.$emit("updateComparison", active);
+    },
+    emitBivariateUpdate() {
+      this.$nextTick(()=>{
+        let active = {
+          firstDataset: this.activeDataset,
+          firstLayer: this.activeLayer,
+          secondDataset: this.bivariateDataset,
+          secondLayer: this.bivariateLayer,
+        };
+        this.$emit("updateBivariate", active);
+      })
     },
 
     getGoalImage(index) {
       if (this.activeGoalType === "sdgs") {
-        return require(`@/assets/media/goals-icons/sdgs/${index+1}.png`)
+        return require(`@/assets/media/goals-icons/sdgs/${index + 1}.png`);
       } else {
-        return require(`@/assets/media/goals-icons/samoa/${index+1}.png`)
+        return require(`@/assets/media/goals-icons/samoa/${index + 1}.png`);
       }
     },
     goalUpdateNext() {
@@ -1002,16 +871,16 @@ export default {
     },
     resetGoalModel() {
       this.activeGoal = 1;
-
-      //Requred to reset slider when switching between samoa and sdgs
       this.$refs.slider && this.$refs.slider.items[0].toggle();
       this.$refs.slider && this.$refs.slider.scrollIntoView();
     },
     selectGoal(goalNumber) {
       this.activeGoal = goalNumber;
-      // this.$refs.slider && this.$refs.slider.items[goalNumber-1].toggle();
       this.$refs.slider.scrollOffset = 120 * (goalNumber - 1);
     },
+  },
+  mounted() {
+    this.addEmptyTab(); //add empty tab in order to display the tab system and convey its presence to user
   },
 };
 </script>
@@ -1019,9 +888,102 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 /*Brandon additions*/
+.toggleScaleTypeButtonWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.toggleScaleTypeButtonWrapper > button {
+  background-color: white !important;
+  outline: grey !important;
+}
+
+.comparisonButtons .v-btn {
+  padding: 0 1em !important;
+  height: 100% !important;
+}
+
 .data-controller .v-sheet.v-card {
   border-radius: 0;
 }
+
+.dualmode-legend-container {
+  background-color: transparent;
+  position: absolute;
+  width: 80%;
+  top: 90.5%;
+  left: 10%;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.legend-frame {
+  flex: 0 1 320px;
+  text-align: center;
+  padding: 4px 0;
+  border-radius: 5px;
+}
+.main-shadow-color {
+  box-shadow: 0px 0px 20px 10px red;
+}
+.comparison-shadow-color {
+  box-shadow: 0px 0px 20px 10px magenta;
+}
+
+.main-map-legend,
+.comparison-map-legend {
+  /* position: relative; */
+  /* background-color: grey; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.main-map-legend {
+  /* left: 25vw;
+  top: 75vh; */
+}
+
+.comparison-map-legend {
+  /* left: 75vw;
+  top: 75vh; */
+}
+
+/* .left-symbol,
+.right-symbol {
+  position: relative;
+  background-color: grey;
+}
+.left-symbol {
+  position: absolute;
+  left: -12px;
+}
+.right-symbol {
+  position: absolute;
+  right: 12px;
+} */
+.legend-title {
+  font-weight: bold;
+}
+
+/* .left-symbol, */
+#main-legend-title,
+.tab-leftmost-highlight {
+  color: red;
+  border: red;
+}
+/* .right-symbol, */
+#comparison-legend-title,
+.tab-rightmost-highlight {
+  color: magenta;
+  border: magenta;
+}
+
 .tab-system-box {
   /* should force the chrome-tabs and tab-add towards extreme ends of container */
   display: flex;
@@ -1148,10 +1110,14 @@ export default {
 }
 
 /* TESTING - TAB SYSTEM */
+/* .vue-tabs-chrome {
+} */
 .vue-tabs-chrome .tabs-content,
 .tab-add {
+  /* height: inherit; */
   height: 22px;
 }
+
 .vue-tabs-chrome {
   font-size: smaller;
   padding-top: 0;

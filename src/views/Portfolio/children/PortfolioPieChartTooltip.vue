@@ -5,14 +5,14 @@
       <v-list-item-group>
         <v-list-item class="p-0">
           <v-list-item-content class="one-line">
-            <v-list-item-title class="one-line_header" v-text="'Budget:'"></v-list-item-title>
+            <v-list-item-title class="" v-text="'Budget:'"></v-list-item-title>
             <v-list-item-subtitle class="one-line_subtitle">{{finance}} USD</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item  class="p-0">
           <v-list-item-content class="one-line">
-            <v-list-item-title class="one-line_header" v-text="'Share:'"></v-list-item-title>
-            <v-list-item-subtitle>{{share}} %</v-list-item-subtitle>
+            <v-list-item-title class="" v-text="'Share:'"></v-list-item-title>
+            <v-list-item-subtitle class="one-line_subtitle">{{share}} %</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
@@ -34,9 +34,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .tooltip-root {
-  max-width: 320px;
+  max-width: 360px;
 }
 .indicators-list {
   padding-bottom: 0;
@@ -50,6 +50,10 @@ export default {
   min-height: 25px;
 }
 .indicators-list .one-line_subtitle{
-  white-space: normal;
+  overflow: visible;
+  margin-left: 1em;
+}
+.p-0{
+  padding:0 !important;
 }
 </style>
