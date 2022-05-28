@@ -184,7 +184,7 @@ const routes = [
       }, 500)
       next();
     },
-    component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData/GeospatialData.vue')
   },
   {
     path: '/about',
