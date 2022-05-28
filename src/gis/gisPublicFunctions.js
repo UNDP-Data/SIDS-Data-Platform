@@ -1,5 +1,6 @@
 import colors from "@/gis/static/colors.js";
 import chroma from "chroma-js";
+import constants from "@/gis/static/constants.js";
 
 export function updateData(
   activeDataset,
@@ -12,7 +13,7 @@ export function updateData(
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
   let Field_Name = activeLayer.Field_Name;
-
+  this._handleOceanData(activeDataset, activeLayer, comparison)
   // this.remove3d();
 
   cls.dataLayer = Field_Name; //update global to reflect selected datalayer
@@ -153,6 +154,81 @@ export function updateData(
   }, 1000);
 
   map.moveLayer("allsids", this.options.firstSymbolId);
+}
+
+export function addOcean(activeDataset, activeLayer, comparison = false) {
+  let map = !comparison ? this.map : this.map2; //
+  let cls = !comparison
+    ? this.options.currentLayerState
+    : this.options.comparisonLayerState;
+
+  // this.clearHexHighlight();
+  // this.remove3d();
+
+  cls.dataLayer = activeLayer.Field_Name; //corresponds to the attributeId
+  cls.hexSize = "ocean";
+
+  cls.breaks = [-4841, -3805, -2608, -1090, 0];
+  cls.color = colors.colorNatural["ocean-depth"];
+
+  for (var layer in constants.userLayers) {
+    if (map.getLayer(constants.userLayers[layer])) {
+      map.removeLayer(constants.userLayers[layer]);
+    }
+  }
+
+  let layerOptions = {
+    id: "ocean",
+    type: "fill",
+    source: "ocean",
+    "source-layer": "oceans",
+    layout: {
+      visibility: "visible",
+    },
+    filter: ["<", "depth", 0],
+    paint: {
+      "fill-color": [
+        "interpolate",
+        ["linear"],
+        ["get", "depth"], //TODO remove this hardcoding
+        -4841,
+        "#08519c",
+        -3805,
+        "#3182bd",
+        -2608,
+        "#6baed6",
+        -1090,
+        "#bdd7e7",
+        1322,
+        "#eff3ff",
+      ],
+      "fill-opacity": this.options.opacity, //0.8,
+    },
+  };
+
+  map.addLayer(layerOptions, this.options.firstSymbolId);
+
+  if (!comparison) {
+    let waitInterval = 1000;
+    setTimeout(() => {
+      if (map.areTilesLoaded()) {
+        let features = map.queryRenderedFeatures({
+          layers: ["ocean"],
+        });
+        if (features) {
+          let uniFeatures;
+          uniFeatures = this.getUniqueFeatures(features, "depth"); //depth is field_id for ocean depths layer
+          let selectedData = uniFeatures.map((x) => x.properties["depth"]);
+          this.emit('layerUpdate', {
+            colorRamp: cls.color,
+            breaks: cls.breaks,
+            selectedData: selectedData,
+            precision: this.options.precision
+          });
+        }
+      }
+    }, waitInterval);
+  }
 }
 
 export function on(eventName, callback) {

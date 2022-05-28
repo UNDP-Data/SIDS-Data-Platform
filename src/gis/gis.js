@@ -9,10 +9,12 @@ import "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import axios from "axios";
 
-import { updateData, on, emit } from './gisPublicFunctions'
+import { updateData, on, emit, addOcean } from './gisPublicFunctions'
 
 export default class Map {
-  constructor(containerId, leftMapContainerId, rightMapContainerId) {
+  constructor(containerId, leftMapContainerId,
+    // rightMapContainerId
+  ) {
     mapboxgl.accessToken =
       "pk.eyJ1Ijoic2ViYXN0aWFuLWNoIiwiYSI6ImNpejkxdzZ5YzAxa2gyd21udGpmaGU0dTgifQ.IrEd_tvrl6MuypVNUGU5SQ";
     this.containerId = containerId;
@@ -20,10 +22,10 @@ export default class Map {
       container: leftMapContainerId,
       ...constants.mapOptions,
     });
-    this.map2 = new mapboxgl.Map({
-      container: rightMapContainerId,
-      ...constants.mapOptions,
-    });
+    // this.map2 = new mapboxgl.Map({
+    //   container: rightMapContainerId,
+    //   ...constants.mapOptions,
+    // });
     this.Draw = null;
     this.drawModeDisabled = false;
     this.map.on("load", () => {
@@ -42,6 +44,7 @@ export default class Map {
     this.updateData = updateData;
     this.on = on;
     this.emit = emit;
+    this.addOcean = addOcean;
   }
 
   getBasemapLabels() {
@@ -118,6 +121,72 @@ export default class Map {
             "line-width": 1,
           },
         }
+      );
+    }
+  }
+
+  _handleOceanData (
+    activeDataset,
+    activeLayer,
+    comparison = false
+  ) {
+    let map = !comparison ? this.map : this.map2; //
+    let cls = !comparison
+      ? this.options.currentLayerState
+      : this.options.comparisonLayerState;
+    let Field_Name = activeLayer.Field_Name;
+    if (map.getLayer("ocean")) {
+      if (!Field_Name.includes("fl")) {
+
+        map.removeLayer("ocean");
+
+        cls.hexSize = "hex5";
+
+        map.addLayer(
+          {
+            id: "hex5",
+            type: "fill",
+            source: "hex5",
+            "source-layer": "hex5",
+            layout: {
+              visibility: "visible",
+            },
+            paint: {
+              "fill-color": "blue",
+              "fill-opacity": 0.0,
+            },
+          },
+          this.options.firstSymbolId
+        );
+      }
+    } else if (
+      activeLayer.Name === "Ocean Data" &&
+      !(activeLayer.Field_Name === "depths")
+    ) {
+
+      cls.hexSize = "ocean";
+
+      for (var layer in constants.userLayers) {
+        if (map.getLayer(constants.userLayers[layer])) {
+          map.removeLayer(constants.userLayers[layer]);
+        }
+      }
+
+      map.addLayer(
+        {
+          id: "ocean",
+          type: "fill",
+          source: "ocean",
+          "source-layer": "oceans",
+          layout: {
+            visibility: "visible",
+          },
+          paint: {
+            "fill-color": "blue",
+            "fill-opacity": 0.0, //globals.opacity, //
+          },
+        },
+        globals.firstSymbolId
       );
     }
   }

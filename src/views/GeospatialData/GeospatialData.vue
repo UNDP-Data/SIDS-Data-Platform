@@ -113,7 +113,7 @@
         </div> -->
       </div>
 
-      <div id="map2"></div>
+      <!-- <div id="map2"></div> -->
     </div>
   </div>
 </template>
@@ -816,15 +816,15 @@ export default {
         //     }
         //   }
         // }
-        // if (e.layer.Name === "Ocean Data") {
-        //   if (e.layer.Field_Name === "depth") {
-        //     this.map.addOcean(e.dataset, e.layer);
-        //   } else {
-        //     this.map.changeDataOnMap(e.dataset, e.layer);
-        //   }
-        // } else {
+        if (e.layer.Name === "Ocean Data") {
+          if (e.layer.Field_Name === "depth") {
+            this.map.addOcean(e.dataset, e.layer);
+          } else {
+            this.map.updateData(e.dataset, e.layer);
+          }
+        } else {
           this.map.updateData(e.dataset, e.layer);
-        // }
+        }
       }
     },
   },
