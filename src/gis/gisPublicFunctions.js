@@ -710,3 +710,26 @@ export function changeBasemap (selectedBasemap) {
   //   self.hideSpinner();
   });
 }
+export function toggleLabels(label) {
+  let map = this.map;
+
+  if (label == true) {
+    this.options.basemapLabels.forEach((x) => {
+      //console.log(x);
+      map.addLayer(x);
+      if (x.type === "line") {
+        if (map.getLayer(this.options.currentLayerState.hexSize)) {
+          map.moveLayer(x.id, this.options.currentLayerState.hexSize);
+        }
+      }
+    });
+  } else {
+    this.options.basemapLabels.forEach(function (x) {
+      map.removeLayer(x.id);
+    });
+  }
+
+  // map.once("idle", () => {
+  //   this.hideSpinner();
+  // });
+}
