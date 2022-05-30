@@ -10,7 +10,7 @@ import "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import axios from "axios";
 
-import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D } from './gisPublicFunctions'
+import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor } from './gisPublicFunctions'
 import { onDataClick, onAdminClick } from './gisEventHandlers'
 
 export default class Map {
@@ -42,6 +42,7 @@ export default class Map {
     this.options = globals
     this.options.myBivariateScatterChart = {};
     this.events={};
+    this.options.colorSCheme = {};
     this.updateData = updateData;
     this.on = on;
     this.emit = emit;
@@ -51,6 +52,7 @@ export default class Map {
     this.zoomToCountry = zoomToCountry;
     this.changeHexagonSize = changeHexagonSize;
     this.add3D = add3D;
+    this.changeColor = changeColor;
   }
 
   getBasemapLabels() {
@@ -554,5 +556,40 @@ export default class Map {
       this.options.currentLayerState.dataLayer,
       0,
     ]);
+  }
+
+  computeBreaksAndColorRamp(
+    data,
+    colors,
+    breakMode,
+    numGroups,
+    currentBreaks,
+  ) {
+
+    let numBreaks = 4; //TODO: DETERMINE THIS IMPLICIT SOURCE
+    //calculate breaks and counts for use in histogram
+    let histogram_breaks = chroma.limits(data, breakMode, numGroups);
+    let break_index = 0;
+    let break_counters = Array(numBreaks).fill(0);
+    for (let i = 0; i < numGroups; i++) {
+      if (histogram_breaks[i] > currentBreaks[break_index + 1]) {
+        break_index++;
+      }
+      break_counters[break_index]++; //increment the counter at current break
+    }
+
+    let colorRampNew = [];
+    for (let i = 0; i < numBreaks; i++) {
+      let colorRampPart = chroma
+        .scale([colors[i], colors[i + 1]]) //scale maps numeric values to a color palette
+        .mode("lch") //interpolation mode in which the colors are interpolated; affects color output results
+        .colors(break_counters[i]); //how many colors to generate in the palette
+      colorRampNew = colorRampNew.concat(colorRampPart);
+    }
+
+    return {
+      colorRamp: colorRampNew,
+      histogramBreaks: histogram_breaks,
+    };
   }
 }

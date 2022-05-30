@@ -20,6 +20,11 @@
         :map="map"
       />
     </div>
+    <div class="button-wrapper">
+      <map-color-selector
+        :map="map"
+      />
+    </div>
   </div>
 </template>
 
@@ -28,6 +33,7 @@ import MapCountrySelector from './MapCountrySelector'
 import MapAdminBoundariesController from './MapAdminBoundariesController'
 import MapResolutionController from './MapResolutionController'
 import Map3dController from './Map3dController'
+import MapColorSelector from './MapColorSelector'
 export default {
   name: 'MapToolbap',
   data() {
@@ -38,7 +44,8 @@ export default {
     MapCountrySelector,
     MapAdminBoundariesController,
     MapResolutionController,
-    Map3dController
+    Map3dController,
+    MapColorSelector
   },
   props:[
     'map'

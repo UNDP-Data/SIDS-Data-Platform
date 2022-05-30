@@ -44,7 +44,7 @@ export function updateData(
       map.moveLayer(cls.hexSize, this.options.firstSymbolId);
     }
   }
-
+  let self = this;
   setTimeout(() => {
     var features = map.queryRenderedFeatures({
       layers: [cls.hexSize],
@@ -52,11 +52,11 @@ export function updateData(
     if (features) {
       var uniFeatures;
       if (cls.hexSize === "admin1") {
-        uniFeatures = this.getUniqueFeatures(features, "GID_1");
+        uniFeatures = self.getUniqueFeatures(features, "GID_1");
       } else if (cls.hexSize === "admin2") {
-        uniFeatures = this.getUniqueFeatures(features, "GID_2");
+        uniFeatures = self.getUniqueFeatures(features, "GID_2");
       } else {
-        uniFeatures = this.getUniqueFeatures(features, "hexid");
+        uniFeatures = self.getUniqueFeatures(features, "hexid");
       }
       var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
       console.warn("changeDataOnMap selectedData", selectedData);
@@ -72,33 +72,47 @@ export function updateData(
             breaks[i].toPrecision(this.options.precision)
           );
         }
-      } while (this.checkForDuplicates(breaks_new) && this.options.precision < 10);
+      } while (self.checkForDuplicates(breaks_new) && this.options.precision < 10);
       breaks = breaks_new;
+      let colorRamp;
+      if(self.options.colorSCheme.color && self.options.colorSCheme.color !=='original') {
+        if (self.options.colorSCheme.color === "red") {
+          colorRamp = colors.colorSeq["pinkish"];
+        } else if (self.options.colorSCheme.color === "purple") {
+          colorRamp = colors.colorSeq["purple"];
+        } else if (self.options.colorSCheme.color === "blue") {
+          colorRamp = colors.colorSeq["blues"];
+        } else if (self.options.colorSCheme.color === "colorblind-safe") {
+          colorRamp = colors.colorSeq["colorBlindGreen"];
+        }
+      } else {
+        colorRamp = colors.colorSeq["yellow-blue"];
 
-      var colorRamp = colors.colorSeq["yellow-blue"];
-
-      if (Field_Name.substring(0, 2) === "1a") {
-        colorRamp = colors.colorDiv.gdpColor;
-      } else if (Field_Name.substring(0, 2) === "1c") {
-        colorRamp = colors.colorSeq["pop"];
-      } else if (Field_Name === "7d10") {
-        colorRamp = colors.colorSeq["combo"];
-      } else if (Field_Name === "7d5") {
-        colorRamp = colors.colorSeq["minty"];
-      } else if (Field_Name === "7d7") {
-        colorRamp = colors.colorSeq["blues"];
-      } else if (Field_Name === "7d4") {
-        colorRamp = colors.colorSeq["pinkish"];
-      } else if (Field_Name === "7d8") {
-        colorRamp = colors.colorSeq["silvers"];
-      } else if (Field_Name === "d") {
-        breaks = [-4841, -3805, -2608, -1090, 1322];
-        colorRamp = colors.colorSeq["ocean"];
+        if (Field_Name.substring(0, 2) === "1a") {
+          colorRamp = colors.colorDiv.gdpColor;
+        } else if (Field_Name.substring(0, 2) === "1c") {
+          colorRamp = colors.colorSeq["pop"];
+        } else if (Field_Name === "7d10") {
+          colorRamp = colors.colorSeq["combo"];
+        } else if (Field_Name === "7d5") {
+          colorRamp = colors.colorSeq["minty"];
+        } else if (Field_Name === "7d7") {
+          colorRamp = colors.colorSeq["blues"];
+        } else if (Field_Name === "7d4") {
+          colorRamp = colors.colorSeq["pinkish"];
+        } else if (Field_Name === "7d8") {
+          colorRamp = colors.colorSeq["silvers"];
+        } else if (Field_Name === "d") {
+          breaks = [-4841, -3805, -2608, -1090, 1322];
+          colorRamp = colors.colorSeq["ocean"];
+        }
       }
 
+      if(self.options.colorSCheme.invert) {
+        colorRamp = [...colorRamp].reverse()
+      }
       cls.breaks = breaks;
       cls.color = colorRamp;
-
       map.setPaintProperty(cls.hexSize, "fill-color", [
         "case",
         ["boolean", ["feature-state", "hover"], false],
@@ -429,4 +443,113 @@ export function add3D() {
   // map.once("idle", () => {
   //   this.hideSpinner();
   // });
+}
+
+
+export function changeColor(selectedColor) {
+  let map = this.map;
+  let currentColor = this.options.currentLayerState.color;
+  if(selectedColor === ' invert') {
+    this.options.colorSCheme.invert = true
+  } else {
+    this.options.colorSCheme.invert = false,
+    this.options.colorSCheme.color = selectedColor
+  }
+  if(!this.getLayer(this.options.currentLayerState.hexSize)) {
+    return;
+  }
+  if (selectedColor === "original") {
+    if (this.options.currentLayerState.dataLayer === "depth") {
+      this.options.currentLayerState.color = colors.colorNatural["ocean-depth"]; //colors.colorSeq["ocean"];
+    } else if (this.options.currentLayerState.dataLayer.substring(0, 2) === "1a") {
+      this.options.currentLayerState.color = colors.colorDiv.gdpColor;
+    } else if (this.options.currentLayerState.dataLayer.substring(0, 2) === "1c") {
+      this.options.currentLayerState.color = colors.colorSeq["pop"];
+    } else if (this.options.currentLayerState.dataLayer === "7d10") {
+      this.options.currentLayerState.color = colors.colorSeq["combo"];
+    } else if (this.options.currentLayerState.dataLayer === "7d5") {
+      this.options.currentLayerState.color = colors.colorSeq["minty"];
+    } else if (this.options.currentLayerState.dataLayer === "7d7") {
+      this.options.currentLayerState.color = colors.colorSeq["blues"];
+    } else if (this.options.currentLayerState.dataLayer === "7d4") {
+      this.options.currentLayerState.color = colors.colorSeq["pinkish"];
+    } else if (this.options.currentLayerState.dataLayer === "7d8") {
+      this.options.currentLayerState.color = colors.colorSeq["silvers"];
+    } else if (this.options.currentLayerState.dataLayer === "d") {
+      //breaks = [-4841, -3805, -2608, -1090, 1322];
+      this.options.currentLayerState.color = colors.colorNatural["ocean-depth"]; //colors.colorSeq["ocean"];
+    } else {
+      this.options.currentLayerState.color = colors.colorSeq["yellow-blue"];
+    }
+  }
+
+  if (selectedColor === "invert") {
+    // var reverse = currentColor.reverse();
+    let reverse = [...currentColor].reverse();
+    this.options.currentLayerState.color = reverse;
+  } else if (selectedColor === "red") {
+    this.options.currentLayerState.color = colors.colorSeq["pinkish"];
+  } else if (selectedColor === "purple") {
+    this.options.currentLayerState.color = colors.colorSeq["purple"];
+  } else if (selectedColor === "blue") {
+    this.options.currentLayerState.color = colors.colorSeq["blues"];
+  } else if (selectedColor === "colorblind-safe") {
+    this.options.currentLayerState.color = colors.colorSeq["colorBlindGreen"];
+  }
+
+  map.setPaintProperty(this.options.currentLayerState.hexSize, "fill-color", [
+    "interpolate",
+    ["linear"],
+    ["get", this.options.currentLayerState.dataLayer],
+    this.options.currentLayerState.breaks[0],
+    this.options.currentLayerState.color[0],
+    this.options.currentLayerState.breaks[1],
+    this.options.currentLayerState.color[1],
+    this.options.currentLayerState.breaks[2],
+    this.options.currentLayerState.color[2],
+    this.options.currentLayerState.breaks[3],
+    this.options.currentLayerState.color[3],
+    this.options.currentLayerState.breaks[4],
+    this.options.currentLayerState.color[4],
+  ]);
+
+  if(this.options.mode3d) {
+    map.setPaintProperty(this.options.currentLayerState.hexSize+'-3d', "fill-extrusion-color", [
+      "interpolate",
+      ["linear"],
+      ["get", this.options.currentLayerState.dataLayer],
+      this.options.currentLayerState.breaks[0],
+      this.options.currentLayerState.color[0],
+      this.options.currentLayerState.breaks[1],
+      this.options.currentLayerState.color[1],
+      this.options.currentLayerState.breaks[2],
+      this.options.currentLayerState.color[2],
+      this.options.currentLayerState.breaks[3],
+      this.options.currentLayerState.color[3],
+      this.options.currentLayerState.breaks[4],
+      this.options.currentLayerState.color[4],
+    ]);
+  }
+
+  let features = map.queryRenderedFeatures({
+    layers: [this.options.currentLayerState.hexSize],
+  });
+
+  let selectedData = features.map(
+    (x) => x.properties[this.options.currentLayerState.dataLayer]
+  );
+
+  let breaksAndColors= this.computeBreaksAndColorRamp(
+    selectedData,
+    this.options.currentLayerState.color,
+     "q", 4,
+    this.options.currentLayerState.breaks
+  );
+
+  this.emit('layerUpdate', {
+    colorRamp: breaksAndColors.colorRamp,
+    breaks: breaksAndColors.histogramBreaks,
+    selectedData,
+    precision: this.options.precision
+  });
 }
