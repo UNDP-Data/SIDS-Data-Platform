@@ -14,6 +14,8 @@ export function updateData(
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
   let Field_Name = activeLayer.Field_Name;
+  this.activeDataset = activeDataset;
+  this.activeLayer = activeLayer;
   this._handleOceanData(activeDataset, activeLayer, comparison)
   this.clearHexHighlight();
   // this.remove3d();
@@ -581,4 +583,130 @@ export function changeOpacity(opacity) {
   // }
   //update global opacity value
   this.options.opacity = opacity;
+}
+
+export function changeBasemap (selectedBasemap) {
+  let self = this;
+  let map = this.map;
+  // let map2 = this.map2;
+
+  // let currentBasemap = map.getStyle().name;
+
+  let thisStyle = Object.values(constants.styles).find((style) => {
+    return style.name === selectedBasemap;
+  });
+
+  map.setStyle(thisStyle.uri);
+    // map2.setStyle(thisStyle.uri);
+  this._removeUnusedLayers();
+
+  //when done, update: firstSymbolId, basemapLabels
+  map.once("idle", function () {
+    self.getBasemapLabels();
+
+    self._addVectorSources();
+    // let currentSource = Object.values(globals.sourceData).find((o) => {
+    //   return o.name === globals.currentLayerState.hexSize;
+    // });
+
+    // let cls = globals.currentLayerState;
+    if(self.activeLayer) {
+      self.updateData(self.activeDataset, self.activeLayer)
+    }
+    // try {
+    //   map.addLayer(
+    //     {
+    //       id: cls.hexSize,
+    //       type: "fill",
+    //       source: cls.hexSize,
+    //       "source-layer": currentSource.layer,
+    //       layout: {
+    //         visibility: "visible",
+    //       },
+    //       paint: {
+    //         "fill-opacity": globals.opacity, //0.8
+    //         "fill-color": [
+    //           "interpolate",
+    //           ["linear"],
+    //           ["get", cls.dataLayer],
+    //           cls.breaks[0],
+    //           cls.color[0],
+    //           cls.breaks[1],
+    //           cls.color[1],
+    //           cls.breaks[2],
+    //           cls.color[2],
+    //           cls.breaks[3],
+    //           cls.color[3],
+    //           cls.breaks[4],
+    //           cls.color[4],
+    //         ],
+    //       },
+    //     },
+    //     globals.firstSymbolId
+    //   );
+    //
+    //   let filterString = cls.dataLayer === "depth" ? "<=" : ">=";
+    //   map.setFilter(cls.hexSize, [filterString, cls.dataLayer, 0]);
+    //   map.moveLayer("allsids", globals.firstSymbolId);
+    // }
+
+    // self._addVectorSources(true);
+    // let comparisonSource = Object.values(this.options.sourceData).find((o) => {
+    //   return o.name === this.options.comparisonLayerState.hexSize;
+    // });
+
+    // let comparison_cls = this.options.comparisonLayerState;
+
+  //   try {
+  //     map2.addLayer(
+  //       {
+  //         id: comparison_cls.hexSize,
+  //         type: "fill",
+  //         source: comparison_cls.hexSize,
+  //         "source-layer": comparisonSource.layer,
+  //         layout: {
+  //           visibility: "visible",
+  //         },
+  //         paint: {
+  //           "fill-opacity": globals.opacity, //0.8
+  //           "fill-color": [
+  //             "interpolate",
+  //             ["linear"],
+  //             ["get", comparison_cls.dataLayer],
+  //             comparison_cls.breaks[0],
+  //             comparison_cls.color[0],
+  //             comparison_cls.breaks[1],
+  //             comparison_cls.color[1],
+  //             comparison_cls.breaks[2],
+  //             comparison_cls.color[2],
+  //             comparison_cls.breaks[3],
+  //             comparison_cls.color[3],
+  //             comparison_cls.breaks[4],
+  //             comparison_cls.color[4],
+  //           ],
+  //         },
+  //       },
+  //       globals.firstSymbolId
+  //     );
+  //
+  //     let filterString = comparison_cls.dataLayer === "depth" ? "<=" : ">=";
+  //     map2.setFilter(comparison_cls.hexSize, [
+  //       filterString,
+  //       comparison_cls.dataLayer,
+  //       0,
+  //     ]);
+  //
+  //     map2.moveLayer("allsids", globals.firstSymbolId); //ensure allsids outline ontop
+  //   } catch (err) {
+  //     if (debug) {
+  //       console.warn(
+  //         "attempted while no data layer is loaded on comparison map"
+  //       );
+  //       console.warn(err.stack);
+  //     }
+  //     //placed to catch error when attempted while no data layer is loaded on main map
+  //   }
+  //
+  //   self.hideSpinner();
+  });
 }

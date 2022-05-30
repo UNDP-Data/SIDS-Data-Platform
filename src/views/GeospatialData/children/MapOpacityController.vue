@@ -21,7 +21,7 @@
             </v-btn>
           </template>
           <span>
-            <b>Opacity</b> - Change opacity for data fills
+            <b>Opacity</b> - Change data layers' opacity
           </span>
         </v-tooltip>
       </template>

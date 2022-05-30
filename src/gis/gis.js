@@ -10,7 +10,7 @@ import "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import axios from "axios";
 
-import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor, changeOpacity } from './gisPublicFunctions'
+import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor, changeOpacity, changeBasemap } from './gisPublicFunctions'
 import { onDataClick, onAdminClick } from './gisEventHandlers'
 
 export default class Map {
@@ -54,6 +54,7 @@ export default class Map {
     this.add3D = add3D;
     this.changeColor = changeColor;
     this.changeOpacity = changeOpacity;
+    this.changeBasemap = changeBasemap;
   }
 
   getBasemapLabels() {
@@ -93,9 +94,11 @@ export default class Map {
   }
 
   _removeUnusedLayers() {
-    constants.unwantedMapboxLayers.forEach((name) =>
-      this.map.removeLayer(name)
-    );
+    constants.unwantedMapboxLayers.forEach((name) =>{
+      if(this.map.getLayer(name)) {
+        this.map.removeLayer(name)
+      }
+    });
   }
 
   _addPointSources() {

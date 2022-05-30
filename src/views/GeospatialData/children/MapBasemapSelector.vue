@@ -17,25 +17,25 @@
               v-bind="attrs"
               v-on="{ ...tooltip, ...menu }"
             >
-              <i class="color-scheme-icon"></i>
+              <i class="basemap-selector-icon"></i>
             </v-btn>
           </template>
           <span>
-            <b>Color scheme</b> - Change between several color palettes
-            for the displayed data
+            <b>Change Basemap</b> - Switch between Satellite Imagery and
+            abstract map themes
           </span>
         </v-tooltip>
       </template>
       <div class="select">
         <v-select
           class="color-scheme-select"
-          :value="activeColor"
+          :value="basemap"
           rounded
           outlined
-          @change="changeColorScheme"
+          @change="changeBasemap"
           dense
           hide-details
-          :items="colors"
+          :items="basemaps"
         >
         </v-select>
       </div>
@@ -44,36 +44,11 @@
 
 <script>
 export default {
-  name: 'MapColorSelector',
+  name: 'MapBasemapSelector',
   data() {
     return {
-      activeColor: 'original',
-      colors:[
-        {
-          value: 'original',
-          text: 'Default'
-        },
-        {
-          value: 'invert',
-          text: 'Invert current'
-        },
-        {
-          value: 'red',
-          text: 'Reds'
-        },
-        {
-          value: 'purple',
-          text: 'Purples'
-        },
-        {
-          value: 'blue',
-          text: 'Blues'
-        },
-        {
-          value: 'colorblind-safe',
-          text: 'Colorblind Safe'
-        }
-      ],
+      basemap: 'Satellite Imagery',
+      basemaps:['Satellite Imagery', 'Light Theme', 'Dark Theme'],
       open:false
     }
   },
@@ -81,9 +56,9 @@ export default {
     'map'
   ],
   methods: {
-    changeColorScheme(scheme) {
-      this.activeColor = scheme;
-      this.map.changeColor(scheme);
+    changeBasemap(basemap) {
+      this.activeColor = basemap;
+      this.map.changeBasemap(basemap);
     }
   }
 }
@@ -91,10 +66,10 @@ export default {
 
 <style>
 
-.color-scheme-icon {
+.basemap-selector-icon {
   width: 38px;
   height: 38px;
-  background-image: url("~@/assets/gis/sidebar/color-icon-1.png");
+  background-image: url("~@/assets/gis/sidebar/satellite-view.png");
   background-size: contain;
 }
 .color-scheme-select {
