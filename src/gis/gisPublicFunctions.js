@@ -294,6 +294,9 @@ export function changeHexagonSize(resolution) {
     this.options.comparisonLayerState.hexSize = resolution;
     return
   }
+  if(this.options.mode3d) {
+    this.map.removeLayer(this.options.currentLayerState.hexSize + "-3d")
+  }
   // this.remove3d();
   //update resolution state
   this.options.currentLayerState.hexSize = resolution;
@@ -330,6 +333,12 @@ export function changeHexagonSize(resolution) {
     },
   };
   map.addLayer(options, this.options.firstSymbolId);
+
+  map.once('idle', () => {
+    if(this.options.mode3d) {
+      this.add3dLayer(map, this.options.currentLayerState.hexSize + "-3d")
+    }
+  })
   // if (globals.compareMode) {
   //   map2.addLayer(options, globals.firstSymbolId);
   // }
