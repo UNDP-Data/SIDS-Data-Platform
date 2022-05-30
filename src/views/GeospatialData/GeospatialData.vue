@@ -7,26 +7,38 @@
       </p>
     </div>
 
-    <div class="collapse-btn">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="ionicon"
-        viewBox="0 0 512 512"
+    <v-btn
+      @click="menuColapsed = !menuColapsed"
+      class="button-collapse"
+      :class="{'button-collapse-colapsed': menuColapsed}"
+      fab
+      x-small
+      dark
       >
-        <path
-          fill="none"
-          stroke="#eee"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="48"
-          d="M328 112L184 256l144 144"
-        />
-      </svg>
-    </div>
-
-    <map-dataset-controller
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
+    <map-controller
+      class="data-controller"
+      :dualModeEnabled="dualModeEnabled"
+      :bivariateModeEnabled="bivariateModeEnabled"
+      :map="map"
+      @update="updateMap"
+      @updateComparison="
+        updateComparisonMap($event.dataset, $event.layer, true)
+      "
+      @updateBivariate="
+        updateBivariate(
+          $event.firstDataset,
+          $event.firstLayer,
+          $event.secondDataset,
+          $event.secondLayer
+        )
+      "
+    />
+    <!-- <map-dataset-controller
       class="data-controller"
       :map="map"
+      :class="{'data-controller-colapsed': menuColapsed}"
       @update="updateMap($event.dataset, $event.layer)"
       @updateComparison="
         updateComparisonMap($event.dataset, $event.layer, true)
@@ -42,8 +54,13 @@
       :displayLegend="displayLegend"
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
-    />
+    /> -->
     <map-toolbar
+      class="toolbar"
+      :map="map"
+      :activeLayer="activeLayer"
+    />
+    <!-- <map-toolbar
       class="toolbar"
       @select-country="selectCountry($event)"
       @select-boundary-layer="addBoundaryLayer($event)"
@@ -57,21 +74,12 @@
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       :map="map"
-      @toggle-legend="toggleLegend()"
-      @toggle-3D="toggle3D()"
-      @toggle-labels="toggleLabels($event)"
-      @toggle-dualmode="toggleDualMode()"
-      @toggle-bivariate="toggleBivariateMode()"
+    /> -->
+    <selection-info
+      v-if="map"
+      :map="map"
+      :activeLayer="activeLayer"
     />
-
-    <div class="info-box-container">
-      <div class="click-info-box display-none">
-        Placeholder: on-click-control
-      </div>
-      <div class="draw-info-box display-none">
-        Placeholder: draw-info-control
-      </div>
-    </div>
 
     <div class="dualmode-legend-container" v-show="dualModeEnabled">
       <div class="legend-frame background-grey">
@@ -92,17 +100,17 @@
 
     <div id="mapsContainer">
       <div id="map">
-        <div class="loader-gis-modal">
+        <!-- <div class="loader-gis-modal">
           <grid-loader
             class="loader-gis display-none"
             :loading="gisLoader.loading"
             :color="gisLoader.color"
             :size="gisLoader.size"
           ></grid-loader>
-        </div>
+        </div> -->
       </div>
 
-      <div id="map2"></div>
+      <!-- <div id="map2"></div> -->
     </div>
   </div>
 </template>
@@ -116,10 +124,13 @@ import filepaths from "@/gis/static/filepaths.js";
 import globals from "@/gis/static/globals.js";
 
 import names from "@/gis/static/names";
-import GIS from "@/gis"; //gets and loads the index.js file from this directory, which has the mapboxgl Map class exported
-import MapDatasetController from "@/components/MapDatasetController";
-import MapToolbar from "@/components/MapToolbar"; //my attempt at adapting Ben's Form of new sidebar
-import GridLoader from "vue-spinner/src/GridLoader.vue"; // import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import GIS from "@/gis/gis"; //gets and loads the index.js file from this directory, which has the mapboxgl Map class exported
+// import MapDatasetController from "./children/MapDatasetController";
+import MapController from "./children/MapController";
+import SelectionInfo from "./children/SelectionInfo";
+
+import MapToolbar from "./children/MapToolbar"; //my attempt at adapting Ben's Form of new sidebar
+// import GridLoader from "vue-spinner/src/GridLoader.vue"; // import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 
 import mapboxgl from "@/gis/mapboxgl";
 import bbox from "@turf/bbox";
@@ -130,11 +141,13 @@ export default {
   name: "GeospatialData",
   data() {
     return {
+      activeLayer:null,
       names: names,
       map: null,
       //for implementing as props to pass from dataset-controller to map-toolbar
       activeDatasetName: null,
       activeLayerName: null,
+      menuColapsed:false,
       displayLegend: true,
       dualModeEnabled: null,
       bivariateModeEnabled: null,
@@ -143,9 +156,11 @@ export default {
     };
   },
   components: {
-    MapDatasetController,
+    // MapDatasetController,
     MapToolbar,
-    GridLoader, // PulseLoader,
+    MapController,
+    SelectionInfo
+    // GridLoader, // PulseLoader,
   },
   methods: {
     //A) Interfaces for the Map class
@@ -177,18 +192,6 @@ export default {
       this.bivariateModeEnabled = !this.bivariateModeEnabled;
       console.log("bivariateModeEnabled:", this.bivariateModeEnabled);
       this.map.toggleBivariateComponents(); //evoke custom functionality from the map class instance
-    },
-    toggleLegend() {
-      this.displayLegend = !this.displayLegend;
-    },
-    toggleDatasetController() {
-      console.log("collapse-btn onclick firing");
-      let dataController =
-        document.getElementsByClassName("data-controller")[0];
-      dataController.classList.toggle("collapsed");
-
-      let collapseBtn = document.getElementsByClassName("collapse-btn")[0];
-      collapseBtn.classList.toggle("collapsed");
     },
     changeResolution(object) {
       if (!(this.activeDatasetName === "Ocean Data")) {
@@ -763,73 +766,27 @@ export default {
       if (!activeDataset) {
         console.log("no dataset/layer to updateComparisonMap with");
       } else {
-        //check for recognized dataset.type
-        switch (activeDataset.type) {
-          case "single": //only contains one layer; pull it from dataset
-            activeLayer = activeDataset.layers[0];
-            break;
-          case "layers": //has multiple datasets -> activeLayer will be truthy
-            break;
-          case "temporal": //has multiple datasets -> activeLayer will be truthy
-            break;
-          default:
-            alert(
-              `Unrecognized case of activeDataset.type: ${activeDataset.type} in updateComparisonMap`
-            );
-        }
-
-        //copied and adapted from start of updateMap()
-        /* if (!(activeDataset === globals.lastActive.dataset)) {
-          // console.log(`dataset changing from ${globals.lastActive.dataset?.name} -> ${activeDataset.name}; resetting color palette;`);
-          globals.lastActiveComparison.dataset = activeDataset;
-          globals.comparisonLayerState.color = null;
-          // this.resetToolbarMenus();
-        } */
-
         if (activeLayer) {
-          //display loader spinner
-          console.log("showing loading spinner");
           let spinner = document.getElementsByClassName("loader-gis")[0];
           let modal = document.getElementsByClassName("loader-gis-modal")[0];
-          console.log(spinner);
           spinner.classList.remove("display-none");
           modal.classList.remove("display-none");
-          console.log(spinner);
-
-          //if ocean dataset or layer selected place resolution indicator to 10km hex option
           var resolutionOptions =
             document.getElementsByClassName("resolution-option");
 
           if (activeLayer.Name === "Ocean Data") {
-            //handle if called while ocean dataset active
-            console.log(
-              `activeLayer.Name: ${activeLayer.Name}; set resolution selector to 10`
-            );
-
             for (let i = 0; i < resolutionOptions.length; i++) {
               if (i === 2) {
-                //i = 2 is the hardcoded index for the 10km selector
                 resolutionOptions[i].classList.add("border-blue");
               } else {
                 resolutionOptions[i].classList.remove("border-blue");
               }
             }
           }
-          console.log(
-            `activeLayer: ${activeLayer.Field_Name} ${activeLayer.Description}`
-          );
-
           if (activeLayer.Name === "Ocean Data") {
             if (activeLayer.Field_Name === "depth") {
-              console.log(
-                "updateComparisonMap w/ Ocean Data-Depths: " +
-                  activeLayer.Description
-              );
               this.map.addOcean(activeDataset, activeLayer, true);
             } else {
-              console.log(
-                "updateComparsionMap w/ Ocean Data: " + activeLayer.Description
-              );
               this.map.changeDataOnMap(activeDataset, activeLayer, true);
             }
           } else {
@@ -843,153 +800,47 @@ export default {
       //, setting a global variable instead of passing it through;
       globals.lastActiveComparison.layer = activeLayer;
       globals.lastActiveComparison.dataset = activeDataset;
-      console.log(
-        "writing to globals.lastActiveComparison",
-        globals.lastActiveComparison
-      );
     },
-    updateMap(activeDataset, activeLayer) {
-      if (!(activeDataset === globals.lastActive.dataset)) {
-        // console.log(`dataset changing from ${globals.lastActive.dataset?.name} -> ${activeDataset.name}; resetting color palette;`);
-        globals.lastActive.dataset = activeDataset;
-        globals.currentLayerState.color = null;
-        this.resetToolbarMenus();
-      }
-
-      //if there isn't a dataset selected and updatecalls;
-      //reset actives (can serve as trigger to reset selection)
-      if (!activeDataset) {
-        // console.log("no dataset/layer to updateMap with; resetting activeDataset/Layer");
-        activeDataset = null;
-        activeLayer = null;
-      } else {
-        //TODO: reevaluate this ratch
-        //update this vue's state
-        this.activeDatasetName = activeDataset.name; //should be identical to activeLayerName
-
-        //check for recognized dataset.type
-        switch (activeDataset.type) {
-          case "single": //only contains one layer; pull it from dataset
-            activeLayer = activeDataset.layers[0];
-            break;
-          case "layers": //has multiple datasets -> activeLayer will be truthy
-            break;
-          case "temporal": //has multiple datasets -> activeLayer will be truthy
-            break;
-          default:
-            alert(
-              `Unrecognized case of activeDataset.type: ${activeDataset.type} in updateMap`
-            );
-        }
-        //
-        if (activeLayer) {
-          //display loader spinner
-          console.log("showing loading spinner");
-          let spinner = document.getElementsByClassName("loader-gis")[0];
-          let modal = document.getElementsByClassName("loader-gis-modal")[0];
-          console.log(spinner);
-          spinner.classList.remove("display-none");
-          modal.classList.remove("display-none");
-          console.log(spinner);
-
-          //if ocean dataset or layer selected place resolution indicator to 10km hex option
-          var resolutionOptions =
-            document.getElementsByClassName("resolution-option");
-
-          if (activeLayer.Name === "Ocean Data") {
-            //handle if called while ocean dataset active
-            console.log(
-              `activeLayer.Name: ${activeLayer.Name}; set resolution selector to 10`
-            );
-
-            for (let i = 0; i < resolutionOptions.length; i++) {
-              if (i === 2) {
-                //i = 2 is the hardcoded index for the 10km selector
-                resolutionOptions[i].classList.add("border-blue");
-              } else {
-                resolutionOptions[i].classList.remove("border-blue");
-              }
-            }
-          }
-
-          //TODO: reevaluate this ratch
-          //update this vue's state
-          this.activeLayerName = activeLayer.Name; //should be identical to activeDatasetName
-          // console.log(`activeLayer: ${activeLayer.Field_Name} ${activeLayer.Description}`);
-
-          if (activeLayer.Name === "Ocean Data") {
-            if (activeLayer.Field_Name === "depth") {
-              // console.log("updateMap w/ Ocean Data-Depths: " + activeLayer.Description);
-              this.map.addOcean(activeDataset, activeLayer);
-            } else {
-              // console.log("updateMap w/ Ocean Data: " + activeLayer.Description);
-              this.map.changeDataOnMap(activeDataset, activeLayer);
-            }
+    updateMap(e) {
+      this.activeLayer = e.layer
+      // globals.currentLayerState.color = null;
+      // this.resetToolbarMenus();
+      if (e.dataset) {
+        // var resolutionOptions = document.getElementsByClassName("resolution-option");
+        // if (e.layer.Name === "Ocean Data") {
+        //   for (let i = 0; i < resolutionOptions.length; i++) {
+        //     if (i === 2) {
+        //       resolutionOptions[i].classList.add("border-blue");
+        //     } else {
+        //       resolutionOptions[i].classList.remove("border-blue");
+        //     }
+        //   }
+        // }
+        if (e.layer.Name === "Ocean Data") {
+          if (e.layer.Field_Name === "depth") {
+            this.map.addOcean(e.dataset, e.layer);
           } else {
-            // console.log(
-            //   "updateMap w/ changeDataOnMap: " +
-            //     activeDataset.name +
-            //     " " +
-            //     activeLayer.Description
-            // );
-            this.map.changeDataOnMap(activeDataset, activeLayer);
+            this.map.updateData(e.dataset, e.layer);
           }
-
-          /* //if there's a layer chosen -> changeDataOnMap
-          if (activeLayer.Field_Name === "depth") {
-            console.log(
-              "updateMap w/ Ocean Data-Depths: " + activeLayer.Description
-            );
-            this.map.addOcean(activeDataset, activeLayer);
-          } else if (activeLayer.Name === "Ocean Data") {
-            console.log("updateMap w/ Ocean Data: " + activeLayer.Description);
-            this.map.changeDataOnMap(activeDataset, activeLayer);
-          } else {
-            console.log(
-              "updateMap w/ changeDataOnMap: " +
-                activeDataset.name +
-                " " +
-                activeLayer.Description
-            );
-            this.map.changeDataOnMap(activeDataset, activeLayer);
-          } */
+        } else {
+          this.map.updateData(e.dataset, e.layer);
         }
       }
-
-      //TODO: reevaluate this
-      //workaround!!! implemented for recoloring code
-      //, setting a global variable instead of passing it through;
-      globals.lastActive.layer = activeLayer;
-      globals.lastActive.dataset = activeDataset;
-      console.log("writing to globals.lastActive", globals.lastActive);
     },
   },
   mounted() {
     this.map = new GIS("#mapsContainer", "map", "map2");
-
-    let collapseBtn = document.getElementsByClassName("collapse-btn")[0];
-    collapseBtn.addEventListener("click", this.toggleDatasetController);
+    console.log(this.map, '!!!!!!!!!!!')
   },
 };
 </script>
 <style media="screen">
-.info-box-container {
-  z-index: 998;
-  /* color and backgroound taken from mapbox control style */
-  background-color: hsla(0, 0%, 100%, 0.75);
-  color: #333;
-  padding: 2px 7px;
-  /* border: 2px solid #333; */
-  position: absolute;
-  bottom: 10vh;
-  right: 0.5vw;
-  box-sizing: border-box;
+.toolbar {
+  position:absolute;
+  z-index:98;
+  top: 2em;
+  right:11px;
 }
-.click-info-box p,
-.draw-info-box p {
-  margin: 2.5px;
-}
-
 /* to keep the nav drawer above the geospatial data components */
 
 .landscape-enforcer {
@@ -1060,10 +911,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 900;
-}
-
-.display-none {
-  display: none;
 }
 
 #map,
@@ -1139,7 +986,7 @@ export default {
 .population-per-km-img {
   width: 17px;
   height: 15px;
-  background: url("../assets/polygon.png");
+  background: url("~@/assets/polygon.png");
   background-repeat: no-repeat;
   background-size: 101% 101%;
   margin-top: 2px;
@@ -1156,43 +1003,7 @@ export default {
   padding: 5px;
 }
 
-.collapse-btn {
-  width: 30px;
-  height: 50px;
-  position: absolute;
-  left: -0vw;
-  top: 20vh;
-  background-color: rgba(153, 142, 142, 0.562);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.5s ease-in-out;
-  /*     display: flex;
-    justify-content: center;*/
-  z-index: 1600;
-  margin-left: -5px;
-}
-
-@media (orientation: landscape) and (max-width: 750px) {
-  .collapse-btn {
-    top: 50vh;
-    /* margin-left: 0; */
-  }
-}
-
-.collapse-btn svg {
-  max-width: 26px;
-
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.collapse-btn.collapsed {
-  transform: rotate(180deg);
-}
-
-.data-controller.collapsed {
+.data-controller-colapsed {
   opacity: 0;
   z-index: -999;
   pointer-events: none;
@@ -1217,5 +1028,16 @@ export default {
   width: 100%;
   height: 100%;
   /* height: 100vh; */
+}
+.button-collapse {
+  position:absolute;
+  top:50px;
+  left:2px;
+  z-index:120;
+  transition: all 200ms;
+  transform:rotate(0deg)
+}
+.button-collapse-colapsed {
+  transform:rotate(180deg)
 }
 </style>
