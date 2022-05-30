@@ -10,7 +10,7 @@ import "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import axios from "axios";
 
-import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor } from './gisPublicFunctions'
+import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor, changeOpacity } from './gisPublicFunctions'
 import { onDataClick, onAdminClick } from './gisEventHandlers'
 
 export default class Map {
@@ -53,6 +53,7 @@ export default class Map {
     this.changeHexagonSize = changeHexagonSize;
     this.add3D = add3D;
     this.changeColor = changeColor;
+    this.changeOpacity = changeOpacity;
   }
 
   getBasemapLabels() {

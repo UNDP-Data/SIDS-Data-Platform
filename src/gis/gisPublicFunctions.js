@@ -553,3 +553,32 @@ export function changeColor(selectedColor) {
     precision: this.options.precision
   });
 }
+
+export function changeOpacity(opacity) {
+  let map = this.map;
+  this.options.opacity = opacity;
+  if(!map.getLayer(this.options.currentLayerState.hexSize)) {
+    return;
+  }
+  map.setPaintProperty(
+    this.options.currentLayerState.hexSize,
+    "fill-opacity",
+    opacity
+  );
+  if (map.getLayer("ocean")) {
+    map.setPaintProperty("ocean", "fill-opacity", opacity);
+  }
+  // if (globals.compareMode) {
+  //   this.map2.setPaintProperty(
+  //     globals.comparisonLayerState.hexSize,
+  //     "fill-opacity",
+  //     sliderValue * 0.02
+  //   );
+  //   if (this.map2.getLayer("ocean")) {
+  //     // console.log(`adjusting "ocean" layer opacity`);
+  //     this.map2.setPaintProperty("ocean", "fill-opacity", sliderValue * 0.02);
+  //   }
+  // }
+  //update global opacity value
+  this.options.opacity = opacity;
+}

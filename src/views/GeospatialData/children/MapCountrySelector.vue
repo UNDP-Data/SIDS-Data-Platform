@@ -87,7 +87,6 @@ export default {
       return itemLK.indexOf(queryLK) !== -1
     },
     countrySelect(selection) {
-      console.log(selection)
       this.open = false;
       this.map.zoomToCountry(selection);
     }
