@@ -57,6 +57,11 @@
     /> -->
     <map-toolbar
       class="toolbar"
+      :map="map"
+      :activeLayer="activeLayer"
+    />
+    <!-- <map-toolbar
+      class="toolbar"
       @select-country="selectCountry($event)"
       @select-boundary-layer="addBoundaryLayer($event)"
       @select-resolution="changeResolution($event)"
@@ -69,20 +74,12 @@
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       :map="map"
-      @toggle-3D="toggle3D()"
-      @toggle-labels="toggleLabels($event)"
-      @toggle-dualmode="toggleDualMode()"
-      @toggle-bivariate="toggleBivariateMode()"
+    /> -->
+    <selection-info
+      v-if="map"
+      :map="map"
+      :activeLayer="activeLayer"
     />
-
-    <div class="info-box-container">
-      <div class="click-info-box display-none">
-        Placeholder: on-click-control
-      </div>
-      <div class="draw-info-box display-none">
-        Placeholder: draw-info-control
-      </div>
-    </div>
 
     <div class="dualmode-legend-container" v-show="dualModeEnabled">
       <div class="legend-frame background-grey">
@@ -130,8 +127,9 @@ import names from "@/gis/static/names";
 import GIS from "@/gis/gis"; //gets and loads the index.js file from this directory, which has the mapboxgl Map class exported
 // import MapDatasetController from "./children/MapDatasetController";
 import MapController from "./children/MapController";
+import SelectionInfo from "./children/SelectionInfo";
 
-import MapToolbar from "@/components/MapToolbar"; //my attempt at adapting Ben's Form of new sidebar
+import MapToolbar from "./children/MapToolbar"; //my attempt at adapting Ben's Form of new sidebar
 // import GridLoader from "vue-spinner/src/GridLoader.vue"; // import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 
 import mapboxgl from "@/gis/mapboxgl";
@@ -143,6 +141,7 @@ export default {
   name: "GeospatialData",
   data() {
     return {
+      activeLayer:null,
       names: names,
       map: null,
       //for implementing as props to pass from dataset-controller to map-toolbar
@@ -160,6 +159,7 @@ export default {
     // MapDatasetController,
     MapToolbar,
     MapController,
+    SelectionInfo
     // GridLoader, // PulseLoader,
   },
   methods: {
@@ -802,7 +802,7 @@ export default {
       globals.lastActiveComparison.dataset = activeDataset;
     },
     updateMap(e) {
-      console.log(e)
+      this.activeLayer = e.layer
       // globals.currentLayerState.color = null;
       // this.resetToolbarMenus();
       if (e.dataset) {
@@ -835,23 +835,12 @@ export default {
 };
 </script>
 <style media="screen">
-.info-box-container {
-  z-index: 998;
-  /* color and backgroound taken from mapbox control style */
-  background-color: hsla(0, 0%, 100%, 0.75);
-  color: #333;
-  padding: 2px 7px;
-  /* border: 2px solid #333; */
-  position: absolute;
-  bottom: 10vh;
-  right: 0.5vw;
-  box-sizing: border-box;
+.toolbar {
+  position:absolute;
+  z-index:98;
+  top: 2em;
+  right:11px;
 }
-.click-info-box p,
-.draw-info-box p {
-  margin: 2.5px;
-}
-
 /* to keep the nav drawer above the geospatial data components */
 
 .landscape-enforcer {
@@ -922,10 +911,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 900;
-}
-
-.display-none {
-  display: none;
 }
 
 #map,

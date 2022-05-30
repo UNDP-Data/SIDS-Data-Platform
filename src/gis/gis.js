@@ -1,6 +1,7 @@
 import globals from "@/gis/static/globals.js";
 import filepaths from "@/gis/static/filepaths.js";
 import constants from "@/gis/static/constants.js";
+import chroma from "chroma-js";
 
 import mapboxgl from "@/gis/mapboxgl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -9,7 +10,8 @@ import "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import axios from "axios";
 
-import { updateData, on, emit, addOcean } from './gisPublicFunctions'
+import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D } from './gisPublicFunctions'
+import { onDataClick, onAdminClick } from './gisEventHandlers'
 
 export default class Map {
   constructor(containerId, leftMapContainerId,
@@ -31,9 +33,8 @@ export default class Map {
     this.map.on("load", () => {
       this.map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
       this._removeUnusedLayers();
-      // this._initOnClickControl();
-      // this._bindMapClickListeners(this);
-      // this._bindRecolorListeners(this);
+      this._bindMapClickListeners();
+      this._bindRecolorListeners();
       this._addPointSources();
       this._addVectorSources();
       this.getBasemapLabels();
@@ -45,6 +46,11 @@ export default class Map {
     this.on = on;
     this.emit = emit;
     this.addOcean = addOcean;
+    this.onDataClick = onDataClick;
+    this.onAdminClick = onAdminClick;
+    this.zoomToCountry = zoomToCountry;
+    this.changeHexagonSize = changeHexagonSize;
+    this.add3D = add3D;
   }
 
   getBasemapLabels() {
@@ -189,5 +195,364 @@ export default class Map {
         globals.firstSymbolId
       );
     }
+  }
+
+  _bindMapClickListeners() {
+    let instance = this;
+    this.map.on("click", "hex5", (e) => {
+      instance.clearOnClickQuery();
+      instance.onDataClick(e);
+    });
+
+    this.map.on("click", "hex10", function (e) {
+      instance.clearOnClickQuery();
+      instance.onDataClick(e);
+    });
+
+    this.map.on("click", "hex1", function (e) {
+      instance.clearOnClickQuery();
+      instance.onDataClick(e);
+    });
+
+    this.map.on("click", "hex5clipped", function (e) {
+        instance.clearOnClickQuery();
+        instance.onDataClick(e);
+      }
+    );
+
+    this.map.on("click", "ocean", function (e) {
+      instance.clearOnClickQuery();
+      instance.onDataClick(e);
+    });
+
+    this.map.on("click", "admin1", function (e) {
+      instance.clearOnClickQuery();
+      instance.onAdminClick(e, "admin1");
+    });
+
+    this.map.on("click", "admin2", function (e ) {
+        instance.clearOnClickQuery();
+        instance.onAdminClick(e, "admin2");
+      }
+    );
+
+    // this.map.on("click", "bivariate", function (e) {
+    //     instance.clearOnClickQuery();
+    //     instance.onBivariateClick(e);
+    //   }
+    // );
+
+    // this.map2.on("click", "hex5", function (e, mapClassInstance = instance) {
+    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    // });
+    //
+    // this.map2.on("click", "hex10", function (e, mapClassInstance = instance) {
+    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    // });
+    //
+    // this.map2.on("click", "hex1", function (e, mapClassInstance = instance) {
+    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    // });
+    //
+    // this.map2.on(
+    //   "click",
+    //   "hex5clipped",
+    //   function (e, mapClassInstance = instance) {
+    //     mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+    //     mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    //   }
+    // );
+    //
+    // this.map2.on("click", "ocean", function (e, mapClassInstance = instance) {
+    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    // });
+    //
+    // this.map2.on("click", "admin1", function (e, mapClassInstance = instance) {
+    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+    //   mapClassInstance.addAdminClick(e, "admin1", mapClassInstance.map2);
+    // });
+    //
+    // this.map2.on(
+    //   "click",
+    //   "admin2",
+    //   function (e, mapClassInstance = instance, debug = false) {
+    //
+    //     mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+    //     mapClassInstance.addAdminClick(e, "admin2", mapClassInstance.map2);
+    //   }
+    // );
+  }
+
+  clearOnClickQuery() {
+    if (this.getLayer("iso")) {
+      this.removeLayer("iso");
+      this.removeSource("iso");
+    }
+    for (let id of ["clickedone", "highlightS", "joined"]) {
+      if (this.getSource(id)) {
+        if (id === "highlightS") {
+          this.removeLayer("highlight");
+          this.removeSource(id);
+        } else {
+          if (this.getLayer(id)) {
+            this.removeLayer(id);
+          }
+          if (this.getSource(id)) {
+              console.log(`removeSource:`, id);
+            this.removeSource(id);
+          }
+        }
+      }
+    }
+  }
+  getLayer(layerName) {
+    return this.map.getLayer(layerName)
+  }
+  removeLayer(layerName) {
+    if(this.map.getLayer(layerName)){
+      return this.map.removeLayer(layerName)
+    }
+  }
+  getSource(sourceName) {
+    return this.map.getSource(sourceName)
+  }
+  removeSource(sourceName) {
+    if(this.map.getSource(sourceName)){
+      return this.map.removeSource(sourceName)
+    }
+  }
+
+  clearHexHighlight() {
+    if (this.map.getLayer("clickedone")) {
+      this.map.removeLayer("clickedone");
+      this.clearOnClickQuery();
+    }
+    if (this.map.getLayer("highlight")) {
+      this.map.removeLayer("highlight");
+      this.clearOnClickQuery();
+    }
+
+    this.emit('selectionUpdate', {
+      value: null
+    })
+  }
+
+  recolorBasedOnWhatsOnPage(recolorComparison = false) {
+    let map = !recolorComparison ? this.map : this.map2; //this.map;
+    let cls = !recolorComparison
+      ? this.options.currentLayerState
+      : this.options.comparisonLayerState;
+    console.log(map.getLayer(cls.hexSize))
+    if (!map.getLayer(cls.hexSize)) {
+      return;
+    }
+
+    var features = map.queryRenderedFeatures({
+      layers: [cls.hexSize],
+    });
+
+    if (!features) {
+      if (!recolorComparison) {
+        this.addNoDataLegend();
+      }
+    } else {
+      var uniFeatures;
+      if (cls.hexSize === "admin1") {
+        uniFeatures = this.getUniqueFeatures(features, "GID_1");
+      } else if (cls.hexSize === "admin2") {
+        uniFeatures = this.getUniqueFeatures(features, "GID_2");
+      } else {
+        uniFeatures = this.getUniqueFeatures(features, "hexid");
+      }
+
+      var selectedData = uniFeatures.map((x) => x.properties[cls.dataLayer]);
+
+      var breaks = chroma.limits(selectedData, "q", 4);
+
+      var breaks_new = [];
+      globals.precision = 1;
+      do {
+        globals.precision++;
+        for (let i = 0; i < 5; i++) {
+          breaks_new[i] = parseFloat(breaks[i].toPrecision(globals.precision));
+        }
+      } while (this.checkForDuplicates(breaks_new) && globals.precision < 10);
+      breaks = breaks_new;
+
+      cls.breaks = breaks;
+
+      map.setPaintProperty(cls.hexSize, "fill-color", [
+        "interpolate",
+        ["linear"],
+        ["get", cls.dataLayer],
+        breaks[0],
+        cls.color[0],
+        breaks[1],
+        cls.color[1],
+        breaks[2],
+        cls.color[2],
+        breaks[3],
+        cls.color[3],
+        breaks[4],
+        cls.color[4],
+      ]);
+
+      if (isNaN(breaks[3]) || breaks[1] == 0) {
+        map.setPaintProperty(
+          cls.hexSize,
+          "fill-opacity",
+          0.0 //globals.opacity
+        );
+        setTimeout(() => {
+          map.setFilter(cls.hexSize, null);
+        }, 1000);
+        if (!recolorComparison) {
+          this.addNoDataLegend();
+        }
+      } else {
+        let filterCondition = cls.dataLayer === "depth" ? "<" : ">=";
+        map.setFilter(cls.hexSize, [
+          //">=",
+          filterCondition,
+          cls.dataLayer,
+          0,
+        ]);
+
+        this.emit('layerUpdate', {
+          colorRamp: cls.color,
+          breaks,
+          selectedData,
+          precision: this.options.precision
+        });
+
+        setTimeout(() => {
+          map.setPaintProperty(
+            cls.hexSize,
+            "fill-opacity",
+            globals.opacity // 0.8
+          );
+        }, 400);
+      }
+    }
+  }
+  _bindRecolorListeners() {
+    let mapClassInstance = this;
+    for (const eventType of ["zoomend", "dragend"]) {
+      this.map.on(eventType, () => {
+        if (!mapClassInstance.options.bivariateMode) {
+          mapClassInstance.recolorBasedOnWhatsOnPage();
+        } else {
+          let bvls = globals.bivariateLayerState;
+          mapClassInstance.createBivariate(
+            null,
+            bvls.dataLayer[0],
+            null,
+            bvls.dataLayer[1]
+          );
+        }
+      });
+      //
+      // //add listener for the comparison map i.e map2
+      // this.map2.on(eventType, function (e, mapClassInstance = instance) {
+      //   //this. in here would ref the mapboxmap and not our mapClass which has the recolor method
+      //   if (debug) {
+      //     console.log(
+      //       "_bindRecolorListeners",
+      //       "event is:",
+      //       e,
+      //       "instance is:",
+      //       instance
+      //     );
+      //   }
+      //
+      //   if (!globals.bivariateMode) {
+      //     let recolorComparison = true;
+      //     mapClassInstance.recolorBasedOnWhatsOnPage(recolorComparison);
+      //
+      //     mapClassInstance.updateOverlayLegend("main");
+      //     mapClassInstance.updateOverlayLegend("comparison");
+      //   } else {
+      //     console.log("bivariateMode enabled - skipping recolor");
+      //   }
+      // });
+    }
+  }
+  addNoDataLegend() {
+    this.emit('layerUpdate', {
+      noData:true
+    });
+  }
+  add3dLayer(map, id) {
+    let current = Object.values(globals.sourceData).find((o) => {
+      return o.name === globals.currentLayerState.hexSize;
+    });
+    if(map.getLayer(id)) {
+      map.removeLayer(id);
+    }
+    map.addLayer(
+      {
+        id: id,
+        type: "fill-extrusion",
+        source: this.options.currentLayerState.hexSize,
+        "source-layer": current.layer,
+        layout: {
+          visibility: "visible",
+        },
+
+        paint: {
+          "fill-extrusion-color": [
+            "interpolate",
+            ["linear"],
+            ["get", this.options.currentLayerState.dataLayer],
+            this.options.currentLayerState.breaks[0],
+            this.options.currentLayerState.color[0],
+            this.options.currentLayerState.breaks[1],
+            this.options.currentLayerState.color[1],
+            this.options.currentLayerState.breaks[2],
+            this.options.currentLayerState.color[2],
+            this.options.currentLayerState.breaks[3],
+            this.options.currentLayerState.color[3],
+            this.options.currentLayerState.breaks[4],
+            this.options.currentLayerState.color[4],
+          ],
+          "fill-extrusion-height": [
+            "interpolate",
+            ["linear"],
+            ["get", this.options.currentLayerState.dataLayer],
+            this.options.currentLayerState.breaks[0],
+            0,
+            this.options.currentLayerState.breaks[1],
+            500,
+            this.options.currentLayerState.breaks[2],
+            5000,
+            this.options.currentLayerState.breaks[3],
+            11000,
+            this.options.currentLayerState.breaks[4],
+            50000,
+          ],
+
+          "fill-extrusion-base": !(
+            this.options.currentLayerState.dataLayer === "depth"
+          )
+            ? 0
+            : 0,
+          "fill-extrusion-opacity": 1,
+        },
+      },
+      this.options.firstSymbolId
+    );
+
+    let filterString =
+      this.options.currentLayerState.dataLayer === "depth" ? "<" : ">=";
+
+    map.setFilter(id, [
+      filterString, // ">="
+      this.options.currentLayerState.dataLayer,
+      0,
+    ]);
   }
 }

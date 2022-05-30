@@ -1,6 +1,7 @@
 import colors from "@/gis/static/colors.js";
 import chroma from "chroma-js";
 import constants from "@/gis/static/constants.js";
+import mapboxgl from "@/gis/mapboxgl";
 
 export function updateData(
   activeDataset,
@@ -14,6 +15,7 @@ export function updateData(
     : this.options.comparisonLayerState;
   let Field_Name = activeLayer.Field_Name;
   this._handleOceanData(activeDataset, activeLayer, comparison)
+  this.clearHexHighlight();
   // this.remove3d();
 
   cls.dataLayer = Field_Name; //update global to reflect selected datalayer
@@ -129,9 +131,7 @@ export function updateData(
           map.setFilter(cls.hexSize, null);
         }, 100);
         if (!comparison) {
-          this.emit('layerUpdate', {
-            noData:true
-          });
+          this.addNoDataLegend()
         }
       } else {
         map.setFilter(cls.hexSize, [">=", Field_Name, 0]);
@@ -151,6 +151,11 @@ export function updateData(
         }, 100);
       }
     }
+    map.once('idle', () => {
+      if(this.options.mode3d) {
+        this.add3dLayer(map, this.options.currentLayerState.hexSize + "-3d")
+      }
+    })
   }, 1000);
 
   map.moveLayer("allsids", this.options.firstSymbolId);
@@ -162,7 +167,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
 
-  // this.clearHexHighlight();
+  this.clearHexHighlight();
   // this.remove3d();
 
   cls.dataLayer = activeLayer.Field_Name; //corresponds to the attributeId
@@ -217,7 +222,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
         });
         if (features) {
           let uniFeatures;
-          uniFeatures = this.getUniqueFeatures(features, "depth"); //depth is field_id for ocean depths layer
+          uniFeatures = this.getUniqueFeatures(features, "depth");
           let selectedData = uniFeatures.map((x) => x.properties["depth"]);
           this.emit('layerUpdate', {
             colorRamp: cls.color,
@@ -246,4 +251,173 @@ export function emit(eventName, event) {
       callback(event);
     });
   }
+}
+
+export function zoomToCountry(selection) {
+    var v2 = new mapboxgl.LngLatBounds(selection.bb);
+    this.map.fitBounds(v2, {
+      linear: true,
+      padding: {
+        top: 50,
+        bottom: 50,
+        left: 50,
+        right: 50,
+      },
+      pitch: 0,
+    });
+
+    // this.remove3d();
+    let self = this;
+    //contextual recolor hexes
+    this.map.once("idle", () => {
+      if (!self.map.getLayer("ocean")) {
+          self.recolorBasedOnWhatsOnPage()
+      }
+    });
+    // this.map2.once("idle", function () {
+    //   if (!self.map2.getLayer("ocean")) {
+    //     setTimeout(() => {
+    //       self.recolorBasedOnWhatsOnPage(self.map2), 1000;
+    //     }); //timeout added to allow data to load in before triggering recolor+legend update
+    //   }
+    // });
+}
+
+export function changeHexagonSize(resolution) {
+  let map = this.map;
+  let map2 = this.map2;
+
+  this.clearHexHighlight();
+
+  if(!map.getLayer(this.options.currentLayerState.hexSize)) {
+    this.options.currentLayerState.hexSize = resolution;
+    this.options.comparisonLayerState.hexSize = resolution;
+    return
+  }
+  // this.remove3d();
+  //update resolution state
+  this.options.currentLayerState.hexSize = resolution;
+  this.options.comparisonLayerState.hexSize = resolution;
+
+  //clear maplayers that are usercontrolled
+  for (var x in constants.userLayers) {
+    if (map.getLayer(constants.userLayers[x])) {
+      map.removeLayer(constants.userLayers[x]);
+    }
+    if (this.options.compareMode) {
+      if (map2.getLayer(constants.userLayers[x])) {
+        map2.removeLayer(constants.userLayers[x]);
+      }
+    }
+  }
+
+  //get source name
+  let currentSourceData = Object.values(this.options.sourceData).find((o) => {
+    return o.name === this.options.currentLayerState.hexSize;
+  });
+
+  let options = {
+    id: resolution,
+    type: "fill",
+    source: resolution,
+    "source-layer": currentSourceData.layer,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": "blue",
+      "fill-opacity": 0.0, //globals.opacity, // 0
+    },
+  };
+  map.addLayer(options, this.options.firstSymbolId);
+  // if (globals.compareMode) {
+  //   map2.addLayer(options, globals.firstSymbolId);
+  // }
+
+  /* if (resolution === "hex1") {
+      //showing loader in expectation of hex1 taking longer to display
+      // $(".loader-gis").show();
+      console.log("handling spinner for hex1 loading");
+      this.showSpinner();
+
+      map.once("idle", () => {
+        // $(".loader-gis").hide();
+        this.hideSpinner();
+      });
+    } */
+
+  if (map.getStyle().name === "Mapbox Satellite") {
+    map.moveLayer(resolution);
+    // if (globals.compareMode) {
+    //   map2.moveLayer(resolution);
+    // }
+  }
+
+  /*     map.once("idle", function (e) {
+      console.log(`map.once on idle triggered by ${e}`);
+      console.log("map idle-> recoloring");
+      this.recolorBasedOnWhatsOnPage();
+
+      //console.log('change bins');
+      //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
+      map.moveLayer(resolution, "allsids");
+    }); */
+  map.once("idle", () => {
+
+    this.recolorBasedOnWhatsOnPage(); //as it's inside an arrow function this. should refer to the outer scope and should be able to find the function
+
+    //console.log('change bins');
+    //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
+    map.moveLayer(resolution, "allsids");
+
+    // this.hideSpinner();
+  });
+  // map2.once("idle", () => {
+  //   if (debug) {
+  //     console.log("map2 idle-> recoloring");
+  //   }
+  //   this.recolorBasedOnWhatsOnPage(map2); //as it's inside an arrow function this. should refer to the outer scope and should be able to find the function
+  //
+  //   //console.log('change bins');
+  //   //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
+  //   map2.moveLayer(resolution, "allsids");
+  //
+  //   // this.hideSpinner();
+  // });
+}
+
+export function add3D() {
+  let map = this.map;
+
+  this.clearHexHighlight();
+
+  let id = this.options.currentLayerState.hexSize + "-3d";
+  if(!map.getLayer(this.options.currentLayerState.hexSize)) {
+    map.easeTo({
+      center: map.getCenter(),
+      pitch: 55,
+    });
+    return this.options.mode3d = true;
+  }
+  if (map.getLayer(id)) {
+    map
+      .easeTo({
+        center: map.getCenter(),
+        pitch: 0,
+      })
+      .removeLayer(id);
+      this.options.mode3d = false;
+  }
+  else {
+    this.options.mode3d = true;
+    this.add3dLayer(map, id)
+    map.easeTo({
+      center: map.getCenter(),
+      pitch: 55,
+    });
+  }
+
+  // map.once("idle", () => {
+  //   this.hideSpinner();
+  // });
 }
