@@ -40,6 +40,12 @@
         :map="map"
       />
     </div>
+
+    <div class="button-wrapper">
+      <map-regional-analysis v-if="map"
+        :map="map"
+      />
+    </div>
   </div>
 </template>
 
@@ -52,6 +58,8 @@ import MapColorSelector from './MapColorSelector'
 import MapOpacityController from './MapOpacityController'
 import MapBasemapSelector from './MapBasemapSelector'
 import MapLabelsController from './MapLabelsController'
+import MapRegionalAnalysis from './MapRegionalAnalysis'
+
 
 export default {
   name: 'MapToolbap',
@@ -67,7 +75,8 @@ export default {
     MapColorSelector,
     MapOpacityController,
     MapBasemapSelector,
-    MapLabelsController
+    MapLabelsController,
+    MapRegionalAnalysis
   },
   props:[
     'map'

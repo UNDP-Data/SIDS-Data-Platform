@@ -7,6 +7,20 @@
         {{value}}
         <span v-html="activeLayer.Unit"></span>
       </p>
+
+      <h4 v-if="mean || min || max">Regional statistics:</h4>
+      <p v-if="mean" class="mb-0">
+        Mean {{mean}}
+        <span v-html="activeLayer.Unit"></span>
+      </p>
+      <p v-if="max" class="mb-0">
+        max {{max}}
+        <span v-html="activeLayer.Unit"></span>
+      </p>
+      <p v-if="min" class="mb-0">
+        min {{min}}
+        <span v-html="activeLayer.Unit"></span>
+      </p>
     </v-card-text>
   </v-card>
 </template>
@@ -19,7 +33,10 @@ export default {
   data() {
     return {
       value:null,
-      name:null
+      name:null,
+      min:null,
+      max:null,
+      mean:null
     }
   },
   mixins: [format],
@@ -39,10 +56,22 @@ export default {
       } else {
         this.name = null
       }
+    },
+    polyUpdate(e) {
+      if(e !== null) {
+        this.min = this.nFormatter(e.min,2)
+        this.max = this.nFormatter(e.max,2)
+        this.mean = this.nFormatter(e.mean,2)
+      } else {
+        this.min = null
+        this.max = null
+        this.mean = null
+      }
     }
   },
   mounted() {
     this.map.on('selectionUpdate', this.updateValue)
+    this.map.on('selectionPolyUpdate', this.polyUpdate)
   }
 }
 </script>

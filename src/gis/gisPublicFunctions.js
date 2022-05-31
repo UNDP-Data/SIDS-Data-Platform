@@ -2,6 +2,7 @@ import colors from "@/gis/static/colors.js";
 import chroma from "chroma-js";
 import constants from "@/gis/static/constants.js";
 import mapboxgl from "@/gis/mapboxgl";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 export function updateData(
   activeDataset,
@@ -732,4 +733,21 @@ export function toggleLabels(label) {
   // map.once("idle", () => {
   //   this.hideSpinner();
   // });
+}
+
+export function startRegionAnalisys(){
+  if (this.draw === null) {
+    this.draw = new MapboxDraw({
+      displayControlsDefault: false,
+      controls: {
+        polygon: true,
+      },
+    });
+    let drawControlsDiv = document.getElementById("drawControls");
+    drawControlsDiv.appendChild(
+      this.draw.onAdd(this.map)
+    );
+    this._addDrawListeners(this);
+  }
+  this.draw.changeMode("draw_polygon");
 }
