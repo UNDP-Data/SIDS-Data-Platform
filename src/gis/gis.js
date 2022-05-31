@@ -8,9 +8,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
+import booleanIntersects from "@turf/boolean-intersects";
+import bbox from "@turf/bbox";
 import axios from "axios";
 
-import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor, changeOpacity, changeBasemap, toggleLabels } from './gisPublicFunctions'
+import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys } from './gisPublicFunctions'
 import { onDataClick, onAdminClick } from './gisEventHandlers'
 
 export default class Map {
@@ -28,7 +30,7 @@ export default class Map {
     //   container: rightMapContainerId,
     //   ...constants.mapOptions,
     // });
-    this.Draw = null;
+    this.draw = null;
     this.drawModeDisabled = false;
     this.map.on("load", () => {
       this.map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
@@ -56,6 +58,7 @@ export default class Map {
     this.changeOpacity = changeOpacity;
     this.changeBasemap = changeBasemap;
     this.toggleLabels = toggleLabels;
+    this.startRegionAnalisys = startRegionAnalisys;
   }
 
   getBasemapLabels() {
@@ -199,7 +202,7 @@ export default class Map {
             "fill-opacity": 0.0, //globals.opacity, //
           },
         },
-        globals.firstSymbolId
+        this.options.firstSymbolId
       );
     }
   }
@@ -381,13 +384,13 @@ export default class Map {
       var breaks = chroma.limits(selectedData, "q", 4);
 
       var breaks_new = [];
-      globals.precision = 1;
+      this.options.precision = 1;
       do {
-        globals.precision++;
+        this.options.precision++;
         for (let i = 0; i < 5; i++) {
-          breaks_new[i] = parseFloat(breaks[i].toPrecision(globals.precision));
+          breaks_new[i] = parseFloat(breaks[i].toPrecision(this.options.precision));
         }
-      } while (this.checkForDuplicates(breaks_new) && globals.precision < 10);
+      } while (this.checkForDuplicates(breaks_new) && this.options.precision < 10);
       breaks = breaks_new;
 
       cls.breaks = breaks;
@@ -408,6 +411,7 @@ export default class Map {
         cls.color[4],
       ]);
 
+      let self = this;
       if (isNaN(breaks[3]) || breaks[1] == 0) {
         map.setPaintProperty(
           cls.hexSize,
@@ -416,6 +420,9 @@ export default class Map {
         );
         setTimeout(() => {
           map.setFilter(cls.hexSize, null);
+          if(self.options.mode3d) {
+            map.setFilter(cls.hexSize + '-3d', null);
+          }
         }, 1000);
         if (!recolorComparison) {
           this.addNoDataLegend();
@@ -428,7 +435,12 @@ export default class Map {
           cls.dataLayer,
           0,
         ]);
-
+        if(self.options.mode3d) {
+          map.setFilter(cls.hexSize + '-3d',
+          [filterCondition,
+          cls.dataLayer,
+          0]);
+        }
         this.emit('layerUpdate', {
           colorRamp: cls.color,
           breaks,
@@ -440,7 +452,7 @@ export default class Map {
           map.setPaintProperty(
             cls.hexSize,
             "fill-opacity",
-            globals.opacity // 0.8
+            this.options.opacity // 0.8
           );
         }, 400);
       }
@@ -453,7 +465,7 @@ export default class Map {
         if (!mapClassInstance.options.bivariateMode) {
           mapClassInstance.recolorBasedOnWhatsOnPage();
         } else {
-          let bvls = globals.bivariateLayerState;
+          let bvls = this.options.bivariateLayerState;
           mapClassInstance.createBivariate(
             null,
             bvls.dataLayer[0],
@@ -494,8 +506,8 @@ export default class Map {
     });
   }
   add3dLayer(map, id) {
-    let current = Object.values(globals.sourceData).find((o) => {
-      return o.name === globals.currentLayerState.hexSize;
+    let current = Object.values(this.options.sourceData).find((o) => {
+      return o.name === this.options.currentLayerState.hexSize;
     });
     if(map.getLayer(id)) {
       map.removeLayer(id);
@@ -596,5 +608,123 @@ export default class Map {
       colorRamp: colorRampNew,
       histogramBreaks: histogram_breaks,
     };
+  }
+
+  _addDrawListeners() {
+    //taken from oldcode implementation in drawFunc.js
+    this.map.on("draw.create", drawCreate);
+    this.map.on("draw.delete", drawDelete);
+    this.map.on("draw.modechange", drawModeChange);
+    let self = this;
+    function drawModeChange(e) {
+      self.emit('selectionPolyUpdate',
+        null
+      )
+      if (e.mode === "simple_select") {
+        self.draw.deleteAll();
+      }
+    }
+
+    function drawDelete() {
+      self.map.setFilter(self.options.currentLayerState.hexSize, null); //map.setFilter(currentGeojsonLayers.hexSize, null);
+      if(self.options.mode3d) {
+        self.map.setFilter(self.options.currentLayerState.hexSize+'-3d', null);
+      }
+      self.draw.deleteAll(); //delete all drawn features ie. polygons
+      self.emit('selectionPolyUpdate',
+        null
+      )
+    }
+
+    function drawCreate(e) {
+      self.map.setFilter(self.options.currentLayerState.hexSize, null);
+      if(self.options.mode3d) {
+        self.map.setFilter(self.options.currentLayerState.hexSize+'-3d', null);
+      }
+      let createdPolygon = e.features[0];
+      let boundBox = bbox(createdPolygon);
+
+      let SW = [boundBox[0], boundBox[1]];
+      let NE = [boundBox[2], boundBox[3]];
+
+      let NEPointPixel = self.map.project(NE);
+      let SWPointPixel = self.map.project(SW);
+
+      //use mapbox function to first cull features to those within the boundBox of the drawn polygon
+      let features3d;
+      let features = self.map.queryRenderedFeatures(
+        [SWPointPixel, NEPointPixel],
+        {
+          layers: [self.options.currentLayerState.hexSize],
+        }
+      );
+
+      if(self.options.mode3d) {
+        features3d = self.map.queryRenderedFeatures(
+          [SWPointPixel, NEPointPixel],
+          {
+            layers: [self.options.currentLayerState.hexSize+'-3d'],
+          }
+        );
+      }
+      if (features.length > 0) {
+        var filter = features.reduce(
+          function (memo, feature) {
+            if (booleanIntersects(feature, createdPolygon)) {
+              memo.push(feature.properties.hexid);
+            }
+            return memo;
+          },
+          ["in", "hexid"] //callback function using reduce - checks if the boundBox rendered features are "in" the array of "hexid"s
+        );
+        self.map.setFilter(
+          self.options.currentLayerState.hexSize,
+          filter
+        );
+        if(self.options.mode3d) {
+          var filter3d = features3d.reduce(
+            function (memo, feature) {
+              if (booleanIntersects(feature, createdPolygon)) {
+                memo.push(feature.properties.hexid);
+              }
+              return memo;
+            },
+            ["in", "hexid"] //callback function using reduce - checks if the boundBox rendered features are "in" the array of "hexid"s
+          );
+          self.map.setFilter(
+            self.options.currentLayerState.hexSize+'-3d',
+            filter3d
+          );
+        }
+        self.map.once("idle", function () //e
+        {
+          let info = [];
+          let onscreenFeatures = self.map.queryRenderedFeatures({
+            layers: [self.options.currentLayerState.hexSize],
+          });
+
+          onscreenFeatures.forEach(function (x) {
+            info.push(x.properties[self.options.currentLayerState.dataLayer]);
+          });
+          let max = Math.max(...info);
+          let min = Math.min(...info);
+          let total = 0;
+          for (let i = 0; i < info.length; i++) {
+            total += info[i];
+          }
+          let mean = total / info.length;
+          self.emit('selectionPolyUpdate', {
+            max,
+            min,
+            mean
+          })
+          self.map.once("zoomend", () => {
+            self.emit('selectionPolyUpdate', null)
+          }).once('dragend', () => {
+            self.emit('selectionPolyUpdate', null)
+          })
+        });
+      }
+    }
   }
 }
