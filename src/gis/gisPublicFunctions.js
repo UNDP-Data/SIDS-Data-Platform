@@ -3,6 +3,7 @@ import chroma from "chroma-js";
 import constants from "@/gis/static/constants.js";
 import mapboxgl from "@/gis/mapboxgl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { featureCollection } from "@turf/helpers";
 
 export function updateData(
   activeDataset,
@@ -163,7 +164,7 @@ export function updateData(
           map.setPaintProperty(
             cls.hexSize,
             "fill-opacity",
-            self.options.opacity // 0.8
+            self.options.bivariateMode ? 0 : self.options.opacity // 0.8
           );
         }, 100);
       }
@@ -262,6 +263,15 @@ export function on(eventName, callback) {
   }
 }
 
+export function off(eventName, callback) {
+  if(this.events[eventName]) {
+    var index = this.events[eventName].indexOf(callback);
+    if (index !== -1) {
+      this.events[eventName].splice(index, 1);
+    }
+  }
+}
+
 export function emit(eventName, event) {
   if(this.events[eventName]){
     this.events[eventName].map(callback => {
@@ -314,6 +324,9 @@ export function changeHexagonSize(resolution) {
   if(this.options.mode3d) {
     this.map.removeLayer(this.options.currentLayerState.hexSize + "-3d")
   }
+  if(this.options.bivariateMode) {
+    this.removeBivariateLayer()
+  }
   // this.remove3d();
   //update resolution state
   this.options.currentLayerState.hexSize = resolution;
@@ -350,10 +363,18 @@ export function changeHexagonSize(resolution) {
     },
   };
   map.addLayer(options, this.options.firstSymbolId);
-
+  let self = this;
   map.once('idle', () => {
     if(this.options.mode3d) {
-      this.add3dLayer(map, this.options.currentLayerState.hexSize + "-3d")
+      self.add3dLayer(map, this.options.currentLayerState.hexSize + "-3d")
+    }
+    if(self.options.bivariateMode) {
+      self.createBivariate(
+        self.options.bivarConfig.firstDataset,
+        self.options.bivarConfig.firstLayer,
+        self.options.bivarConfig.secondDataset,
+        self.options.bivarConfig.secondLayer
+      )
     }
   })
   // if (globals.compareMode) {
@@ -557,9 +578,18 @@ export function changeColor(selectedColor) {
   });
 }
 
-export function changeOpacity(opacity) {
+export function changeOpacity(opacity, noUpdate) {
   let map = this.map;
-  this.options.opacity = opacity;
+  if(!noUpdate) {
+    this.options.opacity = opacity;
+  }
+  if(this.options.bivariateMode && map.getLayer('bivariate')) {
+    return map.setPaintProperty(
+      'bivariate',
+      "fill-opacity",
+      opacity
+    );
+  }
   if(!map.getLayer(this.options.currentLayerState.hexSize)) {
     return;
   }
@@ -583,7 +613,6 @@ export function changeOpacity(opacity) {
   //   }
   // }
   //update global opacity value
-  this.options.opacity = opacity;
 }
 
 export function changeBasemap (selectedBasemap) {
@@ -750,4 +779,252 @@ export function startRegionAnalisys(){
     this._addDrawListeners(this);
   }
   this.draw.changeMode("draw_polygon");
+}
+
+export function toggleBivariateComponents(e) {
+  this.options.bivariateMode = e;
+  if (!e) {
+    this.removeBivariateLayer();
+    this.changeOpacity(this.options.opacity);
+    this.clearHexHighlight()
+  } else {
+    this.changeOpacity(0, true);
+    this.clearHexHighlight()
+  }
+}
+
+export function createBivariate(
+  firstDataset,
+  firstLayer,
+  secondDataset,
+  secondLayer
+) {
+  let map = this.map,
+  self = this,
+  cls = this.options.currentLayerState,
+  bvls = this.options.bivariateLayerState;
+  this.options.bivarConfig = {
+    firstDataset,
+    firstLayer,
+    secondDataset,
+    secondLayer
+  }
+  bvls.dataLayer[0] = firstLayer;
+  bvls.dataLayer[1] = secondLayer;
+
+  if(secondLayer == null || firstLayer == null) {
+    return;
+  }
+  if(
+    [firstLayer.Name, secondLayer.Name].includes("Ocean Data") &&
+    firstLayer.Name !== secondLayer.Name
+  ) {
+    return;
+  } else {
+    let features = map.querySourceFeatures(cls.hexSize, {
+      sourceLayer: [cls.hexSize === "ocean" ? "oceans" : cls.hexSize]
+    });
+    if (features?.length != 0) {
+      // let uniqueFeatures;
+      let idProperty = null;
+      // if (cls.hexSize === "admin1") {
+      //   uniqueFeatures = this.getUniqueFeatures(features, "GID_1");
+      //   idProperty = "GID_1";
+      // } else if (cls.hexSize === "admin2") {
+      //   uniqueFeatures = this.getUniqueFeatures(features, "GID_2");
+      //   idProperty = "GID_2";
+      // } else {
+      //   uniqueFeatures = this.getUniqueFeatures(features, "hexid");
+      // }
+
+      let featuresUsed = features;
+      let attrId_1 = firstLayer.Field_Name;
+      let attrId_2 = secondLayer.Field_Name;
+      let negativeAttrIds = ["depth"];
+
+      let data_1 = featuresUsed.map((x_feat) => {
+        let isNegative = negativeAttrIds.includes(attrId_1) ? -1 : 1;
+        let propertyValue = x_feat.properties[attrId_1];
+        return propertyValue * isNegative;
+      });
+      let data_2 = featuresUsed.map((y_feat) => {
+        let isNegative = negativeAttrIds.includes(attrId_2) ? -1 : 1;
+        let propertyValue = y_feat.properties[attrId_2];
+        return propertyValue * isNegative;
+      });
+
+      let hasData = {
+        data_1: data_1.some((x) => !Number.isNaN(x)),
+        data_2: data_2.some((y) => !Number.isNaN(y)),
+      };
+
+      if (!hasData.data_1 || !hasData.data_2) {
+        if (map.getLayer("bivariate")) {
+          map.removeLayer("bivariate");
+          map.removeSource("bivariate");
+        }
+        return;
+      }
+
+      let X_breaks = chroma.limits(data_1, "q", 3);
+      let Y_breaks = chroma.limits(data_2, "q", 3);
+      bvls.breaks.X = X_breaks;
+      bvls.breaks.Y = Y_breaks;
+
+      let bivar_colors = colors.colorSeqSeq3["blue-pink-purple"];
+      bvls.color = bivar_colors;
+
+      let bivarClass = Array(featuresUsed.length).fill(0);
+      let bivarScatter = new Array(10);
+      for (let i = 0; i < 10; i++) {
+        bivarScatter[i] = [];
+      }
+
+      for (let i = 0; i < featuresUsed.length; i++) {
+
+        let x_val = data_1[i];
+        let y_val = data_2[i];
+
+        let range_1, range_2;
+        if (x_val < X_breaks[1]) range_1 = 1;
+        else if (x_val < X_breaks[2]) range_1 = 2;
+        else range_1 = 3;
+        if (y_val < Y_breaks[1]) range_2 = 1;
+        else if (y_val < Y_breaks[2]) range_2 = 2;
+        else range_2 = 3;
+        var coord = String(range_1) + String(range_2);
+        if (Number.isNaN(x_val) || Number.isNaN(y_val)) {
+          coord = null;
+        }
+        switch (coord) {
+          case "11":
+            bivarClass[i] = 0;
+            break; //LL
+          case "12":
+            bivarClass[i] = 1;
+            break; //LM
+          case "13":
+            bivarClass[i] = 2;
+            break; //LH
+          case "21":
+            bivarClass[i] = 3;
+            break; //ML
+          case "22":
+            bivarClass[i] = 4;
+            break; //MM
+          case "23":
+            bivarClass[i] = 5;
+            break; //MH
+          case "31":
+            bivarClass[i] = 6;
+            break; //HL
+          case "32":
+            bivarClass[i] = 7;
+            break; //HM
+          case "33":
+            bivarClass[i] = 8;
+            break; //HH
+          case null: //"Null":
+            bivarClass[i] = 9;
+            break; //NULL
+        }
+        bivarScatter[bivarClass[i]].push({ x: x_val, y: y_val }); //assign the bivarPairValues object to the counter of the scatterObject for hte appropriate class
+        featuresUsed[i]["properties"]["bivarClass"] = bivarClass[i]; //adding a property to the hex features; //TODO needs a better way especially for after switch to non-aggregated features
+      }
+
+      var fc = featureCollection(featuresUsed);
+      //remove preexisting bivariate layer
+      if (map.getLayer("bivariate")) {
+        map.removeLayer("bivariate");
+        map.removeSource("bivariate");
+      }
+
+      map.addSource("bivariate", {
+        type: "geojson",
+        data: fc,
+        promoteId: idProperty,
+      });
+      map.addLayer({
+        id: "bivariate",
+        source: "bivariate",
+        type: "fill",
+        paint: {
+          "fill-color": [
+            "step", //step operator
+            ["get", "bivarClass"], //the input;retreive a number literal ie. the bivariate class;
+            //values changed from Atlases code, the first output value is used if the input value is less than the first numeric-stop value i.e 1
+            //his code had the first as 0, which was wrong
+            bivar_colors[0],
+            1,
+            bivar_colors[1],
+            2,
+            bivar_colors[2],
+            3,
+            bivar_colors[3],
+            4,
+            bivar_colors[4],
+            5,
+            bivar_colors[5],
+            6,
+            bivar_colors[6],
+            7,
+            bivar_colors[7],
+            8,
+            bivar_colors[8],
+            9,
+            "rgba(255,255,255,0)",
+          ],
+          "fill-opacity": self.options.opacity,
+        },
+      });
+
+      if (!cls.hexSize === "bivariate") {
+        cls.hexSize = "bivariate";
+      }
+      let point_radius;
+      if (featuresUsed.length < 100) {
+        point_radius = 3.3;
+      } else if (featuresUsed.length > 1000) {
+        point_radius = 1.5;
+      } else {
+        point_radius = ((featuresUsed.length - 100) / 100) * 0.2;
+      }
+
+      let bivarClasses = [
+        "L-L",
+        "L-Mid",
+        "L-H",
+        "Mid-L",
+        "Mid-Mid",
+        "Mid-H",
+        "H-L",
+        "H-Mid",
+        "H-H",
+      ];
+      let bivarDatasets = [];
+      for (let i = 0; i < 9; i++) {
+        bivarDatasets.push({
+          label: bivarClasses[i],
+          data: bivarScatter[i],
+          pointRadius: point_radius,
+          pointHoverRadius: 3,
+          backgroundColor: bivar_colors[i],
+          hoverBorderColor: "rgba(0,0,0,1)",
+          pointHoverBorderWidth: 2,
+          borderWidth: 1.5,
+        });
+      }
+      this.emit('bivarDataUpdate', {
+        data:bivarDatasets,
+        minX: X_breaks[0], //minimum tick
+        maxX: X_breaks[3],
+        minY: Y_breaks[0], //minimum tick
+        maxY: Y_breaks[3],
+        X_breaks,
+        Y_breaks
+      })
+    } else {
+      return;
+    }
+  }
 }

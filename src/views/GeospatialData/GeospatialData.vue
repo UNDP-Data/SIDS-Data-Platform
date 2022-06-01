@@ -22,18 +22,12 @@
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       :map="map"
+      @updateBivarState="toggleBivar"
       @update="updateMap"
       @updateComparison="
         updateComparisonMap($event.dataset, $event.layer, true)
       "
-      @updateBivariate="
-        updateBivariate(
-          $event.firstDataset,
-          $event.firstLayer,
-          $event.secondDataset,
-          $event.secondLayer
-        )
-      "
+      @updateBivariate="updateBivariate"
     />
     <!-- <map-dataset-controller
       class="data-controller"
@@ -59,6 +53,7 @@
       class="toolbar"
       :map="map"
       :activeLayer="activeLayer"
+      @toggleBivar="toggleBivar"
     />
     <!-- <map-toolbar
       class="toolbar"
@@ -149,8 +144,8 @@ export default {
       activeLayerName: null,
       menuColapsed:false,
       displayLegend: true,
-      dualModeEnabled: null,
-      bivariateModeEnabled: null,
+      dualModeEnabled: false,
+      bivariateModeEnabled: false,
       gisLoader: { loading: true, color: "purple", size: "50px" },
       // gis_store, //testing use of a store
     };
@@ -163,6 +158,10 @@ export default {
     // GridLoader, // PulseLoader,
   },
   methods: {
+    toggleBivar(e) {
+      this.bivariateModeEnabled = e;
+      this.map.toggleBivariateComponents(e)
+    },
     //A) Interfaces for the Map class
     changeBasemap(object) {
       this.map.changeBasemap(object);
@@ -195,12 +194,8 @@ export default {
     },
     changeResolution(object) {
       if (!(this.activeDatasetName === "Ocean Data")) {
-        console.log(`activeDatasetName: ${this.activeDatasetName}`);
         this.map.changeHexagonSize(object);
       } else {
-        console.log(
-          `activeDatasetName: ${this.activeDatasetName}; doing nothing;`
-        );
         //TODO: implement a more explicitly blocking version where it stops the clicking in the toolbar itself
         return;
       }
@@ -560,13 +555,11 @@ export default {
       //else throw exception
 
       if (checkedBool === false) {
-        console.log(`removing boundary layer ${layerName}`);
         if (pointsLayers.includes(layerName)) {
           map.removeLayer(layerName);
         } else if (layerName === "underwater-overlay") {
           map.removeLayer("underwater");
         } else {
-          console.log(`checked ${checkedBool} , removing ${layerName}`);
           map.removeLayer(layerName);
         }
       } else if (checkedBool === true) {
@@ -744,19 +737,10 @@ export default {
         map.hideSpinner();
       });
     },
-    updateBivariate(firstDataset, firstLayer, secondDataset, secondLayer) {
-      // console.warn(
-      //   "updateBivariate:",
-      //   "activeDataset: ",
-      //   activeDataset,
-      //   "activeLayer: ",
-      //   activeLayer,
-
-      // );
-      // console.warn("updateBivariate(...) still being implemented");
+    updateBivariate({dataset, layer, secondDataset, secondLayer}) {
       this.map.createBivariate(
-        firstDataset,
-        firstLayer,
+        dataset,
+        layer,
         secondDataset,
         secondLayer
       );
@@ -830,7 +814,6 @@ export default {
   },
   mounted() {
     this.map = new GIS("#mapsContainer", "map", "map2");
-    console.log(this.map, '!!!!!!!!!!!')
   },
 };
 </script>

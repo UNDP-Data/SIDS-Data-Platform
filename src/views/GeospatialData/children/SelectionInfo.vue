@@ -2,12 +2,25 @@
   <v-card v-if="value" class="selection-info description-block background-grey">
     <v-card-text class="pa-2">
       <h4 v-if="name">{{name}}</h4>
-      <h4>Value:</h4>
-      <p class="mb-0">
+      <h4 v-if="value && !bivarClass">Value:</h4>
+      <p  v-if="value && !bivarClass" class="mb-0">
         {{value}}
         <span v-html="activeLayer.Unit"></span>
       </p>
 
+      <h4  v-if="bivarClass">Class:</h4>
+      <p class="mb-0">
+        {{bivarClass}}
+      </p>
+      <h4  v-if="level1">First value ({{level1}}):</h4>
+      <p v-if="value1" class="mb-0">
+        {{value1}}
+      </p>
+
+      <h4  v-if="level2">First value ({{level2}}):</h4>
+      <p v-if="value2" class="mb-0">
+        {{value2}}
+      </p>
       <h4 v-if="mean || min || max">Regional statistics:</h4>
       <p v-if="mean" class="mb-0">
         Mean {{mean}}
@@ -36,7 +49,12 @@ export default {
       name:null,
       min:null,
       max:null,
-      mean:null
+      mean:null,
+      bivarClass:null,
+      level1:null,
+      value1:null,
+      level2:null,
+      value2:null,
     }
   },
   mixins: [format],
@@ -67,11 +85,33 @@ export default {
         this.max = null
         this.mean = null
       }
+    },
+    bivarUpdate(e) {
+      console.log(e)
+      if(e !== null) {
+        this.bivarClass = e.class;
+        this.level1 = e.level1;
+        this.value1 = this.nFormatter(e.value1,2)
+        this.level2 = e.level2;
+        this.value2 = this.nFormatter(e.value2,2)
+      } else {
+        this.bivarClass = null
+        this.level1 = null
+        this.value1 = null
+        this.level2 = null
+        this.value2 = null
+      }
     }
   },
   mounted() {
     this.map.on('selectionUpdate', this.updateValue)
     this.map.on('selectionPolyUpdate', this.polyUpdate)
+    this.map.on('bivariateClick', this.bivarUpdate)
+  },
+  destroyed() {
+    this.map.off('selectionUpdate', this.updateValue)
+    this.map.off('selectionPolyUpdate', this.polyUpdate)
+    this.map.on('bivariateClick', this.bivarUpdate)
   }
 }
 </script>

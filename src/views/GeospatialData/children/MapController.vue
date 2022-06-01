@@ -4,14 +4,21 @@
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       @layersChange="emitUpdate"
+      @modeUpdate="toggleBivarUpdate"
     />
     <layer-description
+      v-if="!bivariateModeEnabled"
       :activeLayer="activeLayer"
       :activeDataset="activeDataset"
     />
-    <layer-legend v-if="map"
+    <layer-legend v-if="map && !bivariateModeEnabled"
       :map="map"
       :activeLayer="activeLayer"
+    />
+    <layer-bivar-legend v-if="map && bivariateModeEnabled"
+      :map="map"
+      :activeLayer="activeLayer"
+      :secondLayer="secondLayer"
     />
   </div>
 </template>
@@ -20,12 +27,15 @@
 import LayersController from './LayersController';
 import LayerDescription from './LayerDescription';
 import LayerLegend from './LayerLegend';
+import LayerBivarLegend from './LayerBivarLegend';
 export default {
   name: 'MapController',
   data() {
     return {
       activeLayer:null,
-      activeDataset:null
+      activeDataset:null,
+      secondLayer:null,
+      secondDataset:null
     }
   },
   props: [
@@ -36,19 +46,28 @@ export default {
   components:{
     LayersController,
     LayerDescription,
-    LayerLegend
+    LayerLegend,
+    LayerBivarLegend
   },
   methods:{
+    toggleBivarUpdate(e) {
+      this.$emit('updateBivarState', e)
+    },
     emitUpdate(e) {
+      if(this.activeLayer !== e.layer) {
+          this.$emit("update", e);
+      }
       this.activeLayer = e.layer
       this.activeDataset = e.dataset
+      this.secondLayer = e.secondLayer
+      this.secondDataset = e.secondDataset
+
       if (this.bivariateModeEnabled) {
         return this.emitBivariateUpdate(e);
       }
       if (this.dualModeEnabled) {
         return this.emitBivariateUpdate(e);
       }
-      return this.$emit("update", e);
     },
     emitBivariateUpdate(e) {
       this.$emit("updateBivariate", e);

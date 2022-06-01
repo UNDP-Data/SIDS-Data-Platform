@@ -40,7 +40,12 @@
         :map="map"
       />
     </div>
-
+    <div class="button-wrapper">
+      <map-bivar v-if="map"
+        @toggleBivar="toggleBivar"
+        :map="map"
+      />
+    </div>
     <div class="button-wrapper">
       <map-regional-analysis v-if="map"
         :map="map"
@@ -59,6 +64,7 @@ import MapOpacityController from './MapOpacityController'
 import MapBasemapSelector from './MapBasemapSelector'
 import MapLabelsController from './MapLabelsController'
 import MapRegionalAnalysis from './MapRegionalAnalysis'
+import MapBivar from './MapBivar'
 
 
 export default {
@@ -76,11 +82,17 @@ export default {
     MapOpacityController,
     MapBasemapSelector,
     MapLabelsController,
-    MapRegionalAnalysis
+    MapRegionalAnalysis,
+    MapBivar
   },
   props:[
     'map'
-  ]
+  ],
+  methods: {
+    toggleBivar(e) {
+      this.$emit('toggleBivar', e)
+    }
+  }
 }
 </script>
 
