@@ -2,7 +2,6 @@
   <v-card class="background-grey bivar_frame">
     <div
       v-if="activeLayer && secondLayer"
-      class="pic app-body population-per-km col-flex"
     >
       <div v-if="hasData">
         <div  class="d-flex justify-center legend-title">
@@ -13,6 +12,26 @@
           width="320"
           height="200"
         ></canvas>
+        <v-row>
+          <v-col cols="6">
+            <v-switch
+              class="mt-1"
+              v-model="xAxisLinear"
+              @change="updateAxisType"
+              :label="`X axis: ${xAxisType}`"
+              hide-details
+            ></v-switch>
+          </v-col>
+          <v-col cols="6">
+            <v-switch
+              class="mt-1"
+              v-model="yAxisLinear"
+              @change="updateAxisType"
+              :label="`Y axis: ${yAxisType}`"
+              hide-details
+            ></v-switch>
+          </v-col>
+        </v-row>
       </div>
       <v-card-text v-else>
         No Data for this Region
@@ -35,6 +54,8 @@ export default {
     let nFormatter = this.nFormatter
     return {
       hasData:false,
+      xAxisLinear: false,
+      yAxisLinear: false,
       chartOptions: {
         animation: {
             duration: 0
@@ -116,7 +137,21 @@ export default {
     'activeLayer',
     'secondLayer'
   ],
+  computed: {
+    xAxisType() {
+      return this.xAxisLinear ? 'linear' : 'logarithmic'
+    },
+    yAxisType() {
+      return this.yAxisLinear ? 'linear' : 'logarithmic'
+    }
+  },
   methods:{
+    updateAxisType() {
+      this.chartOptions.scales.yAxes[0].type = this.yAxisType;
+      this.chartOptions.scales.xAxes[0].type = this.xAxisType;
+      this.chart.options = this.chartOptions;
+      this.chart.update(0);
+    },
     updateChart(e) {
       this.hasData = true;
       this.$nextTick(() => {
@@ -149,7 +184,7 @@ export default {
         chartObjX.ticks.push(e.X_breaks[1]);
         chartObjX.ticks.push(e.X_breaks[0]);
       }
-      new Chart(canvas, {
+      this.chart = new Chart(canvas, {
         type: "scatter",
         data: { datasets: e.data },
         options: this.chartOptions,
@@ -176,7 +211,8 @@ export default {
         chartObjX.ticks.push(e.X_breaks[1]);
         chartObjX.ticks.push(e.X_breaks[0]);
       }
-      this.chart.data = e.data
+      this.chart.data = e.data;
+      this.chart.options = this.chartOptions;
       this.chart.update(0);
     },
   },
@@ -195,6 +231,6 @@ export default {
   border-radius: 0 !important;
 }
 .bivar_frame {
-  height: 300px;
+  min-height: 300px;
 }
 </style>
