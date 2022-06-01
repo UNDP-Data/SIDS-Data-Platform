@@ -169,7 +169,7 @@ export default {
         }
       }
       this.chart.data = data.data
-      this.chart.update();
+      this.chart.update(0);
     },
     computeData(
       selectedData, colors, breaks, precision
@@ -248,6 +248,9 @@ export default {
   },
   mounted() {
     this.map.on('layerUpdate', this.updateLegend)
+  },
+  destroyed() {
+    this.map.off('layerUpdate', this.updateLegend)
   }
 }
 </script>

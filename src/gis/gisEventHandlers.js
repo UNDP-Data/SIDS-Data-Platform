@@ -164,3 +164,76 @@ export function onAdminClick(e, adminLayerId) {
     this.map.getSource("highlightS").setData(feats[0]);
   }
 }
+
+export function onBivariateClick(clicked) {
+  if (clicked.features[0].properties.bivarClass === 9) {
+    return;
+  }
+  let classToBivariateClasses = {
+    0: { 1: "Low", 2: "Low" },
+    1: { 1: "Medium", 2: "Low" },
+    2: { 1: "High", 2: "Low" },
+    3: { 1: "Low", 2: "Medium" },
+    4: { 1: "Medium", 2: "Medium" },
+    5: { 1: "High", 2: "Medium" },
+    6: { 1: "Low", 2: "High" },
+    7: { 1: "Medium", 2: "High" },
+    8: { 1: "High", 2: "High" },
+    9: { 1: "Unassigned", 2: "Unassigned" },
+  };
+
+  let cls = this.options.currentLayerState;
+  let bvls = this.options.bivariateLayerState;
+
+  //prepare infobox for display
+  this.emit('bivariateClick', {
+    class:clicked.features[0].properties["bivarClass"] + 1,
+    level1: classToBivariateClasses[clicked.features[0].properties["bivarClass"]][1],
+    value1:clicked.features[0].properties[bvls.dataLayer[0].Field_Name],
+    level2: classToBivariateClasses[clicked.features[0].properties["bivarClass"]][2],
+    value2: clicked.features[0].properties[bvls.dataLayer[1].Field_Name]
+  })
+
+  //clear preexisting highlighted source/layer
+  if (this.map.getSource("highlightS")) {
+    this.map.removeLayer("highlight");
+    this.map.removeSource("highlightS");
+  }
+  if (this.map.getSource("clickedone")) {
+    this.map.removeLayer("clickedone");
+    this.map.removeSource("clickedone");
+  }
+
+  //determine the styleId based on what current resolution is
+  let property;
+  if (cls.hexSize === "admin1") {
+    property = "GID_1";
+  } else if (cls.hexSize === "admin2") {
+    property = "GID_2";
+  } else {
+    property = "hexid";
+  }
+  //find which of the rendered features the clicked on is, and create highlight
+  var featureId = clicked.features[0].properties[property];
+
+  var feats = this.map.queryRenderedFeatures({
+    layers: [bvls.hexSize],
+    filter: ["==", property, featureId],
+  });
+
+  var fc = featureCollection(feats); //use turf.js to aggregate into a single geojson and add as layer to map
+  var dis = dissolve(fc);
+  this.map.addSource("clickedone", {
+    type: "geojson",
+    data: dis,
+  });
+  this.map.addLayer({
+    id: "clickedone",
+    source: "clickedone",
+    type: "line",
+    paint: {
+      "line-color": "red",
+      "line-width": 5,
+    },
+  });
+}

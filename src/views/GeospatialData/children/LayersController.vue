@@ -353,9 +353,11 @@ export default {
       this.activePillar = e.filters.pillar
       if(this.dualModeEnabled !== e.modes.dualModeEnabled
         || this.bivariateModeEnabled !== e.modes.bivariateModeEnabled) {
-          this.$emit('modeUpdate', e.modes)
+          this.$emit('modeUpdate', e.modes.bivariateModeEnabled)
       }
-      this.emitUpdate()
+      this.$nextTick(() => {
+        this.emitUpdate()
+      })
     }
   }
 }

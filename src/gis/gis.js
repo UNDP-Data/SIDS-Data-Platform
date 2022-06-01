@@ -12,8 +12,8 @@ import booleanIntersects from "@turf/boolean-intersects";
 import bbox from "@turf/bbox";
 import axios from "axios";
 
-import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys } from './gisPublicFunctions'
-import { onDataClick, onAdminClick } from './gisEventHandlers'
+import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, off, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys, toggleBivariateComponents, createBivariate } from './gisPublicFunctions'
+import { onDataClick, onAdminClick, onBivariateClick } from './gisEventHandlers'
 
 export default class Map {
   constructor(containerId, leftMapContainerId,
@@ -41,13 +41,14 @@ export default class Map {
       this._addVectorSources();
       this.getBasemapLabels();
     });
-    this.options = globals
-    this.options.myBivariateScatterChart = {};
+    this.options = JSON.parse(JSON.stringify(globals))
     this.events={};
     this.options.colorSCheme = {};
+    this.options.bivarConfig = {};
     this.updateData = updateData;
     this.on = on;
     this.emit = emit;
+    this.off = off;
     this.addOcean = addOcean;
     this.onDataClick = onDataClick;
     this.onAdminClick = onAdminClick;
@@ -59,6 +60,9 @@ export default class Map {
     this.changeBasemap = changeBasemap;
     this.toggleLabels = toggleLabels;
     this.startRegionAnalisys = startRegionAnalisys;
+    this.toggleBivariateComponents = toggleBivariateComponents;
+    this.createBivariate = createBivariate;
+    this.onBivariateClick = onBivariateClick;
   }
 
   getBasemapLabels() {
@@ -246,11 +250,11 @@ export default class Map {
       }
     );
 
-    // this.map.on("click", "bivariate", function (e) {
-    //     instance.clearOnClickQuery();
-    //     instance.onBivariateClick(e);
-    //   }
-    // );
+    this.map.on("click", "bivariate", function (e) {
+        instance.clearOnClickQuery();
+        instance.onBivariateClick(e);
+      }
+    );
 
     // this.map2.on("click", "hex5", function (e, mapClassInstance = instance) {
     //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
@@ -312,7 +316,6 @@ export default class Map {
             this.removeLayer(id);
           }
           if (this.getSource(id)) {
-              console.log(`removeSource:`, id);
             this.removeSource(id);
           }
         }
@@ -349,6 +352,8 @@ export default class Map {
     this.emit('selectionUpdate', {
       value: null
     })
+
+    this.emit('bivariateClick', null)
   }
 
   recolorBasedOnWhatsOnPage(recolorComparison = false) {
@@ -725,6 +730,12 @@ export default class Map {
           })
         });
       }
+    }
+  }
+  removeBivariateLayer() {
+    if (this.map.getLayer("bivariate")) {
+      this.map.removeLayer("bivariate");
+      this.map.removeSource("bivariate");
     }
   }
 }
