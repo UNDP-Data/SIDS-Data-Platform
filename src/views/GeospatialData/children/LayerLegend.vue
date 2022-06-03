@@ -17,7 +17,7 @@
           </div>
         </div>
         <canvas
-          id="histogram"
+          :id="'histogram'+ hexIndex"
           width="320"
           height="115"
         ></canvas>
@@ -116,14 +116,15 @@ export default {
   mixins: [format],
   props:[
     'activeLayer',
-    'map'
+    'map',
+    'hexIndex'
   ],
   methods: {
     updateLegend(e) {
-      if(e.noData) {
+      if(e.noData && e.activeLayer === this.activeLayer) {
         this.hasData = false
         this.chart = null
-      } else {
+      } else if(e.activeLayer === this.activeLayer) {
         this.legendPoints = e.breaks.map((item, index) => {
           return {
             text: this.nFormatter(item,2),
@@ -141,7 +142,7 @@ export default {
       }
     },
     initHistogramm(e) {
-      let canvas = document.getElementById("histogram"),
+      let canvas = document.getElementById("histogram"+ this.hexIndex),
       data = this.computeData(e.selectedData, e.colorRamp, e.breaks, e.precision);
       this.chartOptions.scales.yAxes[0].ticks.max = data.maxY;
       this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObj) {

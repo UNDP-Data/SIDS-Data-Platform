@@ -183,6 +183,7 @@
 
       <layer-selector
         class="mb-4 ml-4 mr-4"
+        :disabled="!activeLayer"
         v-if="bivariateModeEnabled || dualModeEnabled"
         :dataset="secondDataset"
         :datasets="filteredDatasets"
@@ -351,9 +352,11 @@ export default {
       this.activeGoalType = e.filters.goalType
       this.activeGoal = e.filters.goal
       this.activePillar = e.filters.pillar
-      if(this.dualModeEnabled !== e.modes.dualModeEnabled
-        || this.bivariateModeEnabled !== e.modes.bivariateModeEnabled) {
-          this.$emit('modeUpdate', e.modes.bivariateModeEnabled)
+      if(this.bivariateModeEnabled !== e.modes.bivariateModeEnabled) {
+        this.$emit('modeUpdate', e.modes.bivariateModeEnabled)
+      }
+      if(this.dualModeEnabled !== e.modes.dualModeEnabled) {
+        this.$emit('dualModeUpdate', e.modes.bivariateModeEnabled)
       }
       this.$nextTick(() => {
         this.emitUpdate()

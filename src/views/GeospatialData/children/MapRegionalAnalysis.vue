@@ -2,16 +2,19 @@
   <div class="">
   <v-tooltip left maxWidth="240">
     <template v-slot:activator="{ on: tooltip }">
-      <v-btn
-        class="toolbar-button"
-        color="gray"
-        @click="toggleLabels"
-        dark
-        v-on="{ ...tooltip }"
-      >
-        <i class="regional-analysis-icon"
-        ></i>
-      </v-btn>
+      <div>
+        <v-btn
+          class="toolbar-button"
+          color="gray"
+          @click="toggleLabels"
+          :disabled="disabled"
+          dark
+          v-on="{ ...tooltip }"
+        >
+          <i class="regional-analysis-icon"
+          ></i>
+        </v-btn>
+      </div>
     </template>
     <span>
       <b>Regional Analysis</b> - Draw an area of interest to compute statistics for the region
@@ -32,7 +35,8 @@ export default {
   },
   props:[
     'map',
-    'activeLayer'
+    'activeLayer',
+    'disabled'
   ],
   methods: {
     toggleLabels() {

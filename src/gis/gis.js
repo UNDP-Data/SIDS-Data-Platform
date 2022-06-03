@@ -6,18 +6,17 @@ import chroma from "chroma-js";
 import mapboxgl from "@/gis/mapboxgl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import "mapbox-gl-compare";
+import MapboxCompare from "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import booleanIntersects from "@turf/boolean-intersects";
 import bbox from "@turf/bbox";
 import axios from "axios";
 
-import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, off, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys, toggleBivariateComponents, createBivariate } from './gisPublicFunctions'
+import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, off, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys, toggleBivariateComponents, createBivariate, toggleMapboxGLCompare } from './gisPublicFunctions'
 import { onDataClick, onAdminClick, onBivariateClick } from './gisEventHandlers'
 
 export default class Map {
-  constructor(containerId, leftMapContainerId,
-    // rightMapContainerId
+  constructor(containerId, leftMapContainerId, rightMapContainerId
   ) {
     mapboxgl.accessToken =
       "pk.eyJ1Ijoic2ViYXN0aWFuLWNoIiwiYSI6ImNpejkxdzZ5YzAxa2gyd21udGpmaGU0dTgifQ.IrEd_tvrl6MuypVNUGU5SQ";
@@ -26,21 +25,12 @@ export default class Map {
       container: leftMapContainerId,
       ...constants.mapOptions,
     });
-    // this.map2 = new mapboxgl.Map({
-    //   container: rightMapContainerId,
-    //   ...constants.mapOptions,
-    // });
+    this.map2 = new mapboxgl.Map({
+      container: rightMapContainerId,
+      ...constants.mapOptions,
+    });
     this.draw = null;
     this.drawModeDisabled = false;
-    this.map.on("load", () => {
-      this.map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
-      this._removeUnusedLayers();
-      this._bindMapClickListeners();
-      this._bindRecolorListeners();
-      this._addPointSources();
-      this._addVectorSources();
-      this.getBasemapLabels();
-    });
     this.options = JSON.parse(JSON.stringify(globals))
     this.events={};
     this.options.colorSCheme = {};
@@ -63,6 +53,23 @@ export default class Map {
     this.toggleBivariateComponents = toggleBivariateComponents;
     this.createBivariate = createBivariate;
     this.onBivariateClick = onBivariateClick;
+    this.toggleMapboxGLCompare = toggleMapboxGLCompare;
+    let self = this;
+    this.map.on("load", () => {
+      this.map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
+      this._removeUnusedLayers();
+      this._bindMapClickListeners();
+      this._bindRecolorListeners();
+      this._addPointSources();
+      this._addVectorSources();
+      this._addVectorSources(true)
+      this.getBasemapLabels();
+      this.createComparison(containerId, this.map, this.map2);
+      this.removeComparison();
+      self.map.once('idle', () => {
+        self.emit('loadingEnd')
+      })
+    });
   }
 
   getBasemapLabels() {
@@ -106,6 +113,9 @@ export default class Map {
       if(this.map.getLayer(name)) {
         this.map.removeLayer(name)
       }
+      if(this.map2.getLayer(name)) {
+        this.map2.removeLayer(name)
+      }
     });
   }
 
@@ -123,7 +133,8 @@ export default class Map {
     let map = !comparison ? this.map : this.map2;
 
     for (let idString of Object.keys(this.options.sources)) {
-      map.addSource(idString, this.options.sources[idString]);
+      if(!map.getSource(idString))
+        map.addSource(idString, this.options.sources[idString]);
     }
 
     if (!map.getLayer("allsids")) {
@@ -162,6 +173,10 @@ export default class Map {
 
         cls.hexSize = "hex5";
 
+        let lastSymbol;
+        if(this.options.labelsDisabled) {
+          lastSymbol =  this.options.firstSymbolId
+        }
         map.addLayer(
           {
             id: "hex5",
@@ -176,7 +191,7 @@ export default class Map {
               "fill-opacity": 0.0,
             },
           },
-          this.options.firstSymbolId
+          lastSymbol
         );
       }
     } else if (
@@ -191,7 +206,10 @@ export default class Map {
           map.removeLayer(constants.userLayers[layer]);
         }
       }
-
+      let lastSymbol;
+      if(this.options.labelsDisabled) {
+        lastSymbol =  this.options.firstSymbolId
+      }
       map.addLayer(
         {
           id: "ocean",
@@ -206,7 +224,7 @@ export default class Map {
             "fill-opacity": 0.0, //globals.opacity, //
           },
         },
-        this.options.firstSymbolId
+        lastSymbol
       );
     }
   }
@@ -214,128 +232,133 @@ export default class Map {
   _bindMapClickListeners() {
     let instance = this;
     this.map.on("click", "hex5", (e) => {
-      instance.clearOnClickQuery();
-      instance.onDataClick(e);
+      instance.clearOnClickQuery(instance.map);
+      instance.onDataClick(e, instance.map);
     });
 
     this.map.on("click", "hex10", function (e) {
-      instance.clearOnClickQuery();
-      instance.onDataClick(e);
+      instance.clearOnClickQuery(instance.map);
+      instance.onDataClick(e, instance.map);
     });
 
     this.map.on("click", "hex1", function (e) {
-      instance.clearOnClickQuery();
-      instance.onDataClick(e);
+      instance.clearOnClickQuery(instance.map);
+      instance.onDataClick(e, instance.map);
     });
 
     this.map.on("click", "hex5clipped", function (e) {
-        instance.clearOnClickQuery();
-        instance.onDataClick(e);
+        instance.clearOnClickQuery(instance.map);
+        instance.onDataClick(e, instance.map);
       }
     );
 
     this.map.on("click", "ocean", function (e) {
-      instance.clearOnClickQuery();
-      instance.onDataClick(e);
+      instance.clearOnClickQuery(instance.map);
+      instance.onDataClick(e, instance.map);
     });
 
     this.map.on("click", "admin1", function (e) {
-      instance.clearOnClickQuery();
-      instance.onAdminClick(e, "admin1");
+      instance.clearOnClickQuery(instance.map);
+      instance.onAdminClick(e, "admin1", instance.map);
     });
 
     this.map.on("click", "admin2", function (e ) {
-        instance.clearOnClickQuery();
-        instance.onAdminClick(e, "admin2");
+        instance.clearOnClickQuery(instance.map);
+        instance.onAdminClick(e, "admin2", instance.map);
       }
     );
 
     this.map.on("click", "bivariate", function (e) {
-        instance.clearOnClickQuery();
-        instance.onBivariateClick(e);
+        instance.clearOnClickQuery(instance.map);
+        instance.onBivariateClick(e, instance.map);
       }
     );
 
-    // this.map2.on("click", "hex5", function (e, mapClassInstance = instance) {
-    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
-    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
-    // });
-    //
-    // this.map2.on("click", "hex10", function (e, mapClassInstance = instance) {
-    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
-    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
-    // });
-    //
-    // this.map2.on("click", "hex1", function (e, mapClassInstance = instance) {
-    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
-    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
-    // });
-    //
-    // this.map2.on(
-    //   "click",
-    //   "hex5clipped",
-    //   function (e, mapClassInstance = instance) {
-    //     mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
-    //     mapClassInstance.onDataClick(e, mapClassInstance.map2);
-    //   }
-    // );
-    //
-    // this.map2.on("click", "ocean", function (e, mapClassInstance = instance) {
-    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
-    //   mapClassInstance.onDataClick(e, mapClassInstance.map2);
-    // });
-    //
-    // this.map2.on("click", "admin1", function (e, mapClassInstance = instance) {
-    //   mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
-    //   mapClassInstance.addAdminClick(e, "admin1", mapClassInstance.map2);
-    // });
-    //
-    // this.map2.on(
-    //   "click",
-    //   "admin2",
-    //   function (e, mapClassInstance = instance, debug = false) {
-    //
-    //     mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
-    //     mapClassInstance.addAdminClick(e, "admin2", mapClassInstance.map2);
-    //   }
-    // );
+    this.map2.on("click", "hex5", (e) => {
+      instance.clearOnClickQuery(instance.map2);
+      instance.onDataClick(e, instance.map2);
+    });
+
+    this.map2.on("click", "hex10", function (e) {
+      instance.clearOnClickQuery(instance.map2);
+      instance.onDataClick(e, instance.map2);
+    });
+
+    this.map2.on("click", "hex1", function (e) {
+      instance.clearOnClickQuery(instance.map2);
+      instance.onDataClick(e, instance.map2);
+    });
+
+    this.map2.on("click", "hex5clipped", function (e) {
+        instance.clearOnClickQuery(instance.map2);
+        instance.onDataClick(e, instance.map2);
+      }
+    );
+
+    this.map2.on("click", "ocean", function (e) {
+      instance.clearOnClickQuery(instance.map2);
+      instance.onDataClick(e, instance.map2);
+    });
+
+    this.map2.on("click", "admin1", function (e) {
+      instance.clearOnClickQuery(instance.map2);
+      instance.onAdminClick(e, "admin1", instance.map2);
+    });
+
+    this.map2.on("click", "admin2", function (e ) {
+        instance.clearOnClickQuery(instance.map2);
+        instance.onAdminClick(e, "admin2", instance.map2);
+      }
+    );
+
+    this.map2.on("click", "bivariate", function (e) {
+        instance.clearOnClickQuery(instance.map2);
+        instance.onBivariateClick(e, instance.map2);
+      }
+    );
   }
 
   clearOnClickQuery() {
-    if (this.getLayer("iso")) {
-      this.removeLayer("iso");
-      this.removeSource("iso");
+    let maps = [this.map]
+    if(this.options.compareModeEnabled) {
+      maps.push(this.map2)
     }
-    for (let id of ["clickedone", "highlightS", "joined"]) {
-      if (this.getSource(id)) {
-        if (id === "highlightS") {
-          this.removeLayer("highlight");
-          this.removeSource(id);
-        } else {
-          if (this.getLayer(id)) {
-            this.removeLayer(id);
-          }
-          if (this.getSource(id)) {
-            this.removeSource(id);
+    maps.map(map => {
+      if (this.getLayer("iso", map)) {
+        this.removeLayer("iso", map);
+        this.removeSource("iso", map);
+      }
+      for (let id of ["clickedone", "highlightS", "joined"]) {
+        if (this.getSource(id, map)) {
+          if (id === "highlightS") {
+            this.removeLayer("highlight", map);
+            this.removeSource(id, map);
+          } else {
+            if (this.getLayer(id, map)) {
+              this.removeLayer(id, map);
+            }
+            if (this.getSource(id, map)) {
+              this.removeSource(id, map);
+            }
           }
         }
       }
+    })
+  }
+  getLayer(layerName, map = this.map) {
+    return map.getLayer(layerName)
+  }
+  removeLayer(layerName, map = this.map) {
+    if(map.getLayer(layerName)){
+      return map.removeLayer(layerName)
     }
   }
-  getLayer(layerName) {
-    return this.map.getLayer(layerName)
+  getSource(sourceName, map = this.map) {
+    return map.getSource(sourceName)
   }
-  removeLayer(layerName) {
-    if(this.map.getLayer(layerName)){
-      return this.map.removeLayer(layerName)
-    }
-  }
-  getSource(sourceName) {
-    return this.map.getSource(sourceName)
-  }
-  removeSource(sourceName) {
-    if(this.map.getSource(sourceName)){
-      return this.map.removeSource(sourceName)
+  removeSource(sourceName, map = this.map) {
+    if(map.getSource(sourceName)){
+      return map.removeSource(sourceName)
     }
   }
 
@@ -361,7 +384,6 @@ export default class Map {
     let cls = !recolorComparison
       ? this.options.currentLayerState
       : this.options.comparisonLayerState;
-    console.log(map.getLayer(cls.hexSize))
     if (!map.getLayer(cls.hexSize)) {
       return;
     }
@@ -505,23 +527,28 @@ export default class Map {
       // });
     }
   }
-  addNoDataLegend() {
+  addNoDataLegend(activeLayer) {
     this.emit('layerUpdate', {
+      activeLayer,
       noData:true
     });
   }
-  add3dLayer(map, id) {
+  add3dLayer(map, layerState, id) {
     let current = Object.values(this.options.sourceData).find((o) => {
-      return o.name === this.options.currentLayerState.hexSize;
+      return o.name === layerState.hexSize;
     });
     if(map.getLayer(id)) {
       map.removeLayer(id);
+    }
+    let lastSymbol
+    if(this.options.labelsDisabled) {
+      lastSymbol =  this.options.firstSymbolId
     }
     map.addLayer(
       {
         id: id,
         type: "fill-extrusion",
-        source: this.options.currentLayerState.hexSize,
+        source: layerState.hexSize,
         "source-layer": current.layer,
         layout: {
           visibility: "visible",
@@ -531,51 +558,55 @@ export default class Map {
           "fill-extrusion-color": [
             "interpolate",
             ["linear"],
-            ["get", this.options.currentLayerState.dataLayer],
-            this.options.currentLayerState.breaks[0],
-            this.options.currentLayerState.color[0],
-            this.options.currentLayerState.breaks[1],
-            this.options.currentLayerState.color[1],
-            this.options.currentLayerState.breaks[2],
-            this.options.currentLayerState.color[2],
-            this.options.currentLayerState.breaks[3],
-            this.options.currentLayerState.color[3],
-            this.options.currentLayerState.breaks[4],
-            this.options.currentLayerState.color[4],
+            ["get", layerState.dataLayer],
+            layerState.breaks[0],
+            layerState.color[0],
+            layerState.breaks[1],
+            layerState.color[1],
+            layerState.breaks[2],
+            layerState.color[2],
+            layerState.breaks[3],
+            layerState.color[3],
+            layerState.breaks[4],
+            layerState.color[4],
           ],
           "fill-extrusion-height": [
             "interpolate",
             ["linear"],
-            ["get", this.options.currentLayerState.dataLayer],
-            this.options.currentLayerState.breaks[0],
+            ["get", layerState.dataLayer],
+            layerState.breaks[0],
             0,
-            this.options.currentLayerState.breaks[1],
+            layerState.breaks[1],
             500,
-            this.options.currentLayerState.breaks[2],
+            layerState.breaks[2],
             5000,
-            this.options.currentLayerState.breaks[3],
+            layerState.breaks[3],
             11000,
-            this.options.currentLayerState.breaks[4],
+            layerState.breaks[4],
             50000,
           ],
 
           "fill-extrusion-base": !(
-            this.options.currentLayerState.dataLayer === "depth"
+            layerState.dataLayer === "depth"
           )
             ? 0
             : 0,
           "fill-extrusion-opacity": 1,
         },
       },
-      this.options.firstSymbolId
+      lastSymbol
     );
 
+    if (map.getLayer(this.options.firstSymbolId)) {
+      map.moveLayer(layerState.hexSize + '-3d', this.options.firstSymbolId);
+    }
+
     let filterString =
-      this.options.currentLayerState.dataLayer === "depth" ? "<" : ">=";
+      layerState.dataLayer === "depth" ? "<" : ">=";
 
     map.setFilter(id, [
       filterString, // ">="
-      this.options.currentLayerState.dataLayer,
+      layerState.dataLayer,
       0,
     ]);
   }
@@ -737,5 +768,23 @@ export default class Map {
       this.map.removeLayer("bivariate");
       this.map.removeSource("bivariate");
     }
+  }
+  createComparison(containerId, map1Instance, map2Instance) {
+    document.getElementById("map2").classList.remove("d-none"); //enabling show the comparison map
+    console.log(MapboxCompare)
+    this.mapCompare = new mapboxgl.Compare(
+      map1Instance,
+      map2Instance,
+      containerId,
+    );
+    map2Instance.setPitch(map1Instance.getPitch());
+    map2Instance.setCenter(map1Instance.getCenter());
+    map2Instance.setZoom(map1Instance.getZoom());
+
+    map2Instance.resize();
+  }
+  removeComparison() {
+    this.mapCompare.remove();
+    document.getElementById("map2").classList.add("d-none");
   }
 }

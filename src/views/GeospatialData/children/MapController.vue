@@ -13,7 +13,13 @@
     />
     <layer-legend v-if="map && !bivariateModeEnabled"
       :map="map"
+      hexIndex="1"
       :activeLayer="activeLayer"
+    />
+    <layer-legend v-if="map && !bivariateModeEnabled && dualModeEnabled"
+      :map="map"
+      hexIndex="2"
+      :activeLayer="secondLayer"
     />
     <layer-bivar-legend v-if="map && bivariateModeEnabled"
       :map="map"
@@ -55,25 +61,31 @@ export default {
     },
     emitUpdate(e) {
       if(this.activeLayer !== e.layer) {
-          this.$emit("update", e);
+        this.activeLayer = e.layer
+        this.activeDataset = e.dataset
+        this.$emit("update", e);
+      }
+      if (this.dualModeEnabled && this.secondLayer !== e.secondLayer) {
+        this.secondLayer = e.secondLayer
+        this.secondDataset = e.secondDataset
+        return this.emitDualUpdate({
+          layer:e.secondLayer,
+          dataset:e.secondDataset
+        });
       }
       this.activeLayer = e.layer
       this.activeDataset = e.dataset
       this.secondLayer = e.secondLayer
       this.secondDataset = e.secondDataset
-
       if (this.bivariateModeEnabled) {
-        return this.emitBivariateUpdate(e);
-      }
-      if (this.dualModeEnabled) {
         return this.emitBivariateUpdate(e);
       }
     },
     emitBivariateUpdate(e) {
       this.$emit("updateBivariate", e);
     },
-    emitComparisonUpdate(e) {
-      this.$emit("updateComparison", e);
+    emitDualUpdate(e) {
+      this.$emit("updateDual", e);
     }
   }
 }

@@ -211,7 +211,7 @@ export default {
         chartObjX.ticks.push(e.X_breaks[1]);
         chartObjX.ticks.push(e.X_breaks[0]);
       }
-      this.chart.data = e.data;
+      this.chart.data.datasets = e.data;
       this.chart.options = this.chartOptions;
       this.chart.update(0);
     },

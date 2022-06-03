@@ -5,26 +5,24 @@
       <v-btn
         class="toolbar-button"
         color="gray"
-        @click="toggleBivar"
+        @click="toggleDual"
         dark
         v-on="{ ...tooltip }"
       >
-        <i class="bivar-icon"
+        <i class="dual-mode-icon"
         ></i>
       </v-btn>
     </template>
     <span>
-      <b>Bivariate Mode</b> - Show the relationships between two datasets
+      <b>Comparison</b> - Enable a draggable slider to visually compare datasets
     </span>
   </v-tooltip>
-    <div class="d-none" id="drawControls">
-    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'MapBivar',
+  name: 'MapDual',
   data() {
     return {
       modeOn:false
@@ -35,19 +33,19 @@ export default {
     'activeLayer'
   ],
   methods: {
-    toggleBivar() {
+    toggleDual() {
       this.modeOn = !this.modeOn;
-      this.$emit('toggleBivar', this.modeOn)
+      this.$emit('toggleDual', this.modeOn)
     }
   }
 }
 </script>
 
 <style>
-.bivar-icon {
+.dual-mode-icon {
   width: 38px;
   height: 38px;
   background-size: contain;
-  background-image: url("~@/assets/gis/sidebar/bivariate-mode-icon.png");
+  background-image: url("~@/assets/gis/sidebar/dual-mode-icon.png");
 }
 </style>
