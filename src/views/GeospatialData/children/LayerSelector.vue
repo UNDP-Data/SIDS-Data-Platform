@@ -7,6 +7,7 @@
           class="map-input"
           dense
           hide-details
+          :disabled='disabled'
           :value="dataset"
           @change="emitDatasetChange"
           :items="datasets"
@@ -79,7 +80,8 @@ export default {
     'dataset',
     'datasetLabel',
     'layer',
-    'layerLabel'
+    'layerLabel',
+    'disabled'
   ],
   computed:{
     ticksLabels() {

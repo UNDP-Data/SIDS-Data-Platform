@@ -17,11 +17,14 @@
     </div>
     <div class="button-wrapper">
       <map-3d-controller
+        @toggle3d="toggle3d"
         :map="map"
+        :disabled="bivarEnabled"
       />
     </div>
     <div class="button-wrapper">
       <map-color-selector
+        :disabled="dualEnabled"
         :map="map"
       />
     </div>
@@ -48,6 +51,13 @@
     </div>
     <div class="button-wrapper">
       <map-regional-analysis v-if="map"
+        :disabled="dualEnabled"
+        :map="map"
+      />
+    </div>
+    <div class="button-wrapper">
+      <map-dual
+        @toggleDual="toggleDual"
         :map="map"
       />
     </div>
@@ -65,12 +75,16 @@ import MapBasemapSelector from './MapBasemapSelector'
 import MapLabelsController from './MapLabelsController'
 import MapRegionalAnalysis from './MapRegionalAnalysis'
 import MapBivar from './MapBivar'
+import MapDual from './MapDual'
 
 
 export default {
   name: 'MapToolbap',
   data() {
     return {
+      bivarEnabled:false,
+      dualEnabled:false,
+      enabled3d:false,
     }
   },
   components: {
@@ -83,14 +97,23 @@ export default {
     MapBasemapSelector,
     MapLabelsController,
     MapRegionalAnalysis,
-    MapBivar
+    MapBivar,
+    MapDual
   },
   props:[
     'map'
   ],
   methods: {
+    toggle3d(e) {
+      this.enabled3d = e;
+    },
     toggleBivar(e) {
+      this.bivarEnabled = e;
       this.$emit('toggleBivar', e)
+    },
+    toggleDual(e) {
+      this.dualEnabled = e;
+      this.$emit('toggleDual', e)
     }
   }
 }
@@ -99,7 +122,7 @@ export default {
 <style>
 .toolbar-button {
   border-radius: 0!important;
-  background-color: rgba(221, 221, 221, 0.7) !important;
+  background-color: rgba(221, 221, 221, 0.9) !important;
   padding: 2px !important;
   width:40px !important;
   height:40px !important;

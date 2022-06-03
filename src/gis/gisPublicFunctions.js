@@ -11,13 +11,19 @@ export function updateData(
   comparison = false
 )
 {
+  this.emit('loadingStart')
   let map = !comparison ? this.map : this.map2; //
   let cls = !comparison
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
   let Field_Name = activeLayer.Field_Name;
-  this.activeDataset = activeDataset;
-  this.activeLayer = activeLayer;
+  if(!comparison) {
+    this.activeDataset = activeDataset;
+    this.activeLayer = activeLayer;
+  } else {
+    this.secondDataset = activeDataset;
+    this.secondLayer = activeLayer;
+  }
   this._handleOceanData(activeDataset, activeLayer, comparison)
   this.clearHexHighlight();
   // this.remove3d();
@@ -44,7 +50,7 @@ export function updateData(
       },
     });
 
-    if (this.options.firstSymbolId) {
+    if (map.getLayer(this.options.firstSymbolId)) {
       map.moveLayer(cls.hexSize, this.options.firstSymbolId);
     }
   }
@@ -63,7 +69,6 @@ export function updateData(
         uniFeatures = self.getUniqueFeatures(features, "hexid");
       }
       var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
-      console.warn("changeDataOnMap selectedData", selectedData);
 
       var breaks = chroma.limits(selectedData, "q", 4);
 
@@ -148,12 +153,11 @@ export function updateData(
         setTimeout(() => {
           map.setFilter(cls.hexSize, null);
         }, 100);
-        if (!comparison) {
-          this.addNoDataLegend()
-        }
+        this.addNoDataLegend(activeLayer)
       } else {
         map.setFilter(cls.hexSize, [">=", Field_Name, 0]);
         this.emit('layerUpdate', {
+          activeLayer,
           colorRamp,
           breaks,
           selectedData,
@@ -171,20 +175,24 @@ export function updateData(
     }
     map.once('idle', () => {
       if(this.options.mode3d) {
-        this.add3dLayer(map, this.options.currentLayerState.hexSize + "-3d")
+        let layerState = comparison ? this.options.comparisonLayerState : this.options.currentLayerState
+        this.add3dLayer(map, layerState, layerState.hexSize + "-3d")
       }
+      this.emit('loadingEnd')
     })
   }, 1000);
-
-  map.moveLayer("allsids", this.options.firstSymbolId);
+  if(map.getLayer('allsids')) {
+    map.moveLayer("allsids", this.options.firstSymbolId);
+  }
 }
 
 export function addOcean(activeDataset, activeLayer, comparison = false) {
+
+  this.emit('loadingStart')
   let map = !comparison ? this.map : this.map2; //
   let cls = !comparison
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
-
   this.clearHexHighlight();
   // this.remove3d();
 
@@ -243,6 +251,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
           uniFeatures = this.getUniqueFeatures(features, "depth");
           let selectedData = uniFeatures.map((x) => x.properties["depth"]);
           this.emit('layerUpdate', {
+            activeLayer,
             colorRamp: cls.color,
             breaks: cls.breaks,
             selectedData: selectedData,
@@ -250,6 +259,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
           });
         }
       }
+      this.emit('loadingEnd')
     }, waitInterval);
   }
 }
@@ -316,71 +326,108 @@ export function changeHexagonSize(resolution) {
 
   this.clearHexHighlight();
 
-  if(!map.getLayer(this.options.currentLayerState.hexSize)) {
-    this.options.currentLayerState.hexSize = resolution;
-    this.options.comparisonLayerState.hexSize = resolution;
-    return
-  }
   if(this.options.mode3d) {
-    this.map.removeLayer(this.options.currentLayerState.hexSize + "-3d")
+    this.removeLayer(this.options.currentLayerState.hexSize + "-3d", this.map)
   }
+  if(this.options.mode3d && this.options.compareModeEnabled) {
+    this.removeLayer(this.options.currentLayerState.hexSize + "-3d", this.map2)
+  }
+
   if(this.options.bivariateMode) {
     this.removeBivariateLayer()
   }
-  // this.remove3d();
-  //update resolution state
-  this.options.currentLayerState.hexSize = resolution;
-  this.options.comparisonLayerState.hexSize = resolution;
 
-  //clear maplayers that are usercontrolled
-  for (var x in constants.userLayers) {
-    if (map.getLayer(constants.userLayers[x])) {
-      map.removeLayer(constants.userLayers[x]);
+  if(map.getLayer(this.options.currentLayerState.hexSize)) {
+
+    this.options.currentLayerState.hexSize = resolution;
+    //clear maplayers that are usercontrolled
+    for (let x in constants.userLayers) {
+      if (map.getLayer(constants.userLayers[x])) {
+        map.removeLayer(constants.userLayers[x]);
+      }
     }
-    if (this.options.compareMode) {
+
+    //get source name
+    let currentSourceData = Object.values(this.options.sourceData).find((o) => {
+      return o.name === this.options.currentLayerState.hexSize;
+    });
+
+    let options = {
+      id: resolution,
+      type: "fill",
+      source: resolution,
+      "source-layer": currentSourceData.layer,
+      layout: {
+        visibility: "visible",
+      },
+      paint: {
+        "fill-color": "blue",
+        "fill-opacity": 0.0, //globals.opacity, // 0
+      },
+    };
+    map.addLayer(options, this.options.firstSymbolId);
+    let self = this;
+    map.once('idle', () => {
+      if(this.options.mode3d) {
+        self.add3dLayer(map, this.options.currentLayerState , this.options.currentLayerState.hexSize + "-3d")
+      }
+      if(self.options.bivariateMode) {
+        self.createBivariate(
+          self.options.bivarConfig.firstDataset,
+          self.options.bivarConfig.firstLayer,
+          self.options.bivarConfig.secondDataset,
+          self.options.bivarConfig.secondLayer
+        )
+      }
+      map.once("idle", () => {
+        this.recolorBasedOnWhatsOnPage();
+        map.moveLayer(resolution, "allsids");
+      });
+    })
+
+    if (map.getStyle().name === "Mapbox Satellite") {
+      map.moveLayer(resolution);
+    }
+
+
+    map.once("idle", () => {
+      this.recolorBasedOnWhatsOnPage();
+      map.moveLayer(resolution, "allsids");
+    });
+  }
+  if (this.options.compareModeEnabled && map2.getLayer(this.options.comparisonLayerState.hexSize)) {
+    for (let x in constants.userLayers) {
       if (map2.getLayer(constants.userLayers[x])) {
         map2.removeLayer(constants.userLayers[x]);
       }
     }
+    this.options.comparisonLayerState.hexSize = resolution;
+    let currentSourceData = Object.values(this.options.sourceData).find((o) => {
+      return o.name === this.options.comparisonLayerState.hexSize;
+    });
+
+    let options = {
+      id: resolution,
+      type: "fill",
+      source: resolution,
+      "source-layer": currentSourceData.layer,
+      layout: {
+        visibility: "visible",
+      },
+      paint: {
+        "fill-color": "blue",
+        "fill-opacity": 0.0, //globals.opacity, // 0
+      },
+    };
+    map2.addLayer(options, this.options.firstSymbolId);
+    map2.once("idle", () => {
+      this.recolorBasedOnWhatsOnPage(true);
+      map2.moveLayer(resolution, "allsids");
+    });
   }
 
-  //get source name
-  let currentSourceData = Object.values(this.options.sourceData).find((o) => {
-    return o.name === this.options.currentLayerState.hexSize;
-  });
-
-  let options = {
-    id: resolution,
-    type: "fill",
-    source: resolution,
-    "source-layer": currentSourceData.layer,
-    layout: {
-      visibility: "visible",
-    },
-    paint: {
-      "fill-color": "blue",
-      "fill-opacity": 0.0, //globals.opacity, // 0
-    },
-  };
-  map.addLayer(options, this.options.firstSymbolId);
-  let self = this;
-  map.once('idle', () => {
-    if(this.options.mode3d) {
-      self.add3dLayer(map, this.options.currentLayerState.hexSize + "-3d")
-    }
-    if(self.options.bivariateMode) {
-      self.createBivariate(
-        self.options.bivarConfig.firstDataset,
-        self.options.bivarConfig.firstLayer,
-        self.options.bivarConfig.secondDataset,
-        self.options.bivarConfig.secondLayer
-      )
-    }
-  })
-  // if (globals.compareMode) {
-  //   map2.addLayer(options, globals.firstSymbolId);
-  // }
-
+  this.options.currentLayerState.hexSize = resolution;
+  this.options.comparisonLayerState.hexSize = resolution;
   /* if (resolution === "hex1") {
       //showing loader in expectation of hex1 taking longer to display
       // $(".loader-gis").show();
@@ -393,12 +440,6 @@ export function changeHexagonSize(resolution) {
       });
     } */
 
-  if (map.getStyle().name === "Mapbox Satellite") {
-    map.moveLayer(resolution);
-    // if (globals.compareMode) {
-    //   map2.moveLayer(resolution);
-    // }
-  }
 
   /*     map.once("idle", function (e) {
       console.log(`map.once on idle triggered by ${e}`);
@@ -409,61 +450,44 @@ export function changeHexagonSize(resolution) {
       //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
       map.moveLayer(resolution, "allsids");
     }); */
-  map.once("idle", () => {
-
-    this.recolorBasedOnWhatsOnPage(); //as it's inside an arrow function this. should refer to the outer scope and should be able to find the function
-
-    //console.log('change bins');
-    //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
-    map.moveLayer(resolution, "allsids");
-
-    // this.hideSpinner();
-  });
-  // map2.once("idle", () => {
-  //   if (debug) {
-  //     console.log("map2 idle-> recoloring");
-  //   }
-  //   this.recolorBasedOnWhatsOnPage(map2); //as it's inside an arrow function this. should refer to the outer scope and should be able to find the function
-  //
-  //   //console.log('change bins');
-  //   //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
-  //   map2.moveLayer(resolution, "allsids");
-  //
-  //   // this.hideSpinner();
-  // });
 }
 
 export function add3D() {
   let map = this.map;
+  let map2 = this.map2;
 
   this.clearHexHighlight();
 
   let id = this.options.currentLayerState.hexSize + "-3d";
-  if(!map.getLayer(this.options.currentLayerState.hexSize)) {
+  if (this.options.mode3d) {
+    map.easeTo({
+      center: map.getCenter(),
+      pitch: 0,
+    })
+    if(map.getLayer(id)) {
+      map.removeLayer(id);
+    }
+  } else {
+    if(map.getLayer(this.options.currentLayerState.hexSize)) {
+      this.add3dLayer(map, this.options.currentLayerState, id)
+    }
     map.easeTo({
       center: map.getCenter(),
       pitch: 55,
     });
-    return this.options.mode3d = true;
   }
-  if (map.getLayer(id)) {
-    map
-      .easeTo({
-        center: map.getCenter(),
-        pitch: 0,
-      })
-      .removeLayer(id);
-      this.options.mode3d = false;
-  }
-  else {
-    this.options.mode3d = true;
-    this.add3dLayer(map, id)
-    map.easeTo({
-      center: map.getCenter(),
-      pitch: 55,
-    });
+  id = this.options.comparisonLayerState.hexSize + "-3d";
+  if (this.options.mode3d) {
+    if(map2.getLayer(id)){
+      map2.removeLayer(id);
+    }
+  } else {
+    if(map2.getLayer(this.options.comparisonLayerState.hexSize)) {
+      this.add3dLayer(map2, this.options.comparisonLayerState, id)
+    }
   }
 
+  this.options.mode3d = !this.options.mode3d;
   // map.once("idle", () => {
   //   this.hideSpinner();
   // });
@@ -479,7 +503,7 @@ export function changeColor(selectedColor) {
     this.options.colorSCheme.invert = false,
     this.options.colorSCheme.color = selectedColor
   }
-  if(!this.getLayer(this.options.currentLayerState.hexSize)) {
+  if(this.getLayer(this.options.currentLayerState.hexSize)) {
     return;
   }
   if (selectedColor === "original") {
@@ -571,6 +595,7 @@ export function changeColor(selectedColor) {
   );
 
   this.emit('layerUpdate', {
+
     colorRamp: breaksAndColors.colorRamp,
     breaks: breaksAndColors.histogramBreaks,
     selectedData,
@@ -580,6 +605,7 @@ export function changeColor(selectedColor) {
 
 export function changeOpacity(opacity, noUpdate) {
   let map = this.map;
+  let map2 = this.map2;
   if(!noUpdate) {
     this.options.opacity = opacity;
   }
@@ -590,35 +616,33 @@ export function changeOpacity(opacity, noUpdate) {
       opacity
     );
   }
-  if(!map.getLayer(this.options.currentLayerState.hexSize)) {
-    return;
+  if(!this.options.bivariateMode && map.getLayer(this.options.currentLayerState.hexSize)) {
+    map.setPaintProperty(
+      this.options.currentLayerState.hexSize,
+      "fill-opacity",
+      opacity
+    );
+    if (map.getLayer("ocean")) {
+      map.setPaintProperty("ocean", "fill-opacity", opacity);
+    }
   }
-  map.setPaintProperty(
-    this.options.currentLayerState.hexSize,
-    "fill-opacity",
-    opacity
-  );
-  if (map.getLayer("ocean")) {
-    map.setPaintProperty("ocean", "fill-opacity", opacity);
+
+  if(this.options.compareModeEnabled && map2.getLayer(this.options.comparisonLayerState.hexSize)) {
+    map2.setPaintProperty(
+      this.options.comparisonLayerState.hexSize,
+      "fill-opacity",
+      opacity
+    );
+    if (map2.getLayer("ocean")) {
+      map2.setPaintProperty("ocean", "fill-opacity", opacity);
+    }
   }
-  // if (globals.compareMode) {
-  //   this.map2.setPaintProperty(
-  //     globals.comparisonLayerState.hexSize,
-  //     "fill-opacity",
-  //     sliderValue * 0.02
-  //   );
-  //   if (this.map2.getLayer("ocean")) {
-  //     // console.log(`adjusting "ocean" layer opacity`);
-  //     this.map2.setPaintProperty("ocean", "fill-opacity", sliderValue * 0.02);
-  //   }
-  // }
-  //update global opacity value
 }
 
 export function changeBasemap (selectedBasemap) {
   let self = this;
   let map = this.map;
-  // let map2 = this.map2;
+  let map2 = this.map2;
 
   // let currentBasemap = map.getStyle().name;
 
@@ -627,22 +651,25 @@ export function changeBasemap (selectedBasemap) {
   });
 
   map.setStyle(thisStyle.uri);
-    // map2.setStyle(thisStyle.uri);
+  map2.setStyle(thisStyle.uri);
   this._removeUnusedLayers();
 
   //when done, update: firstSymbolId, basemapLabels
+
   map.once("idle", function () {
     self.getBasemapLabels();
-
     self._addVectorSources();
     // let currentSource = Object.values(globals.sourceData).find((o) => {
     //   return o.name === globals.currentLayerState.hexSize;
     // });
 
     // let cls = globals.currentLayerState;
-    if(self.activeLayer) {
-      self.updateData(self.activeDataset, self.activeLayer)
-    }
+
+    map.once("idle", function () {
+      if(self.activeLayer) {
+        self.updateData(self.activeDataset, self.activeLayer)
+      }
+    })
     // try {
     //   map.addLayer(
     //     {
@@ -739,10 +766,21 @@ export function changeBasemap (selectedBasemap) {
   //
   //   self.hideSpinner();
   });
+  if(this.options.compareModeEnabled) {
+    map2.once("idle", function () {
+      self._addVectorSources(true);
+      map2.once("idle", function () {
+        if(self.secondDataset) {
+          self.updateData(self.secondDataset, self.secondLayer, true)
+        }
+      });
+    });
+  }
 }
 export function toggleLabels(label) {
   let map = this.map;
-
+  let map2 = this.map2;
+  this.options.labelsDisabled = label;
   if (label == true) {
     this.options.basemapLabels.forEach((x) => {
       //console.log(x);
@@ -751,6 +789,9 @@ export function toggleLabels(label) {
         if (map.getLayer(this.options.currentLayerState.hexSize)) {
           map.moveLayer(x.id, this.options.currentLayerState.hexSize);
         }
+        if (map.getLayer(this.options.currentLayerState.hexSize + '-3d')) {
+          map.moveLayer(x.id, this.options.currentLayerState.hexSize + '-3d');
+        }
       }
     });
   } else {
@@ -758,7 +799,20 @@ export function toggleLabels(label) {
       map.removeLayer(x.id);
     });
   }
-
+  if (label == true) {
+    this.options.basemapLabels.forEach((x) => {
+      map2.addLayer(x);
+      if (x.type === "line") {
+        if (map2.getLayer(this.options.comparisonLayerState.hexSize + '-3d')) {
+          map2.moveLayer(x.id, this.options.comparisonLayerState.hexSize + '-3d');
+        }
+      }
+    });
+  } else {
+    this.options.basemapLabels.forEach(function (x) {
+      map2.removeLayer(x.id);
+    });
+  }
   // map.once("idle", () => {
   //   this.hideSpinner();
   // });
@@ -788,6 +842,9 @@ export function toggleBivariateComponents(e) {
     this.changeOpacity(this.options.opacity);
     this.clearHexHighlight()
   } else {
+    if(this.options.mode3d) {
+      this.add3D()
+    }
     this.changeOpacity(0, true);
     this.clearHexHighlight()
   }
@@ -825,6 +882,7 @@ export function createBivariate(
       sourceLayer: [cls.hexSize === "ocean" ? "oceans" : cls.hexSize]
     });
     if (features?.length != 0) {
+      this.emit('loadingStart')
       // let uniqueFeatures;
       let idProperty = null;
       // if (cls.hexSize === "admin1") {
@@ -1014,6 +1072,9 @@ export function createBivariate(
           borderWidth: 1.5,
         });
       }
+      map.once('idle',() => {
+        self.emit('loadingEnd')
+      })
       this.emit('bivarDataUpdate', {
         data:bivarDatasets,
         minX: X_breaks[0], //minimum tick
@@ -1027,4 +1088,17 @@ export function createBivariate(
       return;
     }
   }
+}
+
+export function toggleMapboxGLCompare() {
+  //check for other mode eg. bivariate mode being active
+  if (this.options.bivariateModeEnabled) {
+    return;
+  }
+  if (!this.options.compareModeEnabled) {
+    this.createComparison(this.containerId, this.map, this.map2);
+  } else {
+    this.removeComparison();
+  }
+  this.options.compareModeEnabled = !this.options.compareModeEnabled;
 }

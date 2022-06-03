@@ -9,16 +9,19 @@
       <template v-slot:activator="{ on: menu, attrs }">
         <v-tooltip left maxWidth="200">
           <template v-slot:activator="{ on: tooltip }">
-            <v-btn
-              class="toolbar-button"
-              color="gray"
-              @click="open = !open"
-              dark
-              v-bind="attrs"
-              v-on="{ ...tooltip, ...menu }"
-            >
-              <i class="color-scheme-icon"></i>
-            </v-btn>
+            <div>
+              <v-btn
+                class="toolbar-button"
+                color="gray"
+                :disabled="disabled"
+                @click="open = !open"
+                dark
+                v-bind="attrs"
+                v-on="{ ...tooltip, ...menu }"
+              >
+                <i class="color-scheme-icon"></i>
+              </v-btn>
+            </div>
           </template>
           <span>
             <b>Color scheme</b> - Change between several color palettes
@@ -78,7 +81,8 @@ export default {
     }
   },
   props:[
-    'map'
+    'map',
+    'disabled'
   ],
   methods: {
     changeColorScheme(scheme) {
@@ -94,7 +98,7 @@ export default {
 .color-scheme-icon {
   width: 38px;
   height: 38px;
-  background-image: url("~@/assets/gis/sidebar/color-icon-1.png");
+  background-image: url("~@/assets/gis/sidebar/color-icon.png");
   background-size: contain;
 }
 .color-scheme-select {

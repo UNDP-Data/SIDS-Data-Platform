@@ -1,20 +1,22 @@
 <template>
   <v-tooltip left maxWidth="240">
     <template v-slot:activator="{ on: tooltip }">
-      <v-btn
-        class="toolbar-button"
-        color="gray"
-        @click="toggle3D"
-        dark
-        v-on="{ ...tooltip }"
-      >
-        <i class="add-boundaries-icon"
-          :class="{
-            'toggle-3d-icon-3d': !modeOn,
-            'toggle-3d-icon-2d': modeOn
-          }"
-        ></i>
-      </v-btn>
+      <div v-on="{ ...tooltip }">
+        <v-btn
+          class="toolbar-button"
+          color="gray"
+          :disabled="disabled"
+          @click="toggle3D"
+          dark
+        >
+          <i class="add-boundaries-icon"
+            :class="{
+              'toggle-3d-icon-3d': !modeOn,
+              'toggle-3d-icon-2d': modeOn
+            }"
+          ></i>
+        </v-btn>
+      </div>
     </template>
     <span>
       <b>3D mode</b> - Visualize data values using 3-dimensional {{activeLayer}}
@@ -32,12 +34,14 @@ export default {
   },
   props:[
     'map',
-    'activeLayer'
+    'activeLayer',
+    'disabled'
   ],
   methods: {
     toggle3D() {
       this.modeOn = !this.modeOn
       this.map.add3D();
+      this.$emit('toggle3d', this.modeOn)
     }
   }
 }

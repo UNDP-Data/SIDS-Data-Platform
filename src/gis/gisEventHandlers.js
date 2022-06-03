@@ -1,28 +1,28 @@
 import { featureCollection } from "@turf/helpers";
 import dissolve from "@turf/dissolve";
 
-export function onDataClick(e) {
+export function onDataClick(e, map) {
   if (this.options.bivarateMode) {
     return;
   }
   let cls = this.options.currentLayerState;
-  // if (mapboxMapInstance === this.map2) {
-  //   cls = globals.comparisonLayerState;
-  // }
-
-  if (this.getSource("highlightS")) {
-    this.removeLayer("highlight");
-    this.removeSource("highlightS");
+  if (map === this.map2) {
+    cls = this.options.comparisonLayerState;
   }
 
-  if (this.getSource("clickedone")) {
-    this.removeLayer("clickedone");
-    this.removeSource("clickedone");
+  if (this.getSource("highlightS", map)) {
+    this.removeLayer("highlight", map);
+    this.removeSource("highlightS", map);
+  }
+
+  if (this.getSource("clickedone", map)) {
+    this.removeLayer("clickedone", map);
+    this.removeSource("clickedone", map);
   }
 
   var currId = e.features[0].properties.hexid;
 
-  var feats = this.map.queryRenderedFeatures({
+  var feats = map.queryRenderedFeatures({
     layers: [cls.hexSize],
     filter: ["==", "hexid", currId],
   });
@@ -31,12 +31,12 @@ export function onDataClick(e) {
 
   var dis = dissolve(fc);
 
-  this.map.addSource("clickedone", {
+  map.addSource("clickedone", {
     type: "geojson",
     data: dis,
   });
 
-  this.map.addLayer({
+  map.addLayer({
     id: "clickedone",
     source: "clickedone",
     type: "line",
@@ -50,10 +50,10 @@ export function onDataClick(e) {
   })
 }
 
-export function onAdminClick(e, adminLayerId) {
+export function onAdminClick(e, adminLayerId, map) {
   let cls = this.options.currentLayerState;
 
-  var rendered = this.map.queryRenderedFeatures({
+  var rendered = map.queryRenderedFeatures({
     layers: [adminLayerId],
   });
 
@@ -83,17 +83,17 @@ export function onAdminClick(e, adminLayerId) {
   });
 
 
-  if (this.map.getSource("highlightS")) {
-    this.map.removeLayer("highlight");
-    this.map.removeSource("highlightS");
+  if (map.getSource("highlightS")) {
+    map.removeLayer("highlight");
+    map.removeSource("highlightS");
   }
 
-  if (this.map.getSource("joined")) {
-    this.map.removeLayer("joined");
-    this.map.removeSource("joined");
+  if (map.getSource("joined")) {
+    map.removeLayer("joined");
+    map.removeSource("joined");
   }
 
-  this.map.addSource("highlightS", {
+  map.addSource("highlightS", {
     type: "geojson",
     data: {
       type: "FeatureCollection",
@@ -101,7 +101,7 @@ export function onAdminClick(e, adminLayerId) {
     },
   });
 
-  this.map.addLayer({
+  map.addLayer({
     id: "highlight",
     source: "highlightS",
     type: "line",
@@ -141,7 +141,7 @@ export function onAdminClick(e, adminLayerId) {
 
     var joined = dissolve(fc);
 
-    this.map.addSource("joined", {
+    map.addSource("joined", {
       type: "geojson",
       data: {
         type: "FeatureCollection",
@@ -149,7 +149,7 @@ export function onAdminClick(e, adminLayerId) {
       },
     });
 
-    this.map.addLayer({
+    map.addLayer({
       id: "joined",
       source: "joined",
       type: "line",
@@ -159,13 +159,13 @@ export function onAdminClick(e, adminLayerId) {
       },
     });
 
-    this.map.getSource("joined").setData(joined);
+    map.getSource("joined").setData(joined);
   } else {
-    this.map.getSource("highlightS").setData(feats[0]);
+    map.getSource("highlightS").setData(feats[0]);
   }
 }
 
-export function onBivariateClick(clicked) {
+export function onBivariateClick(clicked, map) {
   if (clicked.features[0].properties.bivarClass === 9) {
     return;
   }
@@ -195,13 +195,13 @@ export function onBivariateClick(clicked) {
   })
 
   //clear preexisting highlighted source/layer
-  if (this.map.getSource("highlightS")) {
-    this.map.removeLayer("highlight");
-    this.map.removeSource("highlightS");
+  if (map.getSource("highlightS")) {
+    map.removeLayer("highlight");
+    map.removeSource("highlightS");
   }
-  if (this.map.getSource("clickedone")) {
-    this.map.removeLayer("clickedone");
-    this.map.removeSource("clickedone");
+  if (map.getSource("clickedone")) {
+    map.removeLayer("clickedone");
+    map.removeSource("clickedone");
   }
 
   //determine the styleId based on what current resolution is
@@ -223,11 +223,11 @@ export function onBivariateClick(clicked) {
 
   var fc = featureCollection(feats); //use turf.js to aggregate into a single geojson and add as layer to map
   var dis = dissolve(fc);
-  this.map.addSource("clickedone", {
+  map.addSource("clickedone", {
     type: "geojson",
     data: dis,
   });
-  this.map.addLayer({
+  map.addLayer({
     id: "clickedone",
     source: "clickedone",
     type: "line",

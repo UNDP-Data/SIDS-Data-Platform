@@ -66,7 +66,7 @@ export default {
     }
   },
   props:[
-    'map'
+    'map',
   ],
   methods: {
     boundary1Update(state) {
@@ -82,6 +82,9 @@ export default {
         })
       } else {
         this.map.removeLayer(`${slayer}-overlay`)
+        if(this.map.map2) {
+          this.map.removeLayer(`${slayer}-overlay`, this.map.map2)
+        }
       }
     },
     boundary2Update(state) {
@@ -97,6 +100,9 @@ export default {
         })
       } else {
         this.map.removeLayer(`${slayer}-overlay`)
+        if(this.map.map2) {
+          this.map.removeLayer(`${slayer}-overlay`, this.map.map2)
+        }
       }
     },
     addLayer({
@@ -105,6 +111,10 @@ export default {
       slayer,
       color
     }) {
+      let firstLayer
+      if(this.map.map.getLayer(this.map.options.firstSymbolId)) {
+        firstLayer = this.map.options.firstSymbolId;
+      }
       this.map.map.addLayer(
         {
           id: layerName,
@@ -120,10 +130,36 @@ export default {
             "line-width": 1,
           },
         },
-        this.map.options.firstSymbolId
+        firstLayer
       );
       if (this.map.getLayer("admin1-overlay")) {
         this.map.map.moveLayer(layerName, "admin1-overlay"); //brings the layer ontop of admin1-overlay
+      }
+      if(this.map.map2) {
+        let firstLayer2
+        if(this.map.map2.getLayer(this.map.options.firstSymbolId)) {
+          firstLayer2 = this.map.options.firstSymbolId;
+        }
+        this.map.map2.addLayer(
+          {
+            id: layerName,
+            type: "line",
+            source: source,
+            "source-layer": slayer,
+            layout: {
+              visibility: "visible",
+            },
+
+            paint: {
+              "line-color": color,
+              "line-width": 1,
+            },
+          },
+          firstLayer2
+        );
+        if (this.map.getLayer("admin1-overlay", this.map.map2)) {
+          this.map.map2.moveLayer(layerName, "admin1-overlay"); //brings the layer ontop of admin1-overlay
+        }
       }
     }
   }
