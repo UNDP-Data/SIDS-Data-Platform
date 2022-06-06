@@ -61,7 +61,7 @@ export default class Map {
       container: rightMapContainerId,
       ...constants.mapOptions,
     });
-    /* 
+    /*
     console.log("this.map");
     console.log(this.map);
     console.log("this.map2");
@@ -91,6 +91,7 @@ export default class Map {
     } */
 
     this.map.on("load", () => {
+      //this._bindMapDebugListeners(this.map); //adds lifecycle and data listeners for debugging to console
       // this._createMapComparison(this);
 
       this.map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
@@ -121,7 +122,20 @@ export default class Map {
       this.removeComparison(); //!! creating and immediately removing as my attempt to instantiate
       //  the comparison via the toolbar button later on (with toolbar button click) results in
       //  map2 having diferent dimensions for some reason not immediately apparent
+      ////map2 having different dimensions somehow due to window resizing taking place between separate instantiations;
     });
+
+    //for bivariate mode
+    //create initial scatter plot legend to be mutated later
+    globals.myBivariateScatterChart = {};
+    //  new Chart(
+    //   document.getElementById("bivariate_canvas"),
+    //   {
+    //     type: "scatter",
+    //     data: {}, //empty data
+    //     options: {},
+    //   }
+    // );
 
     //for debugging--------------------
     let self = this.map;
@@ -133,20 +147,772 @@ export default class Map {
       // console.log("getMinZoom():", self.getMinZoom());
       // console.log("getMaxZoom():", self.getMaxZoom());
     });
+
+    window.myMapClass = this; //easy access for debugging purposes via the browser console
     //--------------------------------
   }
 
   //Map class methods:
   //A) map initialization methods----------------------------------------------------------------------------
 
-  toggleMapboxGLCompare() {
-    console.log("globals.compareMode", globals.compareMode);
-    if (!globals.compareMode) {
-      console.log("createComparison");
-      this.createComparison(this.containerId, this.map, this.map2);
+  toggleBivariateComponents(debug = false) {
+    if (globals.compareMode) {
+      console.warn("compareMode active; doing nothing;");
+      return;
+    }
+    if (debug) {
+      console.log("bivariateMode:", globals.bivariateMode);
+    }
+    if (!globals.bivariateMode) {
+      document
+        .querySelector(".v-card.histogram_frame")
+        .classList.add("display-none"); //toggle display of histogram information
+      if (debug) {
+        console.warn("show Bivariate, turn main layer transparent");
+      }
+      document.querySelector(".tab-system-box").classList.add("display-none");
+
+      document
+        .querySelector(".v-card.bivariate_frame")
+        .classList.remove("display-none"); //toggle display of histogram information
+      // this.createBivariate();
+      //set opacity of main mode data layer to full transparent
+      this.changeOpacity({ opacity: 0.0 });
     } else {
-      console.log("removeComparison");
+      document
+        .querySelector(".v-card.histogram_frame")
+        .classList.remove("display-none"); //toggle display of histogram information
+      if (debug) {
+        console.warn("hide Bivariate, increase main layer opacity");
+      }
+      document
+        .querySelector(".tab-system-box")
+        .classList.remove("display-none");
+
+      document
+        .querySelector(".v-card.bivariate_frame")
+        .classList.add("display-none"); //toggle display of histogram information
+      this.removeBivariateLayer();
+      //set opacity of main mode data layer to full transparent
+      this.changeOpacity({ opacity: 40.0 });
+    }
+
+    globals.bivariateMode = !globals.bivariateMode; //toggle the value
+  }
+  createBivariate(
+    firstDataset,
+    firstLayer,
+    secondDataset,
+    secondLayer,
+    debug = true
+  ) {
+    if (debug) {
+      console.log(
+        "createBivariate()",
+        "firstDataset",
+        firstDataset,
+        "firstLayer",
+        firstLayer,
+        "secondDataset",
+        secondDataset,
+        "secondLayer",
+        secondLayer
+      );
+    }
+
+    let mapClassInstance = this;
+    let map = this.map;
+    let cls = globals.currentLayerState;
+    let bvls = globals.bivariateLayerState;
+    //updating bivariate global state variables, to inform other functions like onBivariateClick
+    bvls.dataLayer[0] = firstLayer;
+    bvls.dataLayer[1] = secondLayer;
+    console.log(
+      "updated globals.bivariateLayerState.dataLayer with firstLayer and secondLayer: ",
+      bvls.dataLayer
+    );
+
+    //adapted from oldcode createBivar() from bivariate.js
+    // if (map.getLayer(cls.hexSize)) {
+    //   map.setPaintProperty(cls.hexSize, "fill-opacity", 0.0);
+    // }
+
+    // if (!(secondLayer == null) && !(firstLayer == null)) {
+    // } else
+    if (secondLayer == null || firstLayer == null) {
+      if (debug) {
+        console.warn(
+          "bivariate mode passed incomplete pair of layers:",
+          firstLayer,
+          secondLayer,
+          "doing nothing"
+        );
+      }
+      return;
+    } else if (
+      [firstLayer.Name, secondLayer.Name].includes("Ocean Data") &&
+      firstLayer.Name !== secondLayer.Name
+    ) {
+      if (debug) {
+        console.warn(
+          "bivariate mode passed incompatible pair of ocean+land layers:",
+          firstLayer.Name,
+          secondLayer.Name,
+          "doing nothing"
+        );
+      }
+      return;
+    } else {
+      if (debug) {
+        console.log("bivariate passed layers:", firstLayer, secondLayer);
+      }
+      //a pair of datalayers passed so proceed to create bivariate
+      //check for a pair of ocean and land data, which would lead to fatal crash
+
+      //obsolete //remove existing bivariate map layer
+      // if (debug) {
+      //   console.log("removing preexisting bivariate layer");
+      // }
+      // if (map.getLayer("bivariate")) {
+      //   map.removeLayer("bivariate");
+      //   map.removeSource("bivariate");
+      // }
+
+      //get map features //TODO refactor to account for future vector tiles being not aggregated; will to fetch multiple tiles; likely better to query sources instead of rendered
+      // let features = map.queryRenderedFeatures({ layers: [cls.hexSize] });
+
+      let features = map.querySourceFeatures(cls.hexSize, {
+        //sourceLayer: [cls.hexSize],
+        sourceLayer: [cls.hexSize === "ocean" ? "oceans" : cls.hexSize], //TODO improve ocean source naming consistency so can eliminate this quick hack
+      });
+      if (debug) {
+        console.log("querying souurcefeatures/layer for:", cls.hexSize);
+      }
+      if (features?.length != 0) {
+        // eslint-disable-next-line no-unused-vars
+        let uniqueFeatures; //unused; originally used instead of duplicate source features but runs into issue of cutting off features crossing tile boundaries;
+        //TODO improve handling of features crossing tile boundaries, perhaps using ID or something; BUG banding of features buffered on tile boundaries, likely due to tile buffering and visible due to a slightly transparent layer paint property of output bivariate layer
+        let idProperty = null; //to use as promoteId for the output bivariate geojson source that powers the bivariate layer
+        if (cls.hexSize === "admin1") {
+          uniqueFeatures = this.getUniqueFeatures(features, "GID_1");
+          idProperty = "GID_1";
+        } else if (cls.hexSize === "admin2") {
+          uniqueFeatures = this.getUniqueFeatures(features, "GID_2");
+          idProperty = "GID_2";
+        } else {
+          uniqueFeatures = this.getUniqueFeatures(features, "hexid");
+        }
+        // let featuresUsed = uniqueFeatures;
+        let featuresUsed = features; //vs using uniqueFeatures, since i'm trying to solve the issue of losing features at the maptile border lines
+        //data ids for the two layers of interest
+        let attrId_1 = firstLayer.Field_Name;
+        let attrId_2 = secondLayer.Field_Name;
+        //isolate values from the aggregated property values in the features
+        //and make values absolute if appropriate (eg. ocean depth being negative values)
+        let negativeAttrIds = ["depth"]; //TODO extract this to some settings
+        if (debug) {
+          console.log("attr1Id:", attrId_1, "attr2Id:", attrId_2);
+          if (
+            negativeAttrIds.includes(attrId_1) ||
+            negativeAttrIds.includes(attrId_2)
+          )
+            console.log(
+              "negativeIds present Id1: ",
+              negativeAttrIds.includes(attrId_1),
+              "Id2",
+              negativeAttrIds.includes(attrId_2)
+            );
+        }
+        let data_1 = featuresUsed.map((x_feat) => {
+          let isNegative = negativeAttrIds.includes(attrId_1) ? -1 : 1;
+          let propertyValue = x_feat.properties[attrId_1];
+          return propertyValue * isNegative;
+          // x_feat.properties[attrId_1] *
+          //   negativeAttrIds.includes(attrId_1)
+          //   ? -1
+          //   : 1;
+        });
+        let data_2 = featuresUsed.map((y_feat) => {
+          let isNegative = negativeAttrIds.includes(attrId_2) ? -1 : 1;
+          let propertyValue = y_feat.properties[attrId_2];
+          return propertyValue * isNegative;
+          // y_feat.properties[attrId_2] *
+          //   negativeAttrIds.includes(attrId_2)
+          //   ? -1
+          //   : 1;
+        });
+        if (debug) {
+          console.log("data_1: ", data_1, "data_2", data_2);
+        }
+        //check for case where no data for one of the selected data layers (field ID/name)
+        let hasData = {
+          data_1: data_1.some((x) => !Number.isNaN(x)),
+          data_2: data_2.some((y) => !Number.isNaN(y)),
+        };
+        if (debug) {
+          console.log("bivariate selections hasData:", hasData);
+        }
+        if (!hasData.data_1 || !hasData.data_2) {
+          console.warn(
+            "!! a selected datalayer has no data for this region: ",
+            hasData
+          );
+
+          //remove preexisting bivariate layer
+          if (map.getLayer("bivariate")) {
+            map.removeLayer("bivariate");
+            map.removeSource("bivariate");
+          }
+
+          return;
+        }
+
+        //compute breakpoint values in these datasets, and update them in state
+        let X_breaks = chroma.limits(data_1, "q", 3);
+        let Y_breaks = chroma.limits(data_2, "q", 3);
+        bvls.breaks.X = X_breaks;
+        bvls.breaks.Y = Y_breaks;
+        //choice of bivariate color palette
+        let bivar_colors = colors.colorSeqSeq3["blue-pink-purple"];
+        bvls.color = bivar_colors; //updating state
+        if (debug) {
+          console.log(
+            "bivariate color palette: ",
+            bivar_colors,
+            "X_breaks:",
+            X_breaks,
+            "Y_breaks: ",
+            Y_breaks
+          );
+        }
+
+        //containers for tracking class of each feature, and for counting for scatter plot
+        let bivarClass = Array(featuresUsed.length).fill(0);
+        let bivarScatter = new Array(10);
+        for (let i = 0; i < 10; i++) {
+          bivarScatter[i] = [];
+        }
+
+        //start computing features' bivarclasses and filling scatter counter
+        for (let i = 0; i < featuresUsed.length; i++) {
+          //get the values of concern from that shared feature
+          let x_val = data_1[i];
+          let y_val = data_2[i];
+          //he was using a low/med/high scale so 3x3 grid of classes //TODO generalize and refactor to allow custom scaling
+          //determine class
+          let range_1, range_2;
+          if (x_val < X_breaks[1]) range_1 = 1;
+          //check range in x
+          else if (x_val < X_breaks[2]) range_1 = 2;
+          else range_1 = 3;
+          if (y_val < Y_breaks[1]) range_2 = 1;
+          //check range in y
+          else if (y_val < Y_breaks[2]) range_2 = 2;
+          else range_2 = 3;
+          var coord = String(range_1) + String(range_2);
+          //account for data property values for a feature not being defined
+          if (Number.isNaN(x_val) || Number.isNaN(y_val)) {
+            //(typeof x_val == "undefined" || typeof y_val == "undefined")
+            coord = null; //"Null";
+          }
+          //assign class to that feature //TODO can be refactored into two consequtive loops that count (along the axis bsaically) and add index to a final counter indicating class
+          switch (coord) {
+            case "11":
+              bivarClass[i] = 0;
+              break; //LL
+            case "12":
+              bivarClass[i] = 1;
+              break; //LM
+            case "13":
+              bivarClass[i] = 2;
+              break; //LH
+            case "21":
+              bivarClass[i] = 3;
+              break; //ML
+            case "22":
+              bivarClass[i] = 4;
+              break; //MM
+            case "23":
+              bivarClass[i] = 5;
+              break; //MH
+            case "31":
+              bivarClass[i] = 6;
+              break; //HL
+            case "32":
+              bivarClass[i] = 7;
+              break; //HM
+            case "33":
+              bivarClass[i] = 8;
+              break; //HH
+            case null: //"Null":
+              bivarClass[i] = 9;
+              break; //NULL
+          }
+          bivarScatter[bivarClass[i]].push({ x: x_val, y: y_val }); //assign the bivarPairValues object to the counter of the scatterObject for hte appropriate class
+          featuresUsed[i]["properties"]["bivarClass"] = bivarClass[i]; //adding a property to the hex features; //TODO needs a better way especially for after switch to non-aggregated features
+        }
+        //convert the unique features into a feature collection for addition to the map as a geojson layer
+        var fc = featureCollection(featuresUsed);
+        if (debug) {
+          console.warn(
+            "featuresUsed: ",
+            featuresUsed,
+            "featureCollection",
+            fc,
+            "bivarScatter",
+            bivarScatter
+          );
+        }
+        //remove preexisting bivariate layer
+        if (map.getLayer("bivariate")) {
+          map.removeLayer("bivariate");
+          map.removeSource("bivariate");
+        }
+        //removing the data-carrying layer from the map, in order to avoid firing onClick events for it, and we've already queried it for the features necessary to calculate the bivariate values
+        // if (map.getLayer(cls.hexSize)) {
+        //   map.removeLayer(cls.hexSize);
+        //   map.removeSource(cls.hexSize);
+        // }
+        //add new source
+        map.addSource("bivariate", {
+          type: "geojson",
+          data: fc, //data is the new geojson
+          promoteId: idProperty,
+        });
+        map.addLayer({
+          id: "bivariate",
+          source: "bivariate",
+          type: "fill",
+          paint: {
+            "fill-color": [
+              "step", //step operator
+              ["get", "bivarClass"], //the input;retreive a number literal ie. the bivariate class;
+              //values changed from Atlases code, the first output value is used if the input value is less than the first numeric-stop value i.e 1
+              //his code had the first as 0, which was wrong
+              bivar_colors[0],
+              1,
+              bivar_colors[1],
+              2,
+              bivar_colors[2],
+              3,
+              bivar_colors[3],
+              4,
+              bivar_colors[4],
+              5,
+              bivar_colors[5],
+              6,
+              bivar_colors[6],
+              7,
+              bivar_colors[7],
+              8,
+              bivar_colors[8],
+              9,
+              "rgba(255,255,255,0)",
+            ],
+            "fill-opacity": debug ? 0.9 : 1,
+          },
+        });
+
+        if (!cls.hexSize === "bivariate") {
+          cls.hexSize = "bivariate";
+        }
+
+        // let instance = mapClassInstance;
+        // this.map.on(
+        //   "click",
+        //   "bivariate",
+        //   function (e, mapClassInstance = instance) {
+        //     mapClassInstance.clearOnClickQuery(mapClassInstance);
+        //     mapClassInstance.onBivariateClick(e);
+        //   }
+        // );
+
+        //bivariate legend code
+        //hide histogram stuff legend and title
+        //remove preexisting bivar plot and selector eleements
+
+        // let element = document.getElementById("bivarPlot");
+        // if (typeof element != "undefined" && element != null) {
+        //   $("#bivarPlot").remove();
+        //   $("#bivarSwitcher").remove();
+        // }
+        // let element = document.getElementById("histogram");
+        // if (typeof element != "undefined" && element != null) {
+        //   $("#histogram").remove();
+        // }
+
+        // let bivarFrameElement = document.getElementById("bivariate_frame");
+        // bivarFrameElement.append(
+        //   '<canvas id="bivariate_canvas" ref="canvas_bivariate" width="320" height="200"><canvas>'
+        // );
+        // $("#histogram_frame").append(
+        //   '<select id="bivarSwitcher" onChange="bivarScaleSwitch(this.value);"><option value="logarithmic">logarithmic</option><option value="linear">linear</option></select>'
+        // );
+        // dynamic point size
+        let firstLabel = firstLayer.Unit;
+        // new DOMParser().parseFromString(
+        //   firstLayer.Unit,
+        //   "text/html"
+        // ).body.innerHTML;
+        let secondLabel = secondLayer.Unit;
+        // new DOMParser().parseFromString(
+        //   secondLayer.Unit,
+        //   "text/html"
+        // ).body.innerHTML;
+        let point_radius;
+        if (featuresUsed.length < 100) {
+          point_radius = 3.3;
+        } else if (featuresUsed.length > 1000) {
+          point_radius = 1.5;
+        } else {
+          point_radius = ((featuresUsed.length - 100) / 100) * 0.2;
+        }
+        // eslint-disable-next-line no-unused-vars
+        let bivar_option = {
+          scales: {
+            xAxes: [
+              {
+                display: true,
+                type: "logarithmic",
+                scaleLabel: {
+                  display: true,
+                  //labelString: Vue._.find(allLayers, ["field_name", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
+                  labelString: firstLabel, //firstLayer.Unit,
+                },
+                ticks: {
+                  min: X_breaks[0], //minimum tick
+                  max: X_breaks[3], //maximum tick
+                  //maxTicksLimit: 4,
+                  maxRotation: 45,
+                  minRotation: 45,
+
+                  callback: function (
+                    valueX
+                    //index,
+                    //values
+                  ) {
+                    if (valueX === 100000000) return "100M";
+                    if (valueX === 10000000) return "10M";
+                    if (valueX === 1000000) return "1M";
+                    if (valueX === 100000) return "100K";
+                    if (valueX === 10000) return "10K";
+                    if (valueX === 1000) return "1K";
+                    if (valueX === 100) return "100";
+                    if (valueX === 10) return "10";
+                    if (valueX === 1) return "1";
+                    if (valueX === 0.1) return "0.1";
+                    if (valueX > 10)
+                      return mapClassInstance.nFormatter(valueX, 1);
+                    else return mapClassInstance.nFormatter(valueX, 2);
+                  },
+                },
+
+                afterBuildTicks: function (chartObjX) {
+                  chartObjX.ticks = [];
+                  chartObjX.ticks.push(X_breaks[3]);
+                  chartObjX.ticks.push(X_breaks[2]);
+                  chartObjX.ticks.push(X_breaks[1]);
+                  chartObjX.ticks.push(X_breaks[0]);
+                },
+              },
+            ],
+            yAxes: [
+              {
+                display: true,
+                type: "logarithmic",
+                scaleLabel: {
+                  display: true,
+                  //labelString: Vue._.find(allLayers, ["field_name", attrId_2])["title"],
+                  labelString: secondLabel, //secondLayer.Unit,
+                },
+                ticks: {
+                  min: Y_breaks[0], //minimum tick
+                  max: Y_breaks[3], //maximum tick
+                  //maxTicksLimit: 4,
+                  maxRotation: 45,
+                  minRotation: 45,
+
+                  callback: function (
+                    valueY
+                    //index,
+                    //values
+                  ) {
+                    if (valueY === 100000000) return "100M";
+                    if (valueY === 10000000) return "10M";
+                    if (valueY === 1000000) return "1M";
+                    if (valueY === 100000) return "100K";
+                    if (valueY === 10000) return "10K";
+                    if (valueY === 1000) return "1K";
+                    if (valueY === 100) return "100";
+                    if (valueY === 10) return "10";
+                    if (valueY === 1) return "1";
+                    if (valueY === 0.1) return "0.1";
+                    if (valueY > 10)
+                      return mapClassInstance.nFormatter(valueY, 1);
+                    else return mapClassInstance.nFormatter(valueY, 2);
+                  },
+                },
+
+                afterBuildTicks: function (chartObjY) {
+                  chartObjY.ticks = [];
+                  chartObjY.ticks.push(Y_breaks[3]);
+                  chartObjY.ticks.push(Y_breaks[2]);
+                  chartObjY.ticks.push(Y_breaks[1]);
+                  chartObjY.ticks.push(Y_breaks[0]);
+                },
+              },
+            ],
+          },
+
+          legend: {
+            position: "top",
+            display: false,
+          },
+          tooltips: false,
+        };
+
+        let bivarClasses = [
+          "L-L",
+          "L-Mid",
+          "L-H",
+          "Mid-L",
+          "Mid-Mid",
+          "Mid-H",
+          "H-L",
+          "H-Mid",
+          "H-H",
+        ];
+        let bivarDatasets = [];
+        for (let i = 0; i < 9; i++) {
+          bivarDatasets.push({
+            label: bivarClasses[i],
+            data: bivarScatter[i],
+            pointRadius: point_radius,
+            pointHoverRadius: 3,
+            backgroundColor: bivar_colors[i],
+            hoverBorderColor: "rgba(0,0,0,1)",
+            pointHoverBorderWidth: 2,
+            borderWidth: 1.5,
+          });
+        }
+        //add the chart
+        //get the target canvas element
+        if (debug) {
+          console.log("adding bivariate to canvas");
+        }
+        // let canvas = document.getElementById("bivariate_canvas");
+        // eslint-disable-next-line no-unused-vars
+        // globals.myBivariateScatterChart = new Chart(canvas, {
+        //   type: "scatter",
+        //   data: { datasets: bivarDatasets },
+        //   options: bivar_option,
+        // }); //to be obsoleted by updating an existing chart instance instead
+
+        //testing updating chart //from https://www.chartjs.org/docs/2.9.4/developers/updates.html
+        let chart = globals.myBivariateScatterChart; //get scatter chart instance
+        //remove old data
+        // chart.data.labels.pop();
+        chart.data.datasets.forEach((dataset) => {
+          dataset.data.pop();
+        });
+        //add newly determined data for this createBivariate run
+        // let label = "# of Votes";
+        // chart.data.labels.push(label);
+        chart.data.datasets = bivarDatasets;
+        //update chart
+        chart.update(0); //no-animation update
+        //mutate options
+        chart.options = bivar_option; //no-animation update
+        //update chart
+        chart.update(0);
+        console.log("updating chart");
+        //--end test updating
+      } else {
+        if (debug) {
+          console.warn("no features returned for bivariate mode", features);
+        }
+        if (debug) {
+          console.log("doing nothing");
+        }
+        return;
+      }
+    }
+  }
+
+  //taken from https://www.chartjs.org/docs/2.9.4/developers/updates.html
+  //https://www.chartjs.org/samples/2.9.4/scales/toggle-scale-type.html
+  toggleScaleType(chart, axes = ["X", "Y"], debug = true) {
+    if (debug) {
+      console.log("togglScaleType", chart, axes);
+    }
+    if (!axes.includes("X") && !axes.includes("Y")) {
+      console.warn("toggleScaleType passed invalid axes; doing nothing");
+      return;
+    }
+    let mapClassInstance = this;
+    let bvls = globals.bivariateLayerState;
+    let X_breaks = bvls.breaks.X;
+    let Y_breaks = bvls.breaks.Y;
+    //updating bivariate global state variables, to inform other functions like onBivariateClick
+    let firstLayer = bvls.dataLayer[0];
+    let secondLayer = bvls.dataLayer[1];
+    let firstLabel = firstLayer.Unit;
+    let secondLabel = secondLayer.Unit;
+
+    let XType = null;
+    let YType = null;
+    if (axes.includes("X")) {
+      // eslint-disable-next-line no-unused-vars
+      XType =
+        chart.options.scales.xAxes[0].type === "linear"
+          ? "logarithmic"
+          : "linear";
+      document.getElementById("XType").innerText = XType; //update text showing scale type
+
+      // let xAxis = { display: true, type: XType };
+      let xAxis = {
+        display: true,
+        type: XType,
+        scaleLabel: {
+          display: true,
+          //labelString: Vue._.find(allLayers, ["field_name", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
+          labelString: firstLabel, //firstLayer.Unit,
+        },
+        ticks: {
+          min: X_breaks[0], //minimum tick
+          max: X_breaks[3], //maximum tick
+          //maxTicksLimit: 4,
+          maxRotation: 45,
+          minRotation: 45,
+
+          callback: function (
+            valueX
+            //index,
+            //values
+          ) {
+            if (valueX === 100000000) return "100M";
+            if (valueX === 10000000) return "10M";
+            if (valueX === 1000000) return "1M";
+            if (valueX === 100000) return "100K";
+            if (valueX === 10000) return "10K";
+            if (valueX === 1000) return "1K";
+            if (valueX === 100) return "100";
+            if (valueX === 10) return "10";
+            if (valueX === 1) return "1";
+            if (valueX === 0.1) return "0.1";
+            if (valueX > 10) return mapClassInstance.nFormatter(valueX, 1);
+            else return mapClassInstance.nFormatter(valueX, 2);
+          },
+        },
+
+        afterBuildTicks: function (chartObjX) {
+          chartObjX.ticks = [];
+          chartObjX.ticks.push(X_breaks[3]);
+          chartObjX.ticks.push(X_breaks[2]);
+          chartObjX.ticks.push(X_breaks[1]);
+          chartObjX.ticks.push(X_breaks[0]);
+        },
+      };
+      chart.options.scales.xAxes[0] = xAxis;
+    }
+    if (axes.includes("Y")) {
+      // eslint-disable-next-line no-unused-vars
+      YType =
+        chart.options.scales.yAxes[0].type === "linear"
+          ? "logarithmic"
+          : "linear";
+      document.getElementById("YType").innerText = YType; //update text showing scale type
+      // let yAxis = { display: true, type: YType };
+      let yAxis = {
+        display: true,
+        type: YType,
+        scaleLabel: {
+          display: true,
+          //labelString: Vue._.find(allLayers, ["field_name", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
+          labelString: secondLabel, //secondLayer.Unit,
+        },
+        ticks: {
+          min: Y_breaks[0], //minimum tick
+          max: Y_breaks[3], //maximum tick
+          //maxTicksLimit: 4,
+          maxRotation: 45,
+          minRotation: 45,
+
+          callback: function (
+            valueY
+            //index,
+            //values
+          ) {
+            if (valueY === 100000000) return "100M";
+            if (valueY === 10000000) return "10M";
+            if (valueY === 1000000) return "1M";
+            if (valueY === 100000) return "100K";
+            if (valueY === 10000) return "10K";
+            if (valueY === 1000) return "1K";
+            if (valueY === 100) return "100";
+            if (valueY === 10) return "10";
+            if (valueY === 1) return "1";
+            if (valueY === 0.1) return "0.1";
+            if (valueY > 10) return mapClassInstance.nFormatter(valueY, 1);
+            else return mapClassInstance.nFormatter(valueY, 2);
+          },
+        },
+
+        afterBuildTicks: function (chartObjY) {
+          chartObjY.ticks = [];
+          chartObjY.ticks.push(Y_breaks[3]);
+          chartObjY.ticks.push(Y_breaks[2]);
+          chartObjY.ticks.push(Y_breaks[1]);
+          chartObjY.ticks.push(Y_breaks[0]);
+        },
+      };
+      chart.options.scales.yAxes[0] = yAxis;
+    }
+    if (debug) {
+      console.log("XType, YType:", XType, YType);
+    }
+    chart.update();
+  }
+
+  removeBivariateLayer(mapboxMapInstance = this.map, debug = false) {
+    if (debug) {
+      console.log("removeBivariateLayer(), removing bivariate layer");
+    }
+    let map = mapboxMapInstance;
+    //adapted from oldcode createBivar() from bivariate.js
+    if (map.getLayer("bivariate")) {
+      map.removeLayer("bivariate");
+      map.removeSource("bivariate");
+    }
+  }
+
+  toggleMapboxGLCompare(debug = false) {
+    //check for other mode eg. bivariate mode being active
+    if (globals.bivariateMode) {
+      console.warn("bivariateMode active, doing nothing");
+      return;
+    }
+    if (debug) {
+      console.log("globals.compareMode", globals.compareMode);
+    }
+    if (!globals.compareMode) {
+      if (debug) {
+        console.log("createComparison");
+      }
+      this.createComparison(this.containerId, this.map, this.map2);
+      //hide histogram
+      document
+        .querySelector(".v-card.histogram_frame")
+        .classList.add("display-none");
+    } else {
+      if (debug) {
+        console.log("removeComparison");
+      }
       this.removeComparison();
+      //reshow histogram
+      document
+        .querySelector(".v-card.histogram_frame")
+        .classList.remove("display-none");
     }
     globals.compareMode = !globals.compareMode;
   }
@@ -164,6 +930,9 @@ export default class Map {
     );
     map2Instance.setCenter(map1Instance.getCenter());
     map2Instance.setZoom(map1Instance.getZoom());
+
+    //testing - adding .resize() to handle issue of map2 instance's size being shrunk to a minimum(?) due to window being resized/tiled(?) between uses of the comparison mode
+    map2Instance.resize();
   }
   removeComparison() {
     this.mapCompare.remove(); //remove the  mapboxgl.Compare from the webpage
@@ -239,6 +1008,71 @@ export default class Map {
       this.hideSpinner();
     });
   }
+  _bindMapDebugListeners(map = this.map1) {
+    // Set an event listener that fires
+    // when any map data begins loading
+    // or changing asynchronously.
+    map.on("dataloading", () => {
+      console.log("A dataloading event occurred.");
+    });
+    // Set an event listener that fires
+    // when map data loads or changes.
+    map.on("data", () => {
+      console.log("A data event occurred.");
+    });
+    // Set an event listener that fires
+    // when the map's style loads or changes.
+    map.on("styledata", () => {
+      console.log("A styledata event occurred.");
+    });
+    // Set an event listener that fires
+    // when the map's style begins loading or
+    // changing asynchronously.
+    map.on("styledataloading", () => {
+      console.log("A styledataloading event occurred.");
+    });
+    // Set an event listener that fires
+    // when the map's sources begin loading or
+    // changing asynchronously.
+    map.on("sourcedataloading", () => {
+      console.log("A sourcedataloading event occurred.");
+    });
+    // Set an event listener that fires
+    // when an icon or pattern is missing.
+    map.on("styleimagemissing", () => {
+      console.log("A styleimagemissing event occurred.");
+    });
+    // Set an event listener that fires
+    // when the map has finished loading.
+    map.on("load", () => {
+      console.log("A load event occurred.");
+    });
+    // Set an event listener that fires
+    // whenever the map is drawn to the screen.
+    map.on("render", () => {
+      console.log("A render event occurred.");
+    });
+    // Set an event listener that fires
+    // just before the map enters an "idle" state.
+    map.on("idle", () => {
+      console.log("A idle event occurred.");
+    });
+    // Set an event listener that fires
+    // when an error occurs.
+    map.on("error", () => {
+      console.log("A error event occurred.");
+    });
+    // Set an event listener that fires
+    // when the WebGL context is lost.
+    map.on("webglcontextlost", () => {
+      console.log("A webglcontextlost event occurred.");
+    });
+    // Set an event listener that fires
+    // when the WebGL context is restored.
+    map.on("webglcontextrestored", () => {
+      console.log("A webglcontextrestored event occurred.");
+    });
+  }
   _bindMapClickListeners(mapClassInstance) {
     let instance = mapClassInstance;
     //listeners for the query-clicks
@@ -278,15 +1112,30 @@ export default class Map {
       mapClassInstance.addAdminClick(e, "admin1");
     });
 
-    this.map.on("click", "admin2", function (e, mapClassInstance = instance) {
-      console.log("map.on.click.admin2");
+    this.map.on(
+      "click",
+      "admin2",
+      function (e, mapClassInstance = instance, debug = false) {
+        if (debug) {
+          console.log("map.on.click.admin2");
+        }
 
-      //clear old selections presents
-      mapClassInstance.clearOnClickQuery(mapClassInstance);
+        //clear old selections presents
+        mapClassInstance.clearOnClickQuery(mapClassInstance);
 
-      // this.onDataClick(e);
-      mapClassInstance.addAdminClick(e, "admin2");
-    });
+        // this.onDataClick(e);
+        mapClassInstance.addAdminClick(e, "admin2");
+      }
+    );
+
+    this.map.on(
+      "click",
+      "bivariate",
+      function (e, mapClassInstance = instance) {
+        mapClassInstance.clearOnClickQuery(mapClassInstance);
+        mapClassInstance.onBivariateClick(e);
+      }
+    );
 
     this.map.on("click", function () /* e, mapClassInstance = instance */ {
       /*       console.log("map.on.click.clearing-all");
@@ -312,7 +1161,7 @@ export default class Map {
       ) {
         console.log('removing existing source and layer for "iso"');
         //this.map.removeLayer("iso");
-        //this.map.removeSource("iso"); 
+        //this.map.removeSource("iso");
         mapClassInstance.removeLayer("iso");
         mapClassInstance.removeSource("iso");
       }
@@ -353,28 +1202,140 @@ export default class Map {
       clickDiv.style.display = "none";
       clickDiv.innerHTML = ""; */
     });
+
+    //copied listeners for comparison map instance-----------------------------------------
+    //TODO refactor this entire function
+    this.map2.on("click", "hex5", function (e, mapClassInstance = instance) {
+      mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+      mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    });
+
+    this.map2.on("click", "hex10", function (e, mapClassInstance = instance) {
+      mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+      mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    });
+
+    this.map2.on("click", "hex1", function (e, mapClassInstance = instance) {
+      mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+      mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    });
+
+    this.map2.on(
+      "click",
+      "hex5clipped",
+      function (e, mapClassInstance = instance) {
+        mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+        mapClassInstance.onDataClick(e, mapClassInstance.map2);
+      }
+    );
+
+    this.map2.on("click", "ocean", function (e, mapClassInstance = instance) {
+      mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+      mapClassInstance.onDataClick(e, mapClassInstance.map2);
+    });
+
+    this.map2.on("click", "admin1", function (e, mapClassInstance = instance) {
+      mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+      mapClassInstance.addAdminClick(e, "admin1", mapClassInstance.map2);
+    });
+
+    this.map2.on(
+      "click",
+      "admin2",
+      function (e, mapClassInstance = instance, debug = false) {
+        if (debug) {
+          console.log("map.on.click.admin2");
+        }
+
+        //clear old selections presents
+        mapClassInstance.clearOnClickQuery(mapClassInstance.map2);
+
+        // this.onDataClick(e);
+        mapClassInstance.addAdminClick(e, "admin2", mapClassInstance.map2);
+      }
+    );
+    //--------------------------
   }
-  _bindRecolorListeners(mapClassInstance) {
-    if (globals.compareMode) {
-      console.warn("recolor disabled during comparison mode");
-      return;
-    }
+  _bindDataHoverListeners() {
+    // let instance = mapClassInstance;
+    // this.map.on(
+    //   "hover",
+    //   "bivariate",
+    //   function (e, mapClassInstance = instance) {
+    //     mapClassInstance.clearOnClickQuery(mapClassInstance);
+    //     mapClassInstance.onBivariateClick(e);
+    //   }
+    // );
+  }
+  _bindRecolorListeners(mapClassInstance, debug = false) {
+    // if (globals.compareMode) {
+    //   console.warn("recolor disabled during comparison mode");
+    //   return;
+    // }
+
     let instance = mapClassInstance;
-    console.log(instance);
+    if (debug) {
+      console.log(instance);
+    }
     //this. out here ref the mapClass instance calling this method
     //TODO: review and rewrite
 
     for (const eventType of ["zoomend", "dragend"]) {
-      console.log(`binding RecolorListener: ${eventType}`);
+      if (debug) {
+        console.log(`binding RecolorListener: ${eventType}`);
+      }
       this.map.on(eventType, function (e, mapClassInstance = instance) {
         //this. in here would ref the mapboxmap and not our mapClass which has the recolor method
-        console.log("_bindRecolorListeners");
-        console.log("event is:");
-        console.log(e);
-        console.log("instance is:");
-        console.log(instance);
+        if (debug) {
+          console.log(
+            "_bindRecolorListeners",
+            "event is:",
+            e,
+            "instance is:",
+            instance
+          );
+        }
 
-        mapClassInstance.recolorBasedOnWhatsOnPage();
+        if (!globals.bivariateMode) {
+          mapClassInstance.recolorBasedOnWhatsOnPage();
+
+          mapClassInstance.updateOverlayLegend("main");
+          mapClassInstance.updateOverlayLegend("comparison");
+        } else {
+          console.log("bivariateMode enabled - skipping recolor");
+          console.log("updating bivariate layer");
+          let bvls = globals.bivariateLayerState; //get stored state
+          mapClassInstance.createBivariate(
+            null,
+            bvls.dataLayer[0],
+            null,
+            bvls.dataLayer[1]
+          );
+        }
+      });
+
+      //add listener for the comparison map i.e map2
+      this.map2.on(eventType, function (e, mapClassInstance = instance) {
+        //this. in here would ref the mapboxmap and not our mapClass which has the recolor method
+        if (debug) {
+          console.log(
+            "_bindRecolorListeners",
+            "event is:",
+            e,
+            "instance is:",
+            instance
+          );
+        }
+
+        if (!globals.bivariateMode) {
+          let recolorComparison = true;
+          mapClassInstance.recolorBasedOnWhatsOnPage(recolorComparison);
+
+          mapClassInstance.updateOverlayLegend("main");
+          mapClassInstance.updateOverlayLegend("comparison");
+        } else {
+          console.log("bivariateMode enabled - skipping recolor");
+        }
       });
     }
   }
@@ -388,7 +1349,7 @@ export default class Map {
     const drawInfoControl = new DrawInfoControl();
     this.map.addControl(drawInfoControl, "bottom-right");
   }
-  _addDrawListeners(mapClassInstance) {
+  _addDrawListeners(mapClassInstance, debug = false) {
     //taken from oldcode implementation in drawFunc.js
     mapClassInstance.map.on("draw.create", drawCreate);
     mapClassInstance.map.on("draw.delete", drawDelete);
@@ -396,22 +1357,30 @@ export default class Map {
     mapClassInstance.map.on("draw.modechange", drawModeChange);
 
     function drawUpdate() {
-      console.log("drawUpdate");
+      if (debug) {
+        console.log("drawUpdate");
+      }
     }
     function drawModeChange(e) {
-      console.log("drawModeChange to", e.mode);
+      if (debug) {
+        console.log("drawModeChange to", e.mode);
+      }
       document
         .getElementsByClassName("close-menu")[0]
         .classList.add("display-none");
 
       if (e.mode === "simple_select") {
-        console.log("deletAll features before:", e.mode);
+        if (debug) {
+          console.log("deletAll features before:", e.mode);
+        }
         mapClassInstance.Draw.deleteAll();
       }
     }
 
     function drawDelete() {
-      console.log("drawDelete");
+      if (debug) {
+        console.log("drawDelete");
+      }
 
       mapClassInstance.map.setFilter(globals.currentLayerState.hexSize, null); //map.setFilter(currentGeojsonLayers.hexSize, null);
 
@@ -424,13 +1393,18 @@ export default class Map {
     }
 
     function drawCreate(e) {
-      console.log("drawCreate");
+      if (debug) {
+        console.log("drawCreate");
+      }
       //e.preventDefault()
       //e.stopPropogation()
-      console.log(
-        "Drawn Feature Count: ",
-        mapClassInstance.Draw.getAll().features.length
-      );
+      if (debug) {
+        console.log(
+          "Drawn Feature Count: ",
+          mapClassInstance.Draw.getAll().features.length
+        );
+      }
+
       //clear any previous draw filter
       mapClassInstance.map.setFilter(globals.currentLayerState.hexSize, null);
 
@@ -450,7 +1424,9 @@ export default class Map {
           layers: [globals.currentLayerState.hexSize],
         }
       );
-      console.log("queryRenderedFeatures: ", features);
+      if (debug) {
+        console.log("queryRenderedFeatures: ", features);
+      }
 
       if (features.length > 0) {
         //use Turf.js function to actually check for intersecting features
@@ -568,8 +1544,8 @@ export default class Map {
   //C) Main functions - core logic that implements the major functionality of the map--------------------------------------
   //TODO: MOVE UP INTO GEOSPATIALDATA.VUE AND/OR IMPORT THESE FUNCTIONS AS A SEPARATELY WRITTEN MODULE
 
-  zoomToCountry(country) {
-    let self = this;
+  zoomToCountry(country, debug = false) {
+    let self = this; //the mapclassinstance
     var v2 = new mapboxgl.LngLatBounds(country.bb);
     this.map.fitBounds(v2, {
       linear: true,
@@ -586,27 +1562,42 @@ export default class Map {
 
     //contextual recolor hexes
     this.map.once("idle", function () {
-      console.log("map idle; recoloring non-ocean data");
+      if (debug) {
+        console.log("map idle; recoloring non-ocean data");
+      }
       if (!self.map.getLayer("ocean")) {
         setTimeout(() => {
-          self.recolorBasedOnWhatsOnPage(), 1000;
+          self.recolorBasedOnWhatsOnPage(self.map), 1000;
+        }); //timeout added to allow data to load in before triggering recolor+legend update
+      }
+    });
+    this.map2.once("idle", function () {
+      if (debug) {
+        console.log("map idle; recoloring non-ocean data");
+      }
+      if (!self.map2.getLayer("ocean")) {
+        setTimeout(() => {
+          self.recolorBasedOnWhatsOnPage(self.map2), 1000;
         }); //timeout added to allow data to load in before triggering recolor+legend update
       }
     });
   }
-  setMapBounds(bbox) {
+  setMapBounds(bbox, debug = false) {
     let buffer = 1.5; //degrees to expand the bounding box on all sides //should allow enough buffer room to cover the EEZ of 200naut.miles/~370km/~3deg@110km each
     let expandedBBox = [
       [bbox[0][0] - buffer, bbox[0][1] - buffer], //west, south
       [bbox[1][0] + buffer, bbox[1][1] + buffer], //east, north
     ];
-    console.log("setMapBounds", expandedBBox);
+    if (debug) {
+      console.log("setMapBounds", expandedBBox);
+    }
     this.map.setMaxBounds(expandedBBox);
     this.map2.setMaxBounds(expandedBBox);
   }
   //manages the change when you chang the resolution
-  changeHexagonSize(resolutionObject) {
+  changeHexagonSize(resolutionObject, debug = true) {
     let map = this.map;
+    let map2 = this.map2;
     let resolution = resolutionObject.resolution;
 
     /* if (
@@ -630,43 +1621,56 @@ export default class Map {
     }
 
     this.remove3d();
+    //update resolution state
     globals.currentLayerState.hexSize = resolution;
+    globals.comparisonLayerState.hexSize = resolution;
 
+    //clear maplayers that are usercontrolled
     for (var x in constants.userLayers) {
-      //clear maplayers that are usercontrolled
       if (map.getLayer(constants.userLayers[x])) {
         map.removeLayer(constants.userLayers[x]);
       }
+      if (globals.compareMode) {
+        if (map2.getLayer(constants.userLayers[x])) {
+          map2.removeLayer(constants.userLayers[x]);
+        }
+      }
     }
 
-    var currentSourceData = Vue._.find(globals.sourceData, function (o) {
+    //get source name
+    let currentSourceData = Vue._.find(globals.sourceData, function (o) {
       if (o.name == globals.currentLayerState.hexSize) {
-        console.log(`matching sourceData name: ${o.name}`);
+        if (debug) {
+          console.log(`matching sourceData name: ${o.name}`);
+        }
       }
       //find the name of sourceData which matches current hexSize
       return o.name === globals.currentLayerState.hexSize;
     });
-    console.log("globals.currentLayerState : ");
-    console.log(globals.currentLayerState);
-    console.log("currentSourceData from in sourceData: ");
-    console.log(currentSourceData);
+    if (debug) {
+      console.log("globals.currentLayerState : ");
+      console.log(globals.currentLayerState);
+      console.log("currentSourceData from in sourceData: ");
+      console.log(currentSourceData);
+    }
 
-    map.addLayer(
-      {
-        id: resolution,
-        type: "fill",
-        source: resolution,
-        "source-layer": currentSourceData.layer,
-        layout: {
-          visibility: "visible",
-        },
-        paint: {
-          "fill-color": "blue",
-          "fill-opacity": 0.0, //globals.opacity, // 0
-        },
+    let options = {
+      id: resolution,
+      type: "fill",
+      source: resolution,
+      "source-layer": currentSourceData.layer,
+      layout: {
+        visibility: "visible",
       },
-      globals.firstSymbolId
-    );
+      paint: {
+        "fill-color": "blue",
+        "fill-opacity": 0.0, //globals.opacity, // 0
+      },
+    };
+    map.addLayer(options, globals.firstSymbolId);
+    if (globals.compareMode) {
+      map2.addLayer(options, globals.firstSymbolId);
+    }
 
     /* if (resolution === "hex1") {
         //showing loader in expectation of hex1 taking longer to display
@@ -681,8 +1685,15 @@ export default class Map {
       } */
 
     if (map.getStyle().name === "Mapbox Satellite") {
-      console.log(`map style is Mapbox Satellite; moveLayer to ${resolution}`);
+      if (debug) {
+        console.log(
+          `map style is Mapbox Satellite; moveLayer to ${resolution}`
+        );
+      }
       map.moveLayer(resolution);
+      if (globals.compareMode) {
+        map2.moveLayer(resolution);
+      }
     }
 
     /*     map.once("idle", function (e) {
@@ -695,8 +1706,10 @@ export default class Map {
         map.moveLayer(resolution, "allsids");
       }); */
     map.once("idle", () => {
-      console.log("map idle-> recoloring");
-      this.recolorBasedOnWhatsOnPage(); //as it's inside an arrow function this. should refer to the outer scope and should be able to find the function
+      if (debug) {
+        console.log("map idle-> recoloring");
+      }
+      this.recolorBasedOnWhatsOnPage(map); //as it's inside an arrow function this. should refer to the outer scope and should be able to find the function
 
       //console.log('change bins');
       //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
@@ -704,22 +1717,40 @@ export default class Map {
 
       this.hideSpinner();
     });
+    map2.once("idle", () => {
+      if (debug) {
+        console.log("map2 idle-> recoloring");
+      }
+      this.recolorBasedOnWhatsOnPage(map2); //as it's inside an arrow function this. should refer to the outer scope and should be able to find the function
+
+      //console.log('change bins');
+      //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
+      map2.moveLayer(resolution, "allsids");
+
+      // this.hideSpinner();
+    });
   }
-  changeBasemap(selectionObject) {
+  changeBasemap(selectionObject, debug = false) {
     let self = this;
     let map = this.map;
     let map2 = this.map2;
-    console.log("selectionObject: ");
-    console.log(selectionObject);
+    if (debug) {
+      console.log("selectionObject: ");
+      console.log(selectionObject);
+    }
     let basemapName = selectionObject.name;
     let basemapIcon = selectionObject.icon;
-    console.log(`changeBasemap( ${basemapName} ); icon: ${basemapIcon}`);
+    if (debug) {
+      console.log(`changeBasemap( ${basemapName} ); icon: ${basemapIcon}`);
+    }
 
     ////adapting from old basemapSwitch.js
     //get the basemap names
     let currentBasemap = map.getStyle().name;
     let selectedBasemap = selectionObject.name;
-    console.log(`${currentBasemap} -> ${selectedBasemap}`);
+    if (debug) {
+      console.log(`${currentBasemap} -> ${selectedBasemap}`);
+    }
 
     //get the uri from the store of styles uri's, and set it
     let thisStyle = Vue._.find(constants.styles, function (style) {
@@ -729,7 +1760,9 @@ export default class Map {
       alert("thisStyle from Basemap not exist");
       return;
     } else {
-      console.log(`setting style: ${thisStyle.name}`);
+      if (debug) {
+        console.log(`setting style: ${thisStyle.name}`);
+      }
       map.setStyle(thisStyle.uri);
       map2.setStyle(thisStyle.uri);
     }
@@ -743,8 +1776,10 @@ export default class Map {
 
     //when done, update: firstSymbolId, basemapLabels
     map.once("idle", function () {
-      self.getBasemapLabels();
+      //TODO refactor in order to combine the repeated code here
+      self.getBasemapLabels(); //update global state storing basemap labels
 
+      //handle main map instance
       //unnecessary: why should the layers be removed if the basemap is switching??
       self._addVectorSources();
       let currentSource = Vue._.find(globals.sourceData, function (o) {
@@ -752,6 +1787,7 @@ export default class Map {
       });
       //re-add the current layer, with appropriate filtering
       let cls = globals.currentLayerState;
+
       try {
         map.addLayer(
           {
@@ -789,13 +1825,75 @@ export default class Map {
 
         map.moveLayer("allsids", globals.firstSymbolId); //ensure allsids outline ontop
       } catch (err) {
-        console.warn("attempted while no data layer is loaded on main map");
-        console.warn(err.stack); //placed to catch error when attempted while no data layer is loaded on main map
+        if (debug) {
+          console.warn("attempted while no data layer is loaded on main map");
+          console.warn(err.stack);
+        }
+        //placed to catch error when attempted while no data layer is loaded on main map
       }
+
+      //handle comparison map instance ie. map2
+      self._addVectorSources(true);
+      let comparisonSource = Vue._.find(globals.sourceData, function (o) {
+        return o.name === globals.comparisonLayerState.hexSize;
+      });
+      //re-add the current layer, with appropriate filtering
+      let comparison_cls = globals.comparisonLayerState;
+
+      try {
+        map2.addLayer(
+          {
+            id: comparison_cls.hexSize,
+            type: "fill",
+            source: comparison_cls.hexSize,
+            "source-layer": comparisonSource.layer,
+            layout: {
+              visibility: "visible",
+            },
+            paint: {
+              "fill-opacity": globals.opacity, //0.8
+              "fill-color": [
+                "interpolate",
+                ["linear"],
+                ["get", comparison_cls.dataLayer],
+                comparison_cls.breaks[0],
+                comparison_cls.color[0],
+                comparison_cls.breaks[1],
+                comparison_cls.color[1],
+                comparison_cls.breaks[2],
+                comparison_cls.color[2],
+                comparison_cls.breaks[3],
+                comparison_cls.color[3],
+                comparison_cls.breaks[4],
+                comparison_cls.color[4],
+              ],
+            },
+          },
+          globals.firstSymbolId
+        );
+
+        let filterString = comparison_cls.dataLayer === "depth" ? "<=" : ">=";
+        map2.setFilter(comparison_cls.hexSize, [
+          filterString,
+          comparison_cls.dataLayer,
+          0,
+        ]);
+
+        map2.moveLayer("allsids", globals.firstSymbolId); //ensure allsids outline ontop
+      } catch (err) {
+        if (debug) {
+          console.warn(
+            "attempted while no data layer is loaded on comparison map"
+          );
+          console.warn(err.stack);
+        }
+        //placed to catch error when attempted while no data layer is loaded on main map
+      }
+
       self.hideSpinner();
     });
   }
-  changeOpacity(opacityObject) {
+  changeOpacity(opacityObject, debug = false) {
     let map = this.map;
     let sliderValue = opacityObject.opacity;
     map.setPaintProperty(
@@ -808,11 +1906,25 @@ export default class Map {
       map.setPaintProperty("ocean", "fill-opacity", sliderValue * 0.02);
     }
 
+    //doing same for comparison mode's data when enabled
+    if (globals.compareMode) {
+      this.map2.setPaintProperty(
+        globals.comparisonLayerState.hexSize,
+        "fill-opacity",
+        sliderValue * 0.02
+      );
+      if (this.map2.getLayer("ocean")) {
+        // console.log(`adjusting "ocean" layer opacity`);
+        this.map2.setPaintProperty("ocean", "fill-opacity", sliderValue * 0.02);
+      }
+    }
     //update global opacity value
     globals.opacity = (parseInt(sliderValue) * 2) / 100;
-    console.log(`globals.opacity`, globals.opacity);
+    if (debug) {
+      console.log(`globals.opacity`, globals.opacity);
+    }
   }
-  changeColor(colorObject) {
+  changeColor(colorObject, debug = false) {
     let map = this.map;
     let selectedColor = colorObject.color;
     let currentColor = globals.currentLayerState.color;
@@ -856,7 +1968,9 @@ export default class Map {
       globals.currentLayerState.color = colors.colorSeq["colorBlindGreen"];
     }
 
-    console.log(globals.currentLayerState.breaks);
+    if (debug) {
+      console.log(globals.currentLayerState.breaks);
+    }
 
     map.setPaintProperty(globals.currentLayerState.hexSize, "fill-color", [
       "interpolate",
@@ -889,33 +2003,14 @@ export default class Map {
       (x) => x.properties[globals.currentLayerState.dataLayer]
     );
 
-    //recreated histogram
-    var nGroup = 200;
-    var breaks_histogram = chroma.limits(selectedData, "e", nGroup);
-    var break_index = 0;
-    var histogram_break_count = Array(4).fill(0);
-    for (let i = 0; i < nGroup; i++) {
-      if (
-        breaks_histogram[i] > globals.currentLayerState.breaks[break_index + 1]
-      )
-        break_index += 1;
-      histogram_break_count[break_index] += 1;
-    }
-    let colorRampNew = [];
+    let colorRampNew = this.computeBreaksAndColorRamp(
+      selectedData
+      // colors, //use default global current
+      // breakMode, // use default equidistant
+      // nGroup, //use default 200
+      // breaks //use default global current
+    ).colorRamp;
 
-    for (var i = 0; i < 4; i++) {
-      // colorRampPart = chroma //from in oldcode, appears to never be explicitly assigned to var/let, so appears to have been made an implict global variable; will attempt to implement using let
-      let colorRampPart = chroma
-        .scale([
-          globals.currentLayerState.color[i],
-          globals.currentLayerState.color[i + 1],
-        ])
-        .mode("lch")
-        .colors(histogram_break_count[i]);
-      // colorRampNew = colorRampNew.concat(colorRampPart); //from in oldcode, appears to never be explicitly assigned to var/let, so appears to have been made an implict global variable; will attempt to implement using let
-      colorRampNew = colorRampNew.concat(colorRampPart);
-      //console.log(colorRampNew);
-    }
     //update the chart with new color ramp
     globals.myHistogram.data.datasets[0].backgroundColor = colorRampNew;
     globals.myHistogram.update();
@@ -924,7 +2019,7 @@ export default class Map {
       this.hideSpinner();
     });
   }
-  add3D() {
+  add3D(debug = false) {
     let map = this.map;
 
     this.clearHexHighlight();
@@ -1009,8 +2104,10 @@ export default class Map {
           0,
         ]);
       } catch (err) {
-        console.warn("attempted while no data layer loaded on map");
-        console.warn(err.stack);
+        if (debug) {
+          console.warn("attempted while no data layer loaded on map");
+          console.warn(err.stack);
+        }
       }
       map.easeTo({
         center: map.getCenter(),
@@ -1022,11 +2119,13 @@ export default class Map {
       this.hideSpinner();
     });
   }
-  remove3d() {
+  remove3d(debug = false) {
     let map = this.map;
     this.clearHexHighlight();
     //taken directly from old code
-    console.log("removing 3d");
+    if (debug) {
+      console.log("removing 3d");
+    }
 
     let mapLayers = map.getStyle().layers;
     //console.log(lay);
@@ -1049,7 +2148,9 @@ export default class Map {
       !twoDIcon.classList.contains("display-none") &&
       threeDIcon.classList.contains("display-none")
     ) {
-      console.log("3D icon visible; flip animate to 2D");
+      if (debug) {
+        console.log("3D icon visible; flip animate to 2D");
+      }
 
       //animation triggering of the button
       twoDIcon.classList.add("flip1");
@@ -1063,16 +2164,20 @@ export default class Map {
         threeDIcon.classList.remove("flip2");
       }, 280);
     } else {
-      console.log(`2D icon visible; no flip animate`);
+      if (debug) {
+        console.log(`2D icon visible; no flip animate`);
+      }
     }
   }
-  addLabels(labelObject) {
+  toggleLabels(labelObject, debug = false) {
     let map = this.map;
 
     //adapted from oldcode
     // var sel = Object.values(object)[0];
     let label = labelObject.label;
-    console.log(globals.basemapLabels);
+    if (debug) {
+      console.log(globals.basemapLabels);
+    }
 
     if (label == true) {
       globals.basemapLabels.forEach(function (x) {
@@ -1084,48 +2189,51 @@ export default class Map {
           }
         }
       });
-      //$('#addLabels').toggle();
-      //$('#addLabels')[0].innerText = 'Remove Labels'
     } else {
       globals.basemapLabels.forEach(function (x) {
         map.removeLayer(x.id);
       });
-
-      //$('#addLabels')[0].innerText = 'Add Labels'
     }
 
     map.once("idle", () => {
       this.hideSpinner();
     });
   }
-  addOcean(activeDataset, activeLayer, comparison = false) {
+  addOcean(activeDataset, activeLayer, comparison = false, debug = false) {
     let map = !comparison ? this.map : this.map2; //
+    let cls = !comparison
+      ? globals.currentLayerState
+      : globals.comparisonLayerState;
     this.clearHexHighlight();
     this.remove3d();
 
-    console.log("activeDataset: " + activeDataset.name);
-    console.log("activeLayer: " + activeLayer.Description);
+    if (debug) {
+      console.log("activeDataset: " + activeDataset.name);
+      console.log("activeLayer: " + activeLayer.Description);
+    }
     if (!(activeDataset.name === "Ocean Data")) {
       alert("addOcean called with non-Ocean Data activeDataset!!!");
     }
 
     //update state
-    globals.currentLayerState.dataLayer = activeLayer.Field_Name; //corresponds to the attributeId
-    globals.currentLayerState.hexSize = "ocean";
+    cls.dataLayer = activeLayer.Field_Name; //corresponds to the attributeId
+    cls.hexSize = "ocean";
     //ocean-specific layer state values hardcoded
-    //ocean data uses pre-decided breaks and color;
-    globals.currentLayerState.breaks = [-4841, -3805, -2608, -1090, 0];
-    // globals.currentLayerState.color = [
+    //ocean data uses pre-decided breaks and color;holdover from oldcode
+    cls.breaks = [-4841, -3805, -2608, -1090, 0];
+    // cls.color = [
     //   "#08519c",
     //   "#3182bd",
     //   "#6baed6",
     //   "#bdd7e7",
     //   "#eff3ff",
     // ];
-    globals.currentLayerState.color = colors.colorNatural["ocean-depth"];
+    cls.color = colors.colorNatural["ocean-depth"];
 
     //clear out all userLayers
-    console.log(`removing all userLayers`);
+    if (debug) {
+      console.log(`removing all userLayers`);
+    }
     for (var layer in constants.userLayers) {
       if (map.getLayer(constants.userLayers[layer])) {
         map.removeLayer(constants.userLayers[layer]);
@@ -1148,7 +2256,7 @@ export default class Map {
         "fill-color": [
           "interpolate",
           ["linear"],
-          ["get", "depth"],
+          ["get", "depth"], //TODO remove this hardcoding
           -4841,
           "#08519c",
           -3805,
@@ -1174,55 +2282,94 @@ export default class Map {
     // this.map2.addLayer(layerOptions, globals.firstSymbolId);
     //---------------------------------------------------------------------------------
 
-    setTimeout(() => {
-      var features = map.queryRenderedFeatures({
-        layers: ["ocean"],
-      });
+    if (!comparison) {
+      // setTimeout(() => {
+      //   var features = map.queryRenderedFeatures({
+      //     layers: ["ocean"],
+      //   });
 
-      if (features) {
-        var uniFeatures;
-        uniFeatures = this.getUniqueFeatures(features, "depth"); //depth is field_id for ocean depths layer
-        var selectedData = uniFeatures.map((x) => x.properties["depth"]);
-        this.addLegend(
-          globals.currentLayerState.color,
-          globals.currentLayerState.breaks,
-          2,
-          activeLayer,
-          selectedData
-        );
-      }
-    }, 600);
+      //   console.warn("areTilesLoaded():", map.areTilesLoaded());
 
-    // this.addLegend(); //TODO doesnt this need the extra params that I added to the addLegend function?
+      //   if (features) {
+      //     var uniFeatures;
+      //     uniFeatures = this.getUniqueFeatures(features, "depth"); //depth is field_id for ocean depths layer
+      //     var selectedData = uniFeatures.map((x) => x.properties["depth"]);
+      //     this.addLegend(cls.color, cls.breaks, 2, activeLayer, selectedData);
+      //   }
+      // }, 600);
+
+      //testing - replacing old timeout with an intial check for if tiles have finished loading and a maximum total time before skipping legend loading
+      let waitInterval = 1000;
+      setTimeout(() => {
+        //check if tiles are loaded
+        if (!map.areTilesLoaded()) {
+          console.log("waiting for tiles to fully load"); //skip
+        } else {
+          let features = map.queryRenderedFeatures({
+            layers: ["ocean"],
+          });
+          //create legend
+          if (features) {
+            let uniFeatures;
+            uniFeatures = this.getUniqueFeatures(features, "depth"); //depth is field_id for ocean depths layer
+            let selectedData = uniFeatures.map((x) => x.properties["depth"]);
+            this.addLegend(cls.color, cls.breaks, 2, activeLayer, selectedData);
+          }
+        }
+      }, waitInterval);
+
+      // this.addLegend(); //TODO doesnt this need the extra params that I added to the addLegend function?
+    }
 
     map.once("idle", () => {
       this.hideSpinner();
     });
   }
-  changeDataOnMap(activeDataset, activeLayer, comparison = false) {
+  changeDataOnMap(
+    activeDataset,
+    activeLayer,
+    comparison = false,
+    debug = false
+  ) {
+    console.log(globals.currentLayerState)
     let map = !comparison ? this.map : this.map2; //
+    let cls = !comparison
+      ? globals.currentLayerState
+      : globals.comparisonLayerState;
     // let map = this.map;
     let Field_Name = activeLayer.Field_Name; //get the selected layer's Field_Name
-    console.log(`changeDataOnMap fired: ${Field_Name}, activeLayer:`);
-    console.log();
+    if (debug) {
+      console.log(`changeDataOnMap fired: ${Field_Name}, activeLayer:`);
+    }
 
     this.clearHexHighlight();
 
+    if (globals.bivariateMode) {
+      console.log("bivariateMode enabled, cancelling changeDataOnMap");
+      setTimeout(() => {
+        this.hideSpinner();
+      }, 100);
+      return;
+    }
     //TAKEN FROM OLDCODE changeDataOnMap
 
     //------------------------------------------------------
     if (map.getLayer("ocean")) {
-      console.log("ocean layer exists...");
+      if (debug) {
+        console.log("ocean layer exists...");
+      }
 
       if (!Field_Name.includes("fl")) {
         //
         //if fl inside of the Field_Name (i.e. it's a fishing/ocean related layer)
-        console.log(
-          `activeLayer ${activeLayer.Field_Name} is not fishing/ocean related; removing ocean layer and adding hex5 layer`
-        );
+        if (debug) {
+          console.log(
+            `activeLayer ${activeLayer.Field_Name} is not fishing/ocean related; removing ocean layer and adding hex5 layer`
+          );
+        }
         map.removeLayer("ocean");
 
-        globals.currentLayerState.hexSize = "hex5"; //default to hex5 since leaving ocean data (which is a fixed 10km hexsize)
+        cls.hexSize = "hex5"; //default to hex5 since leaving ocean data (which is a fixed 10km hexsize)
 
         map.addLayer(
           {
@@ -1246,13 +2393,17 @@ export default class Map {
       !(activeLayer.Field_Name === "depths")
     ) {
       //adding hexSize: 'ocean' to allow non-depth Ocean Data
-      console.log(
-        `ocean data (non-depth) added; creating empty 'ocean' id layer;`
-      );
-      globals.currentLayerState.hexSize = "ocean"; //set to ocean
+      if (debug) {
+        console.log(
+          `ocean data (non-depth) added; creating empty 'ocean' id layer;`
+        );
+      }
+      cls.hexSize = "ocean"; //set to ocean
 
       //clear out all userLayers
-      console.log(`removing all userLayers`);
+      if (debug) {
+        console.log(`removing all userLayers`);
+      }
       for (var layer in constants.userLayers) {
         if (map.getLayer(constants.userLayers[layer])) {
           map.removeLayer(constants.userLayers[layer]);
@@ -1276,24 +2427,30 @@ export default class Map {
         globals.firstSymbolId
       );
     } else {
-      console.log("map has no 'ocean' layer");
+      if (debug) {
+        console.log("map has no 'ocean' layer");
+      }
     }
     //-------------------------------------------------------------
 
     this.remove3d();
 
-    console.log(
-      `changeDataOnMap(Field_Name: ${Field_Name}, 
-        activeDataset?.name: ${activeDataset?.name}, 
+    if (debug) {
+      console.log(
+        `changeDataOnMap(Field_Name: ${Field_Name},
+        activeDataset?.name: ${activeDataset?.name},
         activeLayer?.Description: ${activeLayer?.Description}`
-    );
+      );
+    }
 
-    globals.currentLayerState.dataLayer = Field_Name; //update global to reflect selected datalayer
+    cls.dataLayer = Field_Name; //update global to reflect selected datalayer
 
     //-------------------------------------------
     if (!map.getSource("hex5")) {
       //console.log('no source')
-      console.log("no hex5 source; re-adding all vector sources");
+      if (debug) {
+        console.log("no hex5 source; re-adding all vector sources");
+      }
       this._addVectorSources(comparison);
     } else {
       //console.log('source!')
@@ -1301,23 +2458,27 @@ export default class Map {
     //------------------------------------------
 
     //unsure the need for this, pay attention if obsolete
-    console.log("current hexSize: " + globals.currentLayerState.hexSize);
-    if (!map.getLayer(globals.currentLayerState.hexSize)) {
-      console.log(
-        `MAP LACKING LAYER for ${globals.currentLayerState.hexSize}; adding layer;`
-      );
+    if (debug) {
+      console.log("current hexSize: " + cls.hexSize);
+    }
+    if (!map.getLayer(cls.hexSize)) {
+      if (debug) {
+        console.log(`MAP LACKING LAYER for ${cls.hexSize}; adding layer;`);
+      }
       var currentSourceData = Vue._.find(globals.sourceData, function (source) {
         //get matching sourceData
-        return source.name === globals.currentLayerState.hexSize;
+        return source.name === cls.hexSize;
       });
 
-      console.log(
-        `addLayer using ${globals.currentLayerState.hexSize} ${globals.currentLayerState.hexSize} ${currentSourceData.layer}`
-      );
+      if (debug) {
+        console.log(
+          `addLayer using ${cls.hexSize} ${cls.hexSize} ${currentSourceData.layer}`
+        );
+      }
       map.addLayer({
-        id: globals.currentLayerState.hexSize,
+        id: cls.hexSize,
         type: "fill",
-        source: globals.currentLayerState.hexSize,
+        source: cls.hexSize,
         "source-layer": currentSourceData.layer,
         layout: {
           visibility: "visible",
@@ -1330,39 +2491,34 @@ export default class Map {
 
       if (globals.firstSymbolId) {
         //put the added layer behind mapbox symbology layers
-        map.moveLayer(globals.currentLayerState.hexSize, globals.firstSymbolId);
+        map.moveLayer(cls.hexSize, globals.firstSymbolId);
       }
     }
 
     setTimeout(() => {
-      console.log(
-        `queryRenderedFeatures on layers: ${globals.currentLayerState.hexSize} `
-      );
+      // console.log(`queryRenderedFeatures on layers: ${cls.hexSize} `);
       var features = map.queryRenderedFeatures({
-        layers: [globals.currentLayerState.hexSize],
+        layers: [cls.hexSize],
       });
-      // console.log(`features:`);
-      // console.log(features);
+      // console.warn(`changeDataOnMap unfiltered features:`, features);
 
       if (features) {
         var uniFeatures;
-        if (globals.currentLayerState.hexSize === "admin1") {
+        if (cls.hexSize === "admin1") {
           uniFeatures = this.getUniqueFeatures(features, "GID_1");
-        } else if (globals.currentLayerState.hexSize === "admin2") {
+        } else if (cls.hexSize === "admin2") {
           uniFeatures = this.getUniqueFeatures(features, "GID_2");
         } else {
           uniFeatures = this.getUniqueFeatures(features, "hexid");
         }
-        // console.log("uniFeatures");
-        // console.log(uniFeatures);
+        // console.warn("changeDataOnMap uniqueFeatures", uniFeatures);
 
         //console.log(uniFeatures);
         var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
-        console.log("selectedData");
-        console.log(selectedData);
+        console.warn("changeDataOnMap selectedData", selectedData);
 
         var breaks = chroma.limits(selectedData, "q", 4);
-        console.log("breaks:", breaks);
+        // console.log("breaks:", breaks);
         var breaks_new = [];
         globals.precision = 1;
         do {
@@ -1372,10 +2528,10 @@ export default class Map {
               breaks[i].toPrecision(globals.precision)
             );
           }
-          console.log("breaks_new:", breaks_new);
+          // console.log("breaks_new:", breaks_new);
         } while (this.checkForDuplicates(breaks_new) && globals.precision < 10);
         breaks = breaks_new;
-        console.log("new breaks:", breaks);
+        // console.log("new breaks:", breaks);
 
         // console.log("globals.currentLayerState.color:");
         // console.log(globals.currentLayerState.color);
@@ -1408,10 +2564,10 @@ export default class Map {
           colorRamp = colors.colorSeq["ocean"];
         }
 
-        globals.currentLayerState.breaks = breaks;
-        globals.currentLayerState.color = colorRamp;
+        cls.breaks = breaks;
+        cls.color = colorRamp;
 
-        map.setPaintProperty(globals.currentLayerState.hexSize, "fill-color", [
+        map.setPaintProperty(cls.hexSize, "fill-color", [
           "case",
           ["boolean", ["feature-state", "hover"], false],
           "yellow",
@@ -1434,39 +2590,43 @@ export default class Map {
 
         console.log("validating breaks in data");
         if (isNaN(breaks[3]) || breaks[1] == 0) {
-          console.log(
-            `breaks are NaN, ${globals.currentLayerState.hexSize} set to transparent`
-          );
+          console.log(`breaks are NaN, ${cls.hexSize} set to transparent`);
           map.setPaintProperty(
-            globals.currentLayerState.hexSize,
+            cls.hexSize,
             "fill-opacity",
             0.0
             //globals.opacity
           );
           setTimeout(() => {
-            map.setFilter(globals.currentLayerState.hexSize, null);
+            map.setFilter(cls.hexSize, null);
           }, 100);
-          this.addNoDataLegend();
+          if (!comparison) {
+            this.addNoDataLegend();
+          }
         } else {
-          map.setFilter(globals.currentLayerState.hexSize, [
-            ">=",
-            Field_Name,
-            0,
-          ]);
+          map.setFilter(cls.hexSize, [">=", Field_Name, 0]);
           console.log(
             `addLegend called in with intended Field_Name: ${Field_Name}`
           );
 
-          this.addLegend(
-            colorRamp,
-            breaks,
-            globals.precision, //
-            activeLayer,
-            selectedData
-          );
+          if (!comparison) {
+            this.addLegend(
+              colorRamp,
+              breaks,
+              globals.precision, //
+              activeLayer,
+              selectedData
+            );
+          } else {
+            console.log("skipping legend update;");
+          }
+
+          this.updateOverlayLegend("main");
+          this.updateOverlayLegend("comparison");
+
           setTimeout(() => {
             map.setPaintProperty(
-              globals.currentLayerState.hexSize,
+              cls.hexSize,
               "fill-opacity",
               globals.opacity // 0.8
             );
@@ -1482,38 +2642,57 @@ export default class Map {
       this.hideSpinner();
     });
   }
-  recolorBasedOnWhatsOnPage() {
-    console.log(`recolorBasedOnWhatsOnPage()`);
-    let map = this.map;
-    if (!map.getLayer(globals.currentLayerState.hexSize)) {
-      //check for existence of the layer before attempting to update it
-      console.warn(
-        "!!!map does not have the current layer:",
-        globals.currentLayerState.hexSize
+  recolorBasedOnWhatsOnPage(recolorComparison = false, debug = true) {
+    if (debug) {
+      console.log(
+        `recolorBasedOnWhatsOnPage(recolorComparison = ${recolorComparison})`
       );
+    }
+    ////get the mapbox map instance
+    let map = !recolorComparison ? this.map : this.map2; //this.map;
+    let cls = !recolorComparison
+      ? globals.currentLayerState
+      : globals.comparisonLayerState;
+    // console.log("map", map, "currentLayerState", cls);
+    if (!map.getLayer(cls.hexSize)) {
+      //check for existence of the layer before attempting to update it
+      if (debug) {
+        console.warn("!!!map does not have the current layer:", cls.hexSize);
+      }
       return;
     }
 
+    ////get the features rendered on map
     var features = map.queryRenderedFeatures({
-      layers: [globals.currentLayerState.hexSize],
+      layers: [cls.hexSize],
     });
 
-    if (features) {
+    //if not a comparison's update, cull duplicate features that might exist due to the nature of vector tiles
+    if (!features) {
+      if (debug) {
+        console.log(`no data features on map;`);
+      }
+      if (!recolorComparison) {
+        this.addNoDataLegend();
+      } else {
+        // console.log("recolorComparison:", recolorComparison);
+      }
+    } else {
       var uniFeatures;
-      if (globals.currentLayerState.hexSize === "admin1") {
+      if (cls.hexSize === "admin1") {
         uniFeatures = this.getUniqueFeatures(features, "GID_1");
-      } else if (globals.currentLayerState.hexSize === "admin2") {
+      } else if (cls.hexSize === "admin2") {
         uniFeatures = this.getUniqueFeatures(features, "GID_2");
       } else {
         uniFeatures = this.getUniqueFeatures(features, "hexid");
       }
 
-      var selectedData = uniFeatures.map(
-        (x) => x.properties[globals.currentLayerState.dataLayer]
-      );
-      //console.log(selectedData);
+      var selectedData = uniFeatures.map((x) => x.properties[cls.dataLayer]);
+
+      // console.log(selectedData);
+      //-----------------------------------------???
       var breaks = chroma.limits(selectedData, "q", 4);
-      console.log("breaks in recolor:", breaks);
+      // console.log("breaks in recolor:", breaks);
       var breaks_new = [];
       globals.precision = 1;
       do {
@@ -1521,129 +2700,220 @@ export default class Map {
         for (let i = 0; i < 5; i++) {
           breaks_new[i] = parseFloat(breaks[i].toPrecision(globals.precision));
         }
-        console.log("breaks_new:", breaks_new);
+        if (debug) {
+          console.log("breaks_new:", breaks_new);
+        }
       } while (this.checkForDuplicates(breaks_new) && globals.precision < 10);
       breaks = breaks_new;
-      console.log("new breaks:", breaks);
+      // console.log("new breaks:", breaks);
 
-      globals.currentLayerState.breaks = breaks; //update global state
+      cls.breaks = breaks; //update global state
+      //-----------------------------------------
 
-      map.setPaintProperty(globals.currentLayerState.hexSize, "fill-color", [
+      //update layer paint options with the new breaks
+      map.setPaintProperty(cls.hexSize, "fill-color", [
         "interpolate",
         ["linear"],
-        ["get", globals.currentLayerState.dataLayer],
+        ["get", cls.dataLayer],
         breaks[0],
-        globals.currentLayerState.color[0],
+        cls.color[0],
         breaks[1],
-        globals.currentLayerState.color[1],
+        cls.color[1],
         breaks[2],
-        globals.currentLayerState.color[2],
+        cls.color[2],
         breaks[3],
-        globals.currentLayerState.color[3],
+        cls.color[3],
         breaks[4],
-        globals.currentLayerState.color[4],
+        cls.color[4],
       ]);
 
       //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
 
       //addLegend(globals.currentLayerState.color, breaks, globals.currentLayerState.dataLayer)
+
+      //detecting cases where computed breaks are bad/unacceptable (perhaps from insufficient data features) => output a legend for the no/insufficient data situation
       if (isNaN(breaks[3]) || breaks[1] == 0) {
         map.setPaintProperty(
-          globals.currentLayerState.hexSize,
+          cls.hexSize,
           "fill-opacity",
           0.0 //globals.opacity
         );
         setTimeout(() => {
-          map.setFilter(globals.currentLayerState.hexSize, null);
+          map.setFilter(cls.hexSize, null);
         }, 1000);
-        console.log("recoloring calliing addNoDataLegend()");
-        this.addNoDataLegend();
+        if (!recolorComparison) {
+          if (debug) {
+            console.log("recoloring calliing addNoDataLegend()");
+          }
+          this.addNoDataLegend();
+        }
       } else {
-        let filterCondition =
-          globals.currentLayerState.dataLayer === "depth" ? "<" : ">=";
-        console.log(
-          `currentLayerState.dataLayer:  ${globals.currentLayerState.dataLayer}; filterCondition ${filterCondition}`
-        );
-        map.setFilter(globals.currentLayerState.hexSize, [
+        let filterCondition = cls.dataLayer === "depth" ? "<" : ">=";
+        // console.log(
+        //   `currentLayerState.dataLayer:  ${cls.dataLayer}; filterCondition ${filterCondition}`
+        // );
+        map.setFilter(cls.hexSize, [
           //">=",
           filterCondition,
-          globals.currentLayerState.dataLayer,
+          cls.dataLayer,
           0,
         ]);
 
-        console.log(
-          `recoloring calling addLegend with: 
-          currentLayerState.color: ${globals.currentLayerState.color} 
-          breaks: ${breaks} 
-          currentLayerState.dataLayer: ${globals.currentLayerState.dataLayer}
+        if (debug) {
+          console.log(
+            `recoloring calling addLegend with:
+          currentLayerState.color: ${cls.color}
+          breaks: ${breaks}
+          currentLayerState.dataLayer: ${cls.dataLayer}
           `
-        );
-        // this.addLegend(
-        //   //!! I added extra params to addLegend, so needs more i think
-        //   globals.currentLayerState.color,
-        //   breaks,
-        //   globals.currentLayerState.dataLayer
-        // );
+          );
+        }
 
-        console.log(`recolor addLegend`);
+        // console.log(`recolor addLegend`);
         this.addLegend(
           undefined,
           breaks,
           undefined, //should be undefined here but default value in addLegend should handle it
           undefined, //should be undefined here but default value in addLegend should handle it
-          selectedData
+          selectedData,
+          recolorComparison
         );
+
+        //updating overlaid legends for main/comparison maps
+        //moved into recolor listener, needs to fire for both maps
+        // this.updateOverlayLegend("main");
+        // this.updateOverlayLegend("comparison");
 
         setTimeout(() => {
           map.setPaintProperty(
-            globals.currentLayerState.hexSize,
+            cls.hexSize,
             "fill-opacity",
             globals.opacity // 0.8
           );
         }, 400);
       }
-    } else {
-      console.log(`no data features on map; creating noDataLegend`);
-      this.addNoDataLegend();
     }
-    /*     this.addLegend(
-      colors,
-      breaks,
-      undefined, //should be undefined here but default value in addLegend should handle it
-      undefined, //should be undefined here but default value in addLegend should handle it
-      selectedData
-    ); */
 
     map.once("idle", () => {
       this.hideSpinner();
     });
   }
   //adapted from oldcode
-  addNoDataLegend() {
-    console.log("!!ATTENTION!! addNoDataLegend called");
+  addNoDataLegend(targetLegend = null, debug = false) {
+    //targetLegend valuerange = [null, 'main', 'comparison']
+    if (!targetLegend) {
+      //handle updating the data controller's legend
 
-    let legendTitle = document.getElementById("legendTitle");
-    let updateLegend = document.getElementById("updateLegend");
-    updateLegend.innerHTML = "";
-    legendTitle.innerHTML = "";
+      if (debug) {
+        console.log("!!ATTENTION!! addNoDataLegend called");
+      }
 
-    //#clear old canvas
-    let old_canvas = document.getElementById("histogram");
-    if (typeof old_canvas != "undefined" && old_canvas != null) {
-      old_canvas.remove();
+      let legendTitle = document.getElementById("legendTitle");
+      let updateLegend = document.getElementById("updateLegend");
+      updateLegend.innerHTML = "";
+      legendTitle.innerHTML = "";
 
-      //#recreate an empty canvas element and add it to the frame
-      let histogram_frame = document.getElementById("histogram_frame");
-      let canvasNode = document.createElement("CANVAS");
-      canvasNode.id = "histogram";
-      canvasNode.classList.add("histogram_canvas");
-      canvasNode.setAttribute("width", 320);
-      canvasNode.setAttribute("height", 115);
-      histogram_frame.appendChild(canvasNode);
-      console.log("new canvasNode added to histogramFrame: ");
-      console.log(canvasNode);
+      //#clear old canvas
+      let old_canvas = document.getElementById("histogram");
+      if (typeof old_canvas != "undefined" && old_canvas != null) {
+        old_canvas.remove();
 
-      legendTitle.innerHTML = "No Data for this Region";
+        //#recreate an empty canvas element and add it to the frame
+        let histogram_frame = document.getElementById("histogram_frame");
+        let canvasNode = document.createElement("CANVAS");
+        canvasNode.id = "histogram";
+        canvasNode.classList.add("histogram_canvas");
+        canvasNode.setAttribute("width", 320);
+        canvasNode.setAttribute("height", 115);
+        histogram_frame.appendChild(canvasNode);
+        if (debug) {
+          console.log("new canvasNode added to histogramFrame: ", canvasNode);
+        }
+
+        legendTitle.innerHTML = "No Data for this Region";
+      } else {
+        if (!(targetLegend === "main" || targetLegend === "comparison")) {
+          if (debug) {
+            console.warn("!!!UNEXPECTED VALUE FOR TARGETLEGEND!!!");
+          }
+          return;
+        } else {
+          if (debug) {
+            console.log(
+              "!!ATTENTION!! addNoDataLegend called on ",
+              targetLegend
+            );
+          }
+          // let old_maincanvas = document.getElementById("histogram");
+          let title = document.getElementById(targetLegend + "-legend-title");
+          let legend = document.getElementById(targetLegend + "-map-legend");
+          title.innerHTML = "No Data for this Region";
+          legend.innerHTML = "No Data Legend";
+        }
+      }
+    }
+  }
+  updateOverlayLegend(
+    /* selectedData ,*/ targetLegend = "main",
+    debug = false
+  ) {
+    if (debug) {
+      console.log("updateOverlayLegend");
+    }
+    //targetLegend = 'main' OR 'comparison'
+    //heavily adapted from addLegend code; TODO refactor/merge these two
+    let cls = !(targetLegend === "comparison")
+      ? globals.currentLayerState
+      : globals.comparisonLayerState;
+    let colors = cls.color;
+    let breaks = cls.breaks;
+    let precision = globals.precision;
+    // let activeLayer = globals.lastActive.layer;
+    let activeLayer = !(targetLegend === "comparison")
+      ? globals.lastActive.layer
+      : globals.lastActiveComparison.layer;
+    // let activeLayer = !(targetLegend === "comparison")
+    //   ? globals.lastActive.layer
+    //   : globals.lastActiveComparison.layer;
+    // let activeMainLayer = globals.lastActive.layer;
+    // let activeComparisonLayer = globals.lastActiveComparison.layer;
+    // let unit =
+    //   targetLegend === "comparison"
+    //     ? activeComparisonLayer.Unit
+    //     : activeMainLayer.Unit;
+
+    let title = document.getElementById(targetLegend + "-legend-title");
+    let legend = document.getElementById(targetLegend + "-map-legend");
+
+    //taken from addLegend code
+    //reset the legend elements
+
+    legend.innerHTML = "";
+    title.innerHTML = "";
+    // if (title) {
+    //   title.innerHTML = "";
+    // }
+
+    title.innerHTML = "<span>" + activeLayer?.Unit + "</span>";
+    // title.innerHTML = "<span>" + unit + "</span>";
+    //creating legend-hexagon colored symbols
+    for (let x in colors) {
+      let containerDiv = document.createElement("div");
+      containerDiv.classList.add("col-flex");
+      containerDiv.classList.add("align-items-center");
+
+      let words = document.createElement("div");
+      words.classList.add("population-per-km-text");
+      //words.innerHTML = Number.parseFloat(breaks[x]).toFixed(3)
+      words.innerHTML = this.nFormatter(breaks[x], precision);
+      //words.innerHTML = Number(this.nFormatter(breaks[x], 2))
+      let hexI = document.createElement("div");
+      hexI.classList.add("population-per-km-img");
+      hexI.style.backgroundColor = colors[x];
+
+      containerDiv.appendChild(words);
+      containerDiv.appendChild(hexI);
+      legend.appendChild(containerDiv);
     }
   }
   addLegend(
@@ -1651,20 +2921,32 @@ export default class Map {
     breaks = globals.currentLayerState.breaks,
     precision = globals.precision, //default added to mirror oldcode behaviour of global set/modified precision value
     activeLayer = globals.lastActive.layer, //should eliminate need for id etc; default value added as fallback to cope with call from recolor function
-    selectedData //i believe this is input from updatingMap based on whats features/data on screen
+    selectedData, //i believe this is input from updatingMap based on whats features/data on screen
+    recolorComparison,
+    debug = false
   ) {
     // let activeLayer = activeLayer; //activeLayer is oldcode variable of the active layer from allLayers globalvariable
+
+    //selected appropriate state management
+    let cls = !recolorComparison
+      ? globals.currentLayerState
+      : globals.comparisonLayerState;
+    //overwrite defaulting arguments if it's a comparison update
+    if (recolorComparison === true) {
+      colors = cls.color;
+      breaks = cls.breaks;
+    }
 
     if (!activeLayer) {
       alert(`activeLayer ${activeLayer} is not valid for addLegend`);
       return;
     }
     //Debugging logs--------------------------------------
-    console.log("addLegend called with: ");
-    console.log("in addLegend activeLayer");
-    console.log(activeLayer);
-    console.log("in addLegend selectedData: ");
-    console.log(selectedData);
+    // console.log("addLegend called with: ");
+    // console.log("in addLegend activeLayer");
+    // console.log(activeLayer);
+    // console.log("in addLegend selectedData: ");
+    // console.log(selectedData);
     //END-Debugging logs-------------------------------------------------------------------------------
 
     //LEGEND SETUP------------------------------------------------
@@ -1697,7 +2979,10 @@ export default class Map {
     }
     //END-LEGEND SETUP -----------------------------------------------
     //HISTOGRAM-----------------------------------------------------
-    console.log("addLegend calling updateHistogram");
+    if (debug) {
+      console.log("addLegend calling updateHistogram");
+    }
+
     this.updateHistogram(colors, breaks, precision, activeLayer, selectedData);
     //-----------------------------------------------------------
   }
@@ -1706,7 +2991,9 @@ export default class Map {
     breaks,
     precision,
     activeLayer,
-    selectedData //i believe this is input from updatingMap based on whats features/data on screen
+    selectedData,
+    debug = false //i believe this is input from updatingMap based on whats features/data on screen
+    //recolorComparison
 
     /* colors = globals.currentLayerState.colors,
     breaks = globals.currentLayerState.breaks,
@@ -1715,12 +3002,12 @@ export default class Map {
     selectedData //i believe this is input from updatingMap based on whats features/data on screen
      */
   ) {
-    console.log("updateHistogram params passed are:");
-    console.log("colors:", colors);
-    console.log("breaks:", breaks);
-    console.log("precision:", precision);
-    console.log("activeLayer:", activeLayer);
-    console.log("selectedData:", selectedData);
+    // console.log("updateHistogram params passed are:");
+    // console.log("colors:", colors);
+    // console.log("breaks:", breaks);
+    // console.log("precision:", precision);
+    // console.log("activeLayer:", activeLayer);
+    // console.log("selectedData:", selectedData);
 
     //old code
 
@@ -1737,43 +3024,33 @@ export default class Map {
       canvasNode.setAttribute("width", 320);
       canvasNode.setAttribute("height", 115);
       histogram_frame.appendChild(canvasNode);
-      console.log("new canvasNode added to histogramFrame: ");
-      console.log(canvasNode);
+      if (debug) {
+        console.log("new canvasNode added to histogramFrame: ", canvasNode);
+      }
     }
 
     let canvas = document.getElementById("histogram");
 
-    // break
-    var nGroup = 200;
-    // console.log(`in addHistogram: selectedData = ${selectedData}`);
-    // console.log(selectedData);
-    var breaks_histogram = chroma.limits(selectedData, "e", nGroup);
-    //console.log("breaks_histogram",breaks_histogram);
+    let breakMode = "e"; //equidistant (e), quantile (q), logarithmic (l), and k-means (k)
+    var nGroup = 200; //
+    let newBreaksAndColorRamp = this.computeBreaksAndColorRamp(
+      selectedData,
+      colors,
+      breakMode,
+      nGroup,
+      breaks
+      // precision
+    );
+    let colorRampNew = newBreaksAndColorRamp.colorRamp;
+    let breaks_histogram = newBreaksAndColorRamp.histogramBreaks;
+    // let breaks_precision = newBreaksAndColorRamp.breaksPrecision;
 
-    // new color
-    var break_index = 0;
-    var histogram_break_count = Array(4).fill(0);
-    for (let i = 0; i < nGroup; i++) {
-      if (breaks_histogram[i] > breaks[break_index + 1]) break_index += 1;
-      histogram_break_count[break_index] += 1;
-    }
-    var colorRampNew = [];
-    for (let i = 0; i < 4; i++) {
-      //old code did not init with var/let anywhere i could find, so init'ing here
-      let colorRampPart = chroma
-        .scale([colors[i], colors[i + 1]])
-        .mode("lch")
-        .colors(histogram_break_count[i]);
-      colorRampNew = colorRampNew.concat(colorRampPart);
-      //console.log(colorRampNew);
-    }
-
-    // precision
-    var breaks_precision = [];
+    //calculate precision
+    let breaks_precision = [];
     for (let i = 0; i < breaks_histogram.length; i++) {
       breaks_precision.push(this.nFormatter(breaks_histogram[i], precision));
     }
-    //console.log("breaks_precision:",breaks_precision)
+    // console.warn("DEBUGGING breaks_precision: ", breaks_precision);
 
     var histogram_data = Array(nGroup).fill(0);
     for (let i = 0; i < selectedData.length; i++) {
@@ -1791,15 +3068,6 @@ export default class Map {
     }
     //console.log("histogram_data",histogram_data)
 
-    //commented out as never used
-    /*     var colorRampN = chroma
-      .scale([colors[0], colors[4]])
-      .mode("lch")
-      .colors(nGroup); // yellow to dark-blue
- */
-
-    // chroma.scale([colors[0], colors[4]]).mode("lch").colors(nGroup);
-
     var data = {
       labels: breaks_precision.slice(0, -1),
       datasets: [
@@ -1816,7 +3084,7 @@ export default class Map {
     //console.log(maxY,minY);
     //console.log(Math.min(...histogram_data));
 
-    var option = {
+    var options = {
       responsive: true,
       tooltips: {
         enabled: false,
@@ -1914,17 +3182,23 @@ export default class Map {
     // console.log(option);
     // console.log("myHistogram canvas: ");
     // console.log(canvas);
-    console.log("in updateHistogram creating myHistogram");
+    // console.log("in updateHistogram creating myHistogram");
     globals.myHistogram = Chart.Bar(canvas, {
       data: data,
-      options: option,
+      options: options,
     });
-    console.log(globals.myHistogram);
+    if (debug) {
+      console.log(globals.myHistogram);
+    }
   }
 
-  clearOnClickQuery(mapClassInstance = this.map) {
-    console.log("clearOnClickQuery");
-    console.log("mapClassInstance:", mapClassInstance);
+  clearOnClickQuery(mapClassInstance = this.map, debug = false) {
+    if (debug) {
+      console.log("clearOnClickQuery");
+    }
+    if (debug) {
+      console.log("mapClassInstance:", mapClassInstance);
+    }
 
     /* for (let id of ["iso", "clickedone", "highlightS", "joined"]) {
         if (
@@ -1938,12 +3212,16 @@ export default class Map {
  */
     //compressed version of oldcode
     if (mapClassInstance.getLayer("iso")) {
-      console.log('removing existing source and layer for "iso"');
+      if (debug) {
+        console.log('removing existing source and layer for "iso"');
+      }
       mapClassInstance.removeLayer("iso");
       mapClassInstance.removeSource("iso");
     }
     for (let id of ["clickedone", "highlightS", "joined"]) {
-      console.log(`removing existing source and layer for: ${id}`);
+      if (debug) {
+        console.log(`removing existing source and layer for: ${id}`);
+      }
       // try {
       if (mapClassInstance.getSource(id)) {
         if (id === "highlightS") {
@@ -1952,11 +3230,15 @@ export default class Map {
           mapClassInstance.removeSource(id);
         } else {
           if (mapClassInstance.getLayer(id)) {
-            console.log(`removeLayer:`, id);
+            if (debug) {
+              console.log(`removeLayer:`, id);
+            }
             mapClassInstance.removeLayer(id);
           }
           if (mapClassInstance.getSource(id)) {
-            console.log(`removeSource:`, id);
+            if (debug) {
+              console.log(`removeSource:`, id);
+            }
             mapClassInstance.removeSource(id);
           }
         }
@@ -1974,67 +3256,208 @@ export default class Map {
     // clickDiv.style.display = "none";
     clickDiv.innerHTML = "";
   }
-  clearHexHighlight() {
-    if (this.map.getLayer("clickedone")) {
-      console.log(`map:removing highlight`);
-      this.map.removeLayer("clickedone");
-      this.clearOnClickQuery(); //to remove the onClickQuery div
+  clearHexHighlight(mapboxMapInstance = this.map, debug = false) {
+    if (mapboxMapInstance.getLayer("clickedone")) {
+      if (debug) {
+        console.log(`map:removing highlight`);
+      }
+      mapboxMapInstance.removeLayer("clickedone");
+      this.clearOnClickQuery(mapboxMapInstance); //to remove the onClickQuery div
     }
     // let clickDiv = document.getElementById("on-click-control");
     let clickDiv = document.getElementsByClassName("click-info-box")[0];
     clickDiv.classList.add("display-none");
   }
-  onDataClick(clicked) {
-    console.log(`onDataClick clicked object:`, clicked);
+
+  onBivariateClick(clicked, mapboxMapInstance = this.map, debug = false) {
+    if (debug) {
+      console.log(`onBivariateClick clicked object(s):`, clicked);
+    }
+    //check if the clicked feature is an invalid bivariate class ie. bivarClass= 9 (of 0~9 ie. 10)
+    if (clicked.features[0].properties.bivarClass === 9) {
+      if (debug)
+        console.warn("bivar feature clicked is invalid class; doing nothing");
+      return;
+    }
+
+    let classToBivariateClasses = {
+      0: { 1: "Low", 2: "Low" },
+      1: { 1: "Medium", 2: "Low" },
+      2: { 1: "High", 2: "Low" },
+      3: { 1: "Low", 2: "Medium" },
+      4: { 1: "Medium", 2: "Medium" },
+      5: { 1: "High", 2: "Medium" },
+      6: { 1: "Low", 2: "High" },
+      7: { 1: "Medium", 2: "High" },
+      8: { 1: "High", 2: "High" },
+      9: { 1: "Unassigned", 2: "Unassigned" },
+    };
+
+    let cls = globals.currentLayerState;
+    let bvls = globals.bivariateLayerState;
+
+    //prepare infobox for display
+    let clickDiv = document.getElementsByClassName("click-info-box")[0];
+    clickDiv.textContent = "CLICKED placeholder content"; //placeholder content
+    clickDiv.classList.remove("display-none"); // clickDiv.style.display = "block";
+    clickDiv.style.height = "auto";
+    clickDiv.style.width = "200px";
+    if (debug) {
+      console.log("bvls.dataLayer: ", bvls.dataLayer);
+      console.log(
+        "Field_Name 1: ",
+        clicked.features[0].properties[bvls.dataLayer[0].Field_Name],
+        "Field_Name 2: ",
+        clicked.features[0].properties[bvls.dataLayer[1].Field_Name]
+      );
+    }
+    let unitText = [bvls.dataLayer[0].Unit, bvls.dataLayer[1].Unit];
+    clickDiv.innerHTML =
+      "<p><b>Class: </b>" +
+      `${clicked.features[0].properties["bivarClass"] + 1}` +
+      "</p>" +
+      "<p><b>1st Value: (" +
+      classToBivariateClasses[clicked.features[0].properties["bivarClass"]][1] +
+      ") </b>" +
+      clicked.features[0].properties[
+        bvls.dataLayer[0].Field_Name
+      ]?.toLocaleString() +
+      " " +
+      unitText[0] +
+      "</p>" +
+      "<p><b>2nd Value: (" +
+      classToBivariateClasses[clicked.features[0].properties["bivarClass"]][2] +
+      ") </b>" +
+      clicked.features[0].properties[
+        bvls.dataLayer[1].Field_Name
+      ]?.toLocaleString() +
+      " " +
+      unitText[1] +
+      "</p>";
+
+    //clear preexisting highlighted source/layer
+    if (mapboxMapInstance.getSource("highlightS")) {
+      mapboxMapInstance.removeLayer("highlight");
+      mapboxMapInstance.removeSource("highlightS");
+    }
+    if (mapboxMapInstance.getSource("clickedone")) {
+      mapboxMapInstance.removeLayer("clickedone");
+      mapboxMapInstance.removeSource("clickedone");
+    }
+
+    //determine the styleId based on what current resolution is
+    let property;
+    if (cls.hexSize === "admin1") {
+      property = "GID_1";
+    } else if (cls.hexSize === "admin2") {
+      property = "GID_2";
+    } else {
+      property = "hexid";
+    }
+    //find which of the rendered features the clicked on is, and create highlight
+    var featureId = clicked.features[0].properties[property];
+    if (debug) {
+      console.log(`highlighted hex featureId: ${featureId}`);
+    }
+    console.log(
+      "queryRenderedFeatures with:",
+      "property:",
+      property,
+      "featureId:",
+      featureId
+    );
+    var feats = mapboxMapInstance.queryRenderedFeatures({
+      layers: [bvls.hexSize],
+      filter: ["==", property, featureId],
+    });
+    if (debug) {
+      console.log("queryRenderedFeatures return:", feats);
+    }
+    var fc = featureCollection(feats); //use turf.js to aggregate into a single geojson and add as layer to map
+    var dis = dissolve(fc);
+    mapboxMapInstance.addSource("clickedone", {
+      type: "geojson",
+      data: dis,
+    });
+    mapboxMapInstance.addLayer({
+      id: "clickedone",
+      source: "clickedone",
+      type: "line",
+      paint: {
+        "line-color": "red",
+        "line-width": 5,
+      },
+    });
+    if (debug) {
+      console.log(`onBivariateClick END`);
+    }
+  }
+  onDataClick(clicked, mapboxMapInstance = this.map, debug = true) {
+    if (debug) {
+      console.log(`onDataClick clicked object:`, clicked);
+    }
+    if (globals.bivarateMode) {
+      console.log("bivariateMode enabled - onDataClick skipped");
+      return;
+    }
     // console.log(clicked);
+    let cls = globals.currentLayerState;
+    if (mapboxMapInstance === this.map2) {
+      // console.warn("MAP2 DATA CLICKED");
+      cls = globals.comparisonLayerState;
+    }
 
     // var clickDiv = document.getElementsByClassName("my-custom-control")[0];
     // let clickDiv = document.getElementById("on-click-control");
     let clickDiv = document.getElementsByClassName("click-info-box")[0];
-    clickDiv.textContent = "CLICKED"; //placeholder content
+    clickDiv.textContent = "CLICKED placeholder content"; //placeholder content
 
     clickDiv.classList.remove("display-none"); // clickDiv.style.display = "block";
     // clickDiv.style.height = "100px";
     clickDiv.style.height = "auto";
     clickDiv.style.width = "200px";
-
+    let unitText = !(mapboxMapInstance === this.map2)
+      ? globals.lastActive.layer.Unit
+      : globals.lastActiveComparison.layer.Unit;
     clickDiv.innerHTML =
       "<p><b>Value: </b>" +
-      clicked.features[0].properties[
-        globals.currentLayerState.dataLayer
-      ].toLocaleString() +
+      clicked.features[0].properties[cls.dataLayer].toLocaleString() +
       " " +
-      document.getElementById("legendTitle").textContent +
+      // +document.getElementById("legendTitle").textContent
+      unitText +
       "</p>";
     /* //was used with a console log for debugging
   var legData = Vue._.find(allLayers, [
     "field_name",
     // currentGeojsonLayers.dataLayer,
-    globals.currentLayerState.dataLayer,
+    cls.dataLayer,
   ]); */
 
-    if (this.map.getSource("highlightS")) {
-      this.map.removeLayer("highlight");
-      this.map.removeSource("highlightS");
+    if (mapboxMapInstance.getSource("highlightS")) {
+      mapboxMapInstance.removeLayer("highlight");
+      mapboxMapInstance.removeSource("highlightS");
     }
 
-    if (this.map.getSource("clickedone")) {
-      this.map.removeLayer("clickedone");
-      this.map.removeSource("clickedone");
+    if (mapboxMapInstance.getSource("clickedone")) {
+      mapboxMapInstance.removeLayer("clickedone");
+      mapboxMapInstance.removeSource("clickedone");
     }
 
     // console.log(clicked.features);
     // var currId = clicked.features[0].id; //works for non-oceanbased (ocean-data seems to not have id stored)
     var currId = clicked.features[0].properties.hexid;
-    console.log(`highlighted hex currId: ${currId}`);
+    if (debug) {
+      console.log(`highlighted hex currId: ${currId}`);
+    }
 
-    var feats = this.map.queryRenderedFeatures({
-      layers: [globals.currentLayerState.hexSize],
+    var feats = mapboxMapInstance.queryRenderedFeatures({
+      layers: [cls.hexSize],
       filter: ["==", "hexid", currId],
     });
 
-    console.log("queryRenderedFeatures return:");
-    console.log(feats);
+    if (debug) {
+      console.log("queryRenderedFeatures return:", feats);
+    }
 
     //var testAdmin = map.querySourceFeatures()
 
@@ -2044,12 +3467,12 @@ export default class Map {
     // var dis = turf.dissolve(fc);
     var dis = dissolve(fc);
 
-    this.map.addSource("clickedone", {
+    mapboxMapInstance.addSource("clickedone", {
       type: "geojson",
       data: dis,
     });
 
-    this.map.addLayer({
+    mapboxMapInstance.addLayer({
       id: "clickedone",
       source: "clickedone",
       type: "line",
@@ -2059,7 +3482,16 @@ export default class Map {
       },
     });
   }
-  addAdminClick(e, adminLayerId) {
+  addAdminClick(e, adminLayerId, mapboxMapInstance = this.map, debug = true) {
+    let cls = globals.currentLayerState;
+    if (mapboxMapInstance === this.map2) {
+      // console.warn("MAP2 DATA CLICKED");
+      cls = globals.comparisonLayerState;
+    }
+    if (globals.bivarateMode) {
+      console.log("addAdminClick enabled - onDataClick skipped");
+      return;
+    }
     // var clickDiv = document.getElementsByClassName("my-custom-control")[0];
     // let clickDiv = document.getElementById("on-click-control");
     let clickDiv = document.getElementsByClassName("click-info-box")[0];
@@ -2067,19 +3499,26 @@ export default class Map {
     clickDiv.style.height = "auto";
     // clickDiv.style.height = "100px";
     clickDiv.style.width = "200px";
+    let unitText = !(mapboxMapInstance === this.map2)
+      ? globals.lastActive.layer.Unit
+      : globals.lastActiveComparison.layer.Unit;
 
-    console.log(e.features[0].properties);
+    if (debug) {
+      console.log(e.features[0].properties);
+    }
 
     //map.on('click', currentGeojsonLayers.hexSize, function (e) {
 
-    console.log(`clicked feature GID_1: ${e.features[0].properties.GID_1}
+    if (debug) {
+      console.log(`clicked feature GID_1: ${e.features[0].properties.GID_1}
     clicked feature GID_2: ${e.features[0].properties.GID_2}`);
+    }
     //console.log(e.features[0].geometry);
 
     /*var feats = map.queryRenderedFeatures({
           layers: ['admin1'],
           filter: ['==', 'GID_1', e.features[0].id]
-          
+
         }) */
 
     var rendered = this.map.queryRenderedFeatures({
@@ -2088,7 +3527,7 @@ export default class Map {
     });
 
     var feats;
-    if (globals.currentLayerState.hexSize === "admin1") {
+    if (cls.hexSize === "admin1") {
       feats = this.map.querySourceFeatures("admin1", {
         sourceLayer: ["admin1"],
         filter: ["==", "GID_1", e.features[0].id],
@@ -2101,13 +3540,11 @@ export default class Map {
         e.features[0].properties.TYPE_1 +
         "</b></p>" +
         "<br><p><b>Value: </b>" +
-        e.features[0].properties[
-          globals.currentLayerState.dataLayer
-        ].toLocaleString() +
+        e.features[0].properties[cls.dataLayer].toLocaleString() +
         " " +
         document.getElementById("legendTitle").textContent +
         "</p>";
-    } else if (globals.currentLayerState.hexSize === "admin2") {
+    } else if (cls.hexSize === "admin2") {
       feats = this.map.querySourceFeatures("admin2", {
         sourceLayer: ["admin2"],
         filter: ["==", "GID_2", e.features[0].id],
@@ -2115,11 +3552,9 @@ export default class Map {
 
       clickDiv.innerHTML =
         "<p><b>Value: </b>" +
-        e.features[0].properties[
-          globals.currentLayerState.dataLayer
-        ].toLocaleString() +
+        e.features[0].properties[cls.dataLayer].toLocaleString() +
         " " +
-        document.getElementById("legendTitle").textContent +
+        unitText + //document.getElementById("legendTitle").textContent + +
         "</p>";
     }
 
@@ -2131,17 +3566,17 @@ export default class Map {
 
     //console.log(_.uniq(countries));
 
-    if (this.map.getSource("highlightS")) {
-      this.map.removeLayer("highlight");
-      this.map.removeSource("highlightS");
+    if (mapboxMapInstance.getSource("highlightS")) {
+      mapboxMapInstance.removeLayer("highlight");
+      mapboxMapInstance.removeSource("highlightS");
     }
 
-    if (this.map.getSource("joined")) {
-      this.map.removeLayer("joined");
-      this.map.removeSource("joined");
+    if (mapboxMapInstance.getSource("joined")) {
+      mapboxMapInstance.removeLayer("joined");
+      mapboxMapInstance.removeSource("joined");
     }
 
-    this.map.addSource("highlightS", {
+    mapboxMapInstance.addSource("highlightS", {
       type: "geojson",
       data: {
         type: "FeatureCollection",
@@ -2149,7 +3584,7 @@ export default class Map {
       },
     });
 
-    this.map.addLayer({
+    mapboxMapInstance.addLayer({
       id: "highlight",
       source: "highlightS",
       type: "line",
@@ -2159,7 +3594,9 @@ export default class Map {
       },
     });
 
-    console.log(feats);
+    if (debug) {
+      console.log(feats);
+    }
     if (feats.length > 1) {
       var newOne = [];
 
@@ -2169,7 +3606,9 @@ export default class Map {
         var id = f.id;
 
         if (geom.type === "MultiPolygon") {
-          console.log(f);
+          if (debug) {
+            console.log(f);
+          }
           for (var i = 0; i < geom.coordinates.length; i++) {
             var poly = {
               type: "Feature",
@@ -2198,7 +3637,7 @@ export default class Map {
       //map.getSource('highlightS').setData(joined)
       // var allGeos = []; //never used
 
-      this.map.addSource("joined", {
+      mapboxMapInstance.addSource("joined", {
         type: "geojson",
         data: {
           type: "FeatureCollection",
@@ -2206,7 +3645,7 @@ export default class Map {
         },
       });
 
-      this.map.addLayer({
+      mapboxMapInstance.addLayer({
         id: "joined",
         source: "joined",
         type: "line",
@@ -2216,16 +3655,16 @@ export default class Map {
         },
       });
 
-      this.map.getSource("joined").setData(joined);
+      mapboxMapInstance.getSource("joined").setData(joined);
     } else {
-      this.map.getSource("highlightS").setData(feats[0]);
+      mapboxMapInstance.getSource("highlightS").setData(feats[0]);
     }
 
     // })
   }
 
   //D) Utility Functions - static code with no major logic which supports major functions-----------------------------------
-  createSourceObj(attributeIdStr, resolutionStr) {
+  createSourceObj(attributeIdStr, resolutionStr, debug = false) {
     let promoteId;
     if (attributeIdStr.includes("hex")) {
       promoteId = "hexid";
@@ -2236,7 +3675,9 @@ export default class Map {
     } else if (attributeIdStr === "admin2") {
       promoteId = "GID_2";
     } else {
-      console.warn("promoteId not attached to layer");
+      if (debug) {
+        console.warn("promoteId not attached to layer");
+      }
     }
 
     let sourceURI = this.constructSourceURI(attributeIdStr, resolutionStr);
@@ -2278,23 +3719,27 @@ export default class Map {
     return uniqueFeatures;
   }
 
-  showSpinner() {
+  showSpinner(debug = false) {
     let spinner = document.getElementsByClassName("loader-gis")[0];
     let modal = document.getElementsByClassName("loader-gis-modal")[0];
     spinner.classList.remove("display-none");
     modal.classList.remove("display-none");
-    console.log("show loading spinner");
+    if (debug) {
+      console.log("show loading spinner");
+    }
   }
 
-  hideSpinner() {
-    console.log("hide loading spinner");
+  hideSpinner(debug = false) {
+    if (debug) {
+      console.log("hide loading spinner");
+    }
     let spinner = document.getElementsByClassName("loader-gis")[0];
     let modal = document.getElementsByClassName("loader-gis-modal")[0];
     spinner.classList.add("display-none");
     modal.classList.add("display-none");
   }
 
-  getBasemapLabels() {
+  getBasemapLabels(debug = false) {
     let map = this.map;
 
     globals.basemapLabels = [];
@@ -2312,7 +3757,9 @@ export default class Map {
       }
     }
 
-    console.log(`getBasemapLabels: ${globals.basemapLabels.length} layers`);
+    if (debug) {
+      console.log(`getBasemapLabels: ${globals.basemapLabels.length} layers`);
+    }
   }
   nFormatter(num, digits) {
     var si = [
@@ -2356,6 +3803,55 @@ export default class Map {
       valuesAlreadySeen.push(value);
     }
     return false;
+  }
+
+  computeBreaksAndColorRamp(
+    data,
+    colors = globals.currentLayerState.color,
+    breakMode = "e",
+    numGroups = 200,
+    currentBreaks = globals.currentLayerState.breaks,
+    // precision,
+    debug = false
+  ) {
+    if (debug) {
+      console.log("computeBreaksAndColorRamp");
+    }
+    let numBreaks = 4; //TODO: DETERMINE THIS IMPLICIT SOURCE
+    //calculate breaks and counts for use in histogram
+    let histogram_breaks = chroma.limits(data, breakMode, numGroups);
+    let break_index = 0;
+    let break_counters = Array(numBreaks).fill(0);
+    for (let i = 0; i < numGroups; i++) {
+      if (histogram_breaks[i] > currentBreaks[break_index + 1]) {
+        break_index++;
+      }
+      break_counters[break_index]++; //increment the counter at current break
+    }
+    // console.warn(
+    //   "DEBUGGING computeBreaks: HISTOGRAM_BREAK_COUNT:",
+    //   break_counters,
+    //   "OLD BREAKS",
+    //   currentBreaks,
+    //   "NEW BREAKS",
+    //   histogram_breaks
+    // );
+
+    //create new color ramp
+    let colorRampNew = [];
+    for (let i = 0; i < numBreaks; i++) {
+      let colorRampPart = chroma
+        .scale([colors[i], colors[i + 1]]) //scale maps numeric values to a color palette
+        .mode("lch") //interpolation mode in which the colors are interpolated; affects color output results
+        .colors(break_counters[i]); //how many colors to generate in the palette
+      colorRampNew = colorRampNew.concat(colorRampPart);
+    }
+    // console.warn("DEBUGGING: NEW COLOR RAMP: ", colorRampNew);
+
+    return {
+      colorRamp: colorRampNew,
+      histogramBreaks: histogram_breaks,
+    };
   }
 
   //E) Unsorted/debugging----------------------------------------------------------------------------------

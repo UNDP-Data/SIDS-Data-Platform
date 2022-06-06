@@ -178,7 +178,13 @@ const routes = [
       header:'Geospatial Data',
       icon:'GIS'
     },
-    component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData.vue')
+    beforeEnter: async (to, from, next) => {
+      setTimeout(() => {
+        store.commit('loader/setLoading', false);
+      }, 500)
+      next();
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData/GeospatialData.vue')
   },
   {
     path: '/about',
