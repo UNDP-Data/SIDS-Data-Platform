@@ -68,8 +68,12 @@ export default {
       return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
     },
     chartData() {
-      if(this.MLPredictionData) {
-        return this.MLPredictionData
+      if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {
+        return {
+          data: { ...this.activeIndicatorData.data, ...this.MLPredictionData.data},
+          upperIntervals: this.MLPredictionData.upperIntervals,
+          lowerIntervals: this.MLPredictionData.lowerIntervals
+        }
       }
       return this.activeIndicatorData
     },

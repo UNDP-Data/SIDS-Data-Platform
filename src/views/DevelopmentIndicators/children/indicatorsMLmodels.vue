@@ -43,7 +43,7 @@
             </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content class="pt-4">
-            <v-row>
+            <v-row v-if="modelAvaliable">
               <v-col cols="8">
                 <div :id="'imp-bar-'+i">
                 </div>
@@ -51,6 +51,11 @@
               <v-col cols="4">
                 <div :id="'imp-pie-'+i">
                 </div>
+              </v-col>
+            </v-row>
+            <v-row v-else>
+              <v-col cols="12">
+                <p>Model is not avaliable for selected year</p>
               </v-col>
             </v-row>
           </v-expansion-panel-content>
@@ -101,7 +106,8 @@ export default {
     ...mapState({
       indicatorsMeta: state => state.indicators.indicatorsMeta,
       mlData: state => state.ml.mlData,
-      mlModel: state => state.ml.mlModel
+      mlModel: state => state.ml.mlModel,
+      mlPredictionData: state => state.ml.MLPredictionData
     }),
     designErr() {
       if(this.year === 'recentValue' || this.year > 2019 || this.year < 2000) {
@@ -111,13 +117,16 @@ export default {
         return 'Target dataset not supported. Support Key Indicators, MVI, WDI, ND-GAIN'
       }
       return null
+    },
+    modelAvaliable() {
+      return this.mlPredictionData && this.mlPredictionData.data && this.mlPredictionData.data[this.year] ? true : false
     }
   },
   components:{
     IndicatorsML
   },
   methods: {
-    async onPageExpand(index) {
+    async onPageExpand() {
       await this.$nextTick()
       if(typeof this.activePanel !== 'undefined') {
         let res = await service.loadMLindicatorData({
@@ -125,20 +134,27 @@ export default {
           model:this.activePanel+1,
           dataset:this.indicator.split('-')[0]
         })
-        res[this.indicator].confidenceIntervals = res.confidenceIntervals;
-        store.dispatch('ml/loadMlPredictionData', res[this.indicator])
-        this.initPieChart(index, res.featureImportances.categories)
-        this.initBarChart(index, res.featureImportances.indicators)
+        store.dispatch('ml/loadMlPredictionData', res)
+        await this.$nextTick()
+        await this.$nextTick()
+        this.drawData()
       }
+    },
+    drawData() {
+      if(!this.mlPredictionData.data[this.year]) {
+        return
+      }
+      this.initPieChart(this.activePanel, this.mlPredictionData.categoryImportances[this.year])
+      this.initBarChart(this.activePanel, this.mlPredictionData.featureImportances[this.year])
     },
     initBarChart(index, data){
       let traces = [{
         x: Object.keys(data).map(code => {
           let indi = this.indicatorsMeta[code] ? this.indicatorsMeta[code].indicator : code;
-          // if(indi.length > 15) {
-          //   let spaceindex = indi.indexOf(" ", 10)
-          //   indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          // }
+          if(indi.length > 15) {
+            let spaceindex = indi.indexOf(" ", 10)
+            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          }
           return indi
         }),
         y: Object.values(data),
@@ -146,29 +162,41 @@ export default {
         orientation: 'v'
       }];
       var layout = {
-        autosize: true,
-        margin: {b: 200, r:100},
+        autosize: false,
+        margin: {b: 200, r:100, l:0, t:0},
+        width:document.getElementById('imp-bar-'+index).offsetWidth,
+        height:400,
         plot_bgcolor:"rgba(0,0,0,0)",
         paper_bgcolor:"rgba(0,0,0,0)",
         xaxis:{
-          tickfont:{size:10}
+          tickangle:35,
+          tickfont:{size:9}
         },
         yaxis:{
-          tickfont:{size:10}
+          tickfont:{size:9}
         }
       };
-      poltly.newPlot('imp-bar-'+index, traces,layout);
+      poltly.newPlot('imp-bar-'+index, traces, layout);
     },
     initPieChart(index, data) {
-      var trace = {
+      let trace = {
         type: 'pie',
         labels: Object.keys(data),
         values: Object.values(data)
       }
-      poltly.newPlot('imp-pie-'+index, [trace], {
+      var layout = {
+        legend: {
+          x: 1,
+        },
+        margin: {t: 0, b:0},
+        autosize: false,
+        width:document.getElementById('imp-pie-'+index).offsetWidth,
+        height:400,
+        // automargin: true,
         plot_bgcolor:"rgba(0,0,0,0)",
         paper_bgcolor:"rgba(0,0,0,0)",
-      })
+      };
+      poltly.newPlot('imp-pie-'+index, [trace], layout)
     },
     isModelDisplayed(index) {
       return !(typeof this.activePanel === 'undefined' || this.activePanel === index)
@@ -180,14 +208,23 @@ export default {
     }
   },
   watch: {
-    year() {
+    async year() {
       if(this.designErr) {
         this.autoMode = true
+      }
+      if(typeof this.activePanel !== undefined && this.activePanel !== null) {
+        await this.$nextTick()
+        this.drawData(this.mlPredictionData)
       }
     },
     indicator() {
       if(this.designErr) {
         this.autoMode = true
+        this.activePanel = undefined;
+      }
+    },
+    autoMode() {
+      if(!this.autoMode) {
         this.activePanel = undefined;
       }
     },
