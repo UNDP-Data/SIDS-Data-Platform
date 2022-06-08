@@ -217,18 +217,18 @@
         <h2 class="block-subheader">Prediction Strength</h2>
         <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
       </v-col>
-      <v-col cols="10">
-        <div id="imp-bar">
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
       <v-col cols="8">
-        <div id="corr">
+        <div id="imp-bar">
         </div>
       </v-col>
       <v-col cols="4">
         <div id="imp-pie">
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <div id="corr">
         </div>
       </v-col>
     </v-row>
@@ -240,7 +240,7 @@
 import { mapState } from 'vuex';
 import service from '@/services'
 import sidsList from '@/assets/sidsListFull'
-import poltly from 'plotly.js-dist/plotly'
+import plotly from 'plotly.js-dist/plotly'
 import store from '@/store'
 
 export default {
@@ -367,6 +367,9 @@ export default {
       this.loading = false;
     },
     drawData(){
+      if(this.mlData === null) {
+        return
+      }
       let countryList = this.mlData.prediction['Country Code'].map(code => {
         try {
           return sidsList.find( c => {
@@ -399,10 +402,11 @@ export default {
         type: "bar",
         orientation: 'h'
       }];
-      poltly.newPlot('pre-bar', traces, {
+      plotly.newPlot('pre-bar', traces, {
         autosize: true,
-        margin: {l: 0, r:0, b:0, t:0},
+        margin: {l: 100, r:0, b:0, t:0},
         plot_bgcolor:"rgba(0,0,0,0)",
+        width:document.getElementById('pre-bar').offsetWidth,
         paper_bgcolor:"rgba(0,0,0,0)",
         xaxis:{
           tickfont:{size:10}
@@ -416,10 +420,10 @@ export default {
       let traces = [{
         x: feature_names.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          // if(indi.length > 15) {
-          //   let spaceindex = indi.indexOf(" ", 10)
-          //   indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          // }
+          if(indi.length > 15) {
+            let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
+            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          }
           return indi
         }),
         y: importance_values,
@@ -429,43 +433,48 @@ export default {
       var layout = {
         autosize: true,
         margin: {b: 200, r:100},
+        height:400,
         plot_bgcolor:"rgba(0,0,0,0)",
         paper_bgcolor:"rgba(0,0,0,0)",
+        width:document.getElementById('imp-bar').offsetWidth,
         xaxis:{
-          tickfont:{size:10}
+          tickfont:{size:10},
+          tickangle:35
         },
         yaxis:{
           tickfont:{size:10}
         }
       };
-      poltly.newPlot('imp-bar', traces,layout);
+      plotly.newPlot('imp-bar', traces,layout);
     },
     correlation(corrData){
       var trace = {
         z: corrData.data,
         x: corrData.index.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          // if(indi.length > 15) {
-          //   let spaceindex = indi.indexOf(" ", 10)
-          //   indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          // }
+          if(indi.length > 15) {
+            let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
+            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          }
           return indi
         }),
         y: corrData.columns.map(code => {
           let indi = this.indicatorsMeta[code].indicator
-          // if(indi.length > 15) {
-          //   let spaceindex = indi.indexOf(" ", 10)
-          //   indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          // }
+          if(indi.length > 15) {
+            let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
+            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
+          }
           return indi
         }),
         type: 'heatmap'
       }
       var layout = {
         autosize: true,
-        margin: {l: 200, b:200},
+        margin: {l: 200, b:100},
+        height:400,
         plot_bgcolor:"rgba(0,0,0,0)",
         paper_bgcolor:"rgba(0,0,0,0)",
+        width:document.getElementById('corr').offsetWidth,
         xaxis:{
           tickfont:{size:10}
         },
@@ -473,7 +482,7 @@ export default {
           tickfont:{size:10}
         }
       };
-      poltly.newPlot('corr', [trace],layout)
+      plotly.newPlot('corr', [trace],layout)
     },
     pie(pieData){
       var trace = {
@@ -481,18 +490,34 @@ export default {
         labels: pieData.category,
         values: pieData.value
       }
-      poltly.newPlot('imp-pie', [trace], {
+      plotly.newPlot('imp-pie', [trace], {
         plot_bgcolor:"rgba(0,0,0,0)",
         paper_bgcolor:"rgba(0,0,0,0)",
+        legend: {
+          x: 1,
+        },
+        margin: {t: 0, b:0},
+        autosize: false,
+        width:document.getElementById('imp-pie').offsetWidth,
+        height:400,
       })
     },
     emitYearChange(year) {
       this.$emit('yearChange', year)
+    },
+    resetData() {
+      this.rmse = null;
+      store.commit('ml/setMLData', null);
+      plotly.purge('pre-bar')
+      plotly.purge('imp-bar')
+      plotly.purge('corr')
+      plotly.purge('imp-pie')
     }
   },
   watch:{
     async year() {
-      await this.getMLestimate()
+      this.resetData();
+      await this.getMLestimate();
     },
     mlData() {
       if(this.mlData) {
@@ -503,7 +528,7 @@ export default {
   },
   mounted() {
     this.getMLestimate()
-    if(this.mlData && this.mlModel.target === this.indicatorCode && this.mlModel.target_year === this.year) {
+    if(this.mlData && this.mlModel && this.mlModel.target === this.indicatorCode && this.mlModel.target_year === this.year) {
       this.pinterval = this.mlModel.interval
       this.imputer = this.mlModel.interpolator
       this.predictor = this.mlModel.scheme

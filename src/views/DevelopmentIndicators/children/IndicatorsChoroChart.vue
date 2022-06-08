@@ -61,22 +61,33 @@ export default {
     ...mapState({
       profileData: state => state.indicators.profileData,
       indicatorMeta: state => state.indicators.indicatorsMeta,
-      activeIndicatorData: state => state.indicators.activeIndicatorData
+      activeIndicatorData: state => state.indicators.activeIndicatorData,
+      MLPredictionData: state => state.ml.MLPredictionData
     }),
     activeIndicatorsMeta() {
       return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
     },
+    chartData() {
+      if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {
+        return {
+          data: { ...this.activeIndicatorData.data, ...this.MLPredictionData.data},
+          upperIntervals: this.MLPredictionData.upperIntervals,
+          lowerIntervals: this.MLPredictionData.lowerIntervals
+        }
+      }
+      return this.activeIndicatorData
+    },
     sidsList() {
-      if(this.activeIndicatorData.data) {
+      if(this.chartData.data) {
         return sidsList.filter(country => {
           if(!country.average) {
-            return (typeof this.activeIndicatorData.data.recentValue[country.iso] !== 'undefined' &&
-              this.activeIndicatorData.data.recentValue[country.iso] !== 'No Data') &&
+            return (typeof this.chartData.data.recentValue[country.iso] !== 'undefined' &&
+              this.chartData.data.recentValue[country.iso] !== 'No Data') &&
               (this.region === 'All' || this.region === country.region || this.compareIdsList.includes(country.id))
           } else if (countryGroupJson[country.iso]) {
             return Object.keys(countryGroupJson[country.iso]).some((iso) => {
-              return typeof this.activeIndicatorData.data.recentValue[iso] !== 'undefined' &&
-                this.activeIndicatorData.data.recentValue[iso] !== 'No Data'
+              return typeof this.chartData.data.recentValue[iso] !== 'undefined' &&
+                this.chartData.data.recentValue[iso] !== 'No Data'
             })
           }
         })
@@ -108,7 +119,7 @@ export default {
         profileData: this.profileData,
         page:this.page,
         year: this.year,
-        data: this.activeIndicatorData,
+        data: this.chartData,
         countryList: compareISOs,
         clickCallback:this.counntryClickCallback,
         selectedIndis:this.mviCodes,
@@ -140,12 +151,12 @@ export default {
       let res = sidsList.filter(country => {
         if(!country.average) {
           return !this.mviCodes.some((code) => {
-            return this.activeIndicatorData[code].data.recentValue[country.iso] === 'No Data'
+            return this.chartData[code].data.recentValue[country.iso] === 'No Data'
           })
         } else {
           return Object.keys(countryGroupJson[country.iso]).some((iso) => {
             return !this.mviCodes.some((code) => {
-              return this.activeIndicatorData[code].data.recentValue[iso] === 'No Data'
+              return this.chartData[code].data.recentValue[iso] === 'No Data'
             })
           })
         }
@@ -163,19 +174,27 @@ export default {
         chartType: this.chartType,
         code: this.indicatorCode,
         year: this.year,
-        data: this.activeIndicatorData
+        data: this.chartData
       });
     },
     chartType() {
       if(this.choro && this.page === this.choro.page) {
-        this.choro.updateVizType(this.chartType, this.activeIndicatorData);
+        this.choro.updateVizType(this.chartType, this.chartData);
+      }
+    },
+    chartData() {
+      let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
+      this.setCompareCountries(compareIdsList)
+      if(this.choro && this.page === this.choro.page) {
+        console.log(this.chartData)
+        this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },
     indicatorCode() {
       let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
       this.setCompareCountries(compareIdsList)
       if(this.choro && this.page === this.choro.page) {
-        this.choro.updateVizData(this.indicatorCode, this.activeIndicatorData);
+        this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },
     region() {
