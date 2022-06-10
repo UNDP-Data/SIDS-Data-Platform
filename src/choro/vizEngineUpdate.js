@@ -725,6 +725,8 @@ export function updateLabels(vizElementAttributes, noData) {
       });
       if(this.indicatorData.lowerIntervals && rootThis.indiSelections["viz"] === "bars") {
         d3.select(this.sidsMaps)
+          .selectAll(".errorLabel").remove()
+        d3.select(this.sidsMaps)
           .selectAll("g")
           .append("text")
           .classed("errorLabel", true)
