@@ -50,7 +50,9 @@ export default {
   props:{
     placeholder: {
       type: String,
-      default: 'Select countries'
+      default: function () {
+      return this.$t('root.forms.selectCountries')
+    }
     },
     countryActiveIdsList: {
       type: Array,

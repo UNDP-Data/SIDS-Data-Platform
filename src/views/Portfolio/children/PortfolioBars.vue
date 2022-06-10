@@ -6,7 +6,7 @@
         </div>
       </v-row>
       <v-row class="mt-0 bars-container" justify="center">
-        <div class="sdg-goal" v-for="(goal, index) in goals" :key="goal.name">
+        <div class="sdg-goal" v-for="(goal, index) in goals" :key="goal.id">
           <v-tooltip
             top
             transition="none"
@@ -24,10 +24,10 @@
             </template>
             <v-card>
               <v-card-title>
-                {{goal.name}}
+                {{$t(`root.${goalsType}.${goal.id}.title`)}}
               </v-card-title>
               <v-card-text v-if="goal.content">
-                {{goal.content}}
+                {{$t(`root.${goalsType}.${goal.id}.content`)}}
               </v-card-text>
             </v-card>
           </v-tooltip>
@@ -279,7 +279,7 @@ export default {
           })
           .text(function (d) {
             if (rootThis.projectNamesObject[d.name] > 0) {
-              return rootThis.projectNamesObject[d.name].toString().concat(" Projects");
+              return rootThis.projectNamesObject[d.name].toString().concat(' ' + rootThis.$t('portfolio.projects'));
             }
           })
           update.select(".stick").transition(700)
