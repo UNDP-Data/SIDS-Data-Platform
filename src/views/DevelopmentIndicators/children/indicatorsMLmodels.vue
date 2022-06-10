@@ -27,10 +27,10 @@
               <v-col cols="3" class="font-weight-bold ml-panel-button_content d-flex align-center pt-0 pb-0">
                 {{model.name}}
               </v-col>
-              <v-col cols="4" class="ml-panel-button-params ml-panel-button_content d-flex align-center pt-0 pb-0">
+              <v-col cols="3" class="ml-panel-button-params ml-panel-button_content d-flex align-center pt-0 pb-0">
                 {{model.params}}
               </v-col>
-              <v-col cols="3" class="ml-panel-button_content d-flex align-center pt-0 pb-0">
+              <v-col cols="4" class="ml-panel-button_advantage ml-panel-button_content d-flex align-center pt-0 pb-0">
                 {{model.adv}}
               </v-col>
 
@@ -89,17 +89,33 @@ export default {
     return {
       activePanel:undefined,
       autoMode:true,
-      models:[{
-        name:"Random Forest Regressor",
-        params:"100 Indicators, 42 Fibbledygooks, 14 trees mapped to 18 bees, Data style",
-        adv:"Most indicator predictions",
-        color:"#00AED9"
-      },{
-        name:"Gradient Boost Regressor",
-        params:"100 Indicators, 42 Fibbledygooks, 14 trees mapped to 18 bees, Data style",
-        adv:"Highest accuracy",
-        color:"#3EB049"
-      }]
+      models:[
+        {
+          name: "Extratree Regressor",
+          color:"#00AED9",
+          params: "n_estimators, maximum depth (tuned via cross-validation), initial_strategy=\"KNNimputer\"",
+          adv: "uses averaging to improve the predictive accuracy and control over-fitting via randomization, faster computation",
+        },
+        {
+          name: "Random Forest Regressor",
+          color:"#3EB049",
+          params: "n_estimators, maximum depth (tuned via cross-validation), initial_strategy=\\\"KNNimputer\\\"",
+          adv: "uses averaging to improve the predictive accuracy and reduce over-fitting via bootsrapping compared to decision trees.Processing high-dimensional data and feature-missing data are the strengths of random forest",
+        },
+        {
+          name: "Gradient boost Regressor",
+          color: '#FDB713',
+          params: "loss_function, learning_rate, n_estimators, maximum depth (tuned via cross-validation), initial_strategy=\\\"KNNimputer\\\"",
+          adv: "Higher point estimation accuracy",
+        },
+        {
+          name: "LGBM Regressor",
+          color: '#FDB713',
+          params: "Boosting type, maximum tree depth of base learners, number of boosted trees to fit (all selected via cross-validation) and feature importance type",
+          "Model Description": "LightGBM is a gradient boosting framework that uses tree based learning algorithms. It is designed to be distributed and efficient. LightGBM has a faster rate of execution along with being able to maintain good accuracy levels primarily due to the utilization of two novel techniques: Gradient-Based One-Side Sampling (GOSS, retains instances with larger gradients and performs random sampling on instances with smaller gradients) and Exclusive Feature Bundling (EFB,a near lossless method to reduce the number of effective features)",
+          adv: "Faster training speed and higher efficiency, Lower memory usage, Better accuracy, scaling to large data  ",
+        }
+      ]
     }
   },
   computed: {
@@ -141,7 +157,7 @@ export default {
       }
     },
     drawData() {
-      if(!this.mlPredictionData.data[this.year]) {
+      if(!this.mlPredictionData || !this.mlPredictionData.data[this.year]) {
         return
       }
       this.initPieChart(this.activePanel, this.mlPredictionData.categoryImportances[this.year])
@@ -241,7 +257,7 @@ export default {
 .ml-panel {
 }
 .ml-panel .icon-container{
-  height: 48px;
+  height: 56px;
   display: flex;
   align-items: center;
   padding-left: .2em;
@@ -253,7 +269,7 @@ export default {
   padding: 0!important;
   background: #DCDCDC;
   border-radius: 5px !important;
-  min-height: 48px !important;
+  min-height: 56px !important;
 }
 .ml-panel-button-first {
   border-top-left-radius: 5px !important;
@@ -262,9 +278,12 @@ export default {
 }
 
 .ml-panel-button-params {
-  font-size: 12px;
+  font-size: 10px;
 }
 .ml-panel-button_content {
-  height: 48px;
+  height: 64px;
+}
+.ml-panel-button_advantage {
+  font-size: 10px;
 }
 </style>
