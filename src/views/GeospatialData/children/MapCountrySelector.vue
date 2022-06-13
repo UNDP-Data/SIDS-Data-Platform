@@ -3,11 +3,16 @@
       v-model="open"
       :close-on-content-click="false"
       :x-offset="true"
+      content-class="select-floating"
       nudge-left="50"
       left
     >
       <template v-slot:activator="{ on: menu, attrs }">
-        <v-tooltip left maxWidth="200">
+        <v-tooltip
+          color="white"
+          content-class="tooltip-white"
+          transition="fade-transition"
+          left maxWidth="200">
           <template v-slot:activator="{ on: tooltip }">
             <v-btn
               class="toolbar-button"

@@ -1,6 +1,10 @@
 <template>
   <div class="">
-  <v-tooltip left maxWidth="240">
+  <v-tooltip
+    color="white"
+    content-class="tooltip-white"
+    transition="fade-transition"
+    left maxWidth="240">
     <template v-slot:activator="{ on: tooltip }">
       <div>
         <v-btn

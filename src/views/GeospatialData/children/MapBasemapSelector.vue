@@ -3,11 +3,16 @@
       v-model="open"
       :close-on-content-click="false"
       :x-offset="true"
+      content-class="select-floating"
       nudge-left="50"
       left
     >
       <template v-slot:activator="{ on: menu, attrs }">
-        <v-tooltip left maxWidth="200">
+        <v-tooltip
+          color="white"
+          content-class="tooltip-white"
+          transition="fade-transition"
+          left maxWidth="200">
           <template v-slot:activator="{ on: tooltip }">
             <v-btn
               class="toolbar-button"
@@ -17,7 +22,7 @@
               v-bind="attrs"
               v-on="{ ...tooltip, ...menu }"
             >
-              <i class="basemap-selector-icon"></i>
+              <i class="basemap-selector-icon" :class="getMapIcon(basemap)"></i>
             </v-btn>
           </template>
           <span>
@@ -37,6 +42,22 @@
           hide-details
           :items="basemaps"
         >
+          <template #selection="{ item }">
+            <i
+              class="base-selection-select mr-2"
+              :class="getMapIcon(item)"
+            ></i>
+            <span>
+              {{item}}
+            </span>
+          </template>
+          <template slot="item" slot-scope="data">
+          <i
+            class="base-selection-select mr-2"
+            :class="getMapIcon(data.item)"
+          ></i>
+          {{ data.item }}
+          </template>
         </v-select>
       </div>
     </v-menu>
@@ -55,22 +76,54 @@ export default {
   props:[
     'map'
   ],
+  computed: {
+    satelliteImage() {
+      if(this.basemap === 'Light Theme') {
+        return 'satelite-white'
+      }
+      if(this.basemap === 'Dark Theme') {
+        return 'satelite-dark'
+      }
+      return 'satelite'
+    }
+  },
   methods: {
     changeBasemap(basemap) {
       this.activeColor = basemap;
       this.map.changeBasemap(basemap);
+    },
+    getMapIcon(basemap) {
+      if(basemap === 'Light Theme') {
+        return 'satelite-white'
+      }
+      if(basemap === 'Dark Theme') {
+        return 'satelite-dark'
+      }
+      return 'satelite'
     }
   }
 }
 </script>
 
 <style>
-
-.basemap-selector-icon {
-  width: 38px;
-  height: 38px;
-  background-image: url("~@/assets/gis/sidebar/satellite-view.png");
+.base-selection-select {
+  width: 20px;
+  height: 20px;
   background-size: contain;
+}
+.basemap-selector-icon {
+  width: 30px;
+  height: 30px;
+  background-size: contain;
+}
+.satelite {
+  background-image: url("~@/assets/gis/sidebar/satelite.png");
+}
+.satelite-white {
+  background-image: url("~@/assets/gis/sidebar/satelite-white.png");
+}
+.satelite-dark {
+  background-image: url("~@/assets/gis/sidebar/satelite-dark.png");
 }
 .color-scheme-select {
   width: 250px;

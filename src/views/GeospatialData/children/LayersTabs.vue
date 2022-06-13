@@ -4,7 +4,7 @@
   >
     <vue-tabs-chrome
       class="vue-tabs-component"
-      :class="{'d-none' : !tabs.length}"
+      :class="{'d-none' : tabs.length < 2}"
       theme="default"
       ref="tab"
       :minHiddenWidth="120"
@@ -17,7 +17,7 @@
     </vue-tabs-chrome>
     <button
       class="tab-add"
-      :class="{'tab-add-fixed' : !tabs.length}"
+      :class="{'tab-add-fixed' : tabs.length < 2}"
       @click="addEmptyTab"
       >+</button>
   </div>
@@ -58,6 +58,7 @@ export default {
       if(this.activeTab) {
         this.$emit('tabUpdate', this.activeTab)
       }
+      console.log(this.tabs)
     },
     addEmptyTab() {
       let key = Date.now();
@@ -82,6 +83,7 @@ export default {
       };
 
       this.$refs.tab.addTab(newTab);
+      console.log(newTab)
       this.tab = key;
     },
     createTabLabel() {

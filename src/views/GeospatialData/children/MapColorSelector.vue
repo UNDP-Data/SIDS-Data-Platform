@@ -3,11 +3,16 @@
       v-model="open"
       :close-on-content-click="false"
       :x-offset="true"
+      content-class="select-floating"
       nudge-left="50"
       left
     >
       <template v-slot:activator="{ on: menu, attrs }">
-        <v-tooltip left maxWidth="200">
+        <v-tooltip
+          color="white"
+          content-class="tooltip-white"
+          transition="fade-transition"
+          left maxWidth="200">
           <template v-slot:activator="{ on: tooltip }">
             <div>
               <v-btn
@@ -19,7 +24,7 @@
                 v-bind="attrs"
                 v-on="{ ...tooltip, ...menu }"
               >
-                <i class="color-scheme-icon"></i>
+                <i class="color-scheme-icon" :class="getColorIcon(activeColor)"></i>
               </v-btn>
             </div>
           </template>
@@ -40,6 +45,22 @@
           hide-details
           :items="colors"
         >
+          <template #selection="{ item }">
+            <i
+              class="color-selection-select mr-2"
+              :class="getColorIcon(item.value)"
+            ></i>
+            <span>
+              {{item.text}}
+            </span>
+          </template>
+          <template slot="item" slot-scope="data">
+            <i
+              class="color-selection-select mr-2"
+              :class="getColorIcon(data.item.value)"
+            ></i>
+            {{ data.item.text }}
+          </template>
         </v-select>
       </div>
     </v-menu>
@@ -88,6 +109,24 @@ export default {
     changeColorScheme(scheme) {
       this.activeColor = scheme;
       this.map.changeColor(scheme);
+    },
+    getColorIcon(activeColor) {
+      if(activeColor === 'invert') {
+        return 'color-scheme-icon-invert'
+      }
+      if(activeColor === 'red') {
+        return 'color-scheme-icon-red'
+      }
+      if(activeColor === 'purple') {
+        return 'color-scheme-icon-purple'
+      }
+      if(activeColor === 'blue') {
+        return 'color-scheme-icon-blue'
+      }
+      if(activeColor === 'colorblind-safe') {
+        return 'color-scheme-icon-green'
+      }
+      return 'color-scheme-icon-default'
     }
   }
 }
@@ -98,8 +137,30 @@ export default {
 .color-scheme-icon {
   width: 38px;
   height: 38px;
-  background-image: url("~@/assets/gis/sidebar/color-icon.png");
   background-size: contain;
+}
+.color-selection-select {
+  width: 30px;
+  height: 30px;
+  background-size: contain;
+}
+.color-scheme-icon-blue {
+  background-image: url("~@/assets/gis/sidebar/icon-blue.png");
+}
+.color-scheme-icon-red {
+  background-image: url("~@/assets/gis/sidebar/icon-red.png");
+}
+.color-scheme-icon-purple {
+  background-image: url("~@/assets/gis/sidebar/icon-purple.png");
+}
+.color-scheme-icon-green {
+  background-image: url("~@/assets/gis/sidebar/icon-green.png");
+}
+.color-scheme-icon-invert {
+  background-image: url("~@/assets/gis/sidebar/icon-invert.png");
+}
+.color-scheme-icon-default {
+  background-image: url("~@/assets/gis/sidebar/icon-default.png");
 }
 .color-scheme-select {
   width: 250px;
