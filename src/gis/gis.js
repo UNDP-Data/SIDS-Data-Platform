@@ -666,6 +666,7 @@ export default class Map {
       if(self.options.mode3d) {
         self.map.setFilter(self.options.currentLayerState.hexSize+'-3d', null);
       }
+      self.recolorBasedOnWhatsOnPage()
       self.draw.deleteAll(); //delete all drawn features ie. polygons
       self.emit('selectionPolyUpdate',
         null

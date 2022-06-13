@@ -1,10 +1,10 @@
 <template>
   <div class="d-flex flex-column">
-    <v-card class="mb-1 controller-block">
+    <v-card class="mb-1  controller-block">
       <v-row>
         <v-col cols="6">
-          <v-list color="transparent" dense>
-            <v-list-item-group v-model="activeGoalType" mandatory>
+          <v-list class="bt-0 pb-0" color="transparent" dense>
+            <v-list-item-group class="goal-type-list" v-model="activeGoalType" mandatory>
               <v-tooltip
                 top
                 v-for="(item, i) in goalTypes"
@@ -40,7 +40,7 @@
                     ></v-img>
                   </v-card-title>
                   <v-card-text class="tooltip-card_text">
-                    {{ item.content }}
+                    {{ item.description }}
                   </v-card-text>
                 </v-card>
               </v-tooltip>
@@ -126,8 +126,8 @@
                   <img
                     v-on="on"
                     :src="getGoalImage(index)"
-                    height="120"
-                    width="120"
+                    height="100"
+                    width="100"
                   />
                 </template>
                 <div class="goals-tooltip-content">
@@ -314,7 +314,7 @@ export default {
     },
     selectGoal(goalNumber) {
       this.activeGoal = goalNumber;
-      this.$refs.slider.scrollOffset = 120 * (goalNumber - 1);
+      this.$refs.slider.scrollOffset = 100 * (goalNumber - 1);
     },
     firstDatasetChange(dataset) {
       this.activeDataset = dataset;
@@ -369,7 +369,7 @@ export default {
 <style>
   .goals-slider {
     padding: 8px 0 0;
-    width: 170px;
+    width: 150px;
     margin: auto;
   }
   .goals-slider .v-slide-group__next,
@@ -403,5 +403,8 @@ export default {
   .controller-block {
     border-radius: 0 !important;
     background-color: rgba(221, 221, 221, 0.7) !important;
+  }
+  .goal-type-list .v-list-item{
+    min-height: 28px !important;
   }
 </style>

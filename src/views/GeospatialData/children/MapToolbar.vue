@@ -19,12 +19,12 @@
       <map-3d-controller
         @toggle3d="toggle3d"
         :map="map"
-        :disabled="bivarEnabled"
+        :disabled="bivariateModeEnabled"
       />
     </div>
     <div class="button-wrapper">
       <map-color-selector
-        :disabled="dualEnabled"
+        :disabled="dualModeEnabled"
         :map="map"
       />
     </div>
@@ -46,18 +46,20 @@
     <div class="button-wrapper">
       <map-bivar v-if="map"
         @toggleBivar="toggleBivar"
+        :bivarEnabled="bivariateModeEnabled"
         :map="map"
       />
     </div>
     <div class="button-wrapper">
       <map-regional-analysis v-if="map"
-        :disabled="dualEnabled"
+        :disabled="dualModeEnabled"
         :map="map"
       />
     </div>
     <div class="button-wrapper">
       <map-dual
         @toggleDual="toggleDual"
+        :dualEnabled="dualModeEnabled"
         :map="map"
       />
     </div>
@@ -82,8 +84,6 @@ export default {
   name: 'MapToolbap',
   data() {
     return {
-      bivarEnabled:false,
-      dualEnabled:false,
       enabled3d:false,
     }
   },
@@ -101,18 +101,18 @@ export default {
     MapDual
   },
   props:[
-    'map'
+    'map',
+    'dualModeEnabled',
+    'bivariateModeEnabled'
   ],
   methods: {
     toggle3d(e) {
       this.enabled3d = e;
     },
     toggleBivar(e) {
-      this.bivarEnabled = e;
       this.$emit('toggleBivar', e)
     },
     toggleDual(e) {
-      this.dualEnabled = e;
       this.$emit('toggleDual', e)
     }
   }
@@ -128,6 +128,9 @@ export default {
   height:40px !important;
   min-width:40px !important;
   min-height:40px !important;
+}
+.toolbar-button-active {
+  background-color: rgba(9, 105, 250, 0.8) !important;
 }
 .toolbar-container {
   width:85px;

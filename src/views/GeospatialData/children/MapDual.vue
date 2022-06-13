@@ -1,9 +1,14 @@
 <template>
   <div class="">
-  <v-tooltip left maxWidth="240">
+  <v-tooltip
+    color="white"
+    content-class="tooltip-white"
+    transition="fade-transition"
+    left maxWidth="240">
     <template v-slot:activator="{ on: tooltip }">
       <v-btn
         class="toolbar-button"
+        :class="{'toolbar-button-active': modeOn}"
         color="gray"
         @click="toggleDual"
         dark
@@ -30,12 +35,18 @@ export default {
   },
   props:[
     'map',
-    'activeLayer'
+    'activeLayer',
+    'dualEnabled'
   ],
   methods: {
     toggleDual() {
       this.modeOn = !this.modeOn;
       this.$emit('toggleDual', this.modeOn)
+    }
+  },
+  watch: {
+    dualEnabled() {
+      this.modeOn = this.dualEnabled
     }
   }
 }

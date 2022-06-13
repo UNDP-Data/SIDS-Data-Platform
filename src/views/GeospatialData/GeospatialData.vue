@@ -3,14 +3,36 @@
     <v-btn
       @click="menuColapsed = !menuColapsed"
       class="button-collapse"
-      :class="{'button-collapse-colapsed': menuColapsed}"
       fab
       x-small
-      dark
       >
-      <v-icon>mdi-arrow-left</v-icon>
+      <v-icon
+        v-if="!menuColapsed">
+        mdi-eye-off
+      </v-icon>
+      <v-icon
+        v-if="menuColapsed">
+        mdi-eye
+      </v-icon>
     </v-btn>
+    <v-chip
+      v-if="dualModeEnabled"
+      small
+      class="mode-chip"
+      color="primary"
+    >
+      Comparison mode enebled
+    </v-chip>
+    <v-chip
+      v-if="bivariateModeEnabled"
+      small
+      class="mode-chip"
+      color="primary"
+    >
+      Bivariate mode enebled
+    </v-chip>
     <map-controller
+      :class="{'data-controller-hidden': menuColapsed}"
       class="data-controller"
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
@@ -24,6 +46,8 @@
       class="toolbar"
       :map="map"
       :activeLayer="activeLayer"
+      :dualModeEnabled="dualModeEnabled"
+      :bivariateModeEnabled="bivariateModeEnabled"
       @toggleBivar="toggleBivar"
       @toggleDual="toggleDual"
     />
@@ -80,16 +104,19 @@ export default {
   methods: {
     toggleBivar(e) {
       this.bivariateModeEnabled = e;
+      if(this.dualModeEnabled) {
+        this.dualModeEnabled = false;
+        this.map.toggleMapboxGLCompare(this.dualModeEnabled);
+      }
       this.map.toggleBivariateComponents(e)
     },
     toggleDual(e) {
       this.dualModeEnabled = e;
+      if(this.bivariateModeEnabled) {
+        this.bivariateModeEnabled = false;
+        this.map.toggleBivariateComponents(this.bivariateModeEnabled)
+      }
       this.map.toggleMapboxGLCompare(e);
-    },
-    toggleDualMode() {
-      this.dualModeEnabled = !this.dualModeEnabled;
-      // console.log("dualModeEnabled:", this.dualModeEnabled);
-      this.map.toggleMapboxGLCompare();
     },
     updateBivariate({dataset, layer, secondDataset, secondLayer}) {
       this.map.createBivariate(
@@ -210,7 +237,9 @@ export default {
   transition: 0.5s ease-in-out all;
   opacity: 1;
 }
-
+.data-controller-hidden {
+  z-index: -1;
+}
 /* FOR LEGEND ??*/
 
 ::-webkit-scrollbar {
@@ -264,13 +293,17 @@ export default {
 }
 .button-collapse {
   position:absolute;
-  top:50px;
-  left:2px;
-  z-index:120;
+  top: 4px;
+  left: 4px;
+  z-index: 1000;
   transition: all 200ms;
-  transform:rotate(0deg)
+  background: rgba(221, 221, 221, 0.9);
 }
-.button-collapse-colapsed {
-  transform:rotate(180deg)
+
+.mode-chip {
+  position: absolute;
+  top: 20px;
+  left: 60px;
+  z-index: 1000;
 }
 </style>

@@ -503,7 +503,7 @@ export function changeColor(selectedColor) {
     this.options.colorSCheme.invert = false,
     this.options.colorSCheme.color = selectedColor
   }
-  if(this.getLayer(this.options.currentLayerState.hexSize)) {
+  if(!this.getLayer(this.options.currentLayerState.hexSize)) {
     return;
   }
   if (selectedColor === "original") {
@@ -544,7 +544,6 @@ export function changeColor(selectedColor) {
   } else if (selectedColor === "colorblind-safe") {
     this.options.currentLayerState.color = colors.colorSeq["colorBlindGreen"];
   }
-
   map.setPaintProperty(this.options.currentLayerState.hexSize, "fill-color", [
     "interpolate",
     ["linear"],
@@ -595,7 +594,6 @@ export function changeColor(selectedColor) {
   );
 
   this.emit('layerUpdate', {
-
     colorRamp: breaksAndColors.colorRamp,
     breaks: breaksAndColors.histogramBreaks,
     selectedData,
@@ -831,6 +829,8 @@ export function startRegionAnalisys(){
       this.draw.onAdd(this.map)
     );
     this._addDrawListeners(this);
+  } else {
+    this.map.fire('draw.delete')
   }
   this.draw.changeMode("draw_polygon");
 }

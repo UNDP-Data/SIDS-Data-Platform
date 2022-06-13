@@ -1,6 +1,6 @@
 <template>
   <v-card class="mb-1 description-block background-grey">
-    <v-card-subtitle class="block-header" v-if="activeLayer">
+    <v-card-subtitle class=" pt-2 pb-2 block-header" v-if="activeLayer">
       <b
         >{{ activeLayer.Description }}
         {{ activeDataset.type === "temporal" ? activeLayer.Temporal : "" }}</b
@@ -9,14 +9,14 @@
     <v-card-subtitle class="block-header" v-else>
       SIDS Geospatial Platform
     </v-card-subtitle>
-    <v-card-text v-if="activeLayer">
+    <v-card-text class="pb-2" v-if="activeLayer">
       {{ activeLayer.Desc_long }}<br />
       <b>Reference</b> {{ activeLayer.Source_Name }} <br />
       <a :href="activeLayer.Source_Link" target="_blank">
-        {{ activeLayer.Source_Link }}
+        Source
       </a>
     </v-card-text>
-    <v-card-text v-else>
+    <v-card-text class="pb-2" v-else>
       This map visualizes data for the SIDS at different resolutions. Select a
       dataset above or a country to view spatial data about that region.
     </v-card-text>
