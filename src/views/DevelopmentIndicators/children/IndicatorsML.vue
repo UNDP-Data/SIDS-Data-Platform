@@ -419,7 +419,10 @@ export default {
     drawImportanceimportance(feature_names, importance_values){
       let traces = [{
         x: feature_names.map(code => {
-          let indi = this.indicatorsMeta[code].indicator
+          let indi = this.indicatorsMeta[code] ? this.indicatorsMeta[code].indicator : code;
+          if(this.indicatorsMeta[code] && this.indicatorsMeta[code].dim !== 'none') {
+            indi+= ' ' + this.indicatorsMeta[code].dim
+          }
           if(indi.length > 15) {
             let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
             indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
@@ -450,7 +453,10 @@ export default {
       var trace = {
         z: corrData.data,
         x: corrData.index.map(code => {
-          let indi = this.indicatorsMeta[code].indicator
+          let indi = this.indicatorsMeta[code] ? this.indicatorsMeta[code].indicator : code;
+          if(this.indicatorsMeta[code] && this.indicatorsMeta[code].dim !== 'none') {
+            indi+= ' ' + this.indicatorsMeta[code].dim
+          }
           if(indi.length > 15) {
             let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
             indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
@@ -458,7 +464,10 @@ export default {
           return indi
         }),
         y: corrData.columns.map(code => {
-          let indi = this.indicatorsMeta[code].indicator
+          let indi = this.indicatorsMeta[code] ? this.indicatorsMeta[code].indicator : code;
+          if(this.indicatorsMeta[code] && this.indicatorsMeta[code].dim !== 'none') {
+            indi+= ' ' + this.indicatorsMeta[code].dim
+          }
           if(indi.length > 15) {
             let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
             indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
