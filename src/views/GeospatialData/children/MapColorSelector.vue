@@ -10,6 +10,7 @@
       <template v-slot:activator="{ on: menu, attrs }">
         <v-tooltip
           color="white"
+          :disabled="open"
           content-class="tooltip-white"
           transition="fade-transition"
           left maxWidth="200">
@@ -107,6 +108,7 @@ export default {
   ],
   methods: {
     changeColorScheme(scheme) {
+      this.open = false;
       this.activeColor = scheme;
       this.map.changeColor(scheme);
     },

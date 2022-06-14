@@ -74,6 +74,10 @@ export default {
             {
               display: true,
               type: "logarithmic",
+              scaleLabel: {
+                display: true,
+                labelString: 'Frequency'
+              },
               ticks: {
                 maxTicksLimit: 4,
                 max: 0,

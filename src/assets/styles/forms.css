@@ -55,4 +55,8 @@
 
 .select-floating {
   border-radius: 18px !important;
+  box-shadow: none;
+}
+.v-slider__tick {
+  cursor: pointer;
 }

@@ -469,6 +469,7 @@ export default class Map {
           0]);
         }
         this.emit('layerUpdate', {
+          activeLayer: this.activeLayer,
           colorRamp: cls.color,
           breaks,
           selectedData,
@@ -490,6 +491,7 @@ export default class Map {
     for (const eventType of ["zoomend", "dragend"]) {
       this.map.on(eventType, () => {
         if (!mapClassInstance.options.bivariateMode) {
+          console.log('kek')
           mapClassInstance.recolorBasedOnWhatsOnPage();
         } else {
           let bvls = this.options.bivariateLayerState;
