@@ -403,7 +403,7 @@ export default {
         orientation: 'h'
       }];
       plotly.newPlot('pre-bar', traces, {
-        autosize: true,
+        height: country.length * 30,
         margin: {l: 100, r:0, b:0, t:0},
         plot_bgcolor:"rgba(0,0,0,0)",
         width:document.getElementById('pre-bar').offsetWidth,
@@ -431,9 +431,8 @@ export default {
         orientation: 'v'
       }];
       var layout = {
-        autosize: true,
-        margin: {b: 200, r:100},
-        height:400,
+        margin: {b: 100, r:100, t:0},
+        height:300,
         plot_bgcolor:"rgba(0,0,0,0)",
         paper_bgcolor:"rgba(0,0,0,0)",
         width:document.getElementById('imp-bar').offsetWidth,
@@ -469,9 +468,8 @@ export default {
         type: 'heatmap'
       }
       var layout = {
-        autosize: true,
-        margin: {l: 200, b:100},
-        height:400,
+        margin: {l: 200, b:100, t:0},
+        height:corrData.index.length * 40,
         plot_bgcolor:"rgba(0,0,0,0)",
         paper_bgcolor:"rgba(0,0,0,0)",
         width:document.getElementById('corr').offsetWidth,
@@ -497,9 +495,8 @@ export default {
           x: 1,
         },
         margin: {t: 0, b:0},
-        autosize: false,
         width:document.getElementById('imp-pie').offsetWidth,
-        height:400,
+        height:300,
       })
     },
     emitYearChange(year) {
