@@ -54,8 +54,12 @@
               </v-col>
             </v-row>
             <v-row v-else>
-              <v-col cols="12">
+              <v-col v-if="yearsList" cols="12">
                 <p>Model is not avaliable for selected year</p>
+                <p>Avaliable years: {{yearsList}}</p>
+              </v-col>
+              <v-col v-else cols="12">
+                <p>This models is not avaliable for selected indicator</p>
               </v-col>
             </v-row>
           </v-expansion-panel-content>
@@ -136,6 +140,9 @@ export default {
     },
     modelAvaliable() {
       return this.mlPredictionData && this.mlPredictionData.data && this.mlPredictionData.data[this.year] ? true : false
+    },
+    yearsList() {
+      return this.mlPredictionData ? Object.keys(this.mlPredictionData.data).toString() : null
     }
   },
   components:{
@@ -257,7 +264,7 @@ export default {
 .ml-panel {
 }
 .ml-panel .icon-container{
-  height: 56px;
+  height: 64px;
   display: flex;
   align-items: center;
   padding-left: .2em;
