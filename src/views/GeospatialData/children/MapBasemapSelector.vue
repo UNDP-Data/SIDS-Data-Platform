@@ -10,6 +10,7 @@
       <template v-slot:activator="{ on: menu, attrs }">
         <v-tooltip
           color="white"
+          :disabled="open"
           content-class="tooltip-white"
           transition="fade-transition"
           left maxWidth="200">
@@ -22,7 +23,7 @@
               v-bind="attrs"
               v-on="{ ...tooltip, ...menu }"
             >
-              <i class="basemap-selector-icon" :class="getMapIcon(basemap)"></i>
+              <i class="basemap-selector-icon" :class="getMapIcon(activeColor)"></i>
             </v-btn>
           </template>
           <span>
@@ -89,6 +90,7 @@ export default {
   },
   methods: {
     changeBasemap(basemap) {
+      this.open = false;
       this.activeColor = basemap;
       this.map.changeBasemap(basemap);
     },

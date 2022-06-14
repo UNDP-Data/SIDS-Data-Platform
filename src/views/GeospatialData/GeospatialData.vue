@@ -21,7 +21,7 @@
       class="mode-chip"
       color="primary"
     >
-      Comparison mode enebled
+      Comparison mode enabled
     </v-chip>
     <v-chip
       v-if="bivariateModeEnabled"
@@ -29,7 +29,7 @@
       class="mode-chip"
       color="primary"
     >
-      Bivariate mode enebled
+      Bivariate mode enabled
     </v-chip>
     <map-controller
       :class="{'data-controller-hidden': menuColapsed}"

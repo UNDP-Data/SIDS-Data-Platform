@@ -9,6 +9,7 @@
       <template v-slot:activator="{ on: menu, attrs }">
         <v-tooltip
           color="white"
+          :disabled="open"
           content-class="tooltip-white"
           transition="fade-transition"
           left maxWidth="240">

@@ -195,9 +195,19 @@ export default {
 .vue-tabs-chrome .tabs-background-after {
   display: none;
 }
+.tab-add {
+  width:22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2px;
+}
 .tab-add-fixed {
   position: absolute;
   right: 20px;
   top: 0;
+}
+.tabs-close {
+  cursor: pointer;
 }
 </style>
