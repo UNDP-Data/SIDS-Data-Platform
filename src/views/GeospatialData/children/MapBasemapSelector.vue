@@ -23,7 +23,7 @@
               v-bind="attrs"
               v-on="{ ...tooltip, ...menu }"
             >
-              <i class="basemap-selector-icon" :class="getMapIcon(activeColor)"></i>
+              <i class="basemap-selector-icon" :class="getMapIcon(basemap)"></i>
             </v-btn>
           </template>
           <span>
@@ -91,7 +91,7 @@ export default {
   methods: {
     changeBasemap(basemap) {
       this.open = false;
-      this.activeColor = basemap;
+      this.basemap = basemap;
       this.map.changeBasemap(basemap);
     },
     getMapIcon(basemap) {
