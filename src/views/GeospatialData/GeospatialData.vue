@@ -3,16 +3,14 @@
     <v-btn
       @click="menuColapsed = !menuColapsed"
       class="button-collapse"
+      :class="{'button-collapse-rotated' : menuColapsed}"
       fab
       x-small
       >
       <v-icon
-        v-if="!menuColapsed">
-        mdi-eye-off
-      </v-icon>
-      <v-icon
-        v-if="menuColapsed">
-        mdi-eye
+        large
+      >
+        mdi-chevron-left
       </v-icon>
     </v-btn>
     <v-chip
@@ -32,7 +30,7 @@
       Bivariate mode enabled
     </v-chip>
     <map-controller
-      :class="{'data-controller-hidden': menuColapsed}"
+      :class="{'data-controller-colapsed': menuColapsed}"
       class="data-controller"
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
@@ -237,9 +235,6 @@ export default {
   transition: 0.5s ease-in-out all;
   opacity: 1;
 }
-.data-controller-hidden {
-  z-index: -1;
-}
 /* FOR LEGEND ??*/
 
 ::-webkit-scrollbar {
@@ -268,6 +263,7 @@ export default {
 .data-controller-colapsed {
   opacity: 0;
   z-index: -999;
+  left: -30px;
   pointer-events: none;
 }
 
@@ -296,10 +292,13 @@ export default {
   top: 4px;
   left: 4px;
   z-index: 1000;
+  transform: rotate(0deg);
   transition: all 200ms;
   background: rgba(221, 221, 221, 0.9);
 }
-
+.button-collapse-rotated {
+  transform: rotate(180deg);
+}
 .mode-chip {
   position: absolute;
   top: 20px;
