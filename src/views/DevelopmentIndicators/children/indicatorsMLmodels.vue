@@ -4,7 +4,7 @@
       <h3 class="ml-auto page-header text-center">
         AI Mode
       </h3>
-      <v-btn class="mr-0 ml-auto" icon @click="autoMode ? $emit('close') : autoMode = true">
+      <v-btn class="mr-0 ml-auto" icon @click="autoMode ? closeAiMode() : autoMode = true">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card-title>
@@ -44,6 +44,8 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content class="pt-4">
             <v-row v-if="modelAvaliable">
+              <h2 class="block-subheader">Prediction Strength</h2>
+              <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
               <v-col cols="8">
                 <div :id="'imp-bar-'+i">
                 </div>
@@ -223,6 +225,11 @@ export default {
     },
     isModelDisplayed(index) {
       return !(typeof this.activePanel === 'undefined' || this.activePanel === index)
+    },
+    closeAiMode() {
+      this.activePanel = undefined;
+      store.dispatch('ml/clearMlPredictionData')
+      this.$emit('close')
     }
   },
   created() {
