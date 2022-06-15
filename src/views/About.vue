@@ -9,88 +9,93 @@
       <v-col md="6" xs="12" sm="12">
         <v-expansion-panels flat accordion>
           <v-expansion-panel>
-            <v-expansion-panel-header>What are Small Island Developing States?</v-expansion-panel-header>
+            <v-expansion-panel-header>{{$t('about.whatSids')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <p>
-                <a href="http://unohrlls.org/about-sids/" target="_blank">Small Island Developing States (SIDS)</a> are a distinct group of 38 UN Member States and 20 Non-UN Members/Associate Members of United Nations regional commissions that face unique social, economic and environmental vulnerabilities. The three geographical regions in which SIDS are located are: the Caribbean, the Pacific, and the Atlantic, Indian Ocean and South China Sea (AIS).
+                <a href="http://unohrlls.org/about-sids/" target="_blank">{{$t('about.whatSidsContent[0]')}}</a> {{$t('about.whatSidsContent[1]')}}
               </p>
               <p>
-                SIDS were recognized as a special case both for their environment and development at the 1992 United Nations Conference on Environment and Development held in Rio de Janeiro, Brazil.
+                {{$t('about.whatSidsContent[2]')}}
               </p>
               <p>
-                The aggregate population of all the SIDS is 65 million, slightly less than 1% of the world’s population, yet this group faces unique social, economic, and environmental challenges.
+                {{$t('about.whatSidsContent[3]')}}
               </p>
               <p>
-                SIDS face a host of challenges including, for many, their remote geography. As a result, many SIDS face high import and export costs for goods as well as irregular international traffic volumes. Yet, they must rely on external markets for many goods due to the narrow resource base.
+                {{$t('about.whatSidsContent[4]')}}
               </p>
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-divider/>
           <v-expansion-panel>
-            <v-expansion-panel-header>What is UNDP's SIDS Offer?</v-expansion-panel-header>
+            <v-expansion-panel-header>{{$t('about.whatOffer')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <p>
-                UNDP’s SIDS offer –
+                {{$t('about.whatOfferContent[0]')}}
                 <a href="https://www.sparkblue.org/dashboard/small-island-developing-states" target="_blank">
-                  <b>Rising Up for SIDS</b>
+                  <b>{{$t('about.whatOfferContent[1]')}}</b>
                 </a>
-                 – presents an integrated approach for tapping into areas with potential to accelerate green recovery and transform societies based on three interconnected pillars: Climate Action, Blue Economy and Digital Transformation. The offer responds to the ambitions and demands SIDS expressed during the 2019 midterm review of the S.A.M.O.A. Pathway. It includes measures strengthening UNDP’s programmatic engagement, increasing our ability to respond to urgent challenges and enhancing organizational agility.
+                  {{$t('about.whatOfferContent[2]')}}
+              </p>Offer
+              <p>
+                <b>{{$t('about.whatOfferContent[3]')}}</b>
+                {{$t('about.whatOfferContent[4]')}}
+              <p>
+                <b>{{$t('about.whatOfferContent[5]')}}</b>
+                {{$t('about.whatOfferContent[6]')}}
+              <p>
+                <b>{{$t('about.whatOfferContent[7]')}}</b>
+                {{$t('about.whatOfferContent[8]')}}
               </p>
               <p>
-                <b>Climate Action</b> - Promoting decarbonized and resilient societies through scaled up climate action and enhanced efforts to mobilize climate finance.</p>
-              <p>
-                <b>Blue Economy</b> - Harnessing the blue economy through an integrated approach rooted in sustainable finance and development.</p>
-              <p>
-                <b>Digital Transformation</b> - Accelerating digital transformation through a whole-of-society approach that puts people at the centre for inclusive societies and resilient economies.
-              </p>
-              <p>
-                <b>Financing for Development</b> - Supporting SIDS to mobilize financing for development by seizing finance innovation opportunities such as: blue finance solutions, risk insurance, catalysing private sector investment and leveraging domestic resource mobilization.
-              </p>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-          <v-divider/>
-          <v-expansion-panel>
-            <v-expansion-panel-header>What is the SIDS Data Platform? </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <p>
-                The UNDP Data Platform for Small Island Developing States, a digital tool for accelerating development in SIDS by providing policymakers, research institutions, and country offices with access to updated, standardized, and comprehensive data. As a central component of the UNDP’s SIDS Offer, the visualization and analytics features of this platform will help SIDS to respond to the SAMOA Pathway and the 2030 agenda by rising up to the urgent challenges of climate change and their green and blue transition. By focusing on the needs of SIDS, this tool has been designed specifically to feature datasets about Digital Transformation, Blue Economy, and Climate Action.  There are three main types of data within the SIDS data platform, including data on the UNDP portfolio of projects and investment in SIDS, country-level development indicators, and geospatial data. For each data type we have developed interfaces within the platform to visualize, analyze, and export these data.
+                <b>{{$t('about.whatOfferContent[9]')}}</b>
+                {{$t('about.whatOfferContent[10]')}}
               </p>
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-divider/>
           <v-expansion-panel>
-            <v-expansion-panel-header>What are the sources of data used?</v-expansion-panel-header>
+            <v-expansion-panel-header>{{$t('about.whatPlatform')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <p>
-                The SIDS data platform uses all publicly available datasets from a broad base of partner agencies and research publications. This includes data from the World Bank, WHO, UNICEF, UNDESA, IRENA, ITU, IGRAC, IHME, FAO, UNCTAD, UNDESA, Yale, CIESIN, OECD, UNWTO, ILO, and many additional sources. All citations are provided with the corresponding dataset within the platform. We have strived to curate the data in order to feature reliable, accurate and comprehensive information.
+                {{$t('about.whatPlatformContent')}}
               </p>
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-divider/>
           <v-expansion-panel>
-            <v-expansion-panel-header>What are the future stages of development for this data platform?</v-expansion-panel-header>
+            <v-expansion-panel-header>{{$t('about.whatSources')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <p>
-                The current phase has been focused on the aggregation and visualization of publicly available development-related datasets in SIDS to support policymaking and to provide an opportunity for international, regional, and sub-regional SIDS-SIDS collaboration. In our next phase, we intend to use these collated datasets to build analysis tools that identify trends and generate insights specifically focused on the developmental challenges and solutions relevant for SIDS.
+                {{$t('about.whatSourcesContent')}}
               </p>
             </v-expansion-panel-content>
           </v-expansion-panel>
           <v-divider/>
           <v-expansion-panel>
-            <v-expansion-panel-header>Who should I contact to learn more?</v-expansion-panel-header>
+            <v-expansion-panel-header>{{$t('about.whatFuture')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <p>
-                To learn more about UNDP’s SIDS Offer, please visit our
-                <a href="https://www.sparkblue.org/dashboard/small-island-developing-states" target="_blank">SparkBlue page</a>.
+                {{$t('about.whatFutureContent')}}
+              </p>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-divider/>
+          <v-expansion-panel>
+            <v-expansion-panel-header>{{$t('about.whatContact')}}</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <p>
+                {{$t('about.whatContactContent[0]')}}
+                <a href="https://www.sparkblue.org/dashboard/small-island-developing-states" target="_blank">
+                  {{$t('about.whatContactContent[1]')}}</a>.
               </p>
               <p>
-                For questions about UNDP’s SIDS Offer, “Rising up for SIDS”, please contact:<br/>
-                Riad Meddeb, <i>Senior Principal Advisor for SIDS</i> – riad.meddeb@undp.org<br/>
-                Ines Benabdallah, <i>Programme Officer, SIDS</i> – ines.benabdallah@undp.org
+                {{$t('about.whatContactContent[2]')}}<br/>
+                {{$t('about.whatContactContent[3]')}}, <i>{{$t('about.whatContactContent[4]')}}</i> – riad.meddeb@undp.org<br/>
+                {{$t('about.whatContactContent[5]')}}, <i>{{$t('about.whatContactContent[6]')}}</i> – ines.benabdallah@undp.org
               </p>
               <p>
-                For technical questions about the platform please contact:<br/>
-                Benjamin Keller - benjamin.keller@undp.org
+                {{$t('about.whatContactContent[7]')}}<br/>
+                {{$t('about.whatContactContent[8]')}} - benjamin.keller@undp.org
               </p>
             </v-expansion-panel-content>
           </v-expansion-panel>

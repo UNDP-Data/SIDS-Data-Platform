@@ -58,7 +58,7 @@
           <template v-slot:header>
             <v-row lass="d-none d-lg-flex">
               <v-col class="offset-lg-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2" cols="8" sm="8" md='10' lg='8' xl="10">
-                <h2 class="page-header mt-md-5 mb-2">UNDP Portfolio in Small Island Developing States</h2>
+                <h2 class="page-header mt-md-5 mb-2">{{$t('portfolio.header')}}</h2>
               </v-col>
               <v-col class="" cols="2" sm="1" md='1' lg='2' xl="1">
                 <div class="mt-2 float-md-right mb-2">
@@ -94,7 +94,7 @@
               >
                 <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">
                   <info-hover-tooltip :contentName="page.contentName">
-                    <template v-slot:button>{{page.name}}</template>
+                    <template v-slot:button>{{$t(`root.goals.${page.value}`)}}</template>
                   </info-hover-tooltip>
                 </v-tab>
               </v-tabs>
@@ -123,7 +123,7 @@
         <v-row dense justify="center">
           <v-col cols='5' md="5" lg="12">
             <div class="select">
-            <label class="input-label">Years</label>
+            <label class="input-label">{{$t('root.forms.years')}}</label>
             <v-select
               rounded
               dense
@@ -138,7 +138,7 @@
           <v-col cols='5'  md="5" lg="12">
             <v-divider class="mt-2 d-none d-lg-block mb-2"></v-divider>
             <div class="select">
-              <label class="input-label">Funding categories</label>
+              <label class="input-label">{{$t('portfolio.fundingCategories')}}</label>
               <v-select
                 rounded
                 hide-details
@@ -154,7 +154,7 @@
         <v-row dense justify="center">
           <v-col class="d-block d-lg-none"  cols='5'  md="5" lg="12">
             <div class="select">
-              <label class="input-label">Region</label>
+              <label class="input-label">{{$t('root.forms.region')}}</label>
               <v-select
                 rounded
                 hide-details
@@ -168,7 +168,7 @@
           </v-col>
           <v-col cols='5'  md="5" lg="12">
             <div class="select">
-              <label class="input-label">Funding sources</label>
+              <label class="input-label">{{$t('portfolio.fundingSources')}}</label>
               <v-autocomplete
                 rounded
                 hide-details
@@ -252,10 +252,10 @@ export default {
     return {
       pages:goalTypes,
       activePage:goalTypes.findIndex((goal) => goal.value === this.goalsType),
-      fundingCategoriesTypes:['All',"European Union", "Donor Countries", "Programme Countries", "UN Agencies", "UN Pooled Funds", "Vertical Funds", "Other"],
+      fundingCategoriesTypes:['All', "European Union", "Donor Countries", "Programme Countries", "UN Agencies", "UN Pooled Funds", "Vertical Funds", "Other"],
       years:[
         {
-          text:'2012 to 2021',
+          text:this.$t('portfolio.yearsAll'),
           value: 'all',
         },{
           text:'2021',
