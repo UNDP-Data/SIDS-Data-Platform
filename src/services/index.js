@@ -25,7 +25,8 @@ export default {
   loadTextContent,
   loadML,
   loadMLTargetSize,
-  loadMLPredictorSize
+  loadMLPredictorSize,
+  loadLang
 }
 
 
@@ -809,4 +810,9 @@ async function loadMLTargetSize () {
 async function loadMLPredictorSize () {
   // const resp = await axios.get(`${ML_API_URL}/imputation/predictor_sample_size`)
   return 25
+}
+
+async function loadLang(lang) {
+  let resp = await axios.get(`${NEW_API_URl_2}/language/${lang}.json`);
+  return resp.data
 }
