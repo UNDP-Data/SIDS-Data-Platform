@@ -76,7 +76,7 @@ export default {
       bars: null
     }
   },
-  props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
+  props:['year', 'fundingCategory', 'fundingSource', 'goalsType'],
   mixins:[sidsdata, format],
   computed: {
     ...mapState({
@@ -106,6 +106,7 @@ export default {
       }, {})
     },
     barsData() {
+      console.log(this.portfolioData)
       if(this.goalsType === 'samoa') {
         let barsData = goals.samoa.map(() => {
           return {

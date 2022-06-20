@@ -10,8 +10,8 @@
                 rounded
                 dense
                 hide-details
-                item-value="value"
-                item-text="text"
+                item-text="name"
+                item-value="iso"
                 :value="region"
                 :items="regions"
                 @change="emitRegionChange"

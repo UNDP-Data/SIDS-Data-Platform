@@ -47,7 +47,7 @@
         ></portfolio-pie-chart>
       </v-col>
     </v-row>
-    <v-row class="d-none d-md-flex">
+    <v-row class="d-none d-md-flex mt-0">
       <v-col cols="12">
         <portfolio-map
           :region="region"
@@ -56,9 +56,9 @@
 
         >
           <template v-slot:header>
-            <v-row lass="d-none d-lg-flex">
+            <v-row class="map-header d-none d-lg-flex">
               <v-col class="offset-lg-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2" cols="8" sm="8" md='10' lg='8' xl="10">
-                <h2 class="page-header mt-md-5 mb-2">{{$t('portfolio.header')}}</h2>
+                <h2 class="page-header mt-md-2 mb-2">{{$t('portfolio.header')}}</h2>
               </v-col>
               <v-col class="" cols="2" sm="1" md='1' lg='2' xl="1">
                 <div class="mt-2 float-md-right mb-2">
@@ -80,7 +80,7 @@
         </portfolio-map>
       </v-col>
     </v-row>
-    <v-row  v-if="isDesktop" class="d-block mb-3 mt-negative">
+    <v-row  v-if="isDesktop" class="bars-row d-block mb-3 mt-negative">
       <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
     </v-row>
     <v-row class="d-none d-md-flex mt-md-0 mt-lg-2 flex-lg-nowrap" justify="center">
@@ -160,6 +160,8 @@
                 hide-details
                 dense
                 :value="region"
+                item-text="name"
+                item-value="iso"
                 @change="updateRegion"
                 :items="regionsToSelect"
                 outlined
@@ -290,12 +292,11 @@ export default {
         }
       ],
       regionsToSelect: [
-        {value: "Caribbean", text:'Caribbean'},
-        {value: "AIS", text:'AIS'},
-        {value: "Pacific", text:'Pacific'},
-        {value: "All", text:'All SIDS'},
-      ],
-      sidsList,
+        {iso: "Caribbean", name:'Caribbean'},
+        {iso: "AIS", name:'AIS'},
+        {iso: "Pacific", name:'Pacific'},
+        {iso: "All", name:'All SIDS'},
+      ].concat(sidsList.filter(country => !country.average)),
       sdgToSamoa: { 1: [1], 2: [6], 3: [11], 4: [12, 13], 5: [13], 6: [7], 7: [3], 8: [1], 9: [1, 8], 10: [12, 13], 11: [1, 4, 8, 10], 12: [9, 10], 13: [2, 4], 14: [5, 10, 14], 15: [10, 15], 16: [1, 13], 17: [16] },
       goal:'all',
       regions: ["Caribbean", "AIS", "Pacific"],
@@ -520,6 +521,11 @@ export default {
     min-width: 170px;
     margin-right: auto;
   }
+
+  .map-header {
+    position: relative;
+    z-index: 5;
+  }
   @media all and (max-width:1263px) {
     .tabs-column {
       min-width: 100%;
@@ -527,5 +533,9 @@ export default {
     .margin-wrap-right {
       max-width: none;
     }
+  }
+  .bars-row {
+    position: relative;
+    z-index: 2;
   }
 </style>
