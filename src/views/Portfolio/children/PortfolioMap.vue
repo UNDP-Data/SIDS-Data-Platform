@@ -50,7 +50,7 @@ import PortfolioIndicatorBox from './PortfolioIndicatorBox'
 import format from '@/mixins/format.mixin'
 import * as d3 from 'd3';
 import * as d3geo from "d3-geo-projection";
-import mapData from '@/assets/world-administrative-boundaries.json'
+import mapData from '@/assets/output.json'
 import pointData from '@/assets/sids.json'
 import sidsList from '@/assets/sidsList'
 
@@ -73,8 +73,59 @@ export default {
   data() {
     return {
       map:null,
-      activeCountry:null,
-      zoom:null
+      zoom:null,
+      path: null,
+      width: null,
+      height: null,
+      g:null,
+      titles:[
+        {"type":"Feature","geometry":{"type":"Point","coordinates":[-115.98267711245876,8.520880383123256]},"properties":{"OBJECTID":102, color:"#0a8080", "name":'Caribbean'}},
+        {"type":"Feature","geometry":{"type":"Point","coordinates":[-2.606592420403899,-8.23811497852346974]},"properties":{"OBJECTID":102, color:"#97032b", "name":'AIS'}},
+        {"type":"Feature","geometry":{"type":"Point","coordinates":[140.580479656511, -0.5129557776870115]},"properties":{"OBJECTID":102, color:"#f0a402", "name":'Pacific'}},
+      ],
+      regionTransforms: {
+        'Caribbean' : {
+          translate: [0, -130],
+          scale: 2
+        },
+        'AIS' : {
+          translate: [-300, -130],
+          scale: 1.5
+        },
+        'Pacific' : {
+          translate: [-1500, -350],
+          scale: 2
+        }
+      },
+      textTransform: {
+        SUR:[0,20],
+        GUY: [-12, 20],
+        BLZ:[-14, 10],
+        TTO: [25, 35],
+        GRD: [30, 30],
+        VCT: [35, 25],
+        BRB: [35, 13],
+        LCA: [43, 5],
+        DMA: [43, 2],
+        MSR: [45, -3],
+        ATG: [40,-12],
+        KNA: [40, -22],
+        AIA: [30, -38],
+        SXM: [40, -28],
+        VGB: [20, -48],
+        DOM: [-15, -50],
+        BHS: [-15, 0],
+        CUB: [-22, 0],
+        CYM: [-16, 4],
+        JAM: [-10, 20],
+        HTI: [-13, -35],
+        CUW: [-27, 30],
+        ABW: [-24, 10],
+        TCA: [30, -56],
+        TON: [0, 10],
+        MHL: [0, 10],
+        SLB: [0, 10],
+      }
     }
   },
   computed:{
@@ -123,59 +174,45 @@ export default {
     initMap() {
       let rootThis = this;
       this.map = d3.select('#map-svg');
-      let width = document.getElementById('map-container').offsetWidth,
-      height = document.getElementById('map-container').offsetHeight,
-      projection = d3geo.geoEckert4().rotate([-61,0])
-                   .fitSize([width, height], mapData),
-      path = d3.geoPath().projection(projection),
-      g = this.map.append("g"),
-      paths = g.selectAll("path")
-        .data(mapData.features);
-      let pointsg = this.map.append("g").attr("class", "points"),
+      this.width = document.getElementById('map-container').offsetWidth;
+      this.height = document.getElementById('map-container').offsetHeight;
+      this.g = this.map.append("g");
+      let pointDataFiltered = pointData.features.filter(feature => {
+        return sidsList.some(c => c.iso === feature.properties.ISOB)
+      })
+      let projection = d3geo.geoEckert4().rotate([-61,0])
+                   .fitSize([this.width, this.height], mapData),
+      gpaths = this.g.append("g"),
+      pointsg = this.g.append("g").attr("class", "points"),
+      gtexts = this.g.append("g"),
+      gLines = this.g.append("g"),
+      gTitles = this.g.append("g"),
+      paths = gpaths.selectAll("path")
+        .data(mapData.features),
       points = pointsg.selectAll("circle")
-        .data(pointData.features);
+        .data(pointDataFiltered);
+      this.path = d3.geoPath().projection(projection);
       this.zoom = d3.zoom().on("zoom", () => {
-        g.style("stroke-width", 1 / d3.event.transform.k + "px");
-        g.attr("transform", d3.event.transform);
-        pointsg.attr("transform", d3.event.transform)
+        this.g.style("stroke-width", 1 / d3.event.transform.k + "px");
+        this.g.attr("transform", d3.event.transform);
         pointsg.style("stroke-width", 1 / d3.event.transform.k + "px");
-        console.log(points, 4 / d3.event.transform.k)
         pointsg.selectAll("circle").attr("r", 4 / d3.event.transform.k + 'px')
+        gtexts.selectAll("text").attr("font-size", 10 / d3.event.transform.k + 'px')
+        gTitles.selectAll("text").attr("font-size", 20 / d3.event.transform.k + 'px')
+        gLines.selectAll("path").attr("stroke-width", 1 / d3.event.transform.k + 'px')
       });
-      let i = [];
       paths.enter().append("path")
         .attr('id', (d) => {
           return d.properties.iso3
         })
         .attr("fill",(d) => {
-          let sidsCountry = sidsList.find(c => c.iso === d.properties.iso3)
-          if(sidsCountry) {
-            i.push(d.properties.iso3);
-            if(sidsCountry.region === 'AIS') {
-              return  "#97032b"
-            }
-            if(sidsCountry.region === 'Pacific') {
-              return  "#f0a402"
-            }
-            if(sidsCountry.region === 'Caribbean') {
-              return  "#0a8080"
-            }
-          }
-          return  "#c5c5c6"
+          return rootThis.computeFill(d.properties.iso3)
         })
         .attr("class", (d) => {
-          let sidsCountry = sidsList.find(c => c.iso === d.properties.iso3)
-          if(sidsCountry) {
-            if(sidsCountry.region === 'AIS') {
-              return  "clickable AIS"
-            }
-            if(sidsCountry.region === 'Pacific') {
-              return  "clickable Pacific"
-            }
-            if(sidsCountry.region === 'Caribbean') {
-              return  "clickable Caribbean"
-            }
+          if(sidsList.some(c => c.iso === d.properties.iso3)) {
+            return `clickable ${rootThis.computeRegion(d.properties.iso3)}`
           }
+          return ''
         })
         .attr("d", d3.geoPath()
             .projection(projection)
@@ -184,150 +221,298 @@ export default {
         .on('mousedown.log', function (d) {
           if(this.classList.contains("clickable")) {
             d3.event.stopPropagation()
-            if(rootThis.activeCountry === d.properties.iso3) {
-              rootThis.activeCountry = null
-              rootThis.map.attr("class", '');
-              rootThis.resetMap();
-              rootThis.map.selectAll(`.clickable`).style("stroke", "#fff");
+            if(rootThis.region === d.properties.iso3) {
+              rootThis.resetMap(d.properties.iso3);
+              rootThis.$emit('updateRegion', 'All');
             } else {
-              rootThis.map.attr("class", 'zoomed');
-              rootThis.map.selectAll(`.clickable`).style("stroke", "#fff");
-              rootThis.map.selectAll(`#${d.properties.iso3}`).style("stroke", "#000");
-              rootThis.map.selectAll(`#${d.properties.iso3}`).raise()
-              rootThis.activeCountry = d.properties.iso3
-              var bounds = path.bounds(d),
-                dx = bounds[1][0] - bounds[0][0],
-                dy = bounds[1][1] - bounds[0][1],
-                x = (bounds[0][0] + bounds[1][0]) / 2,
-                y = (bounds[0][1] + bounds[1][1]) / 2,
-                scale = Math.max(1, Math.min(25, 0.9 / Math.max(dx / width, dy / height))),
-                translate = [width / 2 - scale * x, height / 2 - scale * y];
-
-              rootThis.map.transition()
-                .duration(750)
-                .call( rootThis.zoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale) );
-              rootThis.handleCountryClick(d.properties.iso3)
+              rootThis.selectCountry(d.properties.iso3, d)
             }
           }
         });
 
         points.enter().append("circle")
-          .attr("cx", function (d) { console.log(projection(d.geometry.coordinates), d); return projection(d.geometry.coordinates)[0]; })
+          .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
           .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
           .attr("r", "4px")
+
           .attr("fill",(d) => {
-            let sidsCountry = sidsList.find(c => c.iso === d.properties.ISOB)
-            if(sidsCountry) {
-              i.push(d.properties.ISOB);
-              if(sidsCountry.region === 'AIS') {
-                return  "#97032b"
-              }
-              if(sidsCountry.region === 'Pacific') {
-                return  "#f0a402"
-              }
-              if(sidsCountry.region === 'Caribbean') {
-                return  "#0a8080"
-              }
-            }
-            return  "#c5c5c6"
+            return rootThis.computeFill(d.properties.ISOB)
           })
           .attr("class", (d) => {
-            let sidsCountry = sidsList.find(c => c.iso === d.properties.ISOB)
-            if(sidsCountry) {
-            if(sidsCountry.region === 'AIS') {
-              return  "clickable AIS"
-            }
-            if(sidsCountry.region === 'Pacific') {
-              return  "clickable Pacific"
-            }
-            if(sidsCountry.region === 'Caribbean') {
-              return  "clickable Caribbean"
-            }
-            }
+            return `clickable ${rootThis.computeRegion(d.properties.ISOB)}`
           })
           .style("stroke", "#fff")
           .on('mousedown.log', function (d) {
             if(this.classList.contains("clickable")) {
               d3.event.stopPropagation()
-              if(rootThis.activeCountry === d.properties.ISOB) {
-                rootThis.activeCountry = null
-                rootThis.map.attr("class", '');
+              if(rootThis.region === d.properties.ISOB) {
                 rootThis.resetMap()
-                rootThis.map.selectAll(`.clickable`).style("stroke", "#fff");
+                rootThis.$emit('updateRegion', 'All');
               } else {
-                rootThis.map.attr("class", 'zoomed');
-                rootThis.map.selectAll(`.clickable`).style("stroke", "#fff");
-                rootThis.map.selectAll(`#${d.properties.ISOB}`).style("stroke", "#000");
-                rootThis.map.selectAll(`#${d.properties.ISOB}`).raise()
-                rootThis.activeCountry = d.properties.ISOB
-                var bounds = path.bounds(d),
-                  dx = bounds[1][0] - bounds[0][0],
-                  dy = bounds[1][1] - bounds[0][1],
-                  x = (bounds[0][0] + bounds[1][0]) / 2,
-                  y = (bounds[0][1] + bounds[1][1]) / 2,
-                  scale = Math.max(1, Math.min(25, 0.9 / Math.max(dx / width, dy / height))),
-                  translate = [width / 2 - scale * x, height / 2 - scale * y];
-                rootThis.map.transition()
-                  .duration(750)
-                  .call( rootThis.zoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale) );
-                  rootThis.handleCountryClick(d.properties.ISOB)
+                rootThis.selectCountry(d.properties.ISOB, d)
               }
             }
           });
         this.map
           .on("mousedown.log", function() {
             let coordinates = projection.invert(d3.mouse(this))[0],
-            region,
-            translate,
-            scale;
+            region;
             if(coordinates > -110 && coordinates < -30 ) {
               region = 'Caribbean';
-              translate =[-200, -600]
-              scale = 4;
             } else if (coordinates > -30 && coordinates < 110) {
               region = 'AIS';
-              translate =[-300, -100]
-              scale = 1.5;
             } else {
               region = 'Pacific';
-              translate =[-1500, -350]
-              scale = 2;
             }
-            if(rootThis.activeCountry !== 'All') {
-              rootThis.map.selectAll(`.${rootThis.activeCountry}`).style("stroke", "#fff");
-              rootThis.activeCountry = 'All';
-              rootThis.map.attr("class", '');
-              rootThis.map.selectAll(`.clickable`).style("stroke", "#fff");
-              return rootThis.resetMap()
+            if(rootThis.region !== 'All') {
+              rootThis.resetMap()
+              rootThis.$emit('updateRegion', 'All');
             } else {
-              rootThis.map.transition()
-                .duration(750)
-                .call( rootThis.zoom.transform, d3.zoomIdentity ).on("end", function() {
-                  rootThis.map.selectAll(`.${region}`).style("stroke", "#000");
-                  rootThis.map.transition()
-                    .duration(750)
-                    .call( rootThis.zoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale) ); // updated for d3 v4
+              rootThis.selectRegion(region)
+            }
+          })
+        gtexts.selectAll('.country_label.point_label')
+          .data(pointDataFiltered)
+          .enter().append('text')
+          .attr("class", 'country_label point_label')
+          .text(function (d) { return d.properties.Admin})
+          .attr("fill", "black")
+          .style("text-anchor", (d) => {
+            if(rootThis.textTransform[d.properties.ISOB] && rootThis.textTransform[d.properties.ISOB][0] < 0) {
+              return 'end'
+            }
+            return "start"
+          })
+          .style("transform", (d) => {
+            if(rootThis.textTransform[d.properties.ISOB]) {
+              return `translate(${rootThis.textTransform[d.properties.ISOB][0]}px,${rootThis.textTransform[d.properties.ISOB][1]}px)`
+            }
+            return ''
+          })
+          .attr('id', function (d) {return `point-label-${d.properties.ISOB}`})
+          .attr("dx", function (d) { return projection(d.geometry.coordinates)[0]+5; })
+          .attr("font-size", '10px')
+          .attr("dy", function (d) { return projection(d.geometry.coordinates)[1]-5; })
+          .on('mousedown.log', function (d) {
+            d3.event.stopPropagation()
+            let iso = d.properties.ISOB || d.properties.iso3;
+            if(rootThis.region === iso) {
+              rootThis.resetMap()
+              rootThis.$emit('updateRegion', 'All');
+            } else {
+              rootThis.selectCountry(iso, d)
+            }
+          });
+
+        gtexts.selectAll('.country_label.poly_label')
+          .data(mapData.features)
+          .enter().append('text')
+          .attr('id', function (d) {return `poly-label-${d.properties.iso3}`})
+          .attr("class", 'country_label poly_label')
+          .each(function(d) {
+            let sidsCountry = sidsList.find(c => c.iso === d.properties.iso3)
+            if(sidsCountry && d3.select(`#point-label-${d.properties.iso3}`).empty()) {
+              var bounds = rootThis.path.bounds(d),
+              x = (bounds[0][0] + bounds[1][0]) / 2,
+              y = (bounds[0][1] + bounds[1][1]) / 2;
+              d3.select(this).text(d.properties.name)
+                .attr("dx", x+5)
+                .attr("dy", y-5)
+                .attr("font-size", '10px')
+                .attr("fill", "black")
+                .style("transform", (d) => {
+                  if(rootThis.textTransform[d.properties.iso3]) {
+                    return `translate(${rootThis.textTransform[d.properties.iso3][0]}px,${rootThis.textTransform[d.properties.iso3][1]}px)`
+                  }
+                  return ''
+                })
+                .style("text-anchor", (d) => {
+                  if(rootThis.textTransform[d.properties.iso3] && rootThis.textTransform[d.properties.iso3][0] < 0) {
+                    return 'end'
+                  }
+                  return "start"
                 })
             }
-            rootThis.activeCountry = region;
-            rootThis.$emit('updateRegion', region);
           })
+      let line = d3.line()
+        .x(function(d) { return d.x; })
+        .y(function(d) { return d.y; })
+        .curve(d3.curveLinear)
+      gTitles.selectAll(".map-title")
+        .data(this.titles)
+        .enter().append("text")
+          .attr("class", "map-title")
+          .attr("dx", function (d) { return projection(d.geometry.coordinates)[0]+5; })
+          .attr("dy", function (d) { return projection(d.geometry.coordinates)[1]-5; })
+          .attr("stroke",(d)=> {
+            return d.properties.color
+          })
+          .style("fill",(d)=> {
+            return d.properties.color
+          })
+          .text((d)=> {
+            return d.properties.name
+          })
+          .attr("font-size", '20px')
+          .on((d)=> {
+            d3.event.stopPropagation()
+            rootThis.selectRegion(d.properties.name)
+          })
+      gLines.selectAll(".parish-line.point-line")
+        .data(pointDataFiltered)
+      .enter().append('path')
+        .attr("class", "parish-line point-line")
+        .attr('id', function (d) {return `point-line-${d.properties.ISOB}`})
+        .attr("d", function(d) {
+          let tTransfrom = rootThis.textTransform[d.properties.ISOB]
+          if(tTransfrom && (Math.abs(tTransfrom[0]) + Math.abs(tTransfrom[1])) > 10 ) {
+            let centroid = rootThis.path.centroid(d),
+            endpointX = centroid[0]+ tTransfrom[0] + 5,
+            endpointY = centroid[1]+ tTransfrom[1] - 8;
+            if(tTransfrom[0] < -10) {
+              endpointX+=3
+              // endpointX+=d3.select(`#point-label-${d.properties.ISOB}`).node().getComputedTextLength();
+            }
+            return line([
+              {"x": centroid[0], "y": centroid[1]},
+              {"x": endpointX, "y": endpointY}
+            ]);
+          }
+        })
+        .attr("stroke", "black")
+        .attr("stroke-width", 1)
+        .attr("opacity", 0.8)
+        .attr("fill", "#000")
+    gLines.selectAll(".parish-line.poly-name-line")
+      .data(mapData.features)
+    .enter().append('path')
+      .attr("class", "parish-line poly-name-line")
+      .attr("d", function(d) {
+        let sidsCountry = sidsList.find(c => c.iso === d.properties.iso3);
+        let point = pointDataFiltered.some((k) => {
+          return k.properties.ISOB === d.properties.iso3
+        })
+        if(sidsCountry && !point) {
+          let tTransfrom = rootThis.textTransform[d.properties.iso3]
+          if(tTransfrom && (Math.abs(tTransfrom[0]) + Math.abs(tTransfrom[1])) > 10 ) {
+            let centroid = rootThis.path.centroid(d),
+            endpointX = centroid[0]+ tTransfrom[0] + 5,
+            endpointY = centroid[1]+ tTransfrom[1] - 8;
+            if(tTransfrom[0] < -10) {
+              endpointX+=3
+              // endpointX+=d3.select(`#poly-label-${d.properties.iso3}`).node().getComputedTextLength();
+            }
+            return line([
+              {"x": centroid[0], "y": centroid[1]},
+              {"x": endpointX, "y": endpointY}
+            ]);
+          }
+        }
+      })
+      .attr("stroke", "black")
+      .attr("stroke-width", 1)
+      .attr("opacity", 0.8)
+      .attr("fill", "#000")
+    },
+    computeRegion(iso) {
+      let sidsCountry = sidsList.find(c => c.iso === iso)
+      if(sidsCountry) {
+        return sidsCountry.region
+      } else return '';
+    },
+    computeFill(iso) {
+      let region = this.computeRegion(iso)
+      if(region) {
+        if(region === 'AIS') {
+          return  "#97032b"
+        }
+        if(region === 'Pacific') {
+          return  "#f0a402"
+        }
+        if(region === 'Caribbean') {
+          return  "#0a8080"
+        }
+      }
+      return  "#c5c5c6"
     },
     resetMap() {
+      d3.selectAll('#ctitle').remove()
+      this.map.attr("class", '');
+      this.map.selectAll(`.clickable`).style("stroke", "#fff");
       this.map.transition()
-        .duration(750)
+        .duration(1350)
+        .ease(d3.easeLinear)
         .call( this.zoom.transform, d3.zoomIdentity ); // updated for d3 v4
-        this.handleCountryClick('All')
     },
-    handleCountryClick(iso) {
-      this.$emit('updateRegion', iso);
+    selectCountry(iso) {
+        d3.selectAll('#ctitle').remove()
+        let d = mapData.features.find(d => d.properties.iso3 === iso)
+        this.map.attr("class", 'zoomed');
+        this.map.selectAll(`.clickable`).style("stroke", "#fff");
+        this.map.selectAll(`#${iso}`).style("stroke", "#000");
+        this.map.selectAll(`#${iso}`).raise()
+        var bounds = this.path.bounds(d),
+          dx = bounds[1][0] - bounds[0][0],
+          dy = bounds[1][1] - bounds[0][1],
+          x = (bounds[0][0] + bounds[1][0]) / 2,
+          y = (bounds[0][1] + bounds[1][1]) / 2,
+          scale = Math.max(1, Math.min(25, 0.9 / Math.max(dx / (this.width-200), dy / (this.height-200)))),
+          translate = [this.width / 2 - scale * x, this.height / 2 - scale * y];
+        this.map.transition()
+          .duration(1350)
+          .ease(d3.easeLinear)
+          .call( this.zoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale) );
+        let center = this.path.centroid(d)
+        this.g.append("text")
+        .attr('id', 'ctitle')
+        .text(function () { return d.properties.name})
+        .style("text-anchor", 'middle')
+        .attr("dx", center[0])
+        .attr("dy", center[1])
+        .attr("font-size", 30 / scale + 'px')
+        if(iso !== this.region) {
+          this.$emit('updateRegion', iso);
+        }
+    },
+    selectRegion(name) {
+      let transforms = this.regionTransforms[name]
+      this.map.transition()
+        .duration(1350)
+        .call( this.zoom.transform, d3.zoomIdentity ).on("end", () => {
+          this.map.selectAll(`.${name}`).style("stroke", "#000");
+          this.map.transition()
+            .ease(d3.easeLinear)
+            .duration(1350)
+            .call( this.zoom.transform, d3.zoomIdentity.translate(transforms.translate[0],transforms.translate[1]).scale(transforms.scale) ); // updated for d3 v4
+        })
+      if(name !== this.region) {
+        this.$emit('updateRegion', name);
+      }
     }
   },
   watch: {
+    region() {
+      if(this.region !== 'All') {
+        if(['AIS', 'Caribbean', 'Pacific'].includes(this.region)) {
+          this.selectRegion(this.region)
+        } else {
+          this.selectCountry(this.region)
+        }
+      } else {
+        this.resetMap();
+      }
+    }
   },
   mounted() {
-    this.initMap()
-    console.log('init')
+    this.initMap();
+    if(this.region !== 'All') {
+      if(['AIS', 'Caribbean', 'Pacific'].includes(this.region)) {
+        console.log(this.region, 'sregion')
+        this.selectRegion(this.region)
+      } else {
+        this.selectCountry(this.region)
+      }
+    }
   }
 }
 </script>
@@ -427,17 +612,32 @@ export default {
   cursor: pointer;
 }
 #map-container svg {
-  transform: translateY(-50px);
+  margin-top: -30px;
   width: 100%;
   height: 100%;
 }
 
-.zoomed .points{
+.zoomed .points,.zoomed .country_label, .zoomed .parish-line, .zoomed .map-title {
   display: none;
 }
 
 .svg-shadow {
   -webkit-filter: drop-shadow( 1px 0px 18px 7px rgba(255, 236, 0, 0.43));
   filter: drop-shadow( 1px 0px 18px 7px rgba(255, 236, 0, 0.43));
+}
+.country_label {
+  font-family: sans-serif;
+  text-shadow: -1px 1px 2px #f4f5f8, 1px 1px 2px #f4f5f8, 1px -1px 2px #f4f5f8, -1px -1px 2px #f4f5f8;
+  fill: black;
+}
+#ctitle {
+
+    font-family: sans-serif;
+    text-shadow: -1px 1px 2px #f4f5f8, 1px 1px 2px #f4f5f8, 1px -1px 2px #f4f5f8, -1px -1px 2px #f4f5f8;
+    fill: black;
+}
+.map-title {
+  font-family: sans-serif;
+  font-weight: bold;
 }
 </style>

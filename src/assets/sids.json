@@ -12,6 +12,7 @@
 {"type":"Feature","geometry":{"type":"Point","coordinates":[103.81725592022462,1.3587608708176049]},"properties":{"OBJECTID":17,"Admin":"Singapore","ISO":"SGP","Alpha":"Singapore","Pop":5888926,"ISOB":"SGP","PovPPT":0,"UNMem":"Full"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[160.16894866984535,-9.62442229575231]},"properties":{"OBJECTID":18,"Admin":"Solomon Islands","ISO":"SLB","Alpha":"Solomon Islands","Pop":647581,"ISOB":"SLB","PovPPT":6.81,"UNMem":"Full"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[125.92295251015025,-8.809786732171915]},"properties":{"OBJECTID":20,"Admin":"East Timor","ISO":"TLS","Alpha":"Timor-Leste","Pop":1291358,"ISOB":"TLS","PovPPT":9.74,"UNMem":"Full"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-64.78104999999994, 32.29060000000004]},"properties":{"OBJECTID":53,"Admin":"Bermuda","ISO":"BMU","Alpha":"Bermuda","Pop":1218208,"ISOB":"BMU","PovPPT":1.57,"UNMem":"Full"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-61.293029144079696,10.421093588698227]},"properties":{"OBJECTID":21,"Admin":"Trinidad and Tobago","ISO":"TTO","Alpha":"Trinidad and Tobago","Pop":1218208,"ISOB":"TTO","PovPPT":1.57,"UNMem":"Full"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-69.98267711245876,12.520880383123256]},"properties":{"OBJECTID":22,"Admin":"Aruba","ISO":"ABW","Alpha":"Aruba","Pop":115120,"ISOB":"ABW","PovPPT":null,"UNMem":"Non-UN or Associate"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-63.064989265642055,18.22395950202946]},"properties":{"OBJECTID":23,"Admin":"Anguilla","ISO":"AIA","Alpha":"Anguilla","Pop":17087,"ISOB":"AIA","PovPPT":null,"UNMem":"Non-UN or Associate"}},
@@ -43,5 +44,10 @@
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-64.7716286835169,17.741283019495825]},"properties":{"OBJECTID":49,"Admin":"United States Virgin Islands","ISO":"VIR","Alpha":"Virgin Islands (U.S.)","Pop":107268,"ISOB":"VIR","PovPPT":null,"UNMem":"Non-UN or Associate"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[166.86342773370302,-15.386247709963811]},"properties":{"OBJECTID":50,"Admin":"Vanuatu","ISO":"VUT","Alpha":"Vanuatu","Pop":282814,"ISOB":"VUT","PovPPT":null,"UNMem":"Full"}},
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-172.43743812367043,-13.630770277426336]},"properties":{"OBJECTID":51,"Admin":"Samoa","ISO":"WSM","Alpha":"Samoa","Pop":200108,"ISOB":"WSM","PovPPT":null,"UNMem":"Full"}},
-{"type":"Feature","geometry":{"type":"Point","coordinates":[179.2039742263296,-8.499723712978948]},"properties":{"OBJECTID":52,"Admin":"Tuvalu","ISO":"TUV","Alpha":"Tuvalu","Pop":11000,"ISOB":"TUV","PovPPT": null,"UNMem":"Full"}}
+{"type":"Feature","geometry":{"type":"Point","coordinates":[179.2039742263296,-8.499723712978948]},"properties":{"OBJECTID":52,"Admin":"Tuvalu","ISO":"TUV","Alpha":"Tuvalu","Pop":11000,"ISOB":"TUV","PovPPT": null,"UNMem":"Full"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-81.34166999999991, 19.30416000000008]},"properties":{"OBJECTID":53,"Admin":"Cayman Islands","ISO":"CYM","Alpha":"Cayman Islands","Pop":11000,"ISOB":"CYM","PovPPT": null,"UNMem":"Full"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[50.55964318352661, 26.022409517037765]},"properties":{"OBJECTID":54,"Admin":"Bahrain","ISO":"BHR","Alpha":"Bahrain","Pop":11000,"ISOB":"BHR","PovPPT": null,"UNMem":"Full"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-171.8526596624734, -9.19517535107691]},"properties":{"OBJECTID":55,"Admin":"Tokelau","ISO":"TKL","Alpha":"Tokelau","Pop":11000,"ISOB":"TKL","PovPPT": null,"UNMem":"Full"}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-71.81294727044643, 21.83668194834703]},"properties":{"OBJECTID":56,"Admin":"Turks and Caicos Islands","ISO":"TCA","Alpha":"Turks and Caicos Islands","Pop":11000,"ISOB":"TCA","PovPPT": null,"UNMem":"Full"}}
+
 ]}
