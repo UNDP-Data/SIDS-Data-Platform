@@ -77,6 +77,7 @@ export default {
       path: null,
       width: null,
       height: null,
+      activeRegion: null,
       g:null,
       titles:[
         {"type":"Feature","geometry":{"type":"Point","coordinates":[-115.98267711245876,8.520880383123256]},"properties":{"OBJECTID":102, color:"#0a8080", "name":'Caribbean'}},
@@ -222,10 +223,9 @@ export default {
           if(this.classList.contains("clickable")) {
             d3.event.stopPropagation()
             if(rootThis.region === d.properties.iso3) {
-              rootThis.resetMap(d.properties.iso3);
               rootThis.$emit('updateRegion', 'All');
             } else {
-              rootThis.selectCountry(d.properties.iso3, d)
+              rootThis.$emit('updateRegion', d.properties.iso3);
             }
           }
         });
@@ -246,10 +246,9 @@ export default {
             if(this.classList.contains("clickable")) {
               d3.event.stopPropagation()
               if(rootThis.region === d.properties.ISOB) {
-                rootThis.resetMap()
                 rootThis.$emit('updateRegion', 'All');
               } else {
-                rootThis.selectCountry(d.properties.ISOB, d)
+                rootThis.$emit('updateRegion', d.properties.ISOB);
               }
             }
           });
@@ -265,10 +264,9 @@ export default {
               region = 'Pacific';
             }
             if(rootThis.region !== 'All') {
-              rootThis.resetMap()
               rootThis.$emit('updateRegion', 'All');
             } else {
-              rootThis.selectRegion(region)
+              rootThis.$emit('updateRegion', region);
             }
           })
         gtexts.selectAll('.country_label.point_label')
@@ -297,10 +295,9 @@ export default {
             d3.event.stopPropagation()
             let iso = d.properties.ISOB || d.properties.iso3;
             if(rootThis.region === iso) {
-              rootThis.resetMap()
               rootThis.$emit('updateRegion', 'All');
             } else {
-              rootThis.selectCountry(iso, d)
+              rootThis.$emit('updateRegion', iso);
             }
           });
 
@@ -354,9 +351,9 @@ export default {
             return d.properties.name
           })
           .attr("font-size", '20px')
-          .on((d)=> {
+          .on('mousedown.log', (d)=> {
             d3.event.stopPropagation()
-            rootThis.selectRegion(d.properties.name)
+            rootThis.$emit('updateRegion', d.properties.name);
           })
       gLines.selectAll(".parish-line.point-line")
         .data(pointDataFiltered)
@@ -441,7 +438,6 @@ export default {
       this.map.selectAll(`.clickable`).style("stroke", "#fff");
       this.map.transition()
         .duration(1350)
-        .ease(d3.easeLinear)
         .call( this.zoom.transform, d3.zoomIdentity ); // updated for d3 v4
     },
     selectCountry(iso) {
@@ -460,7 +456,7 @@ export default {
           translate = [this.width / 2 - scale * x, this.height / 2 - scale * y];
         this.map.transition()
           .duration(1350)
-          .ease(d3.easeLinear)
+
           .call( this.zoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale) );
         let center = this.path.centroid(d)
         this.g.append("text")
@@ -470,9 +466,7 @@ export default {
         .attr("dx", center[0])
         .attr("dy", center[1])
         .attr("font-size", 30 / scale + 'px')
-        if(iso !== this.region) {
-          this.$emit('updateRegion', iso);
-        }
+
     },
     selectRegion(name) {
       let transforms = this.regionTransforms[name]
@@ -481,13 +475,10 @@ export default {
         .call( this.zoom.transform, d3.zoomIdentity ).on("end", () => {
           this.map.selectAll(`.${name}`).style("stroke", "#000");
           this.map.transition()
-            .ease(d3.easeLinear)
+
             .duration(1350)
             .call( this.zoom.transform, d3.zoomIdentity.translate(transforms.translate[0],transforms.translate[1]).scale(transforms.scale) ); // updated for d3 v4
         })
-      if(name !== this.region) {
-        this.$emit('updateRegion', name);
-      }
     }
   },
   watch: {
@@ -507,7 +498,6 @@ export default {
     this.initMap();
     if(this.region !== 'All') {
       if(['AIS', 'Caribbean', 'Pacific'].includes(this.region)) {
-        console.log(this.region, 'sregion')
         this.selectRegion(this.region)
       } else {
         this.selectCountry(this.region)
@@ -631,10 +621,9 @@ export default {
   fill: black;
 }
 #ctitle {
-
-    font-family: sans-serif;
-    text-shadow: -1px 1px 2px #f4f5f8, 1px 1px 2px #f4f5f8, 1px -1px 2px #f4f5f8, -1px -1px 2px #f4f5f8;
-    fill: black;
+  font-family: sans-serif;
+  text-shadow: -1px 1px 2px #f4f5f8, 1px 1px 2px #f4f5f8, 1px -1px 2px #f4f5f8, -1px -1px 2px #f4f5f8;
+  fill: black;
 }
 .map-title {
   font-family: sans-serif;
