@@ -1,6 +1,6 @@
 <template>
   <div class="footer-root">
-    <p class="footer-root_text">Powered by the UNDP Data Futures Platform</p>
+    <p class="footer-root_text">{{$t('root.footer.poweredBy')}}</p>
   </div>
 </template>
 

@@ -6,7 +6,7 @@
         </div>
       </v-row>
       <v-row class="mt-0 bars-container" justify="center">
-        <div class="sdg-goal" v-for="(goal, index) in goals" :key="goal.name">
+        <div class="sdg-goal" v-for="(goal, index) in goals" :key="goal.id">
           <v-tooltip
             top
             transition="none"
@@ -24,10 +24,10 @@
             </template>
             <v-card>
               <v-card-title>
-                {{goal.name}}
+                {{$t(`root.${goalsType}.${goal.id}.title`)}}
               </v-card-title>
               <v-card-text v-if="goal.content">
-                {{goal.content}}
+                {{$t(`root.${goalsType}.${goal.id}.content`)}}
               </v-card-text>
             </v-card>
           </v-tooltip>
@@ -76,7 +76,7 @@ export default {
       bars: null
     }
   },
-  props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
+  props:['year', 'fundingCategory', 'fundingSource', 'goalsType'],
   mixins:[sidsdata, format],
   computed: {
     ...mapState({
@@ -194,7 +194,7 @@ export default {
       this.x.rangeRound([0, this.barsWidth]);
       this.x2.rangeRound([0, this.barsWidth]);
       this.svg.select(".root-group")
-        .transition(700)
+        .transition(2300).ease(d3.easeLinear)
         .attr("transform", "translate(" + (this.svgWidth - this.barsWidth)/2 + "," + this.barsMargin.top + ")");
 
       this.y1.domain([0, d3.max(this.projectCount, function (d) { return d; })]);
@@ -213,7 +213,7 @@ export default {
             .attr("width", 16)
             .attr("height", 0)
             .attr("fill", function (d) { return d.color })
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .attr("y", function (d) {
               if(rootThis.projectNamesObject[d.name] === 0) {
                 return rootThis.barsHeight
@@ -255,7 +255,7 @@ export default {
            .style("opacity", 0.4);
         },
         (update) => {
-          update.select('.bar').transition(700)
+          update.select('.bar').transition(2300).ease(d3.easeLinear)
           .attr("fill", function (d) { return d.color })
           .attr("x", function (d) { return (rootThis.x(d.name) + rootThis.barWidth/2 - 19)})
           .attr("height", function (d) {
@@ -270,7 +270,7 @@ export default {
             }
               return rootThis.y1(rootThis.projectNamesObject[d.name]);
           })
-          update.select(".barsLabels").transition(700)
+          update.select(".barsLabels").transition(2300).ease(d3.easeLinear)
           .attr("x", function (d) {return (
             rootThis.x(d.name) + rootThis.barWidth/2 - 15);
           })
@@ -279,10 +279,10 @@ export default {
           })
           .text(function (d) {
             if (rootThis.projectNamesObject[d.name] > 0) {
-              return rootThis.projectNamesObject[d.name].toString().concat(" Projects");
+              return rootThis.projectNamesObject[d.name].toString().concat(' ' + rootThis.$t('portfolio.projects'));
             }
           })
-          update.select(".stick").transition(700)
+          update.select(".stick").transition(2300).ease(d3.easeLinear)
             .attr("x", function (d) { return (rootThis.x(d.name) + rootThis.barWidth/2 - 12) })//+ x2.bandwidth()/2.5+ x2.bandwidth()/6;})
             .attr("y", function (d, i) {
               return rootThis.getBarLabelsY(d.name, i, "proj") + 2;
@@ -295,15 +295,15 @@ export default {
         },
         (exit) => {
           exit.select('rect')
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .attr("y", rootThis.barsHeight)
             .attr("height", 0)
             .remove()
           exit.select('text')
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .remove()
           exit
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .remove()
         }
       )
@@ -326,7 +326,7 @@ export default {
             .attr("height", 0)
             .attr("fill", function (d) { return d.color })
             .style("opacity", 0.5)
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .attr("height", function (d) {
               if(rootThis.budgetNamesObject[d.name] === 0) {
                 return 0
@@ -362,7 +362,7 @@ export default {
            .style("opacity", 0.4);
         },
         (update) => {
-          update.select('.bar2').transition(700)
+          update.select('.bar2').transition(2300).ease(d3.easeLinear)
           .attr("x", function (d) { return (rootThis.x2(d.name) + rootThis.barWidth/2 + 9) })
           .attr("y", function (d) {
             if(rootThis.budgetNamesObject[d] === 0) {
@@ -380,7 +380,7 @@ export default {
           .attr("fill", function (d) { return d.color })
 
 
-          update.select(".barsLabels2").transition(700)
+          update.select(".barsLabels2").transition(2300).ease(d3.easeLinear)
           .text(function (d) {
             if (rootThis.budgetNamesObject[d.name] > 0) {
               return rootThis.nFormatter(rootThis.budgetNamesObject[d.name]).toString().concat(" USD");
@@ -392,7 +392,7 @@ export default {
           .attr("y", function (d, i) {
             return rootThis.getBarLabelsY(d.name, i, "budg");
           })
-          update.select(".stick2").transition(700)
+          update.select(".stick2").transition(2300).ease(d3.easeLinear)
             .attr("x", function (d) { return (rootThis.x2(d.name) + rootThis.barWidth/2 + 16) })
             .attr("y", function (d, i) {
               return rootThis.getBarLabelsY(d.name, i, "budg") + 2;
@@ -405,15 +405,15 @@ export default {
         },
         (exit) => {
           exit.select('rect')
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .attr("y", rootThis.barsHeight)
             .attr("height", 0)
             .remove()
           exit.select('text')
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .remove()
           exit
-            .transition(700)
+            .transition(2300).ease(d3.easeLinear)
             .remove()
         }
       );

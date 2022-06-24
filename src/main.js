@@ -4,8 +4,10 @@ import { router } from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 
+
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
+import i18n from './lang';
 
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
@@ -28,9 +30,11 @@ if(process.env.NODE_ENV === 'production') {
   });
 }
 
-Vue.config.productionTip = process.env.NODE_ENV === 'production'
+Vue.config.productionTip = process.env.NODE_ENV === 'production';
+
 
 new Vue({
+  i18n,
   router,
   store,
   vuetify,

@@ -6,28 +6,28 @@
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="projectsNumber"
-            :title="'SIDS with UNDP Projects'"
+            :title="$t('portfolio.chips.sidsWithProjects')"
           />
         </v-col>
         <v-col cols="6" sm="3" class="d-flex justify-start justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="memberStates"
-            :title="'UN Member States'"
+            :title="$t('portfolio.chips.unMembsers')"
           />
         </v-col>
         <v-col cols="6" sm="3" class="d-flex justify-end justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="UNDPprojectsNumber"
-            :title="'UNDP Projects'"
+            :title="$t('portfolio.chips.projects')"
           />
         </v-col>
         <v-col cols="6" sm="3" class="d-flex justify-start justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="projectsFundning"
-            :title="'Total Project Funding'"
+            :title="$t('portfolio.chips.funding')"
           />
         </v-col>
       </v-row>

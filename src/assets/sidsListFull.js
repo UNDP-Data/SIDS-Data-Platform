@@ -266,13 +266,6 @@ export default [
     unMeber: true
   },
   {
-    id:'guam',
-    name: 'Guam',
-    region:'Pacific',
-    iso:'GUM',
-    unMeber: true
-  },
-  {
     id:'nmisl',
     name: 'Northern Mariana Islands',
     region:'Pacific',

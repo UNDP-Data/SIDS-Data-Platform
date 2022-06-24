@@ -108,7 +108,7 @@ export default {
     generatePortfolioData({ state, commit }, {year, region, category, source}) {
       let sourcesFilteringProjects = [];
       let filteredData = state.SIDSDataWithDonors.filter(project => {
-        if(region !== 'All' && project.region !== region) {
+        if(region !== 'All' && (project.region !== region && project.country !== region)) {
           return false
         }
         if(year !== 'all' && project.year !== year) {

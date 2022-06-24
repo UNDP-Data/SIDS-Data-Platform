@@ -75,7 +75,10 @@ export function initChoroLegend(quantize) {
 }
 
 export function hideChoroLegend(choroLegend) {
-  choroLegend.selectAll("rect").transition().duration(1200).attr("opacity", 0);
+  choroLegend.selectAll("rect")
+  // .transition()
+  // .duration(1200)
+  .attr("opacity", 0);
 
   choroLegend
     .selectAll(".textNum")
@@ -83,6 +86,7 @@ export function hideChoroLegend(choroLegend) {
 }
 
 export function showChoroLegend(choroLegend, quantize) {
+  console.log(choroLegend.selectAll("rect"), 'show')
   choroLegend.selectAll("rect")
   .attr("opacity", 1);
 

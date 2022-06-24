@@ -17,7 +17,7 @@
         v-on="on"
         @click='toggleTooltip'
       >
-        <span v-if="isDesktop">About this</span>
+        <span v-if="isDesktop">{{$t('root.buttons.about')}}</span>
         <v-icon
           v-else
           v-bind="attrs"

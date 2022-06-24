@@ -1,6 +1,7 @@
 export const goals = {
   samoa:[
     {
+      id:'eGrowth',
       name: "Sustainable, inclusive and equitable economic growth",
       color: "#A21942",
       type: 'samoa',
@@ -9,6 +10,7 @@ export const goals = {
 
     },
     {
+      id:'clChange',
       name: "Climate Change",
       color: "#3F7E44",
       type:'samoa',
@@ -17,6 +19,7 @@ export const goals = {
 
     },
     {
+      id:'susEnegy',
       name: "Sustainable Energy",
       color: "#FCC30B",
       type:'samoa',
@@ -25,6 +28,7 @@ export const goals = {
 
     },
     {
+      id:'disaster',
       name: "Disaster Risk Reduction",
       color: "#19486A",
       type:'samoa',
@@ -33,14 +37,15 @@ export const goals = {
 
     },
     {
+      id:'oceans',
       name: "Oceans and Seas",
       color: "#0A97D9",
       type:'samoa',
       title: "5. Oceans and seas",
       content: "To support healthy, productive and resilient oceans and coasts are critical for, inter alia, poverty eradication, access to sufficient, safe and nutritious food, livelihoods, economic development, essential ecosystem services, and identity and culture in SIDS.",
-
     },
     {
+      id:'food',
       name: "Food Security and Nutrition",
       color: "#DDA63A",
       type:'samoa',
@@ -49,6 +54,7 @@ export const goals = {
 
     },
     {
+      id:'water',
       name: "Water and Sanitation",
       color: "#26BDE2",
       type:'samoa',
@@ -57,6 +63,7 @@ export const goals = {
 
     },
     {
+      id:'transport',
       name: "Sustainable Transportation",
       color: "#fd6920",
       type:'samoa',
@@ -65,6 +72,7 @@ export const goals = {
 
     },
     {
+      id:'production',
       name: "Sustainable Consumption and Production",
       color: "#c08c2b",
       type:'samoa',
@@ -73,6 +81,7 @@ export const goals = {
 
     },
     {
+      id:'waste',
       name: "Chemical and Waste management",
       color: "#FD9D24",
       type:'samoa',
@@ -81,6 +90,7 @@ export const goals = {
 
     },
     {
+      id:'health',
       name: "Health and NCDs",
       color: "#4C9F38",
       type:'samoa',
@@ -89,6 +99,7 @@ export const goals = {
 
     },
     {
+      id:'gender',
       name: "Gender Equality",
       color:"#FF3A21",
       type:'samoa',
@@ -97,6 +108,7 @@ export const goals = {
 
     },
     {
+      id:'socialDevelopment',
       name: "Social Development",
       color: "#DD1367",
       type: 'samoa',
@@ -105,6 +117,7 @@ export const goals = {
 
     },
     {
+      id:'biodiversity',
       name: "Biodiversity",
       color:"#0A97D9",
       type:'samoa',
@@ -113,6 +126,7 @@ export const goals = {
 
     },
     {
+      id:'invasiveSpecies',
       name: "Invasive species",
       color: "#00689D",
       type: 'samoa',
@@ -121,6 +135,7 @@ export const goals = {
 
     },
     {
+      id:'meansOfImplementation',
       name: "Means of Implementation",
       color: "#00A99D",
       type: 'samoa',
@@ -131,6 +146,7 @@ export const goals = {
   ],
   sdgs:[
     {
+      id:'poverty',
       name: "No poverty",
       color: "#E5243B",
       type: 'sdg',
@@ -138,6 +154,7 @@ export const goals = {
       content: "To end poverty in all its forms, everywhere, through a powerful commitment to leave no one behind and to reach those fathest behind first.",
     },
     {
+      id:'hunger',
       name: "Zero hunger",
       color: "#DDA63A",
       type: 'sdg',
@@ -145,6 +162,7 @@ export const goals = {
       content: "To end hunger, achieve food security and improve nutrition and promote sustainable agriculture.",
     },
     {
+      id:'health',
       name: "Good health and well-being",
       color: "#4C9F38",
       type: 'sdg',
@@ -152,6 +170,7 @@ export const goals = {
       content: "To ensure healthy lives and promote well-being for all at all ages.",
     },
     {
+      id:'education',
       name: "Quality education",
       color: "#C5192D",
       type:'sdg',
@@ -159,6 +178,7 @@ export const goals = {
       content: "To ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.",
     },
     {
+      id:'gender',
       name: "Gender equality",
       color: "#FF3A21",
       type:'sdg',
@@ -167,6 +187,7 @@ export const goals = {
 
     },
     {
+      id:'water',
       name: "Clean water and sanitation",
       color: "#26BDE2",
       type: 'sdg',
@@ -175,6 +196,7 @@ export const goals = {
 
     },
     {
+      id:'energy',
       name: "Affordable and clean energy",
       color: "#FCC30B",
       type: 'sdg',
@@ -183,6 +205,7 @@ export const goals = {
 
     },
     {
+      id:'growth',
       name: "Decent work and economic growth",
       color: "#A21942",
       type: 'sdg',
@@ -191,6 +214,7 @@ export const goals = {
 
     },
     {
+      id:'industry',
       name: "Industry, innovation and infrastructure",
       color: "#FD6925",
       type: 'sdg',
@@ -199,6 +223,7 @@ export const goals = {
 
     },
     {
+      id:'inequality',
       name: "Reduced inequalities",
       color: "#DD1367",
       type: 'sdg',
@@ -206,6 +231,7 @@ export const goals = {
       content: "To reduce income inequality within and among countries.",
     },
     {
+      id:'cities',
       name: "Sustainable cities and communities",
       color: "#FD9D24",
       type: 'sdg',
@@ -214,6 +240,7 @@ export const goals = {
 
     },
     {
+      id:'consumption',
       name: "Responsible consumption and production",
       color: "#BF8B2E",
       type:'sdg',
@@ -222,6 +249,7 @@ export const goals = {
 
     },
     {
+      id:'climate',
       name: "Climate action",
       color: "#3F7E44",
       type:'sdg',
@@ -230,6 +258,7 @@ export const goals = {
 
     },
     {
+      id:'marineLife',
       name: "Life below water",
       color: "#0A97D9",
       type:'sdg',
@@ -238,6 +267,7 @@ export const goals = {
 
     },
     {
+      id:'landLife',
       name: "Life on Land",
       color: "#56C02B",
       type:'sdg',
@@ -246,6 +276,7 @@ export const goals = {
 
     },
     {
+      id:'peace',
       name: "Peace, justice, and strong institutions",
       color: "#00689D",
       type:'sdg',
@@ -254,6 +285,7 @@ export const goals = {
 
     },
     {
+      id:'partnerships',
       name: "Partnerships for the goals",
       color: "#19486A",
       type:'sdg',
@@ -263,31 +295,37 @@ export const goals = {
   ],
   'signature-solutions':[
     {
+      id:'poverty',
       name: "Keeping people out of poverty",
       color: "#E3253C",
       type:'solution'
     },
     {
+      id:'governance',
       name: "Strengthen effective, inclusive and accountable governance",
       color: "#0076B0",
       type:'solution'
     },
     {
+      id:'prevention',
       name: "Enhance national prevention and recovery capacities for resilient societies",
       color: "#F26A2C",
       type:'solution'
     },
     {
+      id:'solutions',
       name: "Promote nature-based solutions for a sustainable planet",
       color: "#417F45",
       type:'solution'
     },
     {
+      id:'energy',
       name: "Close the energy gap",
       color: "#FAB715",
       type:'solution'
     },
     {
+      id:'equality',
       name: "Strenghten gender equality and the empowerment of women and girls",
       color: "#EF412C",
       type:'solution'

@@ -40,3 +40,6 @@
 .v-card__title {
   word-break: normal !important;
 }
+.tooltip-white.v-tooltip__content {
+  color: #000 !important;
+}
