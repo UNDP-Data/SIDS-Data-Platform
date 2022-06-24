@@ -61,7 +61,7 @@ export default class Map {
       container: rightMapContainerId,
       ...constants.mapOptions,
     });
-    /* 
+    /*
     console.log("this.map");
     console.log(this.map);
     console.log("this.map2");
@@ -127,14 +127,15 @@ export default class Map {
 
     //for bivariate mode
     //create initial scatter plot legend to be mutated later
-    globals.myBivariateScatterChart = new Chart(
-      document.getElementById("bivariate_canvas"),
-      {
-        type: "scatter",
-        data: {}, //empty data
-        options: {},
-      }
-    );
+    globals.myBivariateScatterChart = {};
+    //  new Chart(
+    //   document.getElementById("bivariate_canvas"),
+    //   {
+    //     type: "scatter",
+    //     data: {}, //empty data
+    //     options: {},
+    //   }
+    // );
 
     //for debugging--------------------
     let self = this.map;
@@ -1160,7 +1161,7 @@ export default class Map {
       ) {
         console.log('removing existing source and layer for "iso"');
         //this.map.removeLayer("iso");
-        //this.map.removeSource("iso"); 
+        //this.map.removeSource("iso");
         mapClassInstance.removeLayer("iso");
         mapClassInstance.removeSource("iso");
       }
@@ -2330,6 +2331,7 @@ export default class Map {
     comparison = false,
     debug = false
   ) {
+    console.log(globals.currentLayerState)
     let map = !comparison ? this.map : this.map2; //
     let cls = !comparison
       ? globals.currentLayerState
@@ -2435,8 +2437,8 @@ export default class Map {
 
     if (debug) {
       console.log(
-        `changeDataOnMap(Field_Name: ${Field_Name}, 
-        activeDataset?.name: ${activeDataset?.name}, 
+        `changeDataOnMap(Field_Name: ${Field_Name},
+        activeDataset?.name: ${activeDataset?.name},
         activeLayer?.Description: ${activeLayer?.Description}`
       );
     }
@@ -2759,9 +2761,9 @@ export default class Map {
 
         if (debug) {
           console.log(
-            `recoloring calling addLegend with: 
-          currentLayerState.color: ${cls.color} 
-          breaks: ${breaks} 
+            `recoloring calling addLegend with:
+          currentLayerState.color: ${cls.color}
+          breaks: ${breaks}
           currentLayerState.dataLayer: ${cls.dataLayer}
           `
           );
@@ -3516,7 +3518,7 @@ export default class Map {
     /*var feats = map.queryRenderedFeatures({
           layers: ['admin1'],
           filter: ['==', 'GID_1', e.features[0].id]
-          
+
         }) */
 
     var rendered = this.map.queryRenderedFeatures({

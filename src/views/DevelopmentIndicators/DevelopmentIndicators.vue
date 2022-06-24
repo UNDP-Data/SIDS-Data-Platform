@@ -84,7 +84,7 @@
               }"
               class="tabs tabs-small"
             >
-              <v-tab v-for="(tab, index) in tabs" :disabled="tab.chartType === 'ml' && !mlAvaliable" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
+              <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
             </v-tabs>
           </div>
         </v-col>
@@ -117,8 +117,8 @@
         <v-col cols='12'>
           <indicators-choro-chart v-if='!noData' :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
-          <indicators-m-l v-if="mlMode" :indicator="indicator" @close="mlMode=false" :year="year"/>
-          <v-btn rounded small class="float-right" v-else color="primary" @click="mlMode=true">AI Mode</v-btn>
+          <indicators-m-l v-if="mlMode && mlAvaliable" :indicator="indicator" @close="mlMode=false" :year="year"/>
+          <v-btn v-else-if="mlAvaliable" rounded small class="float-right" color="primary" @click="mlMode=true">AI Mode</v-btn>
         </v-col>
       </v-row>
     </v-col>
@@ -263,7 +263,7 @@ export default {
       return this.indicatorsMeta[this.indicator]
     },
     mlAvaliable() {
-      return Object.values(this.activeIndicatorsMeta.yearValueCounts).some(v=>v >= this.MLTargetSize);
+      return this.indicator && this.indicator.match(/.*key|mvi|ndgain|wdi.*/gm);
     }
   },
   methods: {
@@ -310,7 +310,7 @@ export default {
     }
   },
   created() {
-    if(this.mlData && this.mlModel.target === this.indicator && this.mlModel.target_year === this.year) {
+    if(this.mlData && this.mlModel && this.mlModel.target === this.indicator && this.mlModel.target_year === this.year) {
       this.mlMode = true;
     }
     window.addEventListener("resize", this.updateScreenSize);

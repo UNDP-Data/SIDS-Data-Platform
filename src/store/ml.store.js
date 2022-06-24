@@ -7,11 +7,15 @@ export default {
     mlModel:null,
     mlData:null,
     mlStartTime:null,
-    source:null
+    source:null,
+    MLPredictionData:null
   },
   mutations: {
     setLoading(state, loader) {
       state.mlLoading = loader;
+    },
+    setMLPredictionData(state, MLPredictionData) {
+      state.MLPredictionData = MLPredictionData
     },
     setMLmodel(state, mlModel) {
       state.mlModel = mlModel;
@@ -47,6 +51,12 @@ export default {
     },
     async clearModel({ commit }) {
       commit('setMLmodel', null);
+    },
+    async loadMlPredictionData({ commit }, data) {
+      commit('setMLPredictionData', data);
+    },
+    async clearMlPredictionData({ commit }) {
+      commit('setMLPredictionData', null);
     }
   }
 };

@@ -25,7 +25,8 @@ export default {
   loadTextContent,
   loadML,
   loadMLTargetSize,
-  loadMLPredictorSize
+  loadMLPredictorSize,
+  loadLang
 }
 
 
@@ -79,7 +80,7 @@ async function loadProfileData () {
   return resp.data
 }
 async function loadSidsSVG () {
-  const resp = await d3.xml(`${NEW_API_URl}/maps/sidsSVG8.svg`)
+  const resp = await d3.xml(require(`@/assets/sidsSVG8.svg`))
   return resp
 }
 async function loadMapLocations () {
@@ -110,8 +111,12 @@ async function loadML (data,source) {
 
 
 async function loadMLindicatorData ({model, indicator, dataset}) {
-  const resp = await axios.get(`${NEW_API_URl_2}/ml/model${model}/${dataset}/${indicator}.json`)
-  return resp.data
+  try {
+    const resp = await axios.get(`${NEW_API_URl_2}/ml/model${model}/${dataset}/${indicator}.json`)
+    return resp.data
+  } catch {
+    return null
+  }
 }
 
 
@@ -133,4 +138,9 @@ async function loadMLTargetSize () {
 async function loadMLPredictorSize () {
   // const resp = await axios.get(`${ML_API_URL}/imputation/predictor_sample_size`)
   return 25
+}
+
+async function loadLang(lang) {
+  let resp = await axios.get(`${NEW_API_URl_2}/language/${lang}.json`);
+  return resp.data
 }
