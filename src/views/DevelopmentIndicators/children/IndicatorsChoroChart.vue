@@ -153,7 +153,7 @@ export default {
           return !this.mviCodes.some((code) => {
             return this.chartData[code].data.recentValue[country.iso] === 'No Data'
           })
-        } else {
+        } else if (countryGroupJson[country.iso]) {
           return Object.keys(countryGroupJson[country.iso]).some((iso) => {
             return !this.mviCodes.some((code) => {
               return this.chartData[code].data.recentValue[iso] === 'No Data'
@@ -186,7 +186,6 @@ export default {
       let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
       this.setCompareCountries(compareIdsList)
       if(this.choro && this.page === this.choro.page) {
-        console.log(this.chartData)
         this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },

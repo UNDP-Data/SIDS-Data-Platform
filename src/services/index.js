@@ -80,7 +80,7 @@ async function loadProfileData () {
   return resp.data
 }
 async function loadSidsSVG () {
-  const resp = await d3.xml(`${NEW_API_URl}/maps/sidsSVG8.svg`)
+  const resp = await d3.xml(require(`@/assets/sidsSVG8.svg`))
   return resp
 }
 async function loadMapLocations () {
