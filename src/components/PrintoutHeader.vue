@@ -9,7 +9,11 @@
     <v-col cols="6">
       <v-row dense>
         <v-col>
-          <h2 class="printout-header text-center"><b>{{name}}</b> Country profile</h2>
+          <h2 class="printout-header text-center">
+
+            <slot  name="text"
+            ></slot>
+          </h2>
         </v-col>
       </v-row>
       <v-row dense>

@@ -21,9 +21,12 @@
         <v-list-item @click="exportCSV">
           <v-list-item-title>Summary CSV</v-list-item-title>
         </v-list-item>
-        <!-- <v-list-item @click="exportProjectList">
+        <v-list-item @click="exportProjectList">
           <v-list-item-title>Project List</v-list-item-title>
-        </v-list-item> -->
+        </v-list-item>
+        <v-list-item @click="exportPDF">
+          <v-list-item-title>Summary PDF</v-list-item-title>
+        </v-list-item>
       </v-list-item-group>
     </v-list>
   </v-menu>
@@ -54,7 +57,6 @@ export default {
   data() {
     return {
       portfolioHeaders: {
-          id: 'Project ID',
           country: "Country",
           region: "Region",
           year: "Year",
@@ -80,17 +82,18 @@ export default {
   },
   methods: {
     exportProjectList(){
-      let note = `This dataset is the list of UNDP projects filtered by the ${this.region}  region, the year(s) ${this.year} , and the funding category ${this.funding} . All data is used with permission from the UNDP open data portal.`
-
-      this.exportCSVFile(this.portfolioHeaders, this.projects, 'sids_projects_' + this.region + "_" + this.year, note)
+      let projectExport = this.projecctExportRender(),
+      fileData = [this.portfolioHeaders].concat(projectExport),
+      note = `This dataset is the list of UNDP projects filtered by the ${this.region}  region, the year(s) ${this.year} , and the funding category ${this.funding} . All data is used with permission from the UNDP open data portal.`
+      this.exportCSVFile(fileData, 'sids_projects_' + this.region + "_" + this.year, note)
     },
     exportCSV(){
-      let summaryExport = this.summaryExportRender()
-      let note = `This dataset is the compiled budget and project totals per category for all UNDP projects filtered by the ${this.region}  region, the year(s) ${this.year} , and the funding category ${this.funding} . All data is used with permission from the UNDP open data portal.`
-      this.exportCSVFile(summaryExport, 'sids_projects_' + this.region + "_" + this.year, note)
+      let summaryExport = this.summaryExportRender(),
+      fileData = [this.summaryHeaders].concat(summaryExport),
+      note = `This dataset is the compiled budget and project totals per category for all UNDP projects filtered by the ${this.region}  region, the year(s) ${this.year} , and the funding category ${this.funding} . All data is used with permission from the UNDP open data portal.`
+      this.exportCSVFile(fileData, 'sids_projects_' + this.region + "_" + this.year, note)
     },
-    exportCSVFile(items, fileTitle, note) {
-      const fileData = [this.summaryHeaders].concat(items);
+    exportCSVFile(fileData, fileTitle, note) {
       // Convert Object to JSON
       var jsonObject = JSON.stringify(fileData);
       var csv = this.convertToCSV(jsonObject,note);
@@ -120,12 +123,33 @@ export default {
       for (var i = 0; i < array.length; i++) {
           var line = '';
           for (var index in array[i]) {
-              if (line != '') line += ','
-              line += array[i][index];
+              if (line != '') {
+                line += ','
+              }
+              if(array[i][index]) {
+                line += `"${array[i][index]}"`;
+              }
           }
           str += line + '\r\n';
       }
       return str;
+    },
+    projecctExportRender() {
+      return this.projects.map(project => {
+        return {
+          country: project.country,
+          region: project.region,
+          year: project.year,
+          title: project.title,
+          budget: project.budget,
+          expense: project.expense,
+          sdg: project.sdg,
+          solution: project.solution,
+          donors: project.donors.map(donor => {
+            return donor.name
+          })
+        }
+      })
     },
     summaryExportRender() {
       let summaryExport = [],
@@ -292,6 +316,9 @@ export default {
         summaryExport.push(newEl)
       }
       return summaryExport;
+    },
+    exportPDF() {
+      window.print();
     }
   }
 }
