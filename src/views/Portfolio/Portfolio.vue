@@ -8,7 +8,7 @@
         </template>
       </printout-header>
       <portfolio-printout-chips
-        :region="region"
+        :region="getCountryName(region)"
         :projects="portfolioData"
         :year="yearText"
         :goalType="goalsType"
@@ -568,7 +568,11 @@ export default {
       }).slice(0,5);
     },
     getCountryName(iso) {
-      return sidsList.find(c => c.iso === iso).name;
+      let country = sidsList.find(c => c.iso === iso).name;
+      if(country) {
+        return country
+      }
+      return iso
     }
   },
   async beforeRouteUpdate(to, from, next){
