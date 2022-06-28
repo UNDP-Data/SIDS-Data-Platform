@@ -712,7 +712,8 @@ export function updateTimeChart({ dataset, optionSelected }) {
     })
     return {
       country: code,
-      data: computedData
+      data: computedData,
+      avg: true
     }
   }
   function dataFilter(dataset, countryList, vizWidth) {
@@ -728,8 +729,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
     if (countryGroupOption == "All") {
       return filtered0;
     } else if (countryGroupOption == "Regional average") {
-      let res = [];
-      return res
+      return filtered0.filter((d) => d.avg);
     } else {
       const countries = Object.keys(countryGroup[countryGroupOption]);
       return filtered0.filter((d) => countries.includes(d.country));

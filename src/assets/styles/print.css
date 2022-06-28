@@ -37,6 +37,9 @@
     overflow: hidden;
     position: relative;
   }
+  .print-page-wrap{
+    min-height: 1400px;
+  }
   .justify-print-space-between {
     justify: space-between !important;
   }

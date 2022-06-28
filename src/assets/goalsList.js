@@ -5,7 +5,7 @@ export const goals = {
       name: "Sustainable, inclusive and equitable economic growth",
       color: "#A21942",
       type: 'samoa',
-      title: "1. Sustained and sustainable, inclusive and equitable economic growth with decent work for all",
+      title: "Goal 1 - Sustained and sustainable, inclusive and equitable economic growth with decent work for all",
       content: "To support SIDS to achieve sustained, inclusive and equitable growth with full and productive employment, social protection and the creation of decent work for all.",
 
     },
@@ -14,7 +14,7 @@ export const goals = {
       name: "Climate Change",
       color: "#3F7E44",
       type:'samoa',
-      title: "2. Climate Change",
+      title: "Goal 2 - Climate Change",
       content: "To help SIDS with climate adaptation, including persistent drought and extreme weather events, sea-level rise, coastal erosion and ocean acidification.",
 
     },
@@ -23,7 +23,7 @@ export const goals = {
       name: "Sustainable Energy",
       color: "#FCC30B",
       type:'samoa',
-      title: "3. Sustainable Energy",
+      title: "Goal 3 - Sustainable Energy",
       content: "To address challenges in accessing sustainable energy in the SIDS including enhanced accessibility to modern energy services, energy efficiency and use of economically viable and environmentally sound technology",
 
     },
@@ -32,7 +32,7 @@ export const goals = {
       name: "Disaster Risk Reduction",
       color: "#19486A",
       type:'samoa',
-      title: "4. Disaster risk reduction",
+      title: "Goal 4 - Disaster risk reduction",
       content: "To address the critical need to build resilience, strengthen monitoring and prevention, reduce vulnerability, raise awareness and increase preparedness to respond to and recover from disasters in SIDS",
 
     },
@@ -41,7 +41,7 @@ export const goals = {
       name: "Oceans and Seas",
       color: "#0A97D9",
       type:'samoa',
-      title: "5. Oceans and seas",
+      title: "Goal 5 - Oceans and seas",
       content: "To support healthy, productive and resilient oceans and coasts are critical for, inter alia, poverty eradication, access to sufficient, safe and nutritious food, livelihoods, economic development, essential ecosystem services, and identity and culture in SIDS.",
     },
     {
@@ -49,7 +49,7 @@ export const goals = {
       name: "Food Security and Nutrition",
       color: "#DDA63A",
       type:'samoa',
-      title: "6. Food security and nutrition",
+      title: "Goal 6 - Food security and nutrition",
       content: "To support the right to have access to safe, sufficient and nutritious food, the eradication of hunger and the provision of livelihoods while conserving, protecting and ensuring the sustainable use of land, soil, forests, water, plants and animals, biodiversity and ecosystems.",
 
     },
@@ -58,7 +58,7 @@ export const goals = {
       name: "Water and Sanitation",
       color: "#26BDE2",
       type:'samoa',
-      title: "7. Water and sanitation",
+      title: "Goal 7 - Water and sanitation",
       content: "To support the efforts of small island developing States to develop capacities for the effective, inclusive and sustainable implementation of the integrated management of water resources and related ecosystems",
 
     },
@@ -67,7 +67,7 @@ export const goals = {
       name: "Sustainable Transportation",
       color: "#fd6920",
       type:'samoa',
-      title: "8. Sustainable transportation",
+      title: "Goal 8 - Sustainable transportation",
       content: "To support SIDS to gain access to environmentally sound, safe, affordable, sustainable and well-maintained transportation",
 
     },
@@ -76,7 +76,7 @@ export const goals = {
       name: "Sustainable Consumption and Production",
       color: "#c08c2b",
       type:'samoa',
-      title: "9. Sustainable consumption and production",
+      title: "Goal 9 - Sustainable consumption and production",
       content: "To support SIDS on sustainable consumption and production patterns to advance sustainable consumption and production, with an emphasis on MSMEs, sustainable tourism, waste management, food and nutrition, lifestyles, and rural supply chains.",
 
     },
@@ -85,7 +85,7 @@ export const goals = {
       name: "Chemical and Waste management",
       color: "#FD9D24",
       type:'samoa',
-      title: "10. Management of chemicals and waste, including hazardous waste",
+      title: "Goal 10 - Management of chemicals and waste, including hazardous waste",
       content: "To support SIDS in sound management of chemicals throughout their life cycle and of waste is crucial for the protection of human health and the environment",
 
     },
@@ -94,7 +94,7 @@ export const goals = {
       name: "Health and NCDs",
       color: "#4C9F38",
       type:'samoa',
-      title: "11. Health and non-communicable diseases",
+      title: "Goal 11 - Health and non-communicable diseases",
       content: "To support prevention, treatment, care, and education in health as well as support the national actions of SIDS in addressing communicable and non-communicable diseases.",
 
     },
@@ -103,7 +103,7 @@ export const goals = {
       name: "Gender Equality",
       color:"#FF3A21",
       type:'samoa',
-      title: "12. Gender Equality and women’s empowerment",
+      title: "Goal 12 - Gender Equality and women’s empowerment",
       content: "To support gender equality and women’s empowerment and the full realization of human rights for women and girls have a transformative and multiplier effect on sustainable development and is a driver of economic growth in SIDS.",
 
     },
@@ -112,7 +112,7 @@ export const goals = {
       name: "Social Development",
       color: "#DD1367",
       type: 'samoa',
-      title: "13. Social Development",
+      title: "Goal 13 - Social Development",
       content: "To support efforts to enhance social protection and inclusion, to improve well-being and to guarantee opportunities for the most vulnerable and disadvantaged to have equal access to education, health, food, water and sanitation, and productive resources.",
 
     },
@@ -121,7 +121,7 @@ export const goals = {
       name: "Biodiversity",
       color:"#0A97D9",
       type:'samoa',
-      title: "14. Biodiversity",
+      title: "Goal 14 - Biodiversity",
       content:  "To suport the conservation and sustainable use of biodiversity, as well as their access to and the fair and equitable sharing of benefits arising from the utilization of genetic resources, with the vision of living in harmony with nature",
 
     },
@@ -130,7 +130,7 @@ export const goals = {
       name: "Invasive species",
       color: "#00689D",
       type: 'samoa',
-      title: "15. Invasive alien species",
+      title: "Goal 15 - Invasive alien species",
       content: "To help multisectoral collaboration in SIDS to address invasive alien species in order to protect biodiversity and livelihoods, preserve and maintain ocean resources and ecosystem resiliency, and enhance food security and adapt to climate change",
 
     },
@@ -139,7 +139,7 @@ export const goals = {
       name: "Means of Implementation",
       color: "#00A99D",
       type: 'samoa',
-      title: "16. Means of implementation, including partnerships",
+      title: "Goal 16 - Means of implementation, including partnerships",
       content: "To support SIDS in enhanced global partnership for development, adequate provision and mobilization of all means of implementation and continued international support to achieve internationally agreed goals.",
 
     },
@@ -298,37 +298,43 @@ export const goals = {
       id:'poverty',
       name: "Keeping people out of poverty",
       color: "#E3253C",
-      type:'solution'
+      type:'solution',
+      title: "Keeping people out of poverty",
     },
     {
       id:'governance',
       name: "Strengthen effective, inclusive and accountable governance",
       color: "#0076B0",
-      type:'solution'
+      type:'solution',
+      title: "Strengthen effective, inclusive and accountable governance",
     },
     {
       id:'prevention',
       name: "Enhance national prevention and recovery capacities for resilient societies",
       color: "#F26A2C",
-      type:'solution'
+      type:'solution',
+      title: "Enhance national prevention and recovery capacities for resilient societies",
     },
     {
       id:'solutions',
       name: "Promote nature-based solutions for a sustainable planet",
       color: "#417F45",
-      type:'solution'
+      type:'solution',
+      title: "Promote nature-based solutions for a sustainable planet",
     },
     {
       id:'energy',
       name: "Close the energy gap",
       color: "#FAB715",
-      type:'solution'
+      type:'solution',
+      title: "Close the energy gap",
     },
     {
       id:'equality',
       name: "Strenghten gender equality and the empowerment of women and girls",
       color: "#EF412C",
-      type:'solution'
+      type:'solution',
+      title: "Strenghten gender equality and the empowerment of women and girls",
     }
   ],
   pillars: [
