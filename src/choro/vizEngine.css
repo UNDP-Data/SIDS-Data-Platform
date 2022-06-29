@@ -1,10 +1,4 @@
 /* style.css */
-.allSids {
-  fill: #fee391;
-  stroke: #333;
-  stroke-width: 1px;
-  filter: drop-shadow(1px 1px 0px purple);
-}
 .shadow {
   filter: drop-shadow(1px 1px 0px black);
 }
@@ -134,7 +128,7 @@
   color: black;
 }
 
-#choro_legend_container {
+.choro_legend_container {
   margin: 0;
   margin-top: 20px;
   padding: 0;
@@ -327,12 +321,12 @@
   max-width: 350px;
 }
 
-#choro_legend_container {
+.choro_legend_container {
   height: 0px;
   overflow: visible;
 }
 
-#regionLegend {
+.regionLegend {
   height: 42px;
   margin-top: 5px;
   padding: 0;

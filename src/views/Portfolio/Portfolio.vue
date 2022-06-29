@@ -568,9 +568,9 @@ export default {
       }).slice(0,5);
     },
     getCountryName(iso) {
-      let country = sidsList.find(c => c.iso === iso).name;
+      let country = sidsList.find(c => c.iso === iso);
       if(country) {
-        return country
+        return country.name
       }
       return iso
     }

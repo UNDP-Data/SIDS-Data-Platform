@@ -16,16 +16,17 @@ export function processVizElementAttributes() {
   let indicatorDataObj = this.indicatorData["data"][this.indiSelections["year"]];
   this.updateCountryAVGbars(indicatorDataObj)
   this.updateCountryAVGMVIbars(indicatorDataObj)
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll("path")
     .each(function () {
       let bbox = getBoundingBox(d3.select(this));
       rootThis.bboxDict[this.id] = bbox;
     });
 
-  [...document.querySelectorAll(".choroText")].forEach((item) => {
-      let textBBox = item.getBBox();
-      rootThis.textBBoxDict[item.parentNode.id] = textBBox;
+    this.sidsMapSelection
+      .selectAll(".choroText").each((d,i,c) => {
+      let textBBox = c[i].getBBox();
+      rootThis.textBBoxDict[c[i].parentNode.id] = textBBox;
   });
   this.bboxInit = 1;
   ////////////////////
@@ -86,8 +87,8 @@ export function updateCountryAVGbars(dataObj) {
         this.profileData[avgs[i]] = {
           Region: avgs[i]
         }
-        if(d3.select(`#${avgs[i]}`).empty()) {
-          let g = d3.select(this.sidsMaps)
+        if(this.sidsMapSelection.select(`#${avgs[i]}`).empty()) {
+          let g = this.sidsMapSelection
             .append("g")
             .attr('id', avgs[i])
             g.append('path')
@@ -119,13 +120,13 @@ export function updateCountryAVGbars(dataObj) {
               .classed("countryLabel", true);
           }
         } else {
-          d3.select(`g#${avgs[i]}`)
+          this.sidsMapSelection.select(`g#${avgs[i]}`)
             .remove()
         }
     }
   } else  if (this.vizMode !== 'index'){
     for (let i = 0; i < avgs.length; i++) {
-      d3.select(`g#${avgs[i]}`)
+      this.sidsMapSelection.select(`g#${avgs[i]}`)
         .remove()
       delete this.bboxDict[avgs[i]]
     }
@@ -172,8 +173,8 @@ export function updateCountryAVGMVIbars(dataObj) {
             }
             return val
           },0)
-          if(d3.select(`#${avgs[i]}`).empty()) {
-            let g = d3.select(this.sidsMaps)
+          if(this.sidsMapSelection.select(`#${avgs[i]}`).empty()) {
+            let g = this.sidsMapSelection
               .append("g")
               .attr('id', avgs[i])
               g.append('path')
@@ -221,13 +222,13 @@ export function updateCountryAVGMVIbars(dataObj) {
                 .classed("countryLabel", true);
             }
           } else {
-            d3.select(`g#${avgs[i]}`)
+            this.sidsMapSelection.select(`g#${avgs[i]}`)
               .remove()
           }
       }
     } else if (this.vizMode === 'index') {
       for (let i = 0; i < avgs.length; i++) {
-        d3.select(`g#${avgs[i]}`)
+        this.sidsMapSelection.select(`g#${avgs[i]}`)
           .remove()
         delete this.bboxDict[avgs[i]]
       }

@@ -28,7 +28,7 @@ export function initTimeSeries() {
 //
 export function updateTimeChart({ dataset, optionSelected }) {
   let rootThis = this;
-  const timeSeriesContainer = d3.select("#timeSeriesContainer");
+  const timeSeriesContainer = d3.select(this.timeSeriesContainer);
   const width = this.vizWidth;
   let height = 560/800 * this.vizWidth;
   let margin
@@ -51,7 +51,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
   //data
   const timeData = dataFilter(dataset, rootThis.countryList, rootThis.vizWidth);
   // if (timeData.length == 0) return;
-  console.log(timeData)
   const allData = timeData.map((d) => d.data).flat();
 
   //scale
