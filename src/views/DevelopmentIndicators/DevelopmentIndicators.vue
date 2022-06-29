@@ -29,9 +29,13 @@
           </h2>
         </v-col>
         <v-col cols='2' sm="1" lg="2">
-          <div class="float-right mt-2 mb-2">
+          <div class="float-right mt-0 mb-2">
             <info-button :contentName="page!=='mvi' ? 'aboutThis-indicators' : 'aboutThis-mvi'"/>
           </div>
+          <indicators-export
+            :data="activeIndicatorData"
+            :meta="activeIndicatorsMeta"
+          />
         </v-col>
       </v-row>
       <indicators-autocomplete
@@ -133,6 +137,7 @@ import IndicatorsNav from './children/IndicatorsNav.vue'
 import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
+import IndicatorsExport from './children/IndicatorsExport.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
 import indicatorsMLmodels from './children/indicatorsMLmodels.vue'
 import IndicatorsChoroChart from './children/IndicatorsChoroChart.vue'
@@ -224,6 +229,7 @@ export default {
     IndicatorsAutocomplete,
     MviIndicatorsNav:MVIIndicatorsNav,
     IndicatorsMobileNav,
+    IndicatorsExport,
     MviMobileNav,
     indicatorsML:indicatorsMLmodels
   },
@@ -260,7 +266,7 @@ export default {
       return this.tabs.findIndex(menuItem => menuItem.chartType === this.chartType)
     },
     activeIndicatorsMeta() {
-      return this.indicatorsMeta[this.indicator]
+      return this.indicatorsMeta[this.indicator] || this.indicatorsMeta['hdr-137506']
     },
     mlAvaliable() {
       return this.indicator && this.indicator.match(/.*key|mvi|ndgain|wdi.*/gm);
