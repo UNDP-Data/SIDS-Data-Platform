@@ -16,8 +16,8 @@ export function initVizEngine({sidsXML}) {
   this.sidsMaps = this.main_chart_svg
     .node()
     .appendChild(svgMap);
-
-  appendMultiRectangles()
+  this.sidsMapSelection = d3.select(this.sidsMaps)
+  this.appendMultiRectangles()
   this.initCountrySvgs();
   this.appendAllElements();
   this.initTimeSeries();
@@ -32,7 +32,7 @@ export function appendAllElements(){
     this.appendCountryTitles2();
     this.appendCountryTitles3();
     this.appendCountryRectangles();
-    appendCountryLabels();
+    this.appendCountryLabels();
     this.appendCountryCircles();
     this.initYAxis();
 
@@ -45,7 +45,7 @@ export function appendAllElements(){
 //
 export function initChoroLegend(quantize) {
 
-  d3.select("#regionLegend").style('display','none');
+  d3.select(this.legendContainerSelector).select(".regionLegend").style('display','none');
 
   this.choroLegend = d3
     .select(this.legendContainerSelector)
@@ -86,7 +86,6 @@ export function hideChoroLegend(choroLegend) {
 }
 
 export function showChoroLegend(choroLegend, quantize) {
-  console.log(choroLegend.selectAll("rect"), 'show')
   choroLegend.selectAll("rect")
   .attr("opacity", 1);
 
@@ -145,8 +144,7 @@ function appendLinesMapAndRegions() {
     .attr("fill-opacity", 1)
     .style("font-size", "18px")
     .style("font-weight", 1000)
-    .attr("id", "pacificRegionTitle")
-    .attr("class", "regionTitle");
+    .attr("class", "regionTitle pacificRegionTitle");
 
   this.main_chart_svg
     .append("text")
@@ -157,8 +155,7 @@ function appendLinesMapAndRegions() {
     .style("font-weight", 1000)
     .style("fill", "#" + regionColors("Caribbean", "Y").substring(1))
     .attr("fill-opacity", 1)
-    .attr("id", "caribbeanRegionTitle")
-    .attr("class", "regionTitle");
+    .attr("class", "regionTitle caribbeanRegionTitle");
 
   this.main_chart_svg
     .append("text")
@@ -169,13 +166,12 @@ function appendLinesMapAndRegions() {
     .attr("fill-opacity", 1)
     .style("font-size", "18px")
     .style("font-weight", 1000)
-    .attr("id", "aisRegionTitle")
-    .attr("class", "regionTitle");
+    .attr("class", "regionTitle aisRegionTitle");
   }
 //
 export function initXAxis() {
   //initialize the x-axis
-  d3.select("#choro_legend_container").select("svg").append("g").attr("class", "barAxis").attr("visibility", "hidden");
+  d3.select(this.legendContainerSelector).select("svg").append("g").attr("class", "barAxis").attr("visibility", "hidden");
 
 }
 
@@ -203,7 +199,7 @@ export function initYAxis() {
 // //////////////////
 export function initCountrySvgs(){
   let rootThis = this;
-    d3.select(this.sidsMaps)
+    this.sidsMapSelection
     .selectAll("path")
     .on("click", function () {
       if(rootThis.vizWidth >=800) {
@@ -211,14 +207,14 @@ export function initCountrySvgs(){
       }
     });
 
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll("path")
     .each(function () {
        /* Let's add an id to each group that wraps a path */
       d3.select(this.parentNode).attr("id", this.id);
     });
 
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll("path") // Map countries to regional colors
     .attr("class", function () {
        return (
@@ -231,7 +227,8 @@ export function initCountrySvgs(){
 //
 export function appendCountryCircles() {
   let rootThis = this;
-  d3.select("#allSids")
+
+this.sidsMapSelection
     .selectAll("g")
     .append("circle")
     .style("fill", function () {
@@ -244,8 +241,9 @@ export function appendCountryCircles() {
     .classed("choroCircle", true);
 }
 
-function appendCountryLabels() {
-  d3.select("#allSids")
+export function appendCountryLabels() {
+
+this.sidsMapSelection
     .selectAll("g")
     .append("svg:text")
     .text("")
@@ -263,7 +261,8 @@ function appendCountryLabels() {
 
 export function appendCountryTitles() {
   let rootThis = this;
-  d3.select("#allSids")
+
+this.sidsMapSelection
     .selectAll("g")
     .append("svg:text")
     .text(function () {
@@ -286,7 +285,8 @@ export function appendCountryTitles() {
 
 
 export function appendCountryTitles2() {
-  d3.select("#allSids")
+
+this.sidsMapSelection
     .selectAll("g")
     .append("svg:text")
     .classed("choroText2", true);
@@ -294,7 +294,8 @@ export function appendCountryTitles2() {
 
 export function appendCountryTitles3() {
   let rootThis = this;
-  d3.select("#allSids")
+
+this.sidsMapSelection
     .selectAll("g")
     .append("svg:text")
 
@@ -333,7 +334,8 @@ export function appendCountryTitles3() {
 }
 //
 // function appendCountryLines() {
-//   d3.select("#allSids")
+//
+// this.sidsMapSelection
 //     .selectAll("g")
 //     .append("line")
 //     .style("stroke-width", 1)
@@ -355,7 +357,8 @@ export function appendCountryTitles3() {
 //
 export function appendCountryRectangles() {
   let rootThis = this;
-  d3.select("#allSids")
+
+this.sidsMapSelection
     .selectAll("g")
     .append("rect")
     .style("fill", function () {
@@ -372,8 +375,7 @@ export function appendCountryRectangles() {
 }
 export function initVizEngineTooltips() {
   let rootThis = this;
-
-  delegate('#choro_map_container', {
+  delegate(this.mapContainerSelector, {
     target:'.countrySvg, .choroCircle, .choroRectMvi, .choroRect',
     theme: 'light',
     delay: 300,
@@ -412,12 +414,12 @@ export function initVizEngineTooltips() {
     }
   });
 
-  tippy('.regionTitle', {
+  tippy(`${this.mapContainerSelector} .regionTitle`, {
     theme: 'light',
     delay: 300,
     onShow: function(instance) {
       let content = instance.popper.getElementsByClassName('tippyContent')[0];
-      let regionCode = instance.reference.id.replace('RegionTitle', '');
+      let regionCode = instance.reference.classList[1].replace('RegionTitle', '');
       let value =  nFormatter(rootThis.regionAverages[regionCode],2);
       content.innerHTML = `Average: ${value}`;
     },
@@ -431,7 +433,7 @@ export function initVizEngineTooltips() {
         tooltipElement.appendChild(content);
 
 
-        let regionCode = reference.id.replace('RegionTitle', '');
+        let regionCode = reference.classList[1].replace('RegionTitle', '');
         header.innerHTML = regionsDict[regionCode];
 
         return tooltipElement
@@ -444,7 +446,8 @@ export function initVizEngineTooltips() {
 ///////////////////////////////
 
 export function appendMultiRectangles() {
-  d3.select("#allSids")
+
+this.sidsMapSelection
   .selectAll("g")
   .append("rect")
   .style("fill", indexColors["mvi-index"]["Financial"])
@@ -454,7 +457,7 @@ export function appendMultiRectangles() {
   .attr("height", 0)
   .classed("choroRect0 choroRectMvi", true);
 
-d3.select("#allSids")
+this.sidsMapSelection
   .selectAll("g")
   .append("rect")
   .style("fill", indexColors["mvi-index"]["Economic"])
@@ -464,7 +467,7 @@ d3.select("#allSids")
   .attr("height", 0)
   .classed("choroRect1 choroRectMvi", true);
 
-d3.select("#allSids")
+this.sidsMapSelection
   .selectAll("g")
   .append("rect")
   .style("fill", indexColors["mvi-index"]["Geographic"])
@@ -474,7 +477,7 @@ d3.select("#allSids")
   .attr("height", 0)
   .classed("choroRect2 choroRectMvi", true);
 
-d3.select("#allSids")
+this.sidsMapSelection
   .selectAll("g")
   .append("rect")
   .style("fill", indexColors["mvi-index"]["Environmental"])

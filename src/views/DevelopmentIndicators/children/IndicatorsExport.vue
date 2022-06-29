@@ -7,6 +7,7 @@
         :icon="!isDesktop"
         :small="isDesktop"
         dark
+        :disabled="indiCode === 'region'"
         :outlined="!isDesktop"
         :block="isDesktop"
         v-bind="attrs"
@@ -35,7 +36,7 @@ import sidsList from '@/assets/sidsList'
 export default {
   name: 'IndicatorsExport',
   mixins:[sizeMixin],
-  props:['data', 'meta'],
+  props:['data', 'meta', 'indiCode'],
   data() {
     return {
     }
@@ -78,7 +79,10 @@ export default {
       }
     },
     exportPDF() {
-      window.print();
+      this.$emit('print')
+      this.$nextTick(()=>{
+        window.print();
+      })
     }
   }
 }

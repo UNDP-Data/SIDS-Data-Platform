@@ -15,7 +15,8 @@ import {
   hideChoroLegend,
   showChoroLegend,
   appendMultiRectangles,
-  initVizEngineTooltips
+  initVizEngineTooltips,
+  appendCountryLabels
 } from './vizEngineInit'
 
 
@@ -74,15 +75,17 @@ import {
     // <script src="scripts/vizEngineInit.js"></script>
     // <script src="scripts/processIndexData.js"></script>
 export default class Choro {
-  constructor({viz,countryList, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page, legendContainerSelector, mapContainerSelector, profileData, vizContainerWidth, vizContainerHeight, sidsXML, mapLocations}) {
-    this.initState({viz,countryList, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page,legendContainerSelector, mapLocations, mapContainerSelector, vizContainerWidth, vizContainerHeight, profileData})
+  constructor({viz,countryList, timeSeriesContainer, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page, legendContainerSelector, mapContainerSelector, profileData, vizContainerWidth, vizContainerHeight, sidsXML, mapLocations}) {
+    this.initState({viz, countryList, timeSeriesContainer, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page,legendContainerSelector, mapLocations, mapContainerSelector, vizContainerWidth, vizContainerHeight, profileData})
     this.initVizEngine({sidsXML})
     if(indicatorCode!=='region' || this.vizWidth<800){
       this.updateVizEngine(indicatorCode)
     }
   }
   initState({
-    viz,countryList,
+    viz,
+    countryList,
+    timeSeriesContainer,
     data,
     year,
     clickCallback,
@@ -117,6 +120,8 @@ export default class Choro {
     this.vizWidth = vizContainerWidth;
     this.vizHeigh = vizContainerHeight;
     this.legendContainerSelector = legendContainerSelector;
+    this.mapContainerSelector = mapContainerSelector;
+    this.timeSeriesContainer = timeSeriesContainer;
     this.profileData = profileData;
     this.selectedIndis = selectedIndis;
     this.main_chart_svg = d3.select(mapContainerSelector)
@@ -240,3 +245,4 @@ Choro.prototype.initVizEngineTooltips = initVizEngineTooltips;
 Choro.prototype.updateCountryAVGbars = updateCountryAVGbars;
 Choro.prototype.updateCountryAVGMVIbars = updateCountryAVGMVIbars;
 Choro.prototype.updateErrorLines = updateErrorLines;
+Choro.prototype.appendCountryLabels = appendCountryLabels;

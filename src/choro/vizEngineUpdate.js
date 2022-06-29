@@ -145,7 +145,7 @@ export function updateErrorLines(vizElementAttributes) {
   let rootThis = this;
   if(this.indicatorData.lowerIntervals) {
     if(rootThis.indiSelections["viz"] == "bars") {
-      d3.select("#allSids")
+      this.sidsMapSelection
         .selectAll("g")
         .append("line")
         .classed("errorLine", true)
@@ -260,7 +260,7 @@ export function updateErrorLines(vizElementAttributes) {
             }
         })
     } else if (rootThis.indiSelections["viz"] == "global") {
-      d3.select("#allSids")
+      this.sidsMapSelection
         .selectAll("g")
         .append("line")
         .classed("errorLine", true)
@@ -383,7 +383,7 @@ export function countriesWithNoData() {
   let rootThis = this,
     /// make list of counties with no data (this should probably be refactored to create a list of countries with data)? Or just simplify this
   noData = [];
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll("path") /* Map  counties to  data */
     .each(function () {
       try {
@@ -410,9 +410,9 @@ export function updateVizBlocks(){
     d3.select("#indexSpider").style("display", "none");
   }
   if (this.indiSelections["viz"] == "series") {
-    d3.select("#timeSeriesContainer").style("display", "block");
+    d3.select(this.timeSeriesContainer).style("display", "block");
   } else {
-    d3.select("#timeSeriesContainer").style("display", "none");
+    d3.select(this.timeSeriesContainer).style("display", "none");
   }
   if (this.indiSelections["page"] == "countryDataTab") {
     if (this.indiSelections["viz"] == "multi") {
@@ -427,11 +427,11 @@ export function updateVizBlocks(){
     this.indiSelections["viz"] == "info" ||
     this.indiSelections["viz"] == "series"
   ) {
-    d3.select("#choro_legend_container").style("display", "none");
-    d3.select("#choro_map_container").style("display", "none"); //"opacity", "0");
+    d3.select(this.legendContainerSelector).style("display", "none");
+    d3.select(this.mapContainerSelector).style("display", "none"); //"opacity", "0");
   } else {
-    d3.select("#choro_legend_container").style("display", "block");
-    d3.select("#choro_map_container").style("display", "block"); //("opacity", "1");
+    d3.select(this.legendContainerSelector).style("display", "block");
+    d3.select(this.mapContainerSelector).style("display", "block"); //("opacity", "1");
   }
 }
 //
@@ -489,7 +489,7 @@ export function updateCountrySvgColors(quantize) {
     /* break the data values into 9 ranges of €100 each   */
 
 
-    d3.select(this.sidsMaps)
+    this.sidsMapSelection
       .selectAll("path") /* Map  counties to  data */
       .attr("class", function () {
         try {
@@ -566,7 +566,7 @@ export function updateCountrySvgColors(quantize) {
 //
 export function updateCountryPositions(vizElementAttributes) {
   //update country svg positions
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll(".countrySvg")
     .transition()
     .duration(1200) //make transition time relative to to/from viz
@@ -595,7 +595,7 @@ export function updateCountryTitles(
   noData
 ) {
   let rootThis = this;
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll(".choroText")
     .transition()
     .duration(1200) //make transition time relative to to/from viz
@@ -608,25 +608,25 @@ export function updateCountryTitles(
       }
     });
 
-  d3.select(this.sidsMaps).selectAll(".choroText2").style("pointer-events", "none");
-  d3.select(this.sidsMaps).selectAll(".choroText3").style("pointer-events", "none");
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection.selectAll(".choroText2").style("pointer-events", "none");
+  this.sidsMapSelection.selectAll(".choroText3").style("pointer-events", "none");
+  this.sidsMapSelection
     .selectAll(".countryLabel")
     .style("pointer-events", "none");
 
   if (this.indiSelections["viz"] == "global") {
-    d3.selectAll('.choroText').attr('fill-opacity', 0)
-    d3.selectAll('.choroText2').attr('fill-opacity', 0)
-    d3.selectAll('.choroText3').attr('fill-opacity', 1)
+    this.sidsMapSelection.selectAll('.choroText').attr('fill-opacity', 0)
+    this.sidsMapSelection.selectAll('.choroText2').attr('fill-opacity', 0)
+    this.sidsMapSelection.selectAll('.choroText3').attr('fill-opacity', 1)
   } else {
-    d3.selectAll('.choroText2').attr('fill-opacity', 0)
-    d3.selectAll('.choroText3').attr('fill-opacity', 0)
+    this.sidsMapSelection.selectAll('.choroText2').attr('fill-opacity', 0)
+    this.sidsMapSelection.selectAll('.choroText3').attr('fill-opacity', 0)
   }
 
     if (this.indiSelections["viz"] == "series") {
-      d3.selectAll('.choroText').attr('fill-opacity', 0)
+      this.sidsMapSelection.selectAll('.choroText').attr('fill-opacity', 0)
     } else {
-      d3.selectAll('.choroText').each(function () {
+      this.sidsMapSelection.selectAll('.choroText').each(function () {
         let country = getIsoByName(this.innerHTML);
 
         if (
@@ -659,12 +659,12 @@ export function updateCountryTitles(
     }
 
   if (this.indiSelections["viz"] == "Multi-indicator") {
-    d3.select(".yAxisTitle")
+    this.sidsMapSelection.select(".yAxisTitle")
       .transition()
       .duration(1000)
       .attr("fill-opacity", 1);
   } else {
-    d3.select(".yAxisTitle")
+    this.sidsMapSelection.select(".yAxisTitle")
       .transition()
       .duration(1000)
       .attr("fill-opacity", 0);
@@ -674,7 +674,7 @@ export function updateCountryTitles(
 export function updateLabels(vizElementAttributes, noData) {
 
     let rootThis = this;
-    d3.select(this.sidsMaps)
+    this.sidsMapSelection
       .selectAll(".countryLabel")
       .transition()
       .duration(1200)
@@ -724,9 +724,9 @@ export function updateLabels(vizElementAttributes, noData) {
         );
       });
       if(this.indicatorData.lowerIntervals && rootThis.indiSelections["viz"] === "bars") {
-        d3.select(this.sidsMaps)
+        this.sidsMapSelection
           .selectAll(".errorLabel").remove()
-        d3.select(this.sidsMaps)
+        this.sidsMapSelection
           .selectAll("g")
           .append("text")
           .classed("errorLabel", true)
@@ -778,14 +778,14 @@ export function updateLabels(vizElementAttributes, noData) {
             return ''
           });
       } else {
-        d3.select(this.sidsMaps)
+        this.sidsMapSelection
           .selectAll(".errorLabel").remove()
       }
 }
 
 export function updateRectangles(vizElementAttributes) {
   let rootThis = this;
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll(".choroRect")
     .transition()
     .duration(1200)
@@ -821,7 +821,7 @@ export function updateIndexRectangles(vizElementAttributes) {
   let rootThis = this;
   let subindexList=Object.keys(this.indexWeights["subindices"])
   for(let i=0;i<subindexList.length;i++){
-   d3.select(this.sidsMaps)
+   this.sidsMapSelection
       .selectAll(".choroRect"+(i))
       .transition()
       .duration(1200)
@@ -843,7 +843,7 @@ export function updateIndexRectangles(vizElementAttributes) {
       });
   }
   for(let i=subindexList.length;i<totalIndexRectangles;i++){
-    d3.select(this.sidsMaps)
+    this.sidsMapSelection
        .selectAll(".choroRect"+(i))
        .transition()
        .duration(1200)
@@ -866,7 +866,7 @@ export function updateIndexRectangles(vizElementAttributes) {
   }
 }
 export function updateCircles(vizElementAttributes) {
-  d3.select(this.sidsMaps)
+  this.sidsMapSelection
     .selectAll(".choroCircle")
     .transition()
     .duration(1200)
@@ -905,7 +905,7 @@ export function updateLinesAndMap() {
       .style("opacity", 0);
   }
   let rootThis = this;
-  d3.selectAll(".choroMap")
+  this.main_chart_svg.selectAll(".choroMap")
     .transition()
     .duration(1200) //make transition time relative to to/from viz
     .attr("opacity", function () {
@@ -919,7 +919,7 @@ export function updateLinesAndMap() {
 //
 export function updateBarAxis() {
   let indicatorDataYear = this.indicatorData["data"][this.indiSelections["year"]],
-  barAxis = d3.select(".barAxis");
+  barAxis = d3.select(this.legendContainerSelector).select(".barAxis");
   const x = d3.scaleLinear();
   var margin = { left: this.vizWidth < 800 ? 0 : 160, right: 5 };
   var xAxis = d3.axisTop(x);
@@ -981,7 +981,7 @@ export function updateBarAxis() {
 export function updateYAxis() {
   let indicatorDataYear = this.indicatorData["data"][this.indiSelections["year"]],
 
-  yAxisContainer = d3.select(".multiYAxis");
+  yAxisContainer = this.sidsMapSelection.select(".multiYAxis");
   const yScale = d3.scaleLinear();
   var yAxis = d3.axisLeft(yScale);
   yAxis.tickFormat(d3.format(".2s"));
@@ -1084,7 +1084,7 @@ export function updateChoroLegend(quantize) {
   }
 
 export function updateRegionLables() {
-    let countryMaps = d3.selectAll(".regionTitle"),
+    let countryMaps = this.main_chart_svg.selectAll(".regionTitle"),
     regionAverages = {},
     regionRank = {},
     regionTitleVals,
@@ -1092,7 +1092,7 @@ export function updateRegionLables() {
     countryListLength,
     indicatorDataYear = this.indicatorData["data"][this.indiSelections["year"]];
     countryMaps.each(function () {
-      let region = this.id.replace("RegionTitle", ""),
+      let region = this.classList[1].replace("RegionTitle", ""),
       regionLists = {
         ais: regionCountries["ais"],
         pacific: regionCountries["pacific"],
@@ -1259,19 +1259,19 @@ export function updateRegionLables() {
     }
 
     this.regionAverages = regionAverages;
-    d3.select("#pacificRegionTitle")
+    this.main_chart_svg.select(".pacificRegionTitle")
       .transition()
       .duration(1000)
       .attr("x", regionTitleVals["pacificX"])
       .attr("y", regionTitleVals["pacificY"])
       .attr("fill-opacity", regionTitleVals["opacity"]);
-    d3.select("#caribbeanRegionTitle")
+    this.main_chart_svg.select(".caribbeanRegionTitle")
       .transition()
       .duration(1000)
       .attr("x", regionTitleVals["caribbeanX"])
       .attr("y", regionTitleVals["caribbeanY"])
       .attr("fill-opacity", regionTitleVals["opacity"]);
-    d3.select("#aisRegionTitle")
+    this.main_chart_svg.select(".aisRegionTitle")
       .transition()
       .duration(1000)
       .attr("x", regionTitleVals["aisX"])

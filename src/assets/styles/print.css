@@ -4,8 +4,24 @@
   top: -99999px;
   left: -99999px;
 }
-
+.printable-hidden {
+  position: absolute !important;
+  z-index: -1;
+  top: -100%;
+}
+.print-page-wrap{
+  min-height: 1400px;
+  overflow: hidden;
+}
 @media print {
+  .printable-hidden {
+    position: static !important;
+  }
+  .print-page-wrap-last{
+    position: relative !important;
+    z-index: 100;
+    overflow: visible;
+  }
   body .v-application .d-none-print {
     display: none !important;
   }
@@ -36,9 +52,6 @@
     flex-direction: column;
     overflow: hidden;
     position: relative;
-  }
-  .print-page-wrap{
-    min-height: 1400px;
   }
   .justify-print-space-between {
     justify: space-between !important;
@@ -83,6 +96,13 @@
 }
 .page-break{
   break-after:always;
+}
+.print-page-wrap_footer{
+  position: absolute;
+  left: 0;
+  bottom: -20px;
+  width: 100%;
+  height: 48px;
 }
 @page {
     size: A4;
