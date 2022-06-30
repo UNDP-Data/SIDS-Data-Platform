@@ -9,11 +9,11 @@
   z-index: -1;
   top: -100%;
 }
-.print-page-wrap{
-  min-height: 1400px;
-  overflow: hidden;
-}
 @media print {
+  .print-page-wrap{
+    min-height: 1400px;
+    overflow: hidden;
+  }
   .printable-hidden {
     position: static !important;
   }
