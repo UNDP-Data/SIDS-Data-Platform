@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-md-5">
+  <div class="mt-md-5 print-root">
     <div class="print-page-wrap">
       <printout-header>
         <template slot="text">
@@ -472,5 +472,11 @@ export default {
   }
   .choro-print-legend_pacific {
     color: rgb(240, 165, 0);
+  }
+  @media print {
+    .print-root {
+      max-height: 4200px;
+      overflow: hidden;
+    }
   }
 </style>
