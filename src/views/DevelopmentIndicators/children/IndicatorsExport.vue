@@ -7,7 +7,7 @@
         :icon="!isDesktop"
         :small="isDesktop"
         dark
-        :disabled="indiCode === 'region'"
+        :disabled="indiCode === 'region' || indiCode === 'mvi-index'"
         :outlined="!isDesktop"
         :block="isDesktop"
         v-bind="attrs"

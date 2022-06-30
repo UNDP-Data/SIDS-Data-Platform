@@ -140,9 +140,9 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row dense class="printable-hidden">
+      <v-row  v-if="page!=='mvi'" dense class="printable-hidden">
         <v-col cols='12'>
-          <indicators-choro-chart class="choro-printabe" v-if='!noData' :chartId="'choro-print'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="'bars'" :chartType="'bars'" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe" v-if='!noData' :chartId="'choro-print'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'bars'" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
           <p class="text-center">
             <span class="choro-print-legend choro-print-legend_caribean">Caribbean</span>
@@ -152,31 +152,31 @@
           </v-col>
       </v-row>
     </div>
-    <div class="printable-hidden print-page-wrap">
+    <div v-if="page!=='mvi'" class="printable-hidden print-page-wrap">
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">Regional averages</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-avg'" region="Regional average" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="'series'" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-avg'" region="Regional average" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">Caribbean</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-car'" region="Caribbean" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="'series'" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-car'" region="Caribbean" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
     </div>
-    <div class="printable-hidden print-page-wrap print-page-wrap-last">
+    <div v-if="page!=='mvi'" class="printable-hidden print-page-wrap print-page-wrap-last">
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">AIS</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-ais'" region="AIS" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="'series'" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-ais'" region="AIS" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">Pacific</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="Pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="'series'" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="Pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
       <p class="print-page-wrap_footer">
@@ -392,7 +392,7 @@ export default {
   },
   async beforeRouteUpdate(to, from, next) {
     try {
-      await store.dispatch('indicators/getIndicatorData',to.params.indicator)
+      await store.dispatch('indicators/getIndicatorData', to.params.indicator)
       next()
     } catch (e) {
       next(from)
@@ -400,7 +400,7 @@ export default {
   },
   async beforeRouteEnter(to, from, next) {
     try {
-      await store.dispatch('indicators/getIndicatorData',to.params.indicator)
+      await store.dispatch('indicators/getIndicatorData', to.params.indicator)
       next()
     } catch (e) {
       next(from)

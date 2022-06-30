@@ -187,7 +187,7 @@ export default {
     chartData() {
       let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
       this.setCompareCountries(compareIdsList)
-      if(this.choro && this.page === this.choro.page) {
+      if(this.choro && this.page === this.choro.page && this.MLPredictionData) {
         this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },
