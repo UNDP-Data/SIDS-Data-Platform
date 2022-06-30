@@ -55,7 +55,7 @@ export default {
     async loadMlPredictionData({ commit }, data) {
       commit('setMLPredictionData', data);
     },
-    async clearMlPredictionData({ commit }) {
+    clearMlPredictionData({ commit }) {
       commit('setMLPredictionData', null);
     }
   }
