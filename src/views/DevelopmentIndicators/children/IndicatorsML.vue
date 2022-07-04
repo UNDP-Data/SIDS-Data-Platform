@@ -1,6 +1,6 @@
 <template>
   <div class="pl-5 ml-container">
-    <v-row>
+    <v-row class="d-print-none">
       <v-col cols="6">
         <div class="select">
           <label class="input-label">Model</label>
@@ -18,7 +18,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12">
         <h4 class="choro-title text-center">
           {{activeIndicatorsMeta.indicator}}
@@ -26,7 +26,7 @@
         </h4>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select">
           <label class="input-label">Base Imputer</label>
@@ -49,7 +49,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select">
           <label class="input-label">Predictor Selection Method</label>
@@ -73,7 +73,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select" v-if="predictor === 'MANUAL'">
           <label class="input-label">Select predictors</label>
@@ -110,7 +110,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select">
           <label class="input-label">Number of Estimators in Ensemble models</label>
@@ -131,7 +131,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="6">
         <div class="select">
           <label class="input-label">Ensemble models</label>
@@ -165,7 +165,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row class="d-print-none">
       <v-col cols="12">
         <p class="mb-4" v-if="estimate">
           Estimated time of training {{estimate}} seconds
@@ -180,7 +180,7 @@
         >Train</v-btn>
       </v-col>
     </v-row>
-    <v-row v-if="error">
+    <v-row class="d-print-none" v-if="error">
       <v-col cols="10">
         <v-chip
           class="mr-2"
@@ -190,11 +190,54 @@
         </v-chip>
       </v-col>
     </v-row>
+
+    <v-row class="d-none d-print-flex">
+      <v-col cols="6">
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Model:
+          </span>
+          {{modelType}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Base imputer:
+          </span>
+          {{imputerText}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Predictor selectin method:
+          </span>
+          {{predictorText}}
+        </p>
+      </v-col>
+      <v-col cols="6">
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Predictors:
+          </span>
+          {{predictorsText}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Ensemble models:
+          </span>
+          {{emodelText}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Predicction interval type:
+          </span>
+          {{pintervalText}}
+        </p>
+      </v-col>
+    </v-row>
     <v-row v-if="rmse">
       <v-col cols="10">
-        <p>Normalized root mean square is
+        <p class="ml-print-rms">Normalized root mean square is
           <v-chip
-            class="mr-2"
+            class="mr-2 bg-printable"
             :color="chipColor"
           >
             {{rmse}}
@@ -202,7 +245,7 @@
       </p>
       </v-col>
     </v-row>
-    <v-row  v-if="rmse">
+    <v-row class="bg-printable"  v-if="rmse">
       <v-col cols="12">
         <h2 class="block-subheader">Prediction Strength</h2>
         <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
@@ -214,7 +257,7 @@
         <indicators-pie-chart chartId="pie-self" :data="pieData"/>
       </v-col>
     </v-row>
-    <v-row v-if="rmse">
+    <v-row class="bg-printable" v-if="rmse">
       <v-col cols="12">
         <indicators-heat-map-chart  chartId="hear-self" :data="mlData.correlation"/>
       </v-col>
@@ -291,6 +334,35 @@ export default {
       mlData: state => state.ml.mlData,
       mlModel: state => state.ml.mlModel
     }),
+    imputerText() {
+      return this.imputers.find(i => {
+        return i.id === this.imputer;
+      }).name
+    },
+    predictorsText() {
+      if(this.predictor === 'MANUAL') {
+        return this.nPredicor
+      } else {
+        return this.inPredicor.map(c => {
+          this.indicatorsMeta[c]
+        }).toString()
+      }
+    },
+    emodelText() {
+      return this.emodels.find(i => {
+        return i.id === this.emodel;
+      }).name
+    },
+    predictorText() {
+      return this.predictors.find(i => {
+        return i.id === this.predictor;
+      }).name
+    },
+    pintervalText() {
+      return this.pintervals.find(i => {
+        return i.id === this.pinterval;
+      }).name
+    },
     activeIndicatorsMeta() {
       return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-137506']
     },
@@ -474,6 +546,16 @@ export default {
 <style>
 .bar-chart-ml-self {
   height: 400px;
+}
+
+.ml-print-filters-list_name,  {
+  display: block;
+  font-size: 14px;
+  font-weight: normal;
+}
+.ml-print-filters-list, .ml-print-rms {
+  font-size: 20px;
+  font-weight: bold;
 }
 /* style.css */
 </style>

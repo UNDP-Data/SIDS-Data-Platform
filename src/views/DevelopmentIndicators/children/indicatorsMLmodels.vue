@@ -1,6 +1,6 @@
 <template>
   <v-card flat>
-    <v-card-title class="justify-center">
+    <v-card-title class="justify-center d-print-none">
       <h3 class="ml-auto page-header text-center">
         AI Mode
       </h3>
@@ -9,10 +9,16 @@
       </v-btn>
     </v-card-title>
 
-    <v-card-subtitle>
+    <v-card-subtitle class="d-print-none">
       Select one of five pretrained models to add the predicted results to the interface and analyze correlation between indicators by visualizing the importance of othe indicators used in predictions.
     </v-card-subtitle>
     <v-card-text>
+      <h2 v-if="activePanel !== undefined" class="d-none page-header text-left d-print-block">
+        {{ models[activePanel].name}}
+      </h2>
+      <p v-if="activePanel !== undefined" class="adv-printed d-none d-print-block">
+        {{ models[activePanel].adv}}
+      </p>
       <v-expansion-panels v-if="autoMode" v-model="activePanel" flat accordion>
         <v-expansion-panel
           v-for="(model,i) in models"
@@ -20,7 +26,7 @@
           class="mb-4 ml-panel"
           @change="onPageExpand(i)"
         >
-          <v-expansion-panel-header class="ml-panel-button">
+          <v-expansion-panel-header class="ml-panel-button d-print-none">
               <v-col :style="{'background': model.color}" class="justify-center ml-panel-button-first ml-panel-button_content pt-0 pb-0 d-flex align-center ml-panel_number" cols="2">
                 Model {{i+1}}
               </v-col>
@@ -44,10 +50,12 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content class="pt-4">
             <v-row v-if="modelAvaliable">
-              <h2 class="block-subheader">Prediction Strength</h2>
-              <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
+              <v-col cols="12">
+                <h2 class="block-subheader">Prediction Strength</h2>
+                <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
+              </v-col>
               <v-col cols="8">
-                <indicators-bar-chart :chartId="'bar-'+i" :data="mlPredictionData.featureImportances[year]"/>
+                <indicators-bar-chart class="models-bar-chart" :chartId="'bar-'+i" :data="mlPredictionData.featureImportances[year]"/>
               </v-col>
               <v-col cols="4">
                 <indicators-pie-chart :chartId="'pie-'+i" :data="mlPredictionData.categoryImportances[year]"/>
@@ -65,7 +73,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-      <div v-if="autoMode" class="d-flex align-center">
+      <div v-if="autoMode" class="d-flex d-print-none align-center">
         <p class="mr-4 mb-0">
           Or, you can design your own machine learning model to train in real-time in our Azure environment, with custom parameters and model types
         </p>
@@ -235,5 +243,17 @@ export default {
 }
 .ml-panel-button_advantage {
   font-size: 10px;
+}
+.models-bar-chart {
+  height:400px;
+}
+.adv-printed {
+  font-size: 16px;
+  color: #000;
+}
+@media print {
+  .v-expansion-panel-content__wrap {
+    padding: 0!important;
+  }
 }
 </style>
