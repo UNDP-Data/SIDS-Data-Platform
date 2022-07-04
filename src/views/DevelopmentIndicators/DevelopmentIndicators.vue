@@ -12,6 +12,18 @@
       <p class="d-none d-print-block">
         <b>Source:</b>{{activeIndicatorsMeta.sourcce}}{{activeIndicatorsMeta.link}}
       </p>
+      <v-row  v-if="page!=='mvi'" dense class="printable-hidden">
+        <v-col cols='12'>
+          <indicators-choro-chart class="choro-printabe" v-if='!noData' :chartId="'choro-print'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'bars'" :indicatorCode="indicator"/>
+          <h4 class="text-center" v-else>No data for selected indicator</h4>
+          <p class="text-center">
+            <span class="choro-print-legend choro-print-legend_caribean">Caribbean</span>
+            <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">AIS</span>
+            <span class="choro-print-legend choro-print-legend_pacific">Pacific</span>
+          </p>
+          </v-col>
+      </v-row>
+    </div>
       <v-row dense>
         <v-col  class="d-none d-print-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
           <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
@@ -106,17 +118,6 @@
               </div>
             </v-col>
           </v-row>
-          <v-row  v-if="page!=='mvi'" dense class="printable-hidden">
-            <v-col cols='12'>
-              <indicators-choro-chart class="choro-printabe" v-if='!noData' :chartId="'choro-print'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'bars'" :indicatorCode="indicator"/>
-              <h4 class="text-center" v-else>No data for selected indicator</h4>
-              <p class="text-center">
-                <span class="choro-print-legend choro-print-legend_caribean">Caribbean</span>
-                <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">AIS</span>
-                <span class="choro-print-legend choro-print-legend_pacific">Pacific</span>
-              </p>
-              </v-col>
-          </v-row>
           <v-row class="nav-filter-row d-print-none d-none d-lg-flex" dense justify="end">
             <div v-if="(chartType === 'bars' || chartType === 'spider')" class="sorting-row">
                 <v-tabs
@@ -151,7 +152,6 @@
           </v-row>
         </v-col>
       </v-row>
-    </div>
     <div v-if="page!=='mvi' && !mlMode" class="printable-hidden print-page-wrap">
       <v-row dense>
         <v-col cols='12'>
