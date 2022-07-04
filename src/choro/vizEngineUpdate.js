@@ -369,12 +369,12 @@ export function updateErrorLines(vizElementAttributes) {
             }
         })
     } else {
-      d3.selectAll(".errorLine")
+      this.sidsMapSelection.selectAll(".errorLine")
         .remove()
     }
   } else {
 
-      d3.selectAll(".errorLine")
+      this.sidsMapSelection.selectAll(".errorLine")
         .remove()
   }
 }

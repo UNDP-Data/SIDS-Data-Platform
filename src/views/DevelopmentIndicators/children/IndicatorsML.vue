@@ -202,34 +202,21 @@
       </p>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col v-if="rmse"  cols="12">
-        <h2 class="block-subheader">Visualizing Imputations</h2>
-        <p>It is important to note that the prediction intervals provide additional information on the of the uncertainity in the predictions</p>
-      </v-col>
+    <v-row  v-if="rmse">
       <v-col cols="12">
-        <div id="pre-bar">
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col v-if="rmse" cols="12">
         <h2 class="block-subheader">Prediction Strength</h2>
         <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
       </v-col>
       <v-col cols="8">
-        <div id="imp-bar">
-        </div>
+        <indicators-bar-chart class="bar-chart-ml-self" chartId="bar-self" :data="barsData"/>
       </v-col>
       <v-col cols="4">
-        <div id="imp-pie">
-        </div>
+        <indicators-pie-chart chartId="pie-self" :data="pieData"/>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="rmse">
       <v-col cols="12">
-        <div id="corr">
-        </div>
+        <indicators-heat-map-chart  chartId="hear-self" :data="mlData.correlation"/>
       </v-col>
     </v-row>
   </div>
@@ -239,8 +226,10 @@
 
 import { mapState } from 'vuex';
 import service from '@/services'
-import sidsList from '@/assets/sidsListFull'
 import plotly from 'plotly.js-dist/plotly'
+import IndicatorsPieChart from './IndicatorsPieChart';
+import IndicatorsBarChart from './IndicatorsBarChart';
+import IndicatorsHeatMapChart from './IndicatorsHeatMapChart';
 import store from '@/store'
 
 export default {
@@ -282,12 +271,16 @@ export default {
         id:'quantile'
       }],
       loading:false,
-      rmse:null,
       error: null,
       estimate: null
     }
   },
   props:['indicatorCode', 'year'],
+  components:{
+    IndicatorsPieChart,
+    IndicatorsBarChart,
+    IndicatorsHeatMapChart
+  },
   computed: {
     ...mapState({
       profileData: state => state.indicators.profileData,
@@ -305,6 +298,30 @@ export default {
       if(this.rmse > 0.7) return 'red'
       if(this.rmse > 0.3) return 'yellow'
       return 'green'
+    },
+    barsData() {
+      if(this.mlData) {
+        return this.mlData.model_feature_names.reduce((reducer, value, index) => {
+          reducer[value] = this.mlData.model_feature_importance[index];
+          return reducer
+        }, {})
+      }
+      return null;
+    },
+    pieData() {
+      if(this.mlData) {
+        return this.mlData.feature_importance_pie.category.reduce((reducer, value, index) => {
+          reducer[value] = this.mlData.feature_importance_pie.value[index];
+          return reducer
+        }, {})
+      }
+      return null;
+    },
+    rmse() {
+      if(this.mlData) {
+        return Math.ceil(this.mlData.rmse_deviation,2);
+      }
+      return null
     },
     allIndicators() {
       let indicatorsArray = [];
@@ -366,89 +383,14 @@ export default {
       }
       this.loading = false;
     },
-    drawData(){
-      if(this.mlData === null) {
-        return
-      }
-      let countryList = this.mlData.prediction['Country Code'].map(code => {
-        try {
-          return sidsList.find( c => {
-            return c.iso === code}
-          ).name
-        } catch (e) {
-          return code
-        }
-      })
-      this.rmse = Math.ceil(this.mlData.rmse_deviation,2);
-      this.drawChart(
-        this.mlData.prediction.prediction,
-        countryList,
-        this.mlData.prediction.upper,
-        this.mlData.prediction.lower)
-      this.correlation(this.mlData.correlation)
-      this.pie(this.mlData.feature_importance_pie)
-      this.drawImportanceimportance(this.mlData.model_feature_names, this.mlData.model_feature_importance)
-    },
-    drawChart(prediction, country, upper, lower) {
-      var traces = [{
-        x: prediction,
-        y: country,
-        error_x: {
-          type: "data",
-          symmetric: false,
-          array: upper,
-          arrayminus:lower
-        },
-        type: "bar",
-        orientation: 'h'
-      }];
-      plotly.newPlot('pre-bar', traces, {
-        height: country.length * 30,
-        margin: {l: 100, r:0, b:0, t:0},
-        plot_bgcolor:"rgba(0,0,0,0)",
-        width:document.getElementById('pre-bar').offsetWidth,
-        paper_bgcolor:"rgba(0,0,0,0)",
-        xaxis:{
-          tickfont:{size:10}
-        },
-        yaxis:{
-          tickfont:{size:10}
-        }
-      });
-    },
-    drawImportanceimportance(feature_names, importance_values){
-      let traces = [{
-        x: feature_names.map(code => {
-          let indi = this.indicatorsMeta[code] ? this.indicatorsMeta[code].indicator : code;
-          if(this.indicatorsMeta[code] && this.indicatorsMeta[code].dim !== 'none') {
-            indi+= ' ' + this.indicatorsMeta[code].dim
-          }
-          if(indi.length > 15) {
-            let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
-            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          }
-          return indi
-        }),
-        y: importance_values,
-        type: "bar",
-        orientation: 'v'
-      }];
-      var layout = {
-        margin: {b: 100, r:100, t:0},
-        height:300,
-        plot_bgcolor:"rgba(0,0,0,0)",
-        paper_bgcolor:"rgba(0,0,0,0)",
-        width:document.getElementById('imp-bar').offsetWidth,
-        xaxis:{
-          tickfont:{size:10},
-          tickangle:35
-        },
-        yaxis:{
-          tickfont:{size:10}
-        }
-      };
-      plotly.newPlot('imp-bar', traces,layout);
-    },
+    // drawData(){
+    //   if(this.mlData === null) {
+    //     return
+    //   }
+    //   this.correlation(this.mlData.correlation)
+    //   // this.pie(this.mlData.feature_importance_pie)
+    //   // this.drawImportanceimportance(this.mlData.model_feature_names, this.mlData.model_feature_importance)
+    // },
     correlation(corrData){
       var trace = {
         z: corrData.data,
@@ -491,33 +433,11 @@ export default {
       };
       plotly.newPlot('corr', [trace],layout)
     },
-    pie(pieData){
-      var trace = {
-        type: 'pie',
-        labels: pieData.category,
-        values: pieData.value
-      }
-      plotly.newPlot('imp-pie', [trace], {
-        plot_bgcolor:"rgba(0,0,0,0)",
-        paper_bgcolor:"rgba(0,0,0,0)",
-        legend: {
-          x: 1,
-        },
-        margin: {t: 0, b:0},
-        width:document.getElementById('imp-pie').offsetWidth,
-        height:300,
-      })
-    },
     emitYearChange(year) {
       this.$emit('yearChange', year)
     },
     resetData() {
-      this.rmse = null;
       store.commit('ml/setMLData', null);
-      plotly.purge('pre-bar')
-      plotly.purge('imp-bar')
-      plotly.purge('corr')
-      plotly.purge('imp-pie')
     }
   },
   watch:{
@@ -527,7 +447,6 @@ export default {
     },
     mlData() {
       if(this.mlData) {
-        this.drawData()
         store.dispatch('ml/clearModel');
       }
     }
@@ -546,7 +465,6 @@ export default {
         this.nPredicor = this.mlModel.number_predictor
       }
       store.dispatch('ml/clearModel');
-      this.drawData()
     }
   }
 }
@@ -554,5 +472,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.bar-chart-ml-self {
+  height: 400px;
+}
 /* style.css */
 </style>

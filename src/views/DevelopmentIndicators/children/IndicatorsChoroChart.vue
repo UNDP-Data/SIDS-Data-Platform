@@ -62,7 +62,9 @@ export default {
       profileData: state => state.indicators.profileData,
       indicatorMeta: state => state.indicators.indicatorsMeta,
       activeIndicatorData: state => state.indicators.activeIndicatorData,
-      MLPredictionData: state => state.ml.MLPredictionData
+      MLPredictionData: state => state.ml.MLPredictionData,
+      mlData: state => state.ml.mlData,
+      mlModel: state => state.ml.mlModel
     }),
     activeIndicatorsMeta() {
       return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
@@ -74,6 +76,32 @@ export default {
           upperIntervals: this.MLPredictionData.upperIntervals,
           lowerIntervals: this.MLPredictionData.lowerIntervals
         }
+      } else if (this.mlData && this.mlData.prediction) {
+        let data = {
+          data: { ...this.activeIndicatorData.data},
+          upperIntervals: {},
+          lowerIntervals: {}
+        };
+        data.upperIntervals[this.year] = this.mlData.prediction.upper.reduce(
+          (previousValue, currentValue, index) => {
+            previousValue[this.mlData.prediction['Country Code'][index]] = currentValue;
+            return previousValue
+          },
+          {})
+        data.lowerIntervals[this.year] = this.mlData.prediction.lower.reduce(
+          (previousValue, currentValue, index) => {
+            previousValue[this.mlData.prediction['Country Code'][index]] = currentValue;
+            return previousValue
+          },
+          {})
+        data.data[this.year] = {...data.data[this.year], ...this.mlData.prediction.prediction.reduce(
+          (previousValue, currentValue, index) => {
+            previousValue[this.mlData.prediction['Country Code'][index]] = currentValue;
+            return previousValue
+          },
+          {})
+        }
+        return data
       }
       return this.activeIndicatorData
     },
@@ -187,7 +215,7 @@ export default {
     chartData() {
       let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
       this.setCompareCountries(compareIdsList)
-      if(this.choro && this.page === this.choro.page && this.MLPredictionData) {
+      if(this.choro && this.page === this.choro.page && (this.MLPredictionData || this.mlData)) {
         this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },
