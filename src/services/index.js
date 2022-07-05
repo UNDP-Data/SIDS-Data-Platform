@@ -26,7 +26,8 @@ export default {
   loadML,
   loadMLTargetSize,
   loadMLPredictorSize,
-  loadLang
+  loadLang,
+  loadResourcesData
 }
 
 
@@ -90,6 +91,11 @@ async function loadMapLocations () {
 
 async function loadIndicatorData (apiCode) {
   const resp = await axios.get(`${NEW_API_URl_2}${apiCode}.json`)
+  return resp.data
+}
+
+async function loadResourcesData () {
+  const resp = await axios.get(`${NEW_API_URl_2}/cms/resources.json`)
   return resp.data
 }
 

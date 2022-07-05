@@ -13,7 +13,7 @@
 
   font-weight: 600 !important;
 }
-.v-select fieldset {
+.v-select fieldset , .text-field .v-text-field fieldset{
   border: none !important;
   background: #E9ECF6;
 }

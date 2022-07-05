@@ -196,6 +196,7 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
+      await store.dispatch('texts/loadResourcesData');
       setTimeout(() => {
         store.commit('loader/setLoading', false);
       }, 500)
