@@ -14,6 +14,7 @@ export default {
   loadFundingCategories,
   loadSIDSData,
   loadIndicatorsCategories,
+  loadGISDatasets,
   loadIndicatorsMeta,
   loadProfileData,
   loadSidsSVG,
@@ -115,6 +116,10 @@ async function loadML (data,source) {
   return resp.data
 }
 
+async function loadGISDatasets () {
+  const resp = await axios.get(`${NEW_API_URl_2}/gis/gisDatasetMeta.json`)
+  return resp.data;
+}
 
 async function loadMLindicatorData ({model, indicator, dataset}) {
   try {

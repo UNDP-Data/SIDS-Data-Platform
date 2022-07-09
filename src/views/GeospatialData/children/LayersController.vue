@@ -210,7 +210,7 @@
 </template>
 
 <script>
-import datasets from "@/gis/static/layers";
+import { mapState } from 'vuex';
 import { goalTypesGis, goals } from '@/assets/goalsList'
 import LayerSelector from './LayerSelector'
 import LayersTabs from './LayersTabs'
@@ -219,7 +219,6 @@ export default {
   name: 'LayersController',
   data() {
     return {
-      datasets:datasets,
       activeGoalType: "sdgs",
       goalTypes: goalTypesGis,
       goals,
@@ -240,25 +239,28 @@ export default {
     LayersTabs
   },
   computed:{
+    ...mapState({
+      datasets: state => state.gis.datasets
+    }),
     filteredDatasets() {
       let filteredDatasets = this.datasets.reduce((array, dataset) => {
         let filtered = Object.assign({}, dataset);
-        if (this.activeGoalType === "pillars") {
-          filtered.layers = filtered.layers.filter((layer) =>
-            layer.pillars.includes(this.activePillar)
-          );
-        } else if (this.activeGoalType === "sdgs") {
-          filtered.layers = filtered.layers.filter((layer) =>
-            layer.SDG.includes(this.activeGoal)
-          );
-        } else if (this.activeGoalType === "samoa") {
-          filtered.layers = filtered.layers.filter((layer) =>
-            layer.samoa_pathway.includes(this.activeGoal)
-          );
-        }
-        if (filtered.layers.length > 0) {
+        // if (this.activeGoalType === "pillars") {
+        //   filtered.layers = filtered.layers.filter((layer) =>
+        //     layer.pillars.includes(this.activePillar)
+        //   );
+        // } else if (this.activeGoalType === "sdgs") {
+        //   filtered.layers = filtered.layers.filter((layer) =>
+        //     layer.SDG.includes(this.activeGoal)
+        //   );
+        // } else if (this.activeGoalType === "samoa") {
+        //   filtered.layers = filtered.layers.filter((layer) =>
+        //     layer.samoa_pathway.includes(this.activeGoal)
+        //   );
+        // }
+        // if (filtered.layers.length > 0) {
           array.push(filtered);
-        }
+        // }
         return array;
       }, []);
       if(this.activeDataset && !filteredDatasets.includes(this.activeDataset)) {
