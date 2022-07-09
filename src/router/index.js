@@ -179,6 +179,7 @@ const routes = [
       icon:'GIS'
     },
     beforeEnter: async (to, from, next) => {
+      await store.dispatch('gis/loadDatasets');
       setTimeout(() => {
         store.commit('loader/setLoading', false);
       }, 500)
