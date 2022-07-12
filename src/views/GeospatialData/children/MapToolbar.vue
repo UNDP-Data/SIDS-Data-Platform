@@ -63,6 +63,10 @@
         :map="map"
       />
     </div>
+    <div class="button-wrapper">
+      <map-file-upload
+      />
+    </div>
   </div>
 </template>
 
@@ -72,6 +76,7 @@ import MapAdminBoundariesController from './MapAdminBoundariesController'
 import MapResolutionController from './MapResolutionController'
 import Map3dController from './Map3dController'
 import MapColorSelector from './MapColorSelector'
+import MapFileUpload from './MapFileUpload'
 import MapOpacityController from './MapOpacityController'
 import MapBasemapSelector from './MapBasemapSelector'
 import MapLabelsController from './MapLabelsController'
@@ -95,6 +100,7 @@ export default {
     MapColorSelector,
     MapOpacityController,
     MapBasemapSelector,
+    MapFileUpload,
     MapLabelsController,
     MapRegionalAnalysis,
     MapBivar,
