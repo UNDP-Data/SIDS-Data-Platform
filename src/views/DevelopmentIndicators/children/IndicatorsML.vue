@@ -1,6 +1,6 @@
 <template>
   <div class="pl-5 ml-container">
-    <v-row>
+    <v-row class="d-print-none">
       <v-col cols="6">
         <div class="select">
           <label class="input-label">Model</label>
@@ -18,7 +18,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12">
         <h4 class="choro-title text-center">
           {{activeIndicatorsMeta.indicator}}
@@ -26,7 +26,7 @@
         </h4>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select">
           <label class="input-label">Base Imputer</label>
@@ -49,7 +49,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select">
           <label class="input-label">Predictor Selection Method</label>
@@ -73,7 +73,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select" v-if="predictor === 'MANUAL'">
           <label class="input-label">Select predictors</label>
@@ -110,7 +110,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="12 d-flex">
         <div class="select">
           <label class="input-label">Number of Estimators in Ensemble models</label>
@@ -131,7 +131,7 @@
         </p>
       </v-col>
     </v-row>
-    <v-row class="justify-center">
+    <v-row class="d-print-none justify-center">
       <v-col cols="6">
         <div class="select">
           <label class="input-label">Ensemble models</label>
@@ -165,7 +165,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row class="d-print-none">
       <v-col cols="12">
         <p class="mb-4" v-if="estimate">
           Estimated time of training {{estimate}} seconds
@@ -180,7 +180,7 @@
         >Train</v-btn>
       </v-col>
     </v-row>
-    <v-row v-if="error">
+    <v-row class="d-print-none" v-if="error">
       <v-col cols="10">
         <v-chip
           class="mr-2"
@@ -190,11 +190,54 @@
         </v-chip>
       </v-col>
     </v-row>
+
+    <v-row class="d-none d-print-flex">
+      <v-col cols="6">
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Model:
+          </span>
+          {{modelType}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Base imputer:
+          </span>
+          {{imputerText}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Predictor selectin method:
+          </span>
+          {{predictorText}}
+        </p>
+      </v-col>
+      <v-col cols="6">
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Predictors:
+          </span>
+          {{predictorsText}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Ensemble models:
+          </span>
+          {{emodelText}}
+        </p>
+        <p class="ml-print-filters-list mb-0">
+          <span class="ml-print-filters-list_name">
+            Predicction interval type:
+          </span>
+          {{pintervalText}}
+        </p>
+      </v-col>
+    </v-row>
     <v-row v-if="rmse">
       <v-col cols="10">
-        <p>Normalized root mean square is
+        <p class="ml-print-rms">Normalized root mean square is
           <v-chip
-            class="mr-2"
+            class="mr-2 bg-printable"
             :color="chipColor"
           >
             {{rmse}}
@@ -202,34 +245,21 @@
       </p>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col v-if="rmse"  cols="12">
-        <h2 class="block-subheader">Visualizing Imputations</h2>
-        <p>It is important to note that the prediction intervals provide additional information on the of the uncertainity in the predictions</p>
-      </v-col>
+    <v-row class="bg-printable"  v-if="rmse">
       <v-col cols="12">
-        <div id="pre-bar">
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col v-if="rmse" cols="12">
         <h2 class="block-subheader">Prediction Strength</h2>
         <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
       </v-col>
       <v-col cols="8">
-        <div id="imp-bar">
-        </div>
+        <indicators-bar-chart class="bar-chart-ml-self" chartId="bar-self" :data="barsData"/>
       </v-col>
       <v-col cols="4">
-        <div id="imp-pie">
-        </div>
+        <indicators-pie-chart chartId="pie-self" :data="pieData"/>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row class="bg-printable" v-if="rmse">
       <v-col cols="12">
-        <div id="corr">
-        </div>
+        <indicators-heat-map-chart  chartId="hear-self" :data="mlData.correlation"/>
       </v-col>
     </v-row>
   </div>
@@ -239,8 +269,10 @@
 
 import { mapState } from 'vuex';
 import service from '@/services'
-import sidsList from '@/assets/sidsListFull'
 import plotly from 'plotly.js-dist/plotly'
+import IndicatorsPieChart from './IndicatorsPieChart';
+import IndicatorsBarChart from './IndicatorsBarChart';
+import IndicatorsHeatMapChart from './IndicatorsHeatMapChart';
 import store from '@/store'
 
 export default {
@@ -282,12 +314,16 @@ export default {
         id:'quantile'
       }],
       loading:false,
-      rmse:null,
       error: null,
       estimate: null
     }
   },
   props:['indicatorCode', 'year'],
+  components:{
+    IndicatorsPieChart,
+    IndicatorsBarChart,
+    IndicatorsHeatMapChart
+  },
   computed: {
     ...mapState({
       profileData: state => state.indicators.profileData,
@@ -298,6 +334,35 @@ export default {
       mlData: state => state.ml.mlData,
       mlModel: state => state.ml.mlModel
     }),
+    imputerText() {
+      return this.imputers.find(i => {
+        return i.id === this.imputer;
+      }).name
+    },
+    predictorsText() {
+      if(this.predictor === 'MANUAL') {
+        return this.nPredicor
+      } else {
+        return this.inPredicor.map(c => {
+          this.indicatorsMeta[c]
+        }).toString()
+      }
+    },
+    emodelText() {
+      return this.emodels.find(i => {
+        return i.id === this.emodel;
+      }).name
+    },
+    predictorText() {
+      return this.predictors.find(i => {
+        return i.id === this.predictor;
+      }).name
+    },
+    pintervalText() {
+      return this.pintervals.find(i => {
+        return i.id === this.pinterval;
+      }).name
+    },
     activeIndicatorsMeta() {
       return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-137506']
     },
@@ -305,6 +370,30 @@ export default {
       if(this.rmse > 0.7) return 'red'
       if(this.rmse > 0.3) return 'yellow'
       return 'green'
+    },
+    barsData() {
+      if(this.mlData) {
+        return this.mlData.model_feature_names.reduce((reducer, value, index) => {
+          reducer[value] = this.mlData.model_feature_importance[index];
+          return reducer
+        }, {})
+      }
+      return null;
+    },
+    pieData() {
+      if(this.mlData) {
+        return this.mlData.feature_importance_pie.category.reduce((reducer, value, index) => {
+          reducer[value] = this.mlData.feature_importance_pie.value[index];
+          return reducer
+        }, {})
+      }
+      return null;
+    },
+    rmse() {
+      if(this.mlData) {
+        return Math.ceil(this.mlData.rmse_deviation,2);
+      }
+      return null
     },
     allIndicators() {
       let indicatorsArray = [];
@@ -366,89 +455,14 @@ export default {
       }
       this.loading = false;
     },
-    drawData(){
-      if(this.mlData === null) {
-        return
-      }
-      let countryList = this.mlData.prediction['Country Code'].map(code => {
-        try {
-          return sidsList.find( c => {
-            return c.iso === code}
-          ).name
-        } catch (e) {
-          return code
-        }
-      })
-      this.rmse = Math.ceil(this.mlData.rmse_deviation,2);
-      this.drawChart(
-        this.mlData.prediction.prediction,
-        countryList,
-        this.mlData.prediction.upper,
-        this.mlData.prediction.lower)
-      this.correlation(this.mlData.correlation)
-      this.pie(this.mlData.feature_importance_pie)
-      this.drawImportanceimportance(this.mlData.model_feature_names, this.mlData.model_feature_importance)
-    },
-    drawChart(prediction, country, upper, lower) {
-      var traces = [{
-        x: prediction,
-        y: country,
-        error_x: {
-          type: "data",
-          symmetric: false,
-          array: upper,
-          arrayminus:lower
-        },
-        type: "bar",
-        orientation: 'h'
-      }];
-      plotly.newPlot('pre-bar', traces, {
-        height: country.length * 30,
-        margin: {l: 100, r:0, b:0, t:0},
-        plot_bgcolor:"rgba(0,0,0,0)",
-        width:document.getElementById('pre-bar').offsetWidth,
-        paper_bgcolor:"rgba(0,0,0,0)",
-        xaxis:{
-          tickfont:{size:10}
-        },
-        yaxis:{
-          tickfont:{size:10}
-        }
-      });
-    },
-    drawImportanceimportance(feature_names, importance_values){
-      let traces = [{
-        x: feature_names.map(code => {
-          let indi = this.indicatorsMeta[code] ? this.indicatorsMeta[code].indicator : code;
-          if(this.indicatorsMeta[code] && this.indicatorsMeta[code].dim !== 'none') {
-            indi+= ' ' + this.indicatorsMeta[code].dim
-          }
-          if(indi.length > 15) {
-            let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
-            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          }
-          return indi
-        }),
-        y: importance_values,
-        type: "bar",
-        orientation: 'v'
-      }];
-      var layout = {
-        margin: {b: 100, r:100, t:0},
-        height:300,
-        plot_bgcolor:"rgba(0,0,0,0)",
-        paper_bgcolor:"rgba(0,0,0,0)",
-        width:document.getElementById('imp-bar').offsetWidth,
-        xaxis:{
-          tickfont:{size:10},
-          tickangle:35
-        },
-        yaxis:{
-          tickfont:{size:10}
-        }
-      };
-      plotly.newPlot('imp-bar', traces,layout);
-    },
+    // drawData(){
+    //   if(this.mlData === null) {
+    //     return
+    //   }
+    //   this.correlation(this.mlData.correlation)
+    //   // this.pie(this.mlData.feature_importance_pie)
+    //   // this.drawImportanceimportance(this.mlData.model_feature_names, this.mlData.model_feature_importance)
+    // },
     correlation(corrData){
       var trace = {
         z: corrData.data,
@@ -491,33 +505,11 @@ export default {
       };
       plotly.newPlot('corr', [trace],layout)
     },
-    pie(pieData){
-      var trace = {
-        type: 'pie',
-        labels: pieData.category,
-        values: pieData.value
-      }
-      plotly.newPlot('imp-pie', [trace], {
-        plot_bgcolor:"rgba(0,0,0,0)",
-        paper_bgcolor:"rgba(0,0,0,0)",
-        legend: {
-          x: 1,
-        },
-        margin: {t: 0, b:0},
-        width:document.getElementById('imp-pie').offsetWidth,
-        height:300,
-      })
-    },
     emitYearChange(year) {
       this.$emit('yearChange', year)
     },
     resetData() {
-      this.rmse = null;
       store.commit('ml/setMLData', null);
-      plotly.purge('pre-bar')
-      plotly.purge('imp-bar')
-      plotly.purge('corr')
-      plotly.purge('imp-pie')
     }
   },
   watch:{
@@ -527,7 +519,6 @@ export default {
     },
     mlData() {
       if(this.mlData) {
-        this.drawData()
         store.dispatch('ml/clearModel');
       }
     }
@@ -546,7 +537,6 @@ export default {
         this.nPredicor = this.mlModel.number_predictor
       }
       store.dispatch('ml/clearModel');
-      this.drawData()
     }
   }
 }
@@ -554,5 +544,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.bar-chart-ml-self {
+  height: 400px;
+}
+
+.ml-print-filters-list_name,  {
+  display: block;
+  font-size: 14px;
+  font-weight: normal;
+}
+.ml-print-filters-list, .ml-print-rms {
+  font-size: 20px;
+  font-weight: bold;
+}
 /* style.css */
 </style>

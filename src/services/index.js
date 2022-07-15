@@ -14,6 +14,7 @@ export default {
   loadFundingCategories,
   loadSIDSData,
   loadIndicatorsCategories,
+  loadGISDatasets,
   loadIndicatorsMeta,
   loadProfileData,
   loadSidsSVG,
@@ -26,7 +27,8 @@ export default {
   loadML,
   loadMLTargetSize,
   loadMLPredictorSize,
-  loadLang
+  loadLang,
+  loadResourcesData
 }
 
 
@@ -93,6 +95,11 @@ async function loadIndicatorData (apiCode) {
   return resp.data
 }
 
+async function loadResourcesData () {
+  const resp = await axios.get(`${NEW_API_URl_2}/cms/resources.json`)
+  return resp.data
+}
+
 async function loadTextContent () {
   const resp = await axios.get(`${NEW_API_URl_2}/cms/englishText.json`)
   return resp.data
@@ -109,6 +116,10 @@ async function loadML (data,source) {
   return resp.data
 }
 
+async function loadGISDatasets () {
+  const resp = await axios.get(`${NEW_API_URl_2}/gis/gisDatasetMeta.json`)
+  return resp.data;
+}
 
 async function loadMLindicatorData ({model, indicator, dataset}) {
   try {

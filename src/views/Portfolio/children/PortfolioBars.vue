@@ -1,44 +1,42 @@
 <template>
   <v-row :id="'tab'+id" justify="center">
-    <div class="d-none d-lg-block">
-      <v-row class="mb-0 svg-row" justify="center">
-        <div class="svg-container">
-        </div>
-      </v-row>
-      <v-row class="mt-0 bars-container" justify="center">
-        <div class="sdg-goal" v-for="(goal, index) in goals" :key="goal.id">
-          <v-tooltip
-            top
-            transition="none"
-            content-class="tooltip-content"
-            maxWidth="400"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <img
-                :src="require(`@/assets/media/goals-icons/${goalsType}/${index+1}.png`)"
-                height="56"
-                :width="barWidth"
-                v-bind="attrs"
-                v-on="on"
-                >
-            </template>
-            <v-card>
-              <v-card-title>
-                {{$t(`root.${goalsType}.${goal.id}.title`)}}
-              </v-card-title>
-              <v-card-text v-if="goal.content">
-                {{$t(`root.${goalsType}.${goal.id}.content`)}}
-              </v-card-text>
-            </v-card>
-          </v-tooltip>
-        </div>
-      </v-row>
-      <template v-if="goalsType==='sdgs' && tooltipData[tooltipGoalName]">
-        <div class="d-none" id="goalTooltip">
-          <portfolio-tooltip :maxWidth="400" :header="tooltipGoalTitle" :data="tooltipData[tooltipGoalName]"/>
-        </div>
-      </template>
-    </div>
+    <v-row class="mb-0 svg-row" justify="center">
+      <div class="svg-container">
+      </div>
+    </v-row>
+    <v-row class="mt-0 bars-container" justify="center">
+      <div class="sdg-goal" v-for="(goal, index) in goals" :key="goal.id">
+        <v-tooltip
+          top
+          transition="none"
+          content-class="tooltip-content"
+          maxWidth="400"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <img
+              :src="require(`@/assets/media/goals-icons/${goalsType}/${index+1}.png`)"
+              height="56"
+              :width="barWidth"
+              v-bind="attrs"
+              v-on="on"
+              >
+          </template>
+          <v-card>
+            <v-card-title>
+              {{$t(`root.${goalsType}.${goal.id}.title`)}}
+            </v-card-title>
+            <v-card-text v-if="goal.content">
+              {{$t(`root.${goalsType}.${goal.id}.content`)}}
+            </v-card-text>
+          </v-card>
+        </v-tooltip>
+      </div>
+    </v-row>
+    <template v-if="goalsType==='sdgs' && tooltipData[tooltipGoalName]">
+      <div class="d-none" id="goalTooltip">
+        <portfolio-tooltip :maxWidth="400" :header="tooltipGoalTitle" :data="tooltipData[tooltipGoalName]"/>
+      </div>
+    </template>
   </v-row>
 </template>
 <script>

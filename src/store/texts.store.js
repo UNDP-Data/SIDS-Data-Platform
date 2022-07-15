@@ -4,10 +4,14 @@ export default {
   namespaced: true,
   state: {
     textContent: null,
+    resources: null
   },
   mutations: {
     setTextContent(state, textContent) {
       state.textContent = textContent;
+    },
+    setResources(state, resources) {
+      state.resources = resources;
     }
   },
   actions: {
@@ -17,5 +21,11 @@ export default {
         commit("setTextContent", textContent);
       }
     },
+    async loadResourcesData({ state, commit }) {
+      if(!state.resource){
+        const resources = await service.loadResourcesData();
+        commit("setResources", resources);
+      }
+    }
   }
 };

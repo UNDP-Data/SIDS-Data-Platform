@@ -1,22 +1,22 @@
 <template>
   <div class="choro">
-    <h4 class="choro-title text-center" v-if="page!=='global'">
+    <h4 class="choro-title d-print-none text-center" v-if="page!=='global'">
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
-    <div id="choro_legend_container">
-      <img id="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15">
+    <div class="choro_legend_container" :id="chartId+'_legend_container'">
+      <img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15">
     </div>
     <div class="spiderbox" style="height:0;margin:0;">
       <div id="indexSpider" class="radarChart" style="text-align:center;height:0"></div>
     </div>
-    <div id="choro_map_container">
+    <div class="choro_map_container" :id="chartId+'_map_container'">
 
     </div>
-    <div id="timeSeriesContainer">
+    <div class="timeSeriesContainer" :id="chartId + 'timeSeriesContainer'">
       <!-- <div class="timeSeriesTooltip"></div> -->
     </div>
-    <v-row v-if="chartType === 'series' && choro && choro.vizWidth < 800" class="justify-center">
+    <v-row v-if="chartType === 'series' && choro && choro.vizWidth < 800" class="d-print-none justify-center">
       <v-col cols="11">
         <div>
           <country-multiselect
@@ -56,13 +56,15 @@ export default {
       }),
     }
   },
-  props:['indicatorCode', 'region', 'page', 'chartType', 'sorting', 'mviCodes', 'year'],
+  props:['indicatorCode', 'region', 'page', 'chartType', 'sorting', 'mviCodes', 'year', 'chartId', 'width'],
   computed: {
     ...mapState({
       profileData: state => state.indicators.profileData,
       indicatorMeta: state => state.indicators.indicatorsMeta,
       activeIndicatorData: state => state.indicators.activeIndicatorData,
-      MLPredictionData: state => state.ml.MLPredictionData
+      MLPredictionData: state => state.ml.MLPredictionData,
+      mlData: state => state.ml.mlData,
+      mlModel: state => state.ml.mlModel
     }),
     activeIndicatorsMeta() {
       return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
@@ -74,6 +76,32 @@ export default {
           upperIntervals: this.MLPredictionData.upperIntervals,
           lowerIntervals: this.MLPredictionData.lowerIntervals
         }
+      } else if (this.mlData && this.mlData.prediction) {
+        let data = {
+          data: { ...this.activeIndicatorData.data},
+          upperIntervals: {},
+          lowerIntervals: {}
+        };
+        data.upperIntervals[this.year] = this.mlData.prediction.upper.reduce(
+          (previousValue, currentValue, index) => {
+            previousValue[this.mlData.prediction['Country Code'][index]] = currentValue;
+            return previousValue
+          },
+          {})
+        data.lowerIntervals[this.year] = this.mlData.prediction.lower.reduce(
+          (previousValue, currentValue, index) => {
+            previousValue[this.mlData.prediction['Country Code'][index]] = currentValue;
+            return previousValue
+          },
+          {})
+        data.data[this.year] = {...data.data[this.year], ...this.mlData.prediction.prediction.reduce(
+          (previousValue, currentValue, index) => {
+            previousValue[this.mlData.prediction['Country Code'][index]] = currentValue;
+            return previousValue
+          },
+          {})
+        }
+        return data
       }
       return this.activeIndicatorData
     },
@@ -117,16 +145,18 @@ export default {
         mapLocations,
         indicatorCode:this.indicatorCode,
         profileData: this.profileData,
+        countryType: this.region,
         page:this.page,
         year: this.year,
         data: this.chartData,
         countryList: compareISOs,
         clickCallback:this.counntryClickCallback,
         selectedIndis:this.mviCodes,
-        vizContainerWidth:(document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40),
-        vizContainerHeight:(document.body.clientWidth - 40) > 800 ? 580 : 1060,
-        mapContainerSelector: '#choro_map_container',
-        legendContainerSelector:'#choro_legend_container'
+        vizContainerWidth:this.width || ((document.body.clientWidth - 40) > 800 ? 800 : (document.body.clientWidth - 40)),
+        vizContainerHeight:this.width || ((document.body.clientWidth - 40) > 800 ? 580 : 1060),
+        mapContainerSelector:'#' + this.chartId+'_map_container',
+        legendContainerSelector: '#' + this.chartId+'_legend_container',
+        timeSeriesContainer: '#' + this.chartId + 'timeSeriesContainer'
       })
     },
     counntryClickCallback(countryCode) {
@@ -185,7 +215,7 @@ export default {
     chartData() {
       let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
       this.setCompareCountries(compareIdsList)
-      if(this.choro && this.page === this.choro.page) {
+      if(this.choro && this.page === this.choro.page && (this.MLPredictionData || this.mlData)) {
         this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },
@@ -229,12 +259,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 /* style.css */
-.allSids {
-  fill: #fee391;
-  stroke: #333;
-  stroke-width: 1px;
-  filter: drop-shadow(1px 1px 0px purple);
-}
 
 .countryHover {
   fill: #91eefe;
@@ -374,12 +398,12 @@ export default {
   position: relative;
   z-index: 5;
 }
-#choro_legend_container {
+.choro_legend_container {
   margin: 0;
   padding: 0;
 }
 
-#choro_map_container svg {
+.choro_map_container svg {
   margin-top: 5px;
   margin-bottom: -5px;
   padding-bottom: 0px;
@@ -555,7 +579,7 @@ export default {
   max-width: 350px;
 }
 
-#choro_legend_container {
+.choro_legend_container {
   height: 45px;
   overflow: visible;
 }
@@ -579,13 +603,15 @@ export default {
   padding: 5px;
   font-size: 12px;
 }
-#timeSeriesContainer {
+.timeSeriesContainer {
   width: 900px;
   display:none;
 }
-
+.choro-printabe-series .timeSeriesContainer {
+  width: 100%;
+}
 @media all and (max-width:960px) {
-  #timeSeriesContainer {
+  .timeSeriesContainer {
     width: 100%;
     display:none;
   }
