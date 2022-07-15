@@ -101,7 +101,7 @@ export default {
         commit("setMeta", meta);
       }
     },
-    async getIndicatorData({ commit}, indicatorCode) {
+    async getIndicatorData({ commit, dispatch}, indicatorCode) {
       let APIcode = indicatorCode,
       code = indicatorCode;
       if (indicatorCode == "region") {
@@ -115,6 +115,7 @@ export default {
       }
       let indicatorData = await service.loadIndicatorData(APIcode);
       indicatorData = Object.keys(indexCodes).includes(indicatorCode) ? indicatorData : indicatorData[code];
+      dispatch('ml/clearMlPredictionData',{}, {root:true})
       return commit('setActiveIndicator', indicatorData)
     },
     async getMLTargetSize({ state, commit }) {

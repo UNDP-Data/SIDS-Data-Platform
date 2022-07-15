@@ -2,7 +2,11 @@
   <div class="profiles-page">
     <div class="printout">
       <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
-        <printout-header :name="activeCountry.name"/>
+        <printout-header>
+          <template slot="text">
+            <b>{{activeCountry.name}}</b> Country profile
+          </template>
+        </printout-header>
         <v-row class="mt-0 d-none-print profile-header-row" justify="center" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
           <v-col class="d-none d-md-block" cols="12" md="4" offset-lg="2" lg="3">
             <h2 class="page-header mr-3 country-profile-header text-md-right">Country profile</h2>
@@ -290,7 +294,7 @@
 <script>
 import flagCodes from '@/assets/flagCodes.js'
 
-import PrintoutHeader from './children/PrintoutHeader.vue'
+import PrintoutHeader from '@/components/PrintoutHeader.vue'
 import Export from './children/Export.vue'
 import CountryInfoBar from './children/CountryInfoBar.vue'
 import ProfilesFinance from './children/ProfilesFinance.vue'

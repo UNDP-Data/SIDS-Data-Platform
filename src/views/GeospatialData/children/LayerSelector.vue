@@ -11,8 +11,8 @@
           :value="dataset"
           @change="emitDatasetChange"
           :items="datasets"
-          item-text="name"
-          item-value="name"
+          item-text="title"
+          item-value="title"
           return-object
           :label="datasetLabel"
           outlined
@@ -33,7 +33,7 @@
           :value="layer"
           item-text="Description"
           item-value="Description"
-          :items="dataset.layers"
+          :items="activeLayers"
           :label="layerLabel"
           @change="emitLayerChange"
           return-object
@@ -89,6 +89,14 @@ export default {
     },
     tickIndex() {
       return this.ticksLabels.indexOf(this.layer.Temporal)
+    },
+    activeLayers() {
+      return Object.keys(this.dataset.layers).map(k => {
+        return {
+          id: k,
+          name: this.dataset.layers[k]
+        }
+      })
     }
   },
   methods: {

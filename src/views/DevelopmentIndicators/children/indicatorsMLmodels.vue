@@ -1,6 +1,6 @@
 <template>
   <v-card flat>
-    <v-card-title class="justify-center">
+    <v-card-title class="justify-center d-print-none">
       <h3 class="ml-auto page-header text-center">
         AI Mode
       </h3>
@@ -9,10 +9,16 @@
       </v-btn>
     </v-card-title>
 
-    <v-card-subtitle>
+    <v-card-subtitle class="d-print-none">
       Select one of five pretrained models to add the predicted results to the interface and analyze correlation between indicators by visualizing the importance of othe indicators used in predictions.
     </v-card-subtitle>
     <v-card-text>
+      <h2 v-if="activePanel !== undefined" class="d-none page-header text-left d-print-block">
+        {{ models[activePanel].name}}
+      </h2>
+      <p v-if="activePanel !== undefined" class="adv-printed d-none d-print-block">
+        {{ models[activePanel].adv}}
+      </p>
       <v-expansion-panels v-if="autoMode" v-model="activePanel" flat accordion>
         <v-expansion-panel
           v-for="(model,i) in models"
@@ -20,7 +26,7 @@
           class="mb-4 ml-panel"
           @change="onPageExpand(i)"
         >
-          <v-expansion-panel-header class="ml-panel-button">
+          <v-expansion-panel-header class="ml-panel-button d-print-none">
               <v-col :style="{'background': model.color}" class="justify-center ml-panel-button-first ml-panel-button_content pt-0 pb-0 d-flex align-center ml-panel_number" cols="2">
                 Model {{i+1}}
               </v-col>
@@ -44,15 +50,15 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content class="pt-4">
             <v-row v-if="modelAvaliable">
-              <h2 class="block-subheader">Prediction Strength</h2>
-              <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
+              <v-col cols="12">
+                <h2 class="block-subheader">Prediction Strength</h2>
+                <p>The importance of each predictors is measure through gini importance. Gini importance is defined as the total decrease in node impurity (weighted by the probability of reaching that node (which is approximated by the proportion of samples reaching that node)) averaged over all trees of the ensemble. The higher the value the better</p>
+              </v-col>
               <v-col cols="8">
-                <div :id="'imp-bar-'+i">
-                </div>
+                <indicators-bar-chart class="models-bar-chart" :chartId="'bar-'+i" :data="mlPredictionData.featureImportances[year]"/>
               </v-col>
               <v-col cols="4">
-                <div :id="'imp-pie-'+i">
-                </div>
+                <indicators-pie-chart :chartId="'pie-'+i" :data="mlPredictionData.categoryImportances[year]"/>
               </v-col>
             </v-row>
             <v-row v-else>
@@ -67,7 +73,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-      <div v-if="autoMode" class="d-flex align-center">
+      <div v-if="autoMode" class="d-flex d-print-none align-center">
         <p class="mr-4 mb-0">
           Or, you can design your own machine learning model to train in real-time in our Azure environment, with custom parameters and model types
         </p>
@@ -83,9 +89,10 @@
 
 <script>
 import service from '@/services';
-import poltly from 'plotly.js-dist/plotly';
 import { mapState } from 'vuex';
 import IndicatorsML from './IndicatorsML';
+import IndicatorsPieChart from './IndicatorsPieChart';
+import IndicatorsBarChart from './IndicatorsBarChart';
 import store from '@/store';
 
 export default {
@@ -148,7 +155,9 @@ export default {
     }
   },
   components:{
-    IndicatorsML
+    IndicatorsML,
+    IndicatorsPieChart,
+    IndicatorsBarChart
   },
   methods: {
     async onPageExpand() {
@@ -160,71 +169,7 @@ export default {
           dataset:this.indicator.split('-')[0]
         })
         store.dispatch('ml/loadMlPredictionData', res)
-        await this.$nextTick()
-        await this.$nextTick()
-        this.drawData()
       }
-    },
-    drawData() {
-      if(!this.mlPredictionData || !this.mlPredictionData.data[this.year]) {
-        return
-      }
-      this.initPieChart(this.activePanel, this.mlPredictionData.categoryImportances[this.year])
-      this.initBarChart(this.activePanel, this.mlPredictionData.featureImportances[this.year])
-    },
-    initBarChart(index, data){
-      let traces = [{
-        x: Object.keys(data).map(code => {
-          let indi = this.indicatorsMeta[code] ? this.indicatorsMeta[code].indicator : code;
-          if(this.indicatorsMeta[code] && this.indicatorsMeta[code].dim !== 'none') {
-            indi+= ' ' + this.indicatorsMeta[code].dim
-          }
-          if(indi.length > 15) {
-            let spaceindex = indi.indexOf(" ", indi.length/2 - 5)
-            indi = indi.substring(0,spaceindex) + '<br>' + indi.substring(spaceindex+1)
-          }
-          return indi
-        }),
-        y: Object.values(data),
-        type: "bar",
-        orientation: 'v'
-      }];
-      var layout = {
-        autosize: false,
-        margin: {b: 200, r:100, l:0, t:0},
-        width:document.getElementById('imp-bar-'+index).offsetWidth,
-        height:400,
-        plot_bgcolor:"rgba(0,0,0,0)",
-        paper_bgcolor:"rgba(0,0,0,0)",
-        xaxis:{
-          tickangle:35,
-          tickfont:{size:9}
-        },
-        yaxis:{
-          tickfont:{size:9}
-        }
-      };
-      poltly.newPlot('imp-bar-'+index, traces, layout);
-    },
-    initPieChart(index, data) {
-      let trace = {
-        type: 'pie',
-        labels: Object.keys(data),
-        values: Object.values(data)
-      }
-      var layout = {
-        legend: {
-          x: 1,
-        },
-        margin: {t: 0, b:0},
-        autosize: false,
-        width:document.getElementById('imp-pie-'+index).offsetWidth,
-        height:400,
-        // automargin: true,
-        plot_bgcolor:"rgba(0,0,0,0)",
-        paper_bgcolor:"rgba(0,0,0,0)",
-      };
-      poltly.newPlot('imp-pie-'+index, [trace], layout)
     },
     isModelDisplayed(index) {
       return !(typeof this.activePanel === 'undefined' || this.activePanel === index)
@@ -244,10 +189,6 @@ export default {
     async year() {
       if(this.designErr) {
         this.autoMode = true
-      }
-      if(typeof this.activePanel !== undefined && this.activePanel !== null) {
-        await this.$nextTick()
-        this.drawData(this.mlPredictionData)
       }
     },
     indicator() {
@@ -302,5 +243,17 @@ export default {
 }
 .ml-panel-button_advantage {
   font-size: 10px;
+}
+.models-bar-chart {
+  height:400px;
+}
+.adv-printed {
+  font-size: 16px;
+  color: #000;
+}
+@media print {
+  .v-expansion-panel-content__wrap {
+    padding: 0!important;
+  }
 }
 </style>

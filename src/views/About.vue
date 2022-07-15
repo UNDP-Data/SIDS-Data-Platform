@@ -5,9 +5,9 @@
         <h2 class="page-header">About the SIDS Data Platform</h2>
       </v-col>
     </v-row>
-    <v-row justify="center">
-      <v-col md="6" xs="12" sm="12">
-        <v-expansion-panels flat accordion>
+    <v-row>
+      <v-col offset-md="2" md="6" xs="12" sm="12">
+        <v-expansion-panels class="mb-4" flat accordion>
           <v-expansion-panel>
             <v-expansion-panel-header>{{$t('about.whatSids')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -100,11 +100,75 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+        <v-card flat>
+          <v-card-text>
+            <div class="d-flex align-center">
+              <div class="text-field">
+                <v-text-field
+                  label="Follow our biweekly SIDS Bulletin"
+                  rounded
+                  outlined
+                  dense
+                  :rules="rules"
+                  hide-details="true"
+                ></v-text-field>
+              </div>
+              <v-btn
+                class="mr-0 ml-2"
+                color="primary"
+                rounded
+                small
+              >Subscribe</v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col md="4">
+        <v-card flat class="mb-4" :key="index+'doc'" v-for="(doc, index) in resources">
+          <v-card-title><a
+            target="_blank"
+            :href="doc.links[0].link"
+          >{{doc.name}}</a></v-card-title>
+          <v-card-text>
+            <p>{{doc.description}}</p>
+            <div>
+              <template v-for="(link, indexLink) in doc.links">
+                <a v-if="indexLink!==0"
+                  target="_blank"
+                  :key="indexLink+'link'"
+                  :href="link.link"
+                >
+                  {{link.name}}
+                </a>
+              </template>
+            </div>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </div>
 </template>
+<script>
+import { mapState } from 'vuex';
+
+export default {
+  name: 'Portfolio',
+  data() {
+    return {
+
+    }
+  },
+  computed: {
+    ...mapState({
+      resources: state => state.texts.resources
+    }),
+  }
+}
+</script>
 <style>
+    .text-field {
+      width: 100%
+    }
    .about-page .v-expansion-panel::after {
      border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
    }
