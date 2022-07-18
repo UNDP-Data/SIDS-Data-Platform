@@ -189,9 +189,9 @@ export function onBivariateClick(clicked, map) {
   this.emit('bivariateClick', {
     class:clicked.features[0].properties["bivarClass"] + 1,
     level1: classToBivariateClasses[clicked.features[0].properties["bivarClass"]][1],
-    value1:clicked.features[0].properties[bvls.dataLayer[0].Field_Name],
+    value1:clicked.features[0].properties[bvls.dataLayer[0].layerId],
     level2: classToBivariateClasses[clicked.features[0].properties["bivarClass"]][2],
-    value2: clicked.features[0].properties[bvls.dataLayer[1].Field_Name]
+    value2: clicked.features[0].properties[bvls.dataLayer[1].layerId]
   })
 
   //clear preexisting highlighted source/layer

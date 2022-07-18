@@ -16,7 +16,7 @@ export function updateData(
   let cls = !comparison
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
-  let Field_Name = activeLayer.Field_Name;
+  let layerId = activeLayer.layerId;
   if(!comparison) {
     this.activeDataset = activeDataset;
     this.activeLayer = activeLayer;
@@ -28,7 +28,7 @@ export function updateData(
   this.clearHexHighlight();
   // this.remove3d();
 
-  cls.dataLayer = Field_Name; //update global to reflect selected datalayer
+  cls.dataLayer = layerId; //update global to reflect selected datalayer
 
   //-------------------------------------------
   if (!map.getSource("hex5")) {
@@ -68,7 +68,7 @@ export function updateData(
       } else {
         uniFeatures = self.getUniqueFeatures(features, "hexid");
       }
-      var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
+      var selectedData = uniFeatures.map((x) => x.properties[layerId]);
 
       var breaks = chroma.limits(selectedData, "q", 4);
 
@@ -97,21 +97,21 @@ export function updateData(
       } else {
         colorRamp = colors.colorSeq["yellow-blue"];
 
-        if (Field_Name.substring(0, 2) === "1a") {
+        if (layerId.substring(0, 2) === "1a") {
           colorRamp = colors.colorDiv.gdpColor;
-        } else if (Field_Name.substring(0, 2) === "1c") {
+        } else if (layerId.substring(0, 2) === "1c") {
           colorRamp = colors.colorSeq["pop"];
-        } else if (Field_Name === "7d10") {
+        } else if (layerId === "7d10") {
           colorRamp = colors.colorSeq["combo"];
-        } else if (Field_Name === "7d5") {
+        } else if (layerId === "7d5") {
           colorRamp = colors.colorSeq["minty"];
-        } else if (Field_Name === "7d7") {
+        } else if (layerId === "7d7") {
           colorRamp = colors.colorSeq["blues"];
-        } else if (Field_Name === "7d4") {
+        } else if (layerId === "7d4") {
           colorRamp = colors.colorSeq["pinkish"];
-        } else if (Field_Name === "7d8") {
+        } else if (layerId === "7d8") {
           colorRamp = colors.colorSeq["silvers"];
-        } else if (Field_Name === "d") {
+        } else if (layerId === "d") {
           breaks = [-4841, -3805, -2608, -1090, 1322];
           colorRamp = colors.colorSeq["ocean"];
         }
@@ -129,7 +129,7 @@ export function updateData(
         [
           "interpolate",
           ["linear"],
-          ["get", Field_Name],
+          ["get", layerId],
           breaks[0],
           colorRamp[0],
           breaks[1],
@@ -155,7 +155,7 @@ export function updateData(
         }, 100);
         this.addNoDataLegend(activeLayer)
       } else {
-        map.setFilter(cls.hexSize, [">=", Field_Name, 0]);
+        map.setFilter(cls.hexSize, [">=", layerId, 0]);
         this.emit('layerUpdate', {
           activeLayer,
           colorRamp,
@@ -196,7 +196,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
   this.clearHexHighlight();
   // this.remove3d();
 
-  cls.dataLayer = activeLayer.Field_Name; //corresponds to the attributeId
+  cls.dataLayer = activeLayer.layerId; //corresponds to the attributeId
   cls.hexSize = "ocean";
 
   cls.breaks = [-4841, -3805, -2608, -1090, 0];
@@ -896,8 +896,8 @@ export function createBivariate(
       // }
 
       let featuresUsed = features;
-      let attrId_1 = firstLayer.Field_Name;
-      let attrId_2 = secondLayer.Field_Name;
+      let attrId_1 = firstLayer.layerId;
+      let attrId_2 = secondLayer.layerId;
       let negativeAttrIds = ["depth"];
 
       let data_1 = featuresUsed.map((x_feat) => {

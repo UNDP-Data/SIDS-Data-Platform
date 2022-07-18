@@ -8,6 +8,7 @@
           <span v-html="activeLayer.Unit"></span>
         </div>
         <canvas
+          class="d-none d-mb-block"
           id="bivar_histogram"
           width="320"
           height="200"

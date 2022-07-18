@@ -2,7 +2,7 @@
   <div class="map-container">
     <v-btn
       @click="menuColapsed = !menuColapsed"
-      class="button-collapse"
+      class="button-collapse d-none d-md-block"
       :class="{'button-collapse-rotated' : menuColapsed}"
       fab
       x-small
@@ -16,7 +16,7 @@
     <v-chip
       v-if="dualModeEnabled"
       small
-      class="mode-chip"
+      class="mode-chip d-none d-md-block"
       color="primary"
     >
       Comparison mode enabled
@@ -24,7 +24,7 @@
     <v-chip
       v-if="bivariateModeEnabled"
       small
-      class="mode-chip"
+      class="mode-chip d-none d-md-block"
       color="primary"
     >
       Bivariate mode enabled
@@ -304,5 +304,27 @@ export default {
   top: 20px;
   left: 60px;
   z-index: 1000;
+}
+
+@media (max-width:959px) {
+  .toolbar {
+    top: auto;
+    bottom: 70px;
+    width: 90%;
+    right: 5%;
+  }
+
+  #mapsContainer, .map-container {
+    height: calc(100vh - 68px);
+  }
+  #mapsContainer #map,
+  #mapsContainer #map2  {
+    height: calc(100vh - 68px);
+    width: 100%;
+  }
+  .data-controller {
+    width: 90%;
+    left: 5%;
+  }
 }
 </style>

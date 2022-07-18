@@ -83,19 +83,10 @@ export default {
       };
 
       this.$refs.tab.addTab(newTab);
-      console.log(newTab)
       this.tab = key;
     },
     createTabLabel() {
-      let labelString = "New Tab";
-      if (this.dataset && this.dataset.type === "single") {
-        labelString = this.dataset.name;
-      } else if (this.dataset && this.dataset.type === "temporal") {
-        labelString = `${this.firstLayer.Temporal}:${this.dataset.name}`;
-      } else if (this.dataset && this.dataset.type === "layers" && this.firstLayer) {
-        labelString = this.firstLayer.Description;
-      }
-      return labelString;
+      return this.firstLayer && this.firstLayer.description;
     }
   },
   mounted() {

@@ -5,7 +5,7 @@
     id="app"
     fluid
   >
-    <nav-header-mobile v-if="hasTexts" class="d-block d-print-none d-md-none"/>
+    <nav-header-mobile class="d-block d-print-none d-md-none"/>
     <root-header v-if="!scrolledToContent" id="headerElement" class="d-none-print" />
     <nav-menu-mobile class="d-print-none d-md-none"/>
     <v-row no-gutters id="content">
@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     handleScroll () {
-      if(window.scrollY > document.getElementById('headerElement').offsetHeight) {
+      if(window.scrollY > document.getElementById('headerElement').offsetHeight - 32) {
         window.removeEventListener('scroll', this.handleScroll);
         this.scrolledToContent = true
       }
@@ -103,7 +103,7 @@ body,
 
 @media all and (max-width: 959px) {
   #content {
-    min-height: calc(100vh);
+    min-height: calc(100vh - 32px);
   }
   .root-router {
     padding: 0 0 8em;
@@ -115,4 +115,5 @@ body,
 svg {
   overflow: visible !important;
 }
+@media (max-width:)
 </style>

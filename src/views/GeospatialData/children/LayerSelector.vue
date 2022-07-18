@@ -21,7 +21,7 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-if="dataset && dataset.type === 'layers'"
+      v-if="dataset && dataset.layers.length > 1"
       dense
     >
       <v-col>
@@ -31,9 +31,9 @@
           hide-details
           class="map-input"
           :value="layer"
-          item-text="Description"
-          item-value="Description"
-          :items="activeLayers"
+          item-text="title"
+          item-value="layerId"
+          :items="dataset.layers"
           :label="layerLabel"
           @change="emitLayerChange"
           return-object
@@ -43,13 +43,12 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-else-if="dataset && dataset.type === 'temporal'"
+      v-else-if="layer && layer.years.length > 1"
       dense
     >
       <v-col>
         <v-slider
           class="map-input"
-          :value="tickIndex"
           :tick-labels="ticksLabels"
           :max="dataset.layers.length - 1"
           step="1"
@@ -68,7 +67,7 @@
 </template>
 
 <script>
-
+import service from '@/services'
 export default {
   name: 'LayersController',
   data() {
@@ -85,26 +84,20 @@ export default {
   ],
   computed:{
     ticksLabels() {
-      return this.dataset.layers.map((layer) => layer.Temporal);
-    },
-    tickIndex() {
-      return this.ticksLabels.indexOf(this.layer.Temporal)
-    },
-    activeLayers() {
-      return Object.keys(this.dataset.layers).map(k => {
-        return {
-          id: k,
-          name: this.dataset.layers[k]
-        }
-      })
+      return this.layer && this.layer.years
     }
   },
   methods: {
-    emitDatasetChange(dataset){
+    async emitDatasetChange(dataset){
       this.$emit('datasetChange', dataset)
+      if(dataset.layers.length === 1) {
+        await this.emitLayerChange(dataset.layers[0])
+      }
     },
-    emitLayerChange(layer){
-      this.$emit('layerChange', layer)
+    async emitLayerChange(layer){
+      let layerData = await service.loadGISLayer(layer.layerId)
+      layerData.years = layer.years
+      this.$emit('layerChange', layerData)
     },
     emitTemporalChange(index) {
       this.$emit('layerChange', this.dataset.layers[index])

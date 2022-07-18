@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column">
     <v-card class="mb-1  controller-block">
-      <v-row>
+      <v-row class="d-none d-mb-flex">
         <v-col cols="6">
           <v-list class="bt-0 pb-0" color="transparent" dense>
             <v-list-item-group class="goal-type-list" v-model="activeGoalType" mandatory>
@@ -31,7 +31,7 @@
                     </v-list-item-content>
                   </v-list-item>
                 </template>
-                <v-card class="tooltip-card">
+                <v-card flat class="tooltip-card">
                   <v-card-title>
                     <v-img
                       class="tooltip-card_img"
@@ -87,7 +87,7 @@
                     </v-list-item-content>
                   </v-list-item>
                 </template>
-                <v-card>
+                <v-card flat>
                   <v-card-title>
                     <v-img
                       class="pillar-tooltip_img"
@@ -119,7 +119,7 @@
                 open-on-hover
                 bottom
                 :nudge-left="256"
-                :nudge-bottom="118"
+                :nudge-bottom="98"
                 content-class="sdg-menu"
               >
                 <template v-slot:activator="{ on }">
@@ -155,7 +155,7 @@
                         width="80"
                       />
                     </template>
-                    <v-card>
+                    <v-card flat>
                       <v-card-title class="coal-title">
                         {{ n.name }}
                       </v-card-title>
@@ -195,6 +195,7 @@
       />
     </v-card>
     <layers-tabs
+      class="d-none d-mb-flex"
       :dataset="activeDataset"
       :firstLayer="activeLayer"
       :secondDataset="secondDataset"
@@ -244,23 +245,17 @@ export default {
     }),
     filteredDatasets() {
       let filteredDatasets = this.datasets.reduce((array, dataset) => {
-        let filtered = Object.assign({}, dataset);
-        // if (this.activeGoalType === "pillars") {
-        //   filtered.layers = filtered.layers.filter((layer) =>
-        //     layer.pillars.includes(this.activePillar)
-        //   );
-        // } else if (this.activeGoalType === "sdgs") {
-        //   filtered.layers = filtered.layers.filter((layer) =>
-        //     layer.SDG.includes(this.activeGoal)
-        //   );
-        // } else if (this.activeGoalType === "samoa") {
-        //   filtered.layers = filtered.layers.filter((layer) =>
-        //     layer.samoa_pathway.includes(this.activeGoal)
-        //   );
-        // }
-        // if (filtered.layers.length > 0) {
-          array.push(filtered);
-        // }
+        let hasGoal = false;
+        if (this.activeGoalType === "pillars") {
+          hasGoal = dataset.pillars.includes(this.activePillar)
+        } else if (this.activeGoalType === "sdgs") {
+          hasGoal = dataset.sdg.includes(this.activeGoal)
+        } else if (this.activeGoalType === "samoa") {
+          hasGoal = dataset.samoa.includes(this.activeGoal)
+        }
+        if (hasGoal) {
+          array.push(dataset);
+        }
         return array;
       }, []);
       if(this.activeDataset && !filteredDatasets.includes(this.activeDataset)) {
@@ -320,9 +315,6 @@ export default {
     },
     firstDatasetChange(dataset) {
       this.activeDataset = dataset;
-      if(dataset.type==='single' || dataset.type==='temporal') {
-        this.firstLayerChange(dataset.layers[0])
-      }
     },
     firstLayerChange(layer) {
       this.activeLayer = layer;
@@ -330,9 +322,6 @@ export default {
     },
     secondDatasetChange(dataset) {
       this.secondDataset = dataset;
-      if(dataset.type==='single' || dataset.type==='temporal') {
-        this.secondLayerChange(dataset.layers[0])
-      }
     },
     secondLayerChange(layer) {
       this.secondLayer = layer;
@@ -408,5 +397,10 @@ export default {
   }
   .goal-type-list .v-list-item{
     min-height: 28px !important;
+  }
+  @media (max-width:959px) {
+    .controller-block {
+      background-color: transparent !important;
+    }
   }
 </style>

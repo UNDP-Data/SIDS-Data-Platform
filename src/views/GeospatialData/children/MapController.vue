@@ -7,6 +7,7 @@
       @modeUpdate="toggleBivarUpdate"
     />
     <layer-description
+      class="d-none d-mb-flex"
       v-if="!bivariateModeEnabled"
       :activeLayer="activeLayer"
       :activeDataset="activeDataset"
