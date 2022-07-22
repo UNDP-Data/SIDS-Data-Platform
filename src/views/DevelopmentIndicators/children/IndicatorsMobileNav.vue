@@ -70,7 +70,6 @@
             <div v-if="chartType === 'bars'" class="select">
               <label class="input-label">Sorting</label>
               <v-select
-
                 rounded
                 dense
                 hide-details
@@ -85,6 +84,7 @@
             <div v-else class="select">
               <label class="input-label">Region</label>
               <v-select
+                :disabled="chartType === 'choro' || chartType === 'global'"
                 rounded
                 dense
                 hide-details

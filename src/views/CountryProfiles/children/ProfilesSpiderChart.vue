@@ -13,6 +13,7 @@
       </info-hover-tooltip>
       <div class="d-none" v-for="(axis, index) in ranks[0].axes" :id="`${pillarName}${index}`" :key="index">
         <profiles-spider-chart-tooltip
+          :code="axis.code"
           :header="axis.axis"
           :rank="axis.value"
           :value="values[0].axes[index].value"
