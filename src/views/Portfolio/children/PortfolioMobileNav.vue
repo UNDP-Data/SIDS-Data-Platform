@@ -37,7 +37,7 @@
           </v-col>
         </v-row>
         <v-row class="justify-center">
-          <v-col cols="6">
+          <v-col cols="6" class="position-relative">
             <div class="select">
               <label class="input-label">Funding category</label>
               <v-select
@@ -50,6 +50,7 @@
                 outlined
               ></v-select>
             </div>
+            <v-icon dense class="child-select-icon">mdi-chevron-right</v-icon>
           </v-col>
           <v-col cols="6">
             <div class="select">
@@ -69,7 +70,7 @@
           </v-col>
         </v-row>
         <v-row class="justify-center">
-          <v-col cols="6">
+          <v-col cols="6" class="position-relative">
             <div class="select">
               <label class="input-label">Goal type</label>
               <v-select
@@ -84,6 +85,7 @@
                 outlined
               ></v-select>
             </div>
+            <v-icon dense class="child-select-icon">mdi-chevron-right</v-icon>
           </v-col>
           <v-col cols="6">
             <div class="select">
@@ -150,4 +152,10 @@ export default {
 </script>
 
 <style>
+
+.child-select-icon {
+  position: absolute !important;
+  right: -0.5em;
+  bottom: 1em;
+}
 </style>

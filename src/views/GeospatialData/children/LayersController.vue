@@ -35,7 +35,8 @@
                   <v-card-title>
                     <v-img
                       class="tooltip-card_img"
-                      max-width="160"
+                      contain
+                      max-height="45"
                       :src="item.headerImg"
                     ></v-img>
                   </v-card-title>

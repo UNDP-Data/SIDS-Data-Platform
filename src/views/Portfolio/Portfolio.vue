@@ -44,7 +44,7 @@
       />
 
       <v-row dense class="mt-sm-6 d-md-none d-print-none" justify="center">
-        <v-col cols="11" sm="5">
+        <v-col class="pt-6" cols="11" sm="5">
           <portfolio-pie-chart
             @changeFilter="changeFilter"
             :data="regionFundingMobile"
@@ -53,10 +53,25 @@
             :colorScheme="regionColors"
           ></portfolio-pie-chart>
         </v-col>
-        <v-col cols="11" sm="5">
+        <v-col class="pt-6 position-relative" cols="11" sm="5">
+          <div class="pie-tooltip-container">
+            <info-hover-tooltip :bottom="true" contentName="portfolioTooltip-solutions">
+              <template slot="content">
+                <v-card class="pie-tooltip-content">
+                  <v-card-title>
+                    Finance sources
+                  </v-card-title>
+                  <v-card-text>
+                    <p>Pie chart can be used to identify organisations that invest in similar projects or are focused on the same regions</p>
+                  </v-card-text>
+                </v-card>
+              </template>
+            </info-hover-tooltip>
+          </div>
           <portfolio-pie-chart
             @changeFilter="changeFilter"
             :data="sourcesFundingMobile"
+            :activeCategory="fundingCategory"
             chartName="sources"
             postfix="1"
             :colorScheme="sourcesColor"
@@ -117,7 +132,7 @@
                   v-model="activePage"
                 >
                   <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">
-                    <info-hover-tooltip :contentName="page.contentName">
+                    <info-hover-tooltip :bottom="true" :contentName="page.contentName">
                       <template v-slot:button>{{$t(`root.goals.${page.value}`)}}</template>
                     </info-hover-tooltip>
                   </v-tab>
@@ -136,11 +151,26 @@
                 Visualization of budget allocation across regions
               </p>
             </v-col>
-            <v-col cols="6" md="5" lg="6">
+            <v-col class="position-relative" cols="6" md="5" lg="6">
+              <div class="pie-tooltip-container">
+                <info-hover-tooltip :bottom="true" contentName="portfolioTooltip-solutions">
+                  <template slot="content">
+                    <v-card class="pie-tooltip-content">
+                      <v-card-title>
+                        Finance sources
+                      </v-card-title>
+                      <v-card-text>
+                        <p>Pie chart can be used to identify organisations that invest in similar projects or are focused on the same regions</p>
+                      </v-card-text>
+                    </v-card>
+                  </template>
+                </info-hover-tooltip>
+              </div>
               <portfolio-pie-chart
                 @changeFilter="changeFilter"
                 :data="sourcesFunding"
                 chartName="sources"
+                :activeCategory="fundingCategory"
                 :colorScheme="sourcesColor"
               ></portfolio-pie-chart>
               <p class="d-none d-print-block chart-caption text-center">
@@ -149,7 +179,7 @@
             </v-col>
           </v-row>
           <p class="d-none d-print-block mt-4">
-            These two charts visualise investment across SIDS. Second pie chart can be used to identify organisations that invest in similar projects or are focused on the same resions, first one shows invesment across regions.
+            These two charts visualise investment across SIDS. Second pie chart can be used to identify organisations that invest in similar projects or are focused on the same regions, first one shows invesment across regions.
           </p>
         </v-col>
         <v-col class="selects-col d-print-none d-none d-lg-block margin-wrap-right">
@@ -245,7 +275,7 @@
       <h2 class="text-center">
         Selected projects
       </h2>
-      <div :key="goal.id" class="mb-4" v-for="goal in goals[activeGoalType]">
+      <div :key="goal.id" class="mb-4" v-for="goal in goals[goalsType]">
         <template v-if="getTopFiveProjeccts(goal).length" >
           <h3  class="prinout-goal-header mb-4" :style="{background: goal.color}">
             {{goal.title}}
@@ -468,9 +498,6 @@ export default {
         }
       });
       return labels
-    },
-    activeGoalType() {
-      return this.pages[this.activePage].value
     }
   },
   methods: {
@@ -557,7 +584,7 @@ export default {
         } else if (this.goalsType === 'signature-solutions') {
           return project.solution.includes(goal.name)
         } else {
-          let samoaNumber = goals.samoa.findIndex(goal => goal.name === this.goal) + 1,
+          let samoaNumber = goals.samoa.findIndex(goalSamoa => goal.name === goalSamoa.name) + 1,
           sdgNumbers = this.sdgToSamoa[samoaNumber]
           return sdgNumbers.some(number => {
             return project.sdg.includes(goals.sdgs[number].name)
@@ -651,5 +678,13 @@ export default {
   }
   .printout-project-row:last-child {
     border-bottom: none;
+  }
+  .pie-tooltip-content {
+    max-width: 300px;
+  }
+  .pie-tooltip-container {
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 </style>

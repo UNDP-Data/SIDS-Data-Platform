@@ -146,8 +146,8 @@
             <v-col cols='12'>
               <indicators-choro-chart class="d-print-none" v-if='!noData' :chartId="'choro'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
               <h4 class="text-center" v-else>No data for selected indicator</h4>
-              <indicators-m-l v-if="mlMode && mlAvaliable" :indicator="indicator" @close="mlMode=false" :year="year"/>
-              <v-btn v-else-if="mlAvaliable" rounded small class="float-right d-print-none" color="primary" @click="mlMode=true">AI Mode</v-btn>
+              <indicators-m-l v-if="mlMode && mlAvaliable && page!=='mvi'" :indicator="indicator" @close="mlMode=false" :year="year"/>
+              <v-btn v-else-if="mlAvaliable && page!=='mvi'" rounded small class="float-right d-print-none" color="primary" @click="mlMode=true">AI Mode</v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -462,7 +462,7 @@ export default {
     padding-bottom: 290px;
   }
   .choro-printabe .barAxis {
-    transform: translate(95px, 25px)!important;
+    transform: translate(90px, 25px)!important;
   }
   .choro-print-legend {
     font-size: 24px;
