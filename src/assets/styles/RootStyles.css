@@ -62,7 +62,9 @@
 .pt-xs-0, .pt-sm-0 {
   padding-top: 0 !important;
 }
-
+.position-relative {
+  position: relative;
+}
 
 .background-grey {
   background: #e4e1e1 !important;

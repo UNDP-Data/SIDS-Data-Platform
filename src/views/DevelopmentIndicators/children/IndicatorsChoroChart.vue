@@ -8,7 +8,7 @@
       <img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15">
     </div>
     <div class="spiderbox" style="height:0;margin:0;">
-      <div id="indexSpider" class="radarChart" style="text-align:center;height:0"></div>
+      <div class="indexSpider radarChart" style="text-align:center;height:0"></div>
     </div>
     <div class="choro_map_container" :id="chartId+'_map_container'">
 
@@ -131,7 +131,7 @@ export default {
     setCompareCountries(countryList) {
       this.compareIdsList = countryList;
       let res = this.sidsList.filter(country => countryList.includes(country.id)).map(country => country.iso);
-      this.choro && this.choro.updateSeriesCountryList(res)
+      this.choro && this.page === this.choro.page && this.choro.updateSeriesCountryList(res)
     },
     async initChart() {
       let sidsXML = await service.loadSidsSVG();
@@ -199,40 +199,40 @@ export default {
   },
   watch:{
     page() {
-      this.choro && this.choro.updatePageType({
-        page: this.page,
-        chartType: this.chartType,
-        code: this.indicatorCode,
-        year: this.year,
-        data: this.chartData
-      });
+      this.$nextTick(()=> {
+        this.choro && this.choro.updatePageType({
+          page: this.page,
+          chartType: this.chartType,
+          code: this.indicatorCode,
+          year: this.year,
+          data: this.chartData
+        });
+      })
     },
     chartType() {
-      if(this.choro && this.page === this.choro.page) {
+      if(this.choro && this.page === this.choro.page && this.chartType !== this.choro.indiSelections.viz) {
         this.choro.updateVizType(this.chartType, this.chartData);
       }
     },
     chartData() {
-      let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
-      this.setCompareCountries(compareIdsList)
       if(this.choro && this.page === this.choro.page && (this.MLPredictionData || this.mlData)) {
+        let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
+        this.setCompareCountries(compareIdsList)
         this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },
     indicatorCode() {
-      let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
-      this.setCompareCountries(compareIdsList)
       if(this.choro && this.page === this.choro.page) {
         this.choro.updateVizData(this.indicatorCode, this.chartData);
       }
     },
     region() {
-      if(this.choro && this.page === this.choro.page) {
+      if(this.choro && this.page === this.choro.page && this.region !== this.choro.countryType) {
         this.choro && this.choro.updateCountryTypeFilterType(this.region);
       }
     },
     sorting() {
-      if(this.choro && this.page === this.choro.page) {
+      if(this.choro && this.page === this.choro.page && this.sorting !== this.choro.indiSelections.sortby) {
         this.choro && this.choro.updateSortingType(this.sorting);
       }
     },

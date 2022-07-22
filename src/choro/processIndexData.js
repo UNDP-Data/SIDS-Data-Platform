@@ -240,7 +240,7 @@ export function drawIndexSpider() {
   //spiderData = processSpiderData(
 
    RadarChart(
-    "#indexSpider",
+    ".indexSpider",
     radarChartOptionsCustom,
     subindexList,
     "customIndex",

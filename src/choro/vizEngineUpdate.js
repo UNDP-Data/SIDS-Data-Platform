@@ -404,10 +404,11 @@ export function countriesWithNoData() {
 // //
 //
 export function updateVizBlocks(){
+  console.log(this.indiSelections["viz"])
   if (this.indiSelections["viz"] == "spider") {
-    d3.select("#indexSpider").style("display", "block");
+    d3.selectAll(".indexSpider").style("display", "block");
   } else {
-    d3.select("#indexSpider").style("display", "none");
+    d3.selectAll(".indexSpider").style("display", "none");
   }
   if (this.indiSelections["viz"] == "series") {
     d3.select(this.timeSeriesContainer).style("display", "block");
@@ -1146,11 +1147,11 @@ export function updateRegionLables() {
       if (this.indiSelections["sortby"] == "rank") {
         regionTitleVals = {
           opacity: 1,
-          pacificX: 775,
+          pacificX: 695,
           pacificY: 330,
-          caribbeanX: 760,
+          caribbeanX: 680,
           caribbeanY: 170,
-          aisX: 785,
+          aisX: 705,
           aisY: 250,
         };
 
@@ -1158,30 +1159,29 @@ export function updateRegionLables() {
         let regionRanks = [regionRank["pacific"]+'p',regionRank["caribbean"]+'c',regionRank["ais"]+'a'].sort(function(a, b) {
           return parseInt(a) - parseInt(b);
         });
-        console.log(regionRanks)
         if (countryListLength > 0) {
           regionTitleVals = {
             opacity: 1,
-            pacificX: 715,
+            pacificX: 695,
             pacificY:
               40 * (regionRanks.findIndex(v => v === regionRank["pacific"]+'p')) +
               60,
-            caribbeanX: 700,
+            caribbeanX: 680,
             caribbeanY:
               40 * (regionRanks.findIndex(v => v === regionRank["caribbean"]+'c')) +
               60,
-            aisX: 725,
+            aisX: 705,
             aisY:
               40 * (regionRanks.findIndex(v => v === regionRank["ais"]+'a')) + 60,
           };
         } else {
           regionTitleVals = {
             opacity: 1,
-            pacificX: 715,
+            pacificX: 695,
             pacificY: 450,
-            caribbeanX: 700,
+            caribbeanX: 680,
             caribbeanY: 110,
-            aisX: 725,
+            aisX: 705,
             aisY: 300,
           };
         }
@@ -1190,15 +1190,19 @@ export function updateRegionLables() {
         }
         // }
       } else if (this.indiSelections["sortby"] == "region") {
+        console.log(indicatorDataYear)
         if(this.vizWidth < 800) {
+          let k = 0;
           let aisOffset = regionCountries.caribbean.reduce((offset, iso) => {
-            if(indicatorDataYear[iso] !== "No Data") {
+            if(indicatorDataYear[iso] && indicatorDataYear[iso] !== "No Data") {
               offset+=30
+              k+=1
             }
             return offset
           }, 30*2);
+          console.log(k, regionCountries.caribbean)
           let pacificOffset = regionCountries.ais.reduce((offset, iso) => {
-            if(indicatorDataYear[iso] !== "No Data") {
+            if(indicatorDataYear[iso] && indicatorDataYear[iso] !== "No Data") {
               offset+=30
             }
             return offset
@@ -1238,11 +1242,11 @@ export function updateRegionLables() {
       if (this.indiSelections["sortby"] == "rank") {
         regionTitleVals = {
           opacity: 1,
-          pacificX: 775,
+          pacificX: 735,
           pacificY: 330,
-          caribbeanX: 760,
+          caribbeanX: 720,
           caribbeanY: 170,
-          aisX: 785,
+          aisX: 745,
           aisY: 250,
         };
       } else {

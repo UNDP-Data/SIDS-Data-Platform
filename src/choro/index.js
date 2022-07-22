@@ -144,7 +144,7 @@ export default class Choro {
   }
   updatePageType ({page, chartType, codes, year, code, data}) {
     this.page = page;
-      this.data = data;
+    this.data = data;
     this.indiSelections.viz = chartType;
     this.indiSelections.year = year;
     if(codes) {
