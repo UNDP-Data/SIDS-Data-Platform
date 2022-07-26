@@ -29,18 +29,19 @@ export function updateData(
   // this.remove3d();
 
   cls.dataLayer = layerId; //update global to reflect selected datalayer
-
-  //-------------------------------------------
-  if (!map.getSource("hex5")) {
-    this._addVectorSources(comparison);
+  if(activeLayer.years) {
+    cls.dataLayer = `${layerId}-${activeLayer.years[0]}`
   }
-  if (!map.getLayer(cls.hexSize)) {
-    let currentSourceData = this.options.sourceData[`${cls.hexSize}Source`]
+  //-------------------------------------------
+  if (!map.getSource(cls.hexSize+cls.dataLayer)) {
+    this._addDataVectorSource(false, cls.dataLayer, cls.hexSize)
+  }
+  if (!map.getLayer(cls.hexSize+cls.dataLayer)) {
     map.addLayer({
-      id: cls.hexSize,
+      id: cls.hexSize+cls.dataLayer,
       type: "fill",
-      source: cls.hexSize,
-      "source-layer": currentSourceData.layer,
+      source: cls.hexSize+cls.dataLayer,
+      "source-layer": cls.hexSize+'_'+cls.dataLayer,
       layout: {
         visibility: "visible",
       },
@@ -51,28 +52,30 @@ export function updateData(
     });
 
     if (map.getLayer(this.options.firstSymbolId)) {
-      map.moveLayer(cls.hexSize, this.options.firstSymbolId);
+      map.moveLayer(cls.hexSize+cls.dataLayer, this.options.firstSymbolId);
     }
   }
+
+  map.once('idle', () => {
+    if(this.options.mode3d) {
+      let layerState = comparison ? this.options.comparisonLayerState : this.options.currentLayerState
+      this.add3dLayer(map, layerState, layerState.hexSize + "-3d")
+    }
+    this.emit('loadingEnd')
+  })
   let self = this;
   setTimeout(() => {
     var features = map.queryRenderedFeatures({
-      layers: [cls.hexSize],
+      layers: [cls.hexSize+cls.dataLayer],
     });
+    console.log(features)
     if (features) {
       var uniFeatures;
-      if (cls.hexSize === "admin1") {
-        uniFeatures = self.getUniqueFeatures(features, "GID_1");
-      } else if (cls.hexSize === "admin2") {
-        uniFeatures = self.getUniqueFeatures(features, "GID_2");
-      } else {
-        uniFeatures = self.getUniqueFeatures(features, "hexid");
-      }
-      var selectedData = uniFeatures.map((x) => x.properties[layerId]);
-
-      var breaks = chroma.limits(selectedData, "q", 4);
-
+      uniFeatures = self.getUniqueFeatures(features, "fid");
+      var selectedData = uniFeatures.map((x) => x.properties.mean);
+      var breaks = chroma.limits(selectedData, "e", 4);
       var breaks_new = [];
+      console.log(breaks)
       this.options.precision = 1;
       do {
         this.options.precision++;
@@ -122,14 +125,15 @@ export function updateData(
       }
       cls.breaks = breaks;
       cls.color = colorRamp;
-      map.setPaintProperty(cls.hexSize, "fill-color", [
+      console.log(breaks, colorRamp)
+      map.setPaintProperty(cls.hexSize+cls.dataLayer, "fill-color", [
         "case",
         ["boolean", ["feature-state", "hover"], false],
         "yellow",
         [
           "interpolate",
           ["linear"],
-          ["get", layerId],
+          ["get", 'mean'],
           breaks[0],
           colorRamp[0],
           breaks[1],
@@ -145,17 +149,17 @@ export function updateData(
 
       if (isNaN(breaks[3]) || breaks[1] == 0) {
         map.setPaintProperty(
-          cls.hexSize,
+          cls.hexSize+cls.dataLayer,
           "fill-opacity",
           0.0
           //this.options.opacity
         );
         setTimeout(() => {
-          map.setFilter(cls.hexSize, null);
+          map.setFilter(cls.hexSize+cls.dataLayer, null);
         }, 100);
         this.addNoDataLegend(activeLayer)
       } else {
-        map.setFilter(cls.hexSize, [">=", layerId, 0]);
+        map.setFilter(cls.hexSize+cls.dataLayer, [">=", layerId, 0]);
         this.emit('layerUpdate', {
           activeLayer,
           colorRamp,
@@ -166,24 +170,17 @@ export function updateData(
         let self = this;
         setTimeout(() => {
           map.setPaintProperty(
-            cls.hexSize,
+            cls.hexSize+cls.dataLayer,
             "fill-opacity",
             self.options.bivariateMode ? 0 : self.options.opacity // 0.8
           );
         }, 100);
       }
     }
-    map.once('idle', () => {
-      if(this.options.mode3d) {
-        let layerState = comparison ? this.options.comparisonLayerState : this.options.currentLayerState
-        this.add3dLayer(map, layerState, layerState.hexSize + "-3d")
-      }
-      this.emit('loadingEnd')
-    })
-  }, 1000);
-  if(map.getLayer('allsids')) {
-    map.moveLayer("allsids", this.options.firstSymbolId);
-  }
+  }, 6000);
+  // if(map.getLayer('allsids')) {
+  //   map.moveLayer("allsids", this.options.firstSymbolId);
+  // }
 }
 
 export function addOcean(activeDataset, activeLayer, comparison = false) {

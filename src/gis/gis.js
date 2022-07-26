@@ -129,9 +129,22 @@ export default class Map {
     });
   }
 
+  _addDataVectorSource(comparison = false, layerId, resolution) {
+    let map = !comparison ? this.map : this.map2;
+    if (!map.getSource(layerId)) {
+      map.addSource(resolution + layerId, {
+        type: "vector",
+        promoteId: "GID_2",
+        tiles: [`https://data.undpgeohub.org/sids-data/${resolution}_${layerId}/{z}/{x}/{y}.pbf`],
+        //'minzoom': 3,
+        maxzoom: 20, //13.5,
+      });
+    }
+  }
+
   _addVectorSources(comparison = false) {
     let map = !comparison ? this.map : this.map2;
-
+    //
     for (let idString of Object.keys(this.options.sources)) {
       if(!map.getSource(idString))
         map.addSource(idString, this.options.sources[idString]);

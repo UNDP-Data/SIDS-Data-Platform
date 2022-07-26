@@ -105,12 +105,12 @@ export default {
   data() {
     return {
       open:false,
-      activeResolution:'hex5'
+      activeResolution:'hex-5km'
     }
   },
   computed:{
     activeHexResolution() {
-      let index = ['hex1','hex5','hex10'].indexOf(this.activeResolution)
+      let index = ['hex-1km','hex-5km','hex-10km'].indexOf(this.activeResolution)
       if(index === -1) {
         return null
       }
