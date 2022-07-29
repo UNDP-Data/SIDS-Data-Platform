@@ -17,7 +17,7 @@
           </div>
         </div>
         <canvas
-          class="d-none d-mb-block"
+          class="d-none d-md-block"
           :id="'histogram'+ hexIndex"
           width="320"
           height="115"

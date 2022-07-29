@@ -1,30 +1,31 @@
 import { featureCollection } from "@turf/helpers";
 import dissolve from "@turf/dissolve";
 
-export function onDataClick(e, map) {
+export function onDataClick(e, comparison) {
+  let map = comparison ? this.map2 : this.map;
   if (this.options.bivarateMode) {
     return;
   }
   let cls = this.options.currentLayerState;
-  if (map === this.map2) {
+  if (comparison) {
     cls = this.options.comparisonLayerState;
   }
 
-  if (this.getSource("highlightS", map)) {
-    this.removeLayer("highlight", map);
-    this.removeSource("highlightS", map);
+  if (this.getSource("highlightS", comparison)) {
+    this.removeLayer("highlight", comparison);
+    this.removeSource("highlightS", comparison);
   }
 
-  if (this.getSource("clickedone", map)) {
-    this.removeLayer("clickedone", map);
-    this.removeSource("clickedone", map);
+  if (this.getSource("clickedone", comparison)) {
+    this.removeLayer("clickedone", comparison);
+    this.removeSource("clickedone", comparison);
   }
 
-  var currId = e.features[0].properties.hexid;
+  var currId = e.features[0].properties.fid;
 
   var feats = map.queryRenderedFeatures({
     layers: [cls.hexSize],
-    filter: ["==", "hexid", currId],
+    filter: ["==", "fid", currId],
   });
 
   var fc = featureCollection(feats);
@@ -46,42 +47,24 @@ export function onDataClick(e, map) {
     },
   });
   this.emit('selectionUpdate', {
-    value: e.features[0].properties[cls.dataLayer]
+    value: e.features[0].properties.mean
   })
 }
 
-export function onAdminClick(e, adminLayerId, map) {
-  let cls = this.options.currentLayerState;
+export function onAdminClick(e, comparison) {
+  let map = comparison ? this.map2 : this.map;
+  let cls = comparison ? this.options.comparisonLayerState : this.options.currentLayerState;
 
-  var rendered = map.queryRenderedFeatures({
-    layers: [adminLayerId],
+  let feats;
+
+  var currId = e.features[0].properties.fid;
+
+  feats = map.queryRenderedFeatures({
+    layers: [cls.hexSize],
+    filter: ["==", "fid", currId],
   });
 
-  let feats,
-  eventObject = {};
-
-  if (cls.hexSize === "admin1") {
-    feats = this.map.querySourceFeatures("admin1", {
-      sourceLayer: ["admin1"],
-      filter: ["==", "GID_1", e.features[0].id],
-    });
-    eventObject.selectionName = `${e.features[0].properties.NAME_1} ${e.features[0].properties.TYPE_1}`;
-    eventObject.value = e.features[0].properties[cls.dataLayer];
-  } else if (cls.hexSize === "admin2") {
-    feats = this.map.querySourceFeatures("admin2", {
-      sourceLayer: ["admin2"],
-      filter: ["==", "GID_2", e.features[0].id],
-    });
-    eventObject.value = e.features[0].properties[cls.dataLayer];
-  }
-
-  this.emit('selectionUpdate', eventObject)
-
-  var countries = [];
-  rendered.map(function (x) {
-    countries.push(x.properties.NAME_0);
-  });
-
+  this.emit('selectionUpdate', {value: e.features[0].properties.mean})
 
   if (map.getSource("highlightS")) {
     map.removeLayer("highlight");
@@ -182,16 +165,15 @@ export function onBivariateClick(clicked, map) {
     9: { 1: "Unassigned", 2: "Unassigned" },
   };
 
-  let cls = this.options.currentLayerState;
   let bvls = this.options.bivariateLayerState;
 
   //prepare infobox for display
   this.emit('bivariateClick', {
     class:clicked.features[0].properties["bivarClass"] + 1,
     level1: classToBivariateClasses[clicked.features[0].properties["bivarClass"]][1],
-    value1:clicked.features[0].properties[bvls.dataLayer[0].layerId],
+    value1:clicked.features[0].properties.x_val,
     level2: classToBivariateClasses[clicked.features[0].properties["bivarClass"]][2],
-    value2: clicked.features[0].properties[bvls.dataLayer[1].layerId]
+    value2: clicked.features[0].properties.y_val
   })
 
   //clear preexisting highlighted source/layer
@@ -203,22 +185,12 @@ export function onBivariateClick(clicked, map) {
     map.removeLayer("clickedone");
     map.removeSource("clickedone");
   }
-
-  //determine the styleId based on what current resolution is
-  let property;
-  if (cls.hexSize === "admin1") {
-    property = "GID_1";
-  } else if (cls.hexSize === "admin2") {
-    property = "GID_2";
-  } else {
-    property = "hexid";
-  }
   //find which of the rendered features the clicked on is, and create highlight
-  var featureId = clicked.features[0].properties[property];
+  var featureId = clicked.features[0].properties.fid;
 
   var feats = this.map.queryRenderedFeatures({
     layers: [bvls.hexSize],
-    filter: ["==", property, featureId],
+    filter: ["==", 'fid', featureId],
   });
 
   var fc = featureCollection(feats); //use turf.js to aggregate into a single geojson and add as layer to map

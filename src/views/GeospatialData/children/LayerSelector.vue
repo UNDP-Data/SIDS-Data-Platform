@@ -43,24 +43,55 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-else-if="layer && layer.years.length > 1"
+      v-if="layer && datasetLayer && layer.years.length > 1 && layer.years.length < 6"
       dense
     >
       <v-col>
         <v-slider
           class="map-input"
           :tick-labels="ticksLabels"
-          :max="dataset.layers.length - 1"
+          :max="layer.years.length - 1"
           step="1"
           ticks="always"
           tick-size="4"
-          @change="emitTemporalChange"
+          :value="activeYearIndex"
+          @change="updateYear"
         ></v-slider>
       </v-col>
     </v-row>
     <v-row
       class="spacing-row"
-      v-else
+      v-else-if="layer && datasetLayer && layer.years.length > 5"
+      dense
+    >
+      <v-col>
+        <v-select
+          rounded
+          dense
+          hide-details
+          class="map-input"
+          :value="activeYear"
+          :items="dataset.layers"
+          :label="layerLabel"
+          @change="emitLayerChange"
+          return-object
+          outlined
+        ></v-select>
+        <v-slider
+          class="map-input"
+          :tick-labels="ticksLabels"
+          :max="layer.years.length - 1"
+          step="1"
+          ticks="always"
+          tick-size="4"
+          :value="activeYearIndex"
+          @change="updateYear"
+        ></v-slider>
+      </v-col>
+    </v-row>
+    <v-row
+      class="spacing-row"
+      v-else-if="!dataset"
       dense
     ></v-row>
   </div>
@@ -72,6 +103,8 @@ export default {
   name: 'LayersController',
   data() {
     return {
+      activeYear: null,
+      activeYearIndex: null
     }
   },
   props:[
@@ -80,11 +113,16 @@ export default {
     'datasetLabel',
     'layer',
     'layerLabel',
-    'disabled'
+    'disabled',
   ],
   computed:{
     ticksLabels() {
       return this.layer && this.layer.years
+    },
+    datasetLayer() {
+      return this.layer && this.dataset.layers.some(l => {
+        return l.layerId === this.layer.layerId
+      })
     }
   },
   methods: {
@@ -94,14 +132,25 @@ export default {
         await this.emitLayerChange(dataset.layers[0])
       }
     },
+    updateYear(year) {
+      this.activeYearIndex = year;
+      this.activeYear = this.layer.years[year]
+      this.emitLayerChange(this.layer)
+    },
     async emitLayerChange(layer){
       let layerData = await service.loadGISLayer(layer.layerId)
       layerData.years = layer.years
+      if(this.activeYear === null || !layer.years.some(y => y === this.activeYear)) {
+        layerData.activeYear = this.activeYear = layer.years[0]
+        this.activeYearIndex = 0;
+      } else {
+        layerData.activeYear = this.activeYear
+      }
+      if(layerData.years[this.activeYearIndex] !== this.activeYear) {
+        this.activeYearIndex = layerData.years.findIndex(y => y === this.activeYear)
+      }
       this.$emit('layerChange', layerData)
     },
-    emitTemporalChange(index) {
-      this.$emit('layerChange', this.dataset.layers[index])
-    }
   }
 }
 </script>

@@ -57,6 +57,20 @@ const globals = {
     lastActive: { dataset: null, layer: null },
   },
   sources: {
+    admin1Overlay: {
+      type: "vector",
+      promoteId: "GID_1",
+      tiles: [constants.sourceURLs.admin1Overlay],
+      //'minzoom': 3,
+      maxzoom: 20, //13.5,
+    },
+    admin2Overlay: {
+      type: "vector",
+      promoteId: "GID_2",
+      tiles: [constants.sourceURLs.admin2Overlay],
+      //'minzoom': 3,
+      maxzoom: 20, //13.5,
+    },
     allsids: {
       type: "vector",
       //'url': ocean

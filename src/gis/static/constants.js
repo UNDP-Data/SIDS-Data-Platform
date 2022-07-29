@@ -13,14 +13,13 @@ const constants = {
   //     "https://data.undpgeohub.org/sids-data/hex10/{z}/{x}/{y}.pbf",
   //   hex5clipped:
   //     "https://data.undpgeohub.org/sids-data/hex5clipped/{z}/{x}/{y}.pbf",
-  //   admin1:
-  //     "https://data.undpgeohub.org/sids-data/admin1/{z}/{x}/{y}.pbf",
-  //   admin2:
-  //     "https://data.undpgeohub.org/sids-data/admin2/{z}/{x}/{y}.pbf",
+    admin1Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin1/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    admin2Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin2/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+
   //   ocean:
   //     "https://data.undpgeohub.org/sids-data/oceans/{z}/{x}/{y}.pbf",
     allSids:
-      "https://data.undpgeohub.org/sids-data/allsids/{z}/{x}/{y}.pbf",
+    "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/allsids/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
   },
   hexes: ["hex-1km", "hex-5km", "hex-10km", "hex5clipped"],
   admins: ["admin1", "admin2"],

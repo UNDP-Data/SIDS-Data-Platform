@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column">
     <v-card class="mb-1  controller-block">
-      <v-row class="d-none d-mb-flex">
+      <v-row class="d-none d-md-flex">
         <v-col cols="6">
           <v-list class="bt-0 pb-0" color="transparent" dense>
             <v-list-item-group class="goal-type-list" v-model="activeGoalType" mandatory>

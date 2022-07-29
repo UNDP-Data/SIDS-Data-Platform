@@ -31,9 +31,9 @@
                :class="{
                  'button-resolution-icon-boundary-1': activeResolution === 'admin1',
                  'button-resolution-icon-boundary-2': activeResolution === 'admin2',
-                 'button-resolution-icon-hex-1': activeResolution === 'hex1',
-                 'button-resolution-icon-hex-5': activeResolution === 'hex5',
-                 'button-resolution-icon-hex-10': activeResolution === 'hex10'
+                 'button-resolution-icon-hex-1': activeResolution === 'hex-1km',
+                 'button-resolution-icon-hex-5': activeResolution === 'hex-5km',
+                 'button-resolution-icon-hex-10': activeResolution === 'hex-10km'
                }"></i>
             </v-btn>
           </template>
@@ -51,21 +51,21 @@
           >
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex1')"
+              @click="handleResolutionChange('hex-1km')"
             >
               1 km
               <i class="button-resolution-icon button-resolution-icon-hex-1"></i>
             </v-btn>
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex5')"
+              @click="handleResolutionChange('hex-5km')"
             >
               5 km
               <i class="button-resolution-icon button-resolution-icon-hex-5"></i>
             </v-btn>
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex10')"
+              @click="handleResolutionChange('hex-10km')"
             >
               10 km
               <i class="button-resolution-icon button-resolution-icon-hex-10"></i>

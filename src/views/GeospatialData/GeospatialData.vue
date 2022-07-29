@@ -223,7 +223,7 @@ export default {
 .map-container {
   position: relative;
   padding: 0 !important;
-  height: 100%;
+  height: 100vh;
   width: 100%;
 }
 .data-controller {
@@ -284,8 +284,7 @@ export default {
   top: 0;
   bottom: 0;
   width: 100%;
-  height: 100%;
-  /* height: 100vh; */
+  height: 100vh;
 }
 .button-collapse {
   position:absolute;
