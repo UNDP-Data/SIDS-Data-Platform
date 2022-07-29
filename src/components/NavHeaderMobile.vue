@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     header() {
-      return this.$route.meta.header
+      return this.$route.meta.header || 'SIDS Data Platform'
     },
     infoContent() {
       return this.$route.meta.infoContent

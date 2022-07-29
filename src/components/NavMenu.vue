@@ -129,7 +129,8 @@ export default {
 }
 .navigation-container {
   position: relative;
-    height: 100%;
+  height: 100%;
+  min-height: 100vh;
 }
 .navigation-menu-drawer {
   height: 100vh !important;
@@ -180,6 +181,7 @@ export default {
   max-width: 100%;
 }
 .sticky-menu-container {
-  height: 100vh;
+  height: calc(100vh);
+
 }
 </style>

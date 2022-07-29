@@ -30,15 +30,16 @@ export function updateTimeChart({ dataset, optionSelected }) {
   let rootThis = this;
   const timeSeriesContainer = d3.select(this.timeSeriesContainer);
   const width = this.vizWidth;
-  let height = 560/800 * this.vizWidth;
-  let margin
+  let height = 560/800 * this.vizWidth,
+  margin,
+  scale = this.vizWidth/timeSeriesContainer.node().getBoundingClientRect().width;
   if(this.vizWidth < 800) {
     margin = { top: 20, right: 15, bottom: 50, left: 40 };
   } else {
     margin = { top: 20, right: 220, bottom: 50, left: 50 };
   }
-  const innerWidth = width - margin.left - margin.right;
-  let innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = width - (margin.left + margin.right);
+  let innerHeight = height - (margin.top + margin.bottom);
   const timeVariable = 800;
 
   var isLoading = true;
@@ -353,12 +354,11 @@ export function updateTimeChart({ dataset, optionSelected }) {
   let prevClosest = undefined;
   function mouseMoveHandler() {
     if (isLoading) return;
-
     let [mouseX, mouseY] = [d3.event.offsetX, d3.event.offsetY];
-
+    mouseX = mouseX * scale;
+    mouseY = mouseY * scale;
     mouseX -= margin.left;
     mouseY -= margin.top;
-
 
 
     let state =
@@ -489,7 +489,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
         .attr("visibility", "visible")
         .attr("x1", xScale(closestPoint.year))
         .attr("x2", xScale(closestPoint.year));
-
       gMark
         .selectAll("circle.hover-dot")
         .attr("cx", xScale(closestPoint.year))
@@ -704,7 +703,7 @@ export function updateTimeChart({ dataset, optionSelected }) {
       return false
     }).map(dataitem => {
       return {
-        country: dataitem.code,
+        country: dataitem.country,
         year: dataitem.year,
         value: dataitem.summ / dataitem.countries
       }
