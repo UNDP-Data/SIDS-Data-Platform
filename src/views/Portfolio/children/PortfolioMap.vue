@@ -27,17 +27,6 @@
     </v-row>
     <div id="map-container">
         <svg id="map-svg">
-          <!-- <defs>
-             <filter id="dropShadow" x="-70%" y="-70%" height="240%" width="240%">
-               <feDropShadow
-                dx="0"
-                dy="0"
-                stdDeviation="10px"
-                flood-color="#fbff00"
-                flood-opacity="1"
-              />
-            </filter>
-          </defs> -->
         </svg>
     </div>
     <div class="filler-block">
@@ -272,7 +261,7 @@ export default {
         gtexts.selectAll('.country_label.point_label')
           .data(pointDataFiltered)
           .enter().append('text')
-          .attr("class", 'country_label point_label')
+          .attr("class", function (d) {return `country_label point_label ${rootThis.computeRegion(d.properties.ISOB)}`})
           .text(function (d) { return d.properties.Admin})
           .attr("fill", "black")
           .style("text-anchor", (d) => {
@@ -305,7 +294,7 @@ export default {
           .data(mapData.features)
           .enter().append('text')
           .attr('id', function (d) {return `poly-label-${d.properties.iso3}`})
-          .attr("class", 'country_label poly_label')
+          .attr("class", function (d) {return `country_label poly_label ${rootThis.computeRegion(d.properties.iso3)}`})
           .each(function(d) {
             let sidsCountry = sidsList.find(c => c.iso === d.properties.iso3)
             if(sidsCountry && d3.select(`#point-label-${d.properties.iso3}`).empty()) {
@@ -338,7 +327,7 @@ export default {
       gTitles.selectAll(".map-title")
         .data(this.titles)
         .enter().append("text")
-          .attr("class", "map-title")
+          .attr("class", (d) => { return `map-title ${d.properties.name}`})
           .attr("dx", function (d) { return projection(d.geometry.coordinates)[0]+5; })
           .attr("dy", function (d) { return projection(d.geometry.coordinates)[1]-5; })
           .attr("stroke",(d)=> {
@@ -358,7 +347,7 @@ export default {
       gLines.selectAll(".parish-line.point-line")
         .data(pointDataFiltered)
       .enter().append('path')
-        .attr("class", "parish-line point-line")
+        .attr("class",(d) => { return `parish-line point-line ${rootThis.computeRegion(d.properties.ISOB)}` })
         .attr('id', function (d) {return `point-line-${d.properties.ISOB}`})
         .attr("d", function(d) {
           let tTransfrom = rootThis.textTransform[d.properties.ISOB]
@@ -383,7 +372,7 @@ export default {
     gLines.selectAll(".parish-line.poly-name-line")
       .data(mapData.features)
     .enter().append('path')
-      .attr("class", "parish-line poly-name-line")
+      .attr("class",(d) => { return `parish-line poly-name-line ${rootThis.computeRegion(d.properties.iso3)}` })
       .attr("d", function(d) {
         let sidsCountry = sidsList.find(c => c.iso === d.properties.iso3);
         let point = pointDataFiltered.some((k) => {
@@ -452,8 +441,9 @@ export default {
           dy = bounds[1][1] - bounds[0][1],
           x = (bounds[0][0] + bounds[1][0]) / 2,
           y = (bounds[0][1] + bounds[1][1]) / 2,
-          scale = Math.max(1, Math.min(25, 0.9 / Math.max(dx / (this.width-200), dy / (this.height-200)))),
-          translate = [this.width / 2 - scale * x, this.height / 2 - scale * y];
+          scale = Math.max(1, Math.min(35, 0.9 / Math.max(dx / (this.width-250), dy / (this.height-250))));
+          console.log(scale)
+          let translate = [this.width / 2 - scale * x, this.height / 2 - scale * y];
         this.map.transition()
           .duration(1350)
 
@@ -469,13 +459,14 @@ export default {
 
     },
     selectRegion(name) {
-      let transforms = this.regionTransforms[name]
+      let transforms = this.regionTransforms[name];
+
       this.map.transition()
         .duration(1350)
+        .attr('class', `zoom-${name}`)
         .call( this.zoom.transform, d3.zoomIdentity ).on("end", () => {
-          this.map.selectAll(`.${name}`).style("stroke", "#000");
+          this.map.selectAll(`.clickable.${name}`).style("stroke", "#000");
           this.map.transition()
-
             .duration(1350)
             .call( this.zoom.transform, d3.zoomIdentity.translate(transforms.translate[0],transforms.translate[1]).scale(transforms.scale) ); // updated for d3 v4
         })
@@ -628,5 +619,19 @@ export default {
 .map-title {
   font-family: sans-serif;
   font-weight: bold;
+}
+.country_label,
+.parish-line, .map-title {
+  opacity: 1;
+  transition: opacity 1500ms linear;
+}
+.zoom-AIS .country_label.Caribbean,  .zoom-AIS .parish-line.Caribbean, .zoom-AIS .map-title.Caribbean,
+.zoom-AIS .country_label.Pacific,  .zoom-AIS .parish-line.Pacific, .zoom-AIS .map-title.Pacific,
+.zoom-Caribbean .country_label.AIS,  .zoom-Caribbean .parish-line.AIS, .zoom-Caribbean .map-title.AIS,
+.zoom-Caribbean .country_label.Pacific,  .zoom-Caribbean .parish-line.Pacific,  .zoom-Caribbean .map-title.Pacific,
+.zoom-Pacific .country_label.AIS,  .zoom-Pacific .parish-line.AIS, .zoom-Pacific .map-title.AIS,
+.zoom-Pacific .country_label.Caribbean,  .zoom-Pacific .parish-line.Caribbean,  .zoom-Pacific .map-title.Caribbean
+{
+  opacity: 0 !important;
 }
 </style>

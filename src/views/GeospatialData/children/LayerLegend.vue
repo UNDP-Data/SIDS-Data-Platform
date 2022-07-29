@@ -6,7 +6,7 @@
     >
       <div v-if="hasData">
         <div  class="d-flex justify-center legend-title">
-          <span v-html="activeLayer.Unit"></span>
+          <span v-html="activeLayer.units"></span>
         </div>
         <div
           class="d-flex justify-space-evenly legend main-legend"
@@ -17,6 +17,7 @@
           </div>
         </div>
         <canvas
+          class="d-none d-md-block"
           :id="'histogram'+ hexIndex"
           width="320"
           height="115"
@@ -287,5 +288,13 @@ export default {
   background-size: 101% 101%;
   margin-top: 2px;
   z-index: 4;
+}
+@media (max-width:959px) {
+  .background-grey {
+    background-color: transparent !important;
+  }
+  .histogram_frame {
+    height: auto;
+  }
 }
 </style>

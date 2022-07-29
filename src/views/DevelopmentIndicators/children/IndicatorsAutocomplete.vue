@@ -34,7 +34,7 @@
     </v-col>
     <v-col class="d-flex justify-end align-center" cols="3">
       <div class="mt-5">
-        <info-hover-tooltip :disabled="!activeIndicator" :large="true">
+        <info-hover-tooltip :bottom="true" :disabled="!activeIndicator" :large="true">
           <template slot="content">
             <v-card flat>
               <v-card-title v-if="activeIndicator" class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>

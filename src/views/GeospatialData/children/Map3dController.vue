@@ -3,7 +3,9 @@
   color="white"
   content-class="tooltip-white"
   transition="fade-transition"
-  left maxWidth="240">
+  :left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+  :top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+  maxWidth="240">
     <template v-slot:activator="{ on: tooltip }">
       <div v-on="{ ...tooltip }">
         <v-btn

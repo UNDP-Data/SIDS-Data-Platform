@@ -39,6 +39,10 @@ export default {
     data: {
       type: Array,
       default: ()=>([])
+    },
+    activeCategory: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -146,6 +150,11 @@ export default {
         .append("text")
         .attr("dy", ".35em")
         .attr("font-size", "12px")
+        .attr('font-weight', (d) => {
+          if(d.data.category === rootThis.activeCategory) {
+            return "bold"
+          }
+        })
         .text(function (d) {
           if (d.data.value == 0) { return ""; } else {
             return d.data.category + " - " + rootThis.nFormatter(d.data.value, 1);
@@ -177,6 +186,11 @@ export default {
             pos[0] = radius * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
             return "translate(" + pos + ")";
           };
+        })
+        .attr('font-weight', (d) => {
+          if(d.data.category === rootThis.activeCategory) {
+            return "bold"
+          }
         })
         .styleTween("text-anchor", function (d) {
           this._current = this._current || d;

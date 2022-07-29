@@ -58,7 +58,7 @@
                 </div>
               </v-col>
               <v-col cols="6">
-                <div v-if="chartType === 'bars'" class="select">
+                <div v-if="chartType === 'bars' || chartType === 'spider'" class="select">
                   <label class="input-label">Sorting</label>
                   <v-select
                     rounded

@@ -2,9 +2,13 @@
   <v-menu
       v-model="open"
       :close-on-content-click="false"
-      :x-offset="true"
-      nudge-left="50"
-      left
+      :offset-x="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+      :offset-y="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+      content-class="select-floating"
+      :nudge-left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm) ? 50 : 0"
+      :nudge-top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm) ? 20 : 0"
+      :left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+      :top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
     >
       <template v-slot:activator="{ on: menu, attrs }">
         <v-tooltip
@@ -75,7 +79,7 @@ export default {
   ],
   methods: {
     boundary1Update(state) {
-      let source = "admin1",
+      let source = "admin1Overlay",
       slayer = "admin1",
       color = "red";
       if(state){
@@ -93,7 +97,7 @@ export default {
       }
     },
     boundary2Update(state) {
-      let source = "admin2",
+      let source = "admin2Overlay",
       slayer = "admin2",
       color = "#003399";
       if(state){
