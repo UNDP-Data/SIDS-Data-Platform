@@ -176,6 +176,7 @@ export function updateData(
         if (!comparison) {
           self.addNoDataLegend(activeLayer);
         }
+        this.emit('loadingEnd')
       }
       map.once('idle', () => {
         if(this.options.mode3d) {
