@@ -305,8 +305,8 @@ export default class Map {
         // let featuresUsed = uniqueFeatures;
         let featuresUsed = features; //vs using uniqueFeatures, since i'm trying to solve the issue of losing features at the maptile border lines
         //data ids for the two layers of interest
-        let attrId_1 = firstLayer.Field_Name;
-        let attrId_2 = secondLayer.Field_Name;
+        let attrId_1 = firstLayer.layerId;
+        let attrId_2 = secondLayer.layerId;
         //isolate values from the aggregated property values in the features
         //and make values absolute if appropriate (eg. ocean depth being negative values)
         let negativeAttrIds = ["depth"]; //TODO extract this to some settings
@@ -576,7 +576,7 @@ export default class Map {
                 type: "logarithmic",
                 scaleLabel: {
                   display: true,
-                  //labelString: Vue._.find(allLayers, ["field_name", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
+                  //labelString: Vue._.find(allLayers, ["layerId", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
                   labelString: firstLabel, //firstLayer.Unit,
                 },
                 ticks: {
@@ -622,7 +622,7 @@ export default class Map {
                 type: "logarithmic",
                 scaleLabel: {
                   display: true,
-                  //labelString: Vue._.find(allLayers, ["field_name", attrId_2])["title"],
+                  //labelString: Vue._.find(allLayers, ["layerId", attrId_2])["title"],
                   labelString: secondLabel, //secondLayer.Unit,
                 },
                 ticks: {
@@ -775,7 +775,7 @@ export default class Map {
         type: XType,
         scaleLabel: {
           display: true,
-          //labelString: Vue._.find(allLayers, ["field_name", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
+          //labelString: Vue._.find(allLayers, ["layerId", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
           labelString: firstLabel, //firstLayer.Unit,
         },
         ticks: {
@@ -828,7 +828,7 @@ export default class Map {
         type: YType,
         scaleLabel: {
           display: true,
-          //labelString: Vue._.find(allLayers, ["field_name", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
+          //labelString: Vue._.find(allLayers, ["layerId", attrId_1])["title"], //adapted from oldcode, i presume was looking for the title/name of the dataset in order to label axes
           labelString: secondLabel, //secondLayer.Unit,
         },
         ticks: {
@@ -2216,7 +2216,7 @@ export default class Map {
     }
 
     //update state
-    cls.dataLayer = activeLayer.Field_Name; //corresponds to the attributeId
+    cls.dataLayer = activeLayer.layerId; //corresponds to the attributeId
     cls.hexSize = "ocean";
     //ocean-specific layer state values hardcoded
     //ocean data uses pre-decided breaks and color;holdover from oldcode
@@ -2277,7 +2277,7 @@ export default class Map {
     //NEW - adding Source and Layer for new format of data-----------------------------
     // this.map2.addSource(
     //   "ocean",
-    //   this.createSourceObj(activeLayer.Field_Name, "ocean")
+    //   this.createSourceObj(activeLayer.layerId, "ocean")
     // );
     // this.map2.addLayer(layerOptions, globals.firstSymbolId);
     //---------------------------------------------------------------------------------
@@ -2337,9 +2337,9 @@ export default class Map {
       ? globals.currentLayerState
       : globals.comparisonLayerState;
     // let map = this.map;
-    let Field_Name = activeLayer.Field_Name; //get the selected layer's Field_Name
+    let layerId = activeLayer.layerId; //get the selected layer's layerId
     if (debug) {
-      console.log(`changeDataOnMap fired: ${Field_Name}, activeLayer:`);
+      console.log(`changeDataOnMap fired: ${layerId}, activeLayer:`);
     }
 
     this.clearHexHighlight();
@@ -2359,12 +2359,12 @@ export default class Map {
         console.log("ocean layer exists...");
       }
 
-      if (!Field_Name.includes("fl")) {
+      if (!layerId.includes("fl")) {
         //
-        //if fl inside of the Field_Name (i.e. it's a fishing/ocean related layer)
+        //if fl inside of the layerId (i.e. it's a fishing/ocean related layer)
         if (debug) {
           console.log(
-            `activeLayer ${activeLayer.Field_Name} is not fishing/ocean related; removing ocean layer and adding hex5 layer`
+            `activeLayer ${activeLayer.layerId} is not fishing/ocean related; removing ocean layer and adding hex5 layer`
           );
         }
         map.removeLayer("ocean");
@@ -2390,7 +2390,7 @@ export default class Map {
       }
     } else if (
       activeLayer.Name === "Ocean Data" &&
-      !(activeLayer.Field_Name === "depths")
+      !(activeLayer.layerId === "depths")
     ) {
       //adding hexSize: 'ocean' to allow non-depth Ocean Data
       if (debug) {
@@ -2437,13 +2437,13 @@ export default class Map {
 
     if (debug) {
       console.log(
-        `changeDataOnMap(Field_Name: ${Field_Name},
+        `changeDataOnMap(layerId: ${layerId},
         activeDataset?.name: ${activeDataset?.name},
         activeLayer?.Description: ${activeLayer?.Description}`
       );
     }
 
-    cls.dataLayer = Field_Name; //update global to reflect selected datalayer
+    cls.dataLayer = layerId; //update global to reflect selected datalayer
 
     //-------------------------------------------
     if (!map.getSource("hex5")) {
@@ -2514,7 +2514,7 @@ export default class Map {
         // console.warn("changeDataOnMap uniqueFeatures", uniFeatures);
 
         //console.log(uniFeatures);
-        var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
+        var selectedData = uniFeatures.map((x) => x.properties[layerId]);
         console.warn("changeDataOnMap selectedData", selectedData);
 
         var breaks = chroma.limits(selectedData, "q", 4);
@@ -2545,21 +2545,21 @@ export default class Map {
         var colorRamp = colors.colorSeq["yellow-blue"];
         console.log(colorRamp);
 
-        if (Field_Name.substring(0, 2) === "1a") {
+        if (layerId.substring(0, 2) === "1a") {
           colorRamp = colors.colorDiv.gdpColor;
-        } else if (Field_Name.substring(0, 2) === "1c") {
+        } else if (layerId.substring(0, 2) === "1c") {
           colorRamp = colors.colorSeq["pop"];
-        } else if (Field_Name === "7d10") {
+        } else if (layerId === "7d10") {
           colorRamp = colors.colorSeq["combo"];
-        } else if (Field_Name === "7d5") {
+        } else if (layerId === "7d5") {
           colorRamp = colors.colorSeq["minty"];
-        } else if (Field_Name === "7d7") {
+        } else if (layerId === "7d7") {
           colorRamp = colors.colorSeq["blues"];
-        } else if (Field_Name === "7d4") {
+        } else if (layerId === "7d4") {
           colorRamp = colors.colorSeq["pinkish"];
-        } else if (Field_Name === "7d8") {
+        } else if (layerId === "7d8") {
           colorRamp = colors.colorSeq["silvers"];
-        } else if (Field_Name === "d") {
+        } else if (layerId === "d") {
           breaks = [-4841, -3805, -2608, -1090, 1322];
           colorRamp = colors.colorSeq["ocean"];
         }
@@ -2574,7 +2574,7 @@ export default class Map {
           [
             "interpolate",
             ["linear"],
-            ["get", Field_Name],
+            ["get", layerId],
             breaks[0],
             colorRamp[0],
             breaks[1],
@@ -2604,9 +2604,9 @@ export default class Map {
             this.addNoDataLegend();
           }
         } else {
-          map.setFilter(cls.hexSize, [">=", Field_Name, 0]);
+          map.setFilter(cls.hexSize, [">=", layerId, 0]);
           console.log(
-            `addLegend called in with intended Field_Name: ${Field_Name}`
+            `addLegend called in with intended layerId: ${layerId}`
           );
 
           if (!comparison) {
@@ -3305,10 +3305,10 @@ export default class Map {
     if (debug) {
       console.log("bvls.dataLayer: ", bvls.dataLayer);
       console.log(
-        "Field_Name 1: ",
-        clicked.features[0].properties[bvls.dataLayer[0].Field_Name],
-        "Field_Name 2: ",
-        clicked.features[0].properties[bvls.dataLayer[1].Field_Name]
+        "layerId 1: ",
+        clicked.features[0].properties[bvls.dataLayer[0].layerId],
+        "layerId 2: ",
+        clicked.features[0].properties[bvls.dataLayer[1].layerId]
       );
     }
     let unitText = [bvls.dataLayer[0].Unit, bvls.dataLayer[1].Unit];
@@ -3320,7 +3320,7 @@ export default class Map {
       classToBivariateClasses[clicked.features[0].properties["bivarClass"]][1] +
       ") </b>" +
       clicked.features[0].properties[
-        bvls.dataLayer[0].Field_Name
+        bvls.dataLayer[0].layerId
       ]?.toLocaleString() +
       " " +
       unitText[0] +
@@ -3329,7 +3329,7 @@ export default class Map {
       classToBivariateClasses[clicked.features[0].properties["bivarClass"]][2] +
       ") </b>" +
       clicked.features[0].properties[
-        bvls.dataLayer[1].Field_Name
+        bvls.dataLayer[1].layerId
       ]?.toLocaleString() +
       " " +
       unitText[1] +
@@ -3428,7 +3428,7 @@ export default class Map {
       "</p>";
     /* //was used with a console log for debugging
   var legData = Vue._.find(allLayers, [
-    "field_name",
+    "layerId",
     // currentGeojsonLayers.dataLayer,
     cls.dataLayer,
   ]); */

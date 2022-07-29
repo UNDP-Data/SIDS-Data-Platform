@@ -130,7 +130,7 @@ export default {
 .navigation-container {
   position: relative;
   height: 100%;
-  min-height: 900px;
+  min-height: 100vh;
 }
 .navigation-menu-drawer {
   height: 100vh !important;

@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="value" class="selection-info description-block background-grey">
+  <v-card v-if="value || mean || min || max" class="selection-info description-block background-grey">
     <v-card-text class="pa-2">
       <h4 v-if="name">{{name}}</h4>
       <h4 v-if="value && !bivarClass">Value:</h4>
@@ -76,6 +76,7 @@ export default {
       }
     },
     polyUpdate(e) {
+      console.log(e)
       if(e !== null) {
         this.min = this.nFormatter(e.min,2)
         this.max = this.nFormatter(e.max,2)
@@ -87,7 +88,6 @@ export default {
       }
     },
     bivarUpdate(e) {
-      console.log(e)
       if(e !== null) {
         this.bivarClass = e.class;
         this.level1 = e.level1;

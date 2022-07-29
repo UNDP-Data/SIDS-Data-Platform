@@ -135,6 +135,12 @@ export default {
     margin-bottom: .6em;
   }
 }
+@media all and (max-width:959px) {
+
+  .header {
+    min-height: calc(100vh - 100px);
+  }
+}
 .header-bar_logo-mobile {
   position: relative;
   z-index: 5;

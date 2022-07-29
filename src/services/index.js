@@ -27,6 +27,7 @@ export default {
   loadML,
   loadMLTargetSize,
   loadMLPredictorSize,
+  loadGISLayer,
   loadLang,
   loadResourcesData
 }
@@ -118,6 +119,11 @@ async function loadML (data,source) {
 
 async function loadGISDatasets () {
   const resp = await axios.get(`${NEW_API_URl_2}/gis/gisDatasetMeta.json`)
+  return resp.data;
+}
+
+async function loadGISLayer (id) {
+  const resp = await axios.get(`${NEW_API_URl_2}/gis/layers/${id}.json`)
   return resp.data;
 }
 

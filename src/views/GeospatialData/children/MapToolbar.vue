@@ -148,4 +148,15 @@ export default {
   flex-basis: 50%;
   margin-bottom: 5px;
 }
+@media (max-width:959px) {
+  .button-wrapper {
+    max-width: none;
+    flex-basis: 15%;
+    margin-bottom: 20px;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}
 </style>

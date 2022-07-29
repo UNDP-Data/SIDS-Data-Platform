@@ -2,10 +2,13 @@
   <v-menu
       v-model="open"
       :close-on-content-click="false"
-      :x-offset="true"
+      :offset-x="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+      :offset-y="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
       content-class="select-floating"
-      nudge-left="50"
-      left
+      :nudge-left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm) ? 50 : 0"
+      :nudge-top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm) ? 20 : 0"
+      :left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+      :top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
     >
       <template v-slot:activator="{ on: menu, attrs }">
         <v-tooltip
@@ -13,7 +16,9 @@
           :disabled="open"
           content-class="tooltip-white"
           transition="fade-transition"
-          left maxWidth="200">
+          :left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+          :top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
+          maxWidth="200">
           <template v-slot:activator="{ on: tooltip }">
             <v-btn
               class="toolbar-button"

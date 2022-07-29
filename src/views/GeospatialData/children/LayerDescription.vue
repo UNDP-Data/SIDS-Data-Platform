@@ -2,17 +2,17 @@
   <v-card class="mb-1 description-block background-grey">
     <v-card-subtitle class=" pt-2 pb-2 block-header" v-if="activeLayer">
       <b
-        >{{ activeLayer.Description }}
-        {{ activeDataset.type === "temporal" ? activeLayer.Temporal : "" }}</b
+        >{{ activeLayer.title }}
+        </b
       >
     </v-card-subtitle>
     <v-card-subtitle class="block-header" v-else>
       SIDS Geospatial Platform
     </v-card-subtitle>
     <v-card-text class="pb-2" v-if="activeLayer">
-      {{ activeLayer.Desc_long }}<br />
-      <b>Reference</b> {{ activeLayer.Source_Name }} <br />
-      <a :href="activeLayer.Source_Link" target="_blank">
+      {{ activeLayer.description }}<br />
+      <b>Reference</b> {{ activeLayer.citation }} <br />
+      <a :href="activeLayer.link" target="_blank">
         Source
       </a>
     </v-card-text>
