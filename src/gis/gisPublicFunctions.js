@@ -66,8 +66,7 @@ export function updateData(
         uniFeatures = self.getUniqueFeatures(features, "fid");
         var selectedData = uniFeatures.map((x) => x.properties.mean);
         let limitsLength = selectedData.filter((v,i) => { return i==selectedData.lastIndexOf(v); }).length;
-        limitsLength = limitsLength > 4 ? 4 : limitsLength;
-        var breaks = chroma.limits(selectedData, "q", limitsLength);
+        var breaks = chroma.limits(selectedData, "q", 4);
         var breaks_new = [];
         this.options.precision = 1;
         do {
