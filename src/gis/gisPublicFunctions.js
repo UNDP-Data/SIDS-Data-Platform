@@ -67,16 +67,16 @@ export function updateData(
         var selectedData = uniFeatures.map((x) => x.properties.mean);
         var breaks = chroma.limits(selectedData, "q", 4);
         var breaks_new = [];
-        this.options.precision = 1;
+        self.options.precision = 1;
         do {
-          this.options.precision++;
+          self.options.precision++;
           for (let i = 0; i < breaks.length; i++) {
             breaks_new[i] = parseFloat(
               breaks[i].toPrecision(this.options.precision)
             );
-            if(this.options.precision > 4)  {
-              breaks_new = chroma.limits(selectedData, "e", 4);
-              this.options.precision = 1;
+            if(self.options.precision > 4)  {
+              breaks = chroma.limits(selectedData, "e", 4);
+              self.options.precision = 1;
             }
           }
         } while (self.checkForDuplicates(breaks_new));

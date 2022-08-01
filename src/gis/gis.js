@@ -424,7 +424,7 @@ export default class Map {
           breaks_new[i] = parseFloat(breaks[i].toPrecision(this.options.precision));
         }
         if(this.options.precision < 10) {
-          breaks_new = chroma.limits(selectedData, "e", 4);
+          breaks = chroma.limits(selectedData, "e", 4);
           this.options.precision = 1;
         }
       } while (this.checkForDuplicates(breaks_new));
