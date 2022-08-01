@@ -55,7 +55,7 @@
           ticks="always"
           tick-size="4"
           :value="activeYearIndex"
-          @change="updateYear"
+          @change="updateYearByIndex"
         ></v-slider>
       </v-col>
     </v-row>
@@ -71,22 +71,11 @@
           hide-details
           class="map-input"
           :value="activeYear"
-          :items="dataset.layers"
+          :items="layer.years"
           :label="layerLabel"
-          @change="emitLayerChange"
-          return-object
+          @change="updateYear"
           outlined
         ></v-select>
-        <v-slider
-          class="map-input"
-          :tick-labels="ticksLabels"
-          :max="layer.years.length - 1"
-          step="1"
-          ticks="always"
-          tick-size="4"
-          :value="activeYearIndex"
-          @change="updateYear"
-        ></v-slider>
       </v-col>
     </v-row>
     <v-row
@@ -127,17 +116,24 @@ export default {
   },
   methods: {
     async emitDatasetChange(dataset){
+      console.log(dataset)
       this.$emit('datasetChange', dataset)
       if(dataset.layers.length === 1) {
         await this.emitLayerChange(dataset.layers[0])
       }
     },
-    updateYear(year) {
+    updateYearByIndex(year) {
       this.activeYearIndex = year;
       this.activeYear = this.layer.years[year]
       this.emitLayerChange(this.layer)
     },
+    updateYear(year) {
+      this.activeYearIndex = this.layer.years.findIndex(y => y === year);
+      this.activeYear = [year];
+      this.emitLayerChange(this.layer)
+    },
     async emitLayerChange(layer){
+      console.log(layer)
       let layerData = await service.loadGISLayer(layer.layerId)
       layerData.years = layer.years
       if(this.activeYear === null || !layer.years.some(y => y === this.activeYear)) {
