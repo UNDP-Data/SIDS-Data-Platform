@@ -65,7 +65,6 @@ export function updateData(
         var uniFeatures;
         uniFeatures = self.getUniqueFeatures(features, "fid");
         var selectedData = uniFeatures.map((x) => x.properties.mean);
-        let limitsLength = selectedData.filter((v,i) => { return i==selectedData.lastIndexOf(v); }).length;
         var breaks = chroma.limits(selectedData, "q", 4);
         var breaks_new = [];
         this.options.precision = 1;
@@ -76,7 +75,7 @@ export function updateData(
               breaks[i].toPrecision(this.options.precision)
             );
             if(this.options.precision > 4)  {
-              breaks_new = chroma.limits(selectedData, "l", 4);
+              breaks_new = chroma.limits(selectedData, "e", 4);
               this.options.precision = 1;
             }
           }
