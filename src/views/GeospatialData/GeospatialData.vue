@@ -86,6 +86,9 @@ export default {
   data() {
     return {
       activeLayer:null,
+      dataset: null,
+      secondLayer: null,
+      secondDataset: null,
       map: null,
       menuColapsed:false,
       dualModeEnabled: false,
@@ -107,6 +110,14 @@ export default {
         this.map.toggleMapboxGLCompare(this.dualModeEnabled);
       }
       this.map.toggleBivariateComponents(e)
+      if(e && this.activeLayer && this.secondLayer) {
+        this.updateBivariate({
+          layer: this.activeLayer,
+          dataset: this.dataset,
+          secondDataset: this.secondDataset,
+          secondLayer: this.secondLayer
+        })
+      }
     },
     toggleDual(e) {
       this.dualModeEnabled = e;
@@ -115,8 +126,13 @@ export default {
         this.map.toggleBivariateComponents(this.bivariateModeEnabled)
       }
       this.map.toggleMapboxGLCompare(e);
+      if(e && this.secondLayer) {
+        this.updateComparisonMap(this.secondDataset, this.secondLayer)
+      }
     },
     updateBivariate({dataset, layer, secondDataset, secondLayer}) {
+      this.secondLayer = secondLayer
+      this.secondDataset = secondDataset
       this.map.createBivariate(
         dataset,
         layer,
@@ -127,6 +143,8 @@ export default {
 
     updateComparisonMap(activeDataset, activeLayer) {
       if (activeLayer) {
+        this.secondLayer = activeLayer
+        this.secondDataset = activeDataset
         if (activeLayer.Name === "Ocean Data") {
           if (activeLayer.Field_Name === "depth") {
             this.map.addOcean(activeDataset, activeLayer, true);
@@ -140,6 +158,7 @@ export default {
     },
     updateMap(e) {
       this.activeLayer = e.layer
+      this.dataset = e.dataset
       if (e.dataset) {
         if (e.layer.Name === "Ocean Data") {
           if (e.layer.Field_Name === "depth") {
