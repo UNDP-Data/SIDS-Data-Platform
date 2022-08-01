@@ -798,7 +798,8 @@ export function toggleBivariateComponents(e) {
   if (!e) {
     this.removeBivariateLayer();
     this.changeOpacity(this.options.opacity);
-    this.clearHexHighlight()
+    this.clearHexHighlight();
+    this.updateData(this.activeDataset, this.activeLayer)
   } else {
     if(this.options.mode3d) {
       this.add3D()
@@ -818,6 +819,8 @@ export function createBivariate(
   self = this,
   cls = this.options.currentLayerState,
   bvls = this.options.bivariateLayerState;
+  this.removeLayer('bivar2');
+  this.removeSource(bvls.dataLayer);
   this.options.bivarConfig = {
     firstDataset,
     firstLayer,
@@ -838,7 +841,7 @@ export function createBivariate(
     this.emit('loadingStart')
     this._addDataVectorSource(false, bvls.dataLayer, cls.hexSize)
     map.addLayer({
-      id: cls.hexSize+bvls.dataLayer,
+      id: 'bivar2',
       type: "fill",
       source: cls.hexSize+bvls.dataLayer,
       "source-layer": cls.hexSize+'_'+bvls.dataLayer,
@@ -859,7 +862,7 @@ export function createBivariate(
       });
 
 
-      if (features && features.length != 0 && features2 && features2.length != 0) {
+      if (features && features.length != 0 && features.some(f => typeof f.properties.mean !== 'undefined') && features2 && features2.length != 0 && features2.some(f => typeof f.properties.mean !== 'undefined')) {
 
         let data_1 = features.map((v) => {
           return v.properties.mean;
@@ -867,19 +870,6 @@ export function createBivariate(
         let data_2 = features2.map((v) => {
           return v.properties.mean;
         });
-
-        let hasData = {
-          data_1: data_1.some((x) => !Number.isNaN(x) && typeof x !== 'undefined' ),
-          data_2: data_2.some((y) => !Number.isNaN(y) && typeof y !== 'undefined' ),
-        };
-
-        if (!hasData.data_1 || !hasData.data_2) {
-          if (map.getLayer("bivariate")) {
-            map.removeLayer("bivariate");
-            map.removeSource("bivariate");
-          }
-          return;
-        }
 
         let X_breaks = chroma.limits(data_1, "q", 3);
         let Y_breaks = chroma.limits(data_2, "q", 3);
@@ -1044,7 +1034,10 @@ export function createBivariate(
           Y_breaks
         })
       } else {
-        return;
+        self.removeLayer("bivariate");
+        self.removeSource("bivariate");
+        this.emit('bivarDataUpdate', {noData: true})
+        this.emit('loadingEnd')
       }
     },2000)
   }

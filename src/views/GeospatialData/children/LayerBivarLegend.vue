@@ -154,14 +154,18 @@ export default {
       this.chart.update(0);
     },
     updateChart(e) {
-      this.hasData = true;
-      this.$nextTick(() => {
-        if(this.chart) {
-          this.updateHistogramm(e);
-        } else {
-          this.initHistogramm(e);
-        }
-      })
+      if(e.noData) {
+        this.hasData = false;
+      } else {
+        this.hasData = true;
+        this.$nextTick(() => {
+          if(this.chart) {
+            this.updateHistogramm(e);
+          } else {
+            this.initHistogramm(e);
+          }
+        })
+      }
     },
     initHistogramm(e) {
       let canvas = document.getElementById("bivar_histogram");

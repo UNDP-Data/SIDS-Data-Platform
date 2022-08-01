@@ -93,7 +93,6 @@ export default {
   data() {
     return {
       activeYear: null,
-      activeYearIndex: null
     }
   },
   props:[
@@ -101,6 +100,7 @@ export default {
     'dataset',
     'datasetLabel',
     'layer',
+    'year',
     'layerLabel',
     'disabled',
   ],
@@ -112,38 +112,34 @@ export default {
       return this.layer && this.dataset.layers.some(l => {
         return l.layerId === this.layer.layerId
       })
+    },
+    activeYearIndex() {
+      return this.layer && this.layer.years.findIndex(y => y === this.year);
     }
   },
   methods: {
     async emitDatasetChange(dataset){
-      console.log(dataset)
       this.$emit('datasetChange', dataset)
       if(dataset.layers.length === 1) {
         await this.emitLayerChange(dataset.layers[0])
       }
     },
-    updateYearByIndex(year) {
-      this.activeYearIndex = year;
-      this.activeYear = this.layer.years[year]
+    updateYearByIndex(yearIndex) {
+      this.$emit('yearChange', this.layer.years[yearIndex])
       this.emitLayerChange(this.layer)
     },
     updateYear(year) {
-      this.activeYearIndex = this.layer.years.findIndex(y => y === year);
-      this.activeYear = [year];
+      this.$emit('yearChange', year)
       this.emitLayerChange(this.layer)
     },
     async emitLayerChange(layer){
-      console.log(layer)
       let layerData = await service.loadGISLayer(layer.layerId)
       layerData.years = layer.years
-      if(this.activeYear === null || !layer.years.some(y => y === this.activeYear)) {
-        layerData.activeYear = this.activeYear = layer.years[0]
-        this.activeYearIndex = 0;
+      if(this.year === null || !layer.years.some(y => y === this.year)) {
+        this.$emit('yearChange', layer.years[0])
+        layerData.activeYear = layer.years[0]
       } else {
-        layerData.activeYear = this.activeYear
-      }
-      if(layerData.years[this.activeYearIndex] !== this.activeYear) {
-        this.activeYearIndex = layerData.years.findIndex(y => y === this.activeYear)
+        layerData.activeYear = this.year
       }
       this.$emit('layerChange', layerData)
     },

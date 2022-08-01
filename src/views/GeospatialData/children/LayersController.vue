@@ -174,12 +174,14 @@
       <layer-selector
         class="mb-4 ml-4 mr-4"
         :dataset="activeDataset"
+        :year="activeYear"
         :datasets="filteredDatasets"
         :datasetLabel="firstDatasetName"
         :layer="activeLayer"
         :layerLabel="firstLayerName"
         @datasetChange="firstDatasetChange"
         @layerChange="firstLayerChange"
+        @yearChange="firstYearChange"
       />
 
       <layer-selector
@@ -187,20 +189,24 @@
         :disabled="!activeLayer"
         v-if="bivariateModeEnabled || dualModeEnabled"
         :dataset="secondDataset"
+        :year="secondYear"
         :datasets="filteredDatasets"
         :datasetLabel="dualModeEnabled ? 'Right Dataset' : 'Second Dataset'"
         :layer="secondLayer"
         :layerLabel="dualModeEnabled ? 'Right Layer' : 'Second Layer'"
         @datasetChange="secondDatasetChange"
         @layerChange="secondLayerChange"
+        @yearChange="secondYearChange"
       />
     </v-card>
     <layers-tabs
-      class="d-none d-mb-flex"
+      class="d-none d-md-flex"
       :dataset="activeDataset"
       :firstLayer="activeLayer"
       :secondDataset="secondDataset"
       :secondLayer="secondLayer"
+      :activeYear="activeYear"
+      :secondYear="secondYear"
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       :pillar="activeGoal"
@@ -230,6 +236,8 @@ export default {
       activeLayer:null,
       secondDataset:null,
       secondLayer:null,
+      activeYear: null,
+      secondYear: null
     }
   },
   props:[
@@ -321,12 +329,18 @@ export default {
       this.activeLayer = layer;
       this.emitUpdate()
     },
+    firstYearChange(year) {
+      this.activeYear = year;
+    },
     secondDatasetChange(dataset) {
       this.secondDataset = dataset;
     },
     secondLayerChange(layer) {
       this.secondLayer = layer;
       this.emitUpdate()
+    },
+    secondYearChange(year) {
+      this.secondYear = year;
     },
     emitUpdate() {
       return this.$emit('layersChange', {
@@ -339,6 +353,8 @@ export default {
     hadleTabUpdate(e) {
       this.activeDataset = e.layers.dataset
       this.activeLayer = e.layers.firstLayer
+      this.activeYear = e.layers.activeYear
+      this.secondYear = e.layers.secondYear
       this.secondDataset = e.layers.secondDataset
       this.secondLayer = e.layers.secondLayer
       this.activeGoalType = e.filters.goalType
