@@ -405,7 +405,7 @@ export default class Map {
       layers: [cls.hexSize],
     });
 
-    if (!features || !features.length) {
+    if (!features || !features.length || !features.some(f => typeof f.properties.mean !== 'undefined')) {
       if (!recolorComparison) {
         this.addNoDataLegend();
       }
@@ -427,7 +427,7 @@ export default class Map {
           breaks_new[i] = parseFloat(breaks[i].toPrecision(this.options.precision));
         }
         if(this.options.precision < 10) {
-          breaks_new = chroma.limits(selectedData, "l", 4);
+          breaks_new = chroma.limits(selectedData, "l", limitsLength);
           this.options.precision = 1;
         }
       } while (this.checkForDuplicates(breaks_new));
@@ -660,11 +660,11 @@ export default class Map {
     this.options.precision = 1;
     do {
       this.options.precision++;
-      for (let i = 0; i < breaks.length-1; i++) {
+      for (let i = 0; i < breaks.length; i++) {
         breaks_new[i] = parseFloat(
           breaks[i].toPrecision(this.options.precision)
         );
-        if(this.options.precision < 10) {
+        if(this.options.precision > 4) {
           breaks_new = chroma.limits(data, "l", 4);
           this.options.precision = 1;
         }

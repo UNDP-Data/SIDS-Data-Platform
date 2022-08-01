@@ -61,7 +61,7 @@ export function updateData(
       var features = map.queryRenderedFeatures({
         layers: [cls.hexSize],
       });
-      if (features && features.length) {
+      if (features && features.length && features.some(f => typeof f.properties.mean !== 'undefined')) {
         var uniFeatures;
         uniFeatures = self.getUniqueFeatures(features, "fid");
         var selectedData = uniFeatures.map((x) => x.properties.mean);
@@ -72,11 +72,11 @@ export function updateData(
         this.options.precision = 1;
         do {
           this.options.precision++;
-          for (let i = 0; i < breaks.length-1; i++) {
+          for (let i = 0; i < breaks.length; i++) {
             breaks_new[i] = parseFloat(
               breaks[i].toPrecision(this.options.precision)
             );
-            if(this.options.precision < 10) {
+            if(this.options.precision > 4)  {
               breaks_new = chroma.limits(selectedData, "l", 4);
               this.options.precision = 1;
             }
@@ -174,6 +174,8 @@ export function updateData(
         }
       } else {
         if (!comparison) {
+          self.addNoDataLegend(activeLayer);
+        } else {
           self.addNoDataLegend(activeLayer);
         }
         this.emit('loadingEnd')
