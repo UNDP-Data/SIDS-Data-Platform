@@ -819,6 +819,7 @@ export function createBivariate(
   self = this,
   cls = this.options.currentLayerState,
   bvls = this.options.bivariateLayerState;
+  this.bivarLayer = secondLayer;
   this.removeLayer('bivar2');
   this.removeSource(bvls.dataLayer);
   this.options.bivarConfig = {
@@ -827,6 +828,11 @@ export function createBivariate(
     secondDataset,
     secondLayer
   }
+  map.setPaintProperty(
+    this.options.currentLayerState.hexSize,
+    "fill-opacity",
+    0
+  );
 
   if(secondLayer == null || firstLayer == null) {
     return;

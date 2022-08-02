@@ -8,12 +8,18 @@
           <span v-html="activeLayer.Unit"></span>
         </div>
         <canvas
-          class="d-none d-md-block"
+          v-if="!isMobile"
           id="bivar_histogram"
           width="320"
           height="200"
         ></canvas>
-        <v-row>
+        <canvas
+          v-else
+          id="bivar_histogram"
+          width="320"
+          height="100"
+        ></canvas>
+        <v-row class="d-none d-md-flex">
           <v-col cols="6">
             <v-switch
               class="mt-1"
@@ -47,10 +53,11 @@
 <script>
 import format from "@/mixins/format.mixin";
 import Chart from "chart.js";
+import size from '@/mixins/size.mixin';
 
 export default {
   name: 'LayerBivarLegend',
-  mixins: [format],
+  mixins: [format, size],
   data() {
     let nFormatter = this.nFormatter
     return {
@@ -156,6 +163,7 @@ export default {
     updateChart(e) {
       if(e.noData) {
         this.hasData = false;
+        this.chart = null;
       } else {
         this.hasData = true;
         this.$nextTick(() => {
@@ -173,8 +181,8 @@ export default {
       this.chartOptions.scales.yAxes[0].ticks.min = e.minY;
       this.chartOptions.scales.xAxes[0].ticks.max = e.maxX;
       this.chartOptions.scales.xAxes[0].ticks.min = e.minX;
-      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.Unit;
-      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.Unit;
+      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.units;
+      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.units;
       this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
         chartObjY.ticks.push(e.Y_breaks[3]);
@@ -200,8 +208,8 @@ export default {
       this.chartOptions.scales.yAxes[0].ticks.min = e.minY;
       this.chartOptions.scales.xAxes[0].ticks.max = e.maxX;
       this.chartOptions.scales.xAxes[0].ticks.min = e.minX;
-      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.Unit;
-      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.Unit;
+      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.units;
+      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.units;
       this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
         chartObjY.ticks.push(e.Y_breaks[3]);
@@ -216,8 +224,8 @@ export default {
         chartObjX.ticks.push(e.X_breaks[1]);
         chartObjX.ticks.push(e.X_breaks[0]);
       }
-      this.chart.data.datasets = e.data;
       this.chart.options = this.chartOptions;
+      this.chart.data.datasets = e.data;
       this.chart.update(0);
     },
   },
@@ -237,5 +245,11 @@ export default {
 }
 .bivar_frame {
   min-height: 300px;
+}
+@media (max-width:959px) {
+  .bivar_frame {
+    min-height: 0;
+    max-height: 120px;
+  }
 }
 </style>

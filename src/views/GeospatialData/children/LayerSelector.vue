@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-2">
     <v-row dense>
       <v-col>
         <v-autocomplete
@@ -43,12 +43,12 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-if="layer && datasetLayer && layer.years.length > 1 && layer.years.length < 6"
+      v-if="layer && datasetLayer && layer.years.length > 1 && layer.years.length < 6 && !isMobile"
       dense
     >
       <v-col>
         <v-slider
-          class="map-input"
+          class="map-year-s"
           :tick-labels="ticksLabels"
           :max="layer.years.length - 1"
           step="1"
@@ -61,7 +61,7 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-else-if="layer && datasetLayer && layer.years.length > 5"
+      v-else-if="layer && datasetLayer && (layer.years.length > 5 || (layer.years.length > 1 && isMobile))"
       dense
     >
       <v-col>
@@ -70,7 +70,7 @@
           dense
           hide-details
           class="map-input"
-          :value="activeYear"
+          :value="year"
           :items="layer.years"
           :label="layerLabel"
           @change="updateYear"
@@ -88,8 +88,10 @@
 
 <script>
 import service from '@/services'
+import size from '@/mixins/size.mixin';
 export default {
   name: 'LayersController',
+  mixins:[size],
   data() {
     return {
       activeYear: null,
@@ -148,8 +150,4 @@ export default {
 </script>
 
 <style>
-
-.spacing-row {
-  height: 55px;
-}
 </style>
