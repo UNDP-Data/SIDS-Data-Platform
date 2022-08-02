@@ -56,17 +56,17 @@
         :map="map"
       />
     </div>
-    <div class="button-wrapper">
+    <div class="d-none d-md-block button-wrapper">
       <map-dual
         @toggleDual="toggleDual"
         :dualEnabled="dualModeEnabled"
         :map="map"
       />
     </div>
-    <div class="button-wrapper">
+    <!-- <div class="button-wrapper">
       <map-file-upload
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -76,7 +76,7 @@ import MapAdminBoundariesController from './MapAdminBoundariesController'
 import MapResolutionController from './MapResolutionController'
 import Map3dController from './Map3dController'
 import MapColorSelector from './MapColorSelector'
-import MapFileUpload from './MapFileUpload'
+// import MapFileUpload from './MapFileUpload'
 import MapOpacityController from './MapOpacityController'
 import MapBasemapSelector from './MapBasemapSelector'
 import MapLabelsController from './MapLabelsController'
@@ -100,7 +100,7 @@ export default {
     MapColorSelector,
     MapOpacityController,
     MapBasemapSelector,
-    MapFileUpload,
+    // MapFileUpload,
     MapLabelsController,
     MapRegionalAnalysis,
     MapBivar,
@@ -151,8 +151,8 @@ export default {
 @media (max-width:959px) {
   .button-wrapper {
     max-width: none;
-    flex-basis: 15%;
-    margin-bottom: 20px;
+    flex-basis: 20%;
+    margin-bottom: 10px;
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
