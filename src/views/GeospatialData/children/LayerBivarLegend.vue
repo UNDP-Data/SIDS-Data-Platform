@@ -19,7 +19,7 @@
           width="320"
           height="100"
         ></canvas>
-        <v-row class="d-none d-mb-flex">
+        <v-row class="d-none d-md-flex">
           <v-col cols="6">
             <v-switch
               class="mt-1"
@@ -163,6 +163,7 @@ export default {
     updateChart(e) {
       if(e.noData) {
         this.hasData = false;
+        this.chart = null;
       } else {
         this.hasData = true;
         this.$nextTick(() => {
