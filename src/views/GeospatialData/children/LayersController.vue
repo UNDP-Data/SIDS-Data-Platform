@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column">
-    <v-card class="mb-1  controller-block">
+    <v-card class="mb-0 mb-md-1  controller-block">
       <v-row class="d-none d-md-flex">
         <v-col cols="6">
           <v-list class="bt-0 pb-0" color="transparent" dense>
@@ -172,7 +172,7 @@
         </v-col>
       </v-row>
       <layer-selector
-        class="mb-4 ml-4 mr-4"
+        class="mb-0 mb-md-4 ml-4 mr-4"
         :dataset="activeDataset"
         :year="activeYear"
         :datasets="filteredDatasets"
@@ -185,7 +185,7 @@
       />
 
       <layer-selector
-        class="mb-4 ml-4 mr-4"
+        class="mb-0 mb-md-4 ml-4 mr-4"
         :disabled="!activeLayer"
         v-if="bivariateModeEnabled || dualModeEnabled"
         :dataset="secondDataset"

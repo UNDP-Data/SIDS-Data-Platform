@@ -518,12 +518,11 @@ export default class Map {
         if (!mapClassInstance.options.bivariateMode) {
           mapClassInstance.recolorBasedOnWhatsOnPage();
         } else {
-          let bvls = this.options.bivariateLayerState;
           mapClassInstance.createBivariate(
             null,
-            bvls.dataLayer[0],
+            this.activeLayer,
             null,
-            bvls.dataLayer[1]
+            this.bivarLayer
           );
         }
       });

@@ -327,9 +327,10 @@ export default {
 @media (max-width:959px) {
   .toolbar {
     top: auto;
-    bottom: 70px;
-    width: 90%;
-    right: 5%;
+    bottom: 40px;
+    width: 100%;
+    max-width: calc(95% - 140px);
+    left: 5%;
   }
 
   #mapsContainer, .map-container {
