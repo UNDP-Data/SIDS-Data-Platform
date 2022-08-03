@@ -405,7 +405,7 @@ export default class Map {
       layers: [cls.hexSize],
     });
 
-    if (!features || !features.length) {
+    if (!features || !features.length || !features.some(f => typeof f.properties.mean !== 'undefined')) {
       if (!recolorComparison) {
         this.addNoDataLegend();
       }
@@ -414,10 +414,7 @@ export default class Map {
       uniFeatures = this.getUniqueFeatures(features, "fid");
 
       var selectedData = uniFeatures.map((x) => x.properties.mean);
-
-      let limitsLength = selectedData.filter((v,i) => { return i==selectedData.lastIndexOf(v); }).length;
-      limitsLength = limitsLength > 4 ? 4 : limitsLength;
-      var breaks = chroma.limits(selectedData, "q", limitsLength);
+      var breaks = chroma.limits(selectedData, "q", 4);
 
       var breaks_new = [];
       this.options.precision = 1;
@@ -427,7 +424,7 @@ export default class Map {
           breaks_new[i] = parseFloat(breaks[i].toPrecision(this.options.precision));
         }
         if(this.options.precision < 10) {
-          breaks_new = chroma.limits(selectedData, "l", 4);
+          breaks = chroma.limits(selectedData, "e", 4);
           this.options.precision = 1;
         }
       } while (this.checkForDuplicates(breaks_new));
@@ -521,12 +518,11 @@ export default class Map {
         if (!mapClassInstance.options.bivariateMode) {
           mapClassInstance.recolorBasedOnWhatsOnPage();
         } else {
-          let bvls = this.options.bivariateLayerState;
           mapClassInstance.createBivariate(
             null,
-            bvls.dataLayer[0],
+            this.activeLayer,
             null,
-            bvls.dataLayer[1]
+            this.bivarLayer
           );
         }
       });
@@ -660,11 +656,11 @@ export default class Map {
     this.options.precision = 1;
     do {
       this.options.precision++;
-      for (let i = 0; i < breaks.length-1; i++) {
+      for (let i = 0; i < breaks.length; i++) {
         breaks_new[i] = parseFloat(
           breaks[i].toPrecision(this.options.precision)
         );
-        if(this.options.precision < 10) {
+        if(this.options.precision > 4) {
           breaks_new = chroma.limits(data, "l", 4);
           this.options.precision = 1;
         }

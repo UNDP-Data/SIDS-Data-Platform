@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import size from '@/mixins/size.mixin';
 
 export default {
@@ -52,9 +51,9 @@ export default {
   props:['contentName', 'large', 'disabled', 'contentClass', 'bottom'],
   mixins:[size],
   computed: {
-    ...mapState({
-      textContent: (state) => state.texts.textContent
-    }),
+    textContent() {
+      return this.$t('tooltips')
+    },
     hasContentSlot() {
       return this.$slots['content']
     },

@@ -1,15 +1,15 @@
 <template>
-  <v-card class="background-grey histogram_frame">
+  <v-card class="background-grey histogram_frame mr-4 ml-4 mr-md-0 ml-md-0">
     <div
       v-if="activeLayer"
       class="pic app-body population-per-km col-flex"
     >
-      <div v-if="hasData">
-        <div  class="d-flex justify-center legend-title">
+      <div v-if="hasData" class="d-flex d-md-block">
+        <div  class="d-flex justify-center legend-title mr-4 ml-4 align-center">
           <span v-html="activeLayer.units"></span>
         </div>
         <div
-          class="d-flex justify-space-evenly legend main-legend"
+          class="d-flex justify-space-evenly legend main-legend pb-1 pb-md-0"
         >
           <div class="legend-item" :key="index" v-for="(item,index) in legendPoints">
             <div class="legend-item_text">{{item.text}}</div>
@@ -23,11 +23,11 @@
           height="115"
         ></canvas>
       </div>
-      <v-card-text v-else>
+      <v-card-text class="pt-2 pb-2" v-else>
         No Data for this Region
       </v-card-text>
     </div>
-    <v-card-text v-else>
+    <v-card-text class="pt-2 pb-2" v-else>
       Select a Dataset and Layer to view data on the map.
     </v-card-text>
   </v-card>
@@ -290,11 +290,15 @@ export default {
   z-index: 4;
 }
 @media (max-width:959px) {
-  .background-grey {
+  /* .background-grey {
     background-color: transparent !important;
-  }
+  } */
   .histogram_frame {
     height: auto;
+    border-radius: 22px !important;
+  }
+  .main-legend {
+    width: 100%
   }
 }
 </style>

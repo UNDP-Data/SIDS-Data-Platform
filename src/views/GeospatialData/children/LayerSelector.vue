@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-2">
     <v-row dense>
       <v-col>
         <v-autocomplete
@@ -43,25 +43,25 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-if="layer && datasetLayer && layer.years.length > 1 && layer.years.length < 6"
+      v-if="layer && datasetLayer && layer.years.length > 1 && layer.years.length < 6 && !isMobile"
       dense
     >
       <v-col>
         <v-slider
-          class="map-input"
+          class="map-year-s"
           :tick-labels="ticksLabels"
           :max="layer.years.length - 1"
           step="1"
           ticks="always"
           tick-size="4"
           :value="activeYearIndex"
-          @change="updateYear"
+          @change="updateYearByIndex"
         ></v-slider>
       </v-col>
     </v-row>
     <v-row
       class="spacing-row"
-      v-else-if="layer && datasetLayer && layer.years.length > 5"
+      v-else-if="layer && datasetLayer && (layer.years.length > 5 || (layer.years.length > 1 && isMobile))"
       dense
     >
       <v-col>
@@ -70,23 +70,12 @@
           dense
           hide-details
           class="map-input"
-          :value="activeYear"
-          :items="dataset.layers"
+          :value="year"
+          :items="layer.years"
           :label="layerLabel"
-          @change="emitLayerChange"
-          return-object
+          @change="updateYear"
           outlined
         ></v-select>
-        <v-slider
-          class="map-input"
-          :tick-labels="ticksLabels"
-          :max="layer.years.length - 1"
-          step="1"
-          ticks="always"
-          tick-size="4"
-          :value="activeYearIndex"
-          @change="updateYear"
-        ></v-slider>
       </v-col>
     </v-row>
     <v-row
@@ -99,12 +88,13 @@
 
 <script>
 import service from '@/services'
+import size from '@/mixins/size.mixin';
 export default {
   name: 'LayersController',
+  mixins:[size],
   data() {
     return {
       activeYear: null,
-      activeYearIndex: null
     }
   },
   props:[
@@ -112,6 +102,7 @@ export default {
     'dataset',
     'datasetLabel',
     'layer',
+    'year',
     'layerLabel',
     'disabled',
   ],
@@ -123,6 +114,9 @@ export default {
       return this.layer && this.dataset.layers.some(l => {
         return l.layerId === this.layer.layerId
       })
+    },
+    activeYearIndex() {
+      return this.layer && this.layer.years.findIndex(y => y === this.year);
     }
   },
   methods: {
@@ -132,22 +126,22 @@ export default {
         await this.emitLayerChange(dataset.layers[0])
       }
     },
+    updateYearByIndex(yearIndex) {
+      this.$emit('yearChange', this.layer.years[yearIndex])
+      this.emitLayerChange(this.layer)
+    },
     updateYear(year) {
-      this.activeYearIndex = year;
-      this.activeYear = this.layer.years[year]
+      this.$emit('yearChange', year)
       this.emitLayerChange(this.layer)
     },
     async emitLayerChange(layer){
       let layerData = await service.loadGISLayer(layer.layerId)
       layerData.years = layer.years
-      if(this.activeYear === null || !layer.years.some(y => y === this.activeYear)) {
-        layerData.activeYear = this.activeYear = layer.years[0]
-        this.activeYearIndex = 0;
+      if(this.year === null || !layer.years.some(y => y === this.year)) {
+        this.$emit('yearChange', layer.years[0])
+        layerData.activeYear = layer.years[0]
       } else {
-        layerData.activeYear = this.activeYear
-      }
-      if(layerData.years[this.activeYearIndex] !== this.activeYear) {
-        this.activeYearIndex = layerData.years.findIndex(y => y === this.activeYear)
+        layerData.activeYear = this.year
       }
       this.$emit('layerChange', layerData)
     },
@@ -156,8 +150,4 @@ export default {
 </script>
 
 <style>
-
-.spacing-row {
-  height: 55px;
-}
 </style>

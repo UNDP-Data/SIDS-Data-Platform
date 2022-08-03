@@ -50,7 +50,7 @@
 <script>
 import sizeMixin from '@/mixins/size.mixin'
 
-import { mapState } from 'vuex';
+// import { mapState } from 'vuex';
 export default {
   name: 'InfoButton',
   mixins: [sizeMixin],
@@ -61,9 +61,9 @@ export default {
   },
   props:['contentName', 'fab'],
   computed: {
-    ...mapState({
-      textContent: (state) => state.texts.textContent
-    }),
+    textContent() {
+      return this.$t('tooltips')
+    }
   },
   methods: {
     toggleTooltip() {

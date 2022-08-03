@@ -5,7 +5,7 @@
       content-class="select-floating"
       :offset-x="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
       :offset-y="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
-      :nudge-left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm) ? 50 : 0"
+      :nudge-left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm) ? 10 : 0"
       :nudge-top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm) ? 20 : 0"
       :left="!($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
       :top="($vuetify.breakpoint.xs || $vuetify.breakpoint.sm)"
