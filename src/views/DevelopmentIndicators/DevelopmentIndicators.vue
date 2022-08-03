@@ -3,7 +3,7 @@
     <div class="print-page-wrap">
       <printout-header>
         <template slot="text">
-          {{activeIndicatorsMeta.indicator}} <br/> {{year === 'recentValue' ? 'Moust recent value' : year}}
+          {{activeIndicatorsMeta.indicator}} <br/> {{year === 'recentValue' ? 'Most recent value' : year}}
         </template>
       </printout-header>
       <p class="d-none d-print-block">
