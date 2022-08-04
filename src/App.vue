@@ -92,6 +92,7 @@ html {
 }
 .root-router {
   padding: 0 2em 4em;
+  position: relative;
 }
 :focus {
   outline: none;
