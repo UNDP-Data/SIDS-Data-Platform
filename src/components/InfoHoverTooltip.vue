@@ -10,6 +10,7 @@
     :max-height="maxHeight"
     :top="bottom ? false : true"
     :bottom="bottom ? true : false"
+    :attach="attach"
     :nudge-top="bottom ? 0 : 50"
     :nudge-bottom="bottom ? 50 : 0"
     :content-class="'tooltip-content ' + contentClass"
@@ -48,7 +49,7 @@ import size from '@/mixins/size.mixin';
 
 export default {
   name: 'InfoHoverTooltip',
-  props:['contentName', 'large', 'disabled', 'contentClass', 'bottom'],
+  props:['contentName', 'large', 'disabled', 'contentClass', 'bottom', 'attach'],
   mixins:[size],
   computed: {
     textContent() {
