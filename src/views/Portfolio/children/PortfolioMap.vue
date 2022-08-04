@@ -69,7 +69,7 @@ export default {
       activeRegion: null,
       g:null,
       titles:[
-        {"type":"Feature","geometry":{"type":"Point","coordinates":[-115.98267711245876,8.520880383123256]},"properties":{"OBJECTID":102, color:"#0a8080", "name":'Caribbean'}},
+        {"type":"Feature","geometry":{"type":"Point","coordinates":[-75.98267711245876,1.520880383123256]},"properties":{"OBJECTID":102, color:"#0a8080", "name":'Caribbean'}},
         {"type":"Feature","geometry":{"type":"Point","coordinates":[-2.606592420403899,-8.23811497852346974]},"properties":{"OBJECTID":102, color:"#97032b", "name":'AIS'}},
         {"type":"Feature","geometry":{"type":"Point","coordinates":[140.580479656511, -0.5129557776870115]},"properties":{"OBJECTID":102, color:"#f0a402", "name":'Pacific'}},
       ],
@@ -332,6 +332,11 @@ export default {
           .attr("dy", function (d) { return projection(d.geometry.coordinates)[1]-5; })
           .attr("stroke",(d)=> {
             return d.properties.color
+          })
+          .attr('text-anchor', (d) => {
+            if(d.properties.name ==='Caribbean') {
+              return 'end'
+            }
           })
           .style("fill",(d)=> {
             return d.properties.color

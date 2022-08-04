@@ -87,50 +87,47 @@ export function updateCountryAVGbars(dataObj) {
         this.profileData[avgs[i]] = {
           Region: avgs[i]
         }
-        if(this.sidsMapSelection.select(`#${avgs[i]}`).empty()) {
-          let g = this.sidsMapSelection
-            .append("g")
+
+        this.sidsMapSelection.select(`g#${avgs[i]}`).remove()
+        let g = this.sidsMapSelection
+          .append("g")
+          .attr('id', avgs[i])
+          g.append('path')
             .attr('id', avgs[i])
-            g.append('path')
-              .attr('id', avgs[i])
-            g.append('rect')
-              .attr("x", 160)
-              .attr("y", 300)
-              .attr("width", 0)
-              .attr("height", 0)
-              .classed("choroRect", true)
-              .style("fill", function () {
-                return (
-                  "#" +
-                  regionColors(rootThis.profileData[avgs[i]].Region, "Y").substring(1)
-                );
-              }) //
-            g.append('text')
-              .attr("font-size", 10)
-              .text(avgs[i] + ' Average')
-              .attr("x", function () {
-                return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
-              })
-              .attr("y", function () {
-                return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
-              })
-              .classed("choroText", true);
-            g.append('text')
-              .attr("font-size", 10)
-              .classed("countryLabel", true);
-          }
-        } else {
-          this.sidsMapSelection.select(`g#${avgs[i]}`)
-            .remove()
+          g.append('rect')
+            .attr("x", 160)
+            .attr("y", 300)
+            .attr("width", 0)
+            .attr("height", 0)
+            .classed("choroRect", true)
+            .style("fill", function () {
+              return (
+                "#" +
+                regionColors(rootThis.profileData[avgs[i]].Region, "Y").substring(1)
+              );
+            }) //
+          g.append('text')
+            .attr("font-size", 10)
+            .text(avgs[i] + ' Average')
+            .attr("x", function () {
+              return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
+            })
+            .attr("y", function () {
+              return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
+            })
+            .classed("choroText", true);
+          g.append('text')
+            .attr("font-size", 10)
+            .classed("countryLabel", true);
         }
     }
-  } else  if (this.vizMode !== 'index'){
-    for (let i = 0; i < avgs.length; i++) {
-      this.sidsMapSelection.select(`g#${avgs[i]}`)
-        .remove()
-      delete this.bboxDict[avgs[i]]
+    } else  if (this.vizMode !== 'index'){
+      for (let i = 0; i < avgs.length; i++) {
+        this.sidsMapSelection.select(`g#${avgs[i]}`)
+          .remove()
+        delete this.bboxDict[avgs[i]]
+      }
     }
-  }
 }
 /////////////////////////
 ////Transform functions
@@ -173,57 +170,55 @@ export function updateCountryAVGMVIbars(dataObj) {
             }
             return val
           },0)
-          if(this.sidsMapSelection.select(`#${avgs[i]}`).empty()) {
-            let g = this.sidsMapSelection
-              .append("g")
+
+          this.sidsMapSelection.select(`g#${avgs[i]}`).remove()
+
+          let g = this.sidsMapSelection
+            .append("g")
+            .attr('id', avgs[i])
+            g.append('path')
               .attr('id', avgs[i])
-              g.append('path')
-                .attr('id', avgs[i])
-              g.append("rect")
-                .style("fill", indexColors["mvi-index"]["Financial"])
-                .attr("x", 160)
-                .attr("y", 100)
-                .attr("width", 0)
-                .attr("height", 0)
-                .classed("choroRect0 choroRectMvi", true);
-              g.append("rect")
-                .style("fill", indexColors["mvi-index"]["Economic"])
-                .attr("x", 160)
-                .attr("y", 200)
-                .attr("width", 0)
-                .attr("height", 0)
-                .classed("choroRect1 choroRectMvi", true);
-              g.append("rect")
-                .style("fill", indexColors["mvi-index"]["Geographic"])
-                .attr("x", 160)
-                .attr("y", 300)
-                .attr("width", 0)
-                .attr("height", 0)
-                .classed("choroRect2 choroRectMvi", true);
-              g.append("rect")
-                .style("fill", indexColors["mvi-index"]["Environmental"])
-                .attr("x", 160)
-                .attr("y", 400)
-                .attr("width", 0)
-                .attr("height", 0)
-                .classed("choroRect3 choroRectMvi", true);
-              g.append('text')
-                .attr("font-size", 10)
-                .text(avgs[i] + ' Average')
-                .attr("x", function () {
-                  return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
-                })
-                .attr("y", function () {
-                  return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
-                })
-                .classed("choroText", true);
-              g.append('text')
-                .attr("font-size", 10)
-                .classed("countryLabel", true);
-            }
-          } else {
-            this.sidsMapSelection.select(`g#${avgs[i]}`)
-              .remove()
+            g.append("rect")
+              .style("fill", indexColors["mvi-index"]["Financial"])
+              .attr("x", 160)
+              .attr("y", 100)
+              .attr("width", 0)
+              .attr("height", 0)
+              .classed("choroRect0 choroRectMvi", true);
+            g.append("rect")
+              .style("fill", indexColors["mvi-index"]["Economic"])
+              .attr("x", 160)
+              .attr("y", 200)
+              .attr("width", 0)
+              .attr("height", 0)
+              .classed("choroRect1 choroRectMvi", true);
+            g.append("rect")
+              .style("fill", indexColors["mvi-index"]["Geographic"])
+              .attr("x", 160)
+              .attr("y", 300)
+              .attr("width", 0)
+              .attr("height", 0)
+              .classed("choroRect2 choroRectMvi", true);
+            g.append("rect")
+              .style("fill", indexColors["mvi-index"]["Environmental"])
+              .attr("x", 160)
+              .attr("y", 400)
+              .attr("width", 0)
+              .attr("height", 0)
+              .classed("choroRect3 choroRectMvi", true);
+            g.append('text')
+              .attr("font-size", 10)
+              .text(avgs[i] + ' Average')
+              .attr("x", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
+              })
+              .attr("y", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
+              })
+              .classed("choroText", true);
+            g.append('text')
+              .attr("font-size", 10)
+              .classed("countryLabel", true);
           }
       }
     } else if (this.vizMode === 'index') {
