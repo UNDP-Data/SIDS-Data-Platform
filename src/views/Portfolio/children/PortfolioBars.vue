@@ -48,6 +48,8 @@ import { goals } from '@/assets/goalsList'
 import * as d3 from 'd3';
 import PortfolioTooltip from './PortfolioSDGSTooltip'
 import tippy from 'tippy.js';
+import {hideAll} from 'tippy.js';
+
 
 export default {
   name: 'goals',
@@ -455,6 +457,7 @@ export default {
                         showTimer = true
                         instance.show()
                       })
+                      hideAll({exclude: instance})
                     })
                     if(!showTimer) {
                       showTimer = false;
