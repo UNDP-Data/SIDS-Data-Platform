@@ -131,11 +131,12 @@
                   class="tabs portfolio-slider"
                   v-model="activePage"
                 >
-                  <v-tab v-for="page in pages" @change="transitionTo(page.value)" :key="page.value">
-                    <info-hover-tooltip :bottom="true" :contentName="page.contentName">
-                      <template v-slot:button>{{$t(`root.goals.${page.value}`)}}</template>
-                    </info-hover-tooltip>
-                  </v-tab>
+                  <info-hover-tooltip :key="page.value" v-for="page in pages" :bottom="true" :contentName="page.contentName">
+                    <template v-slot:button>
+                    <v-tab   @change="transitionTo(page.value)" >
+                        {{$t(`root.goals.${page.value}`)}}
+                    </v-tab></template>
+                  </info-hover-tooltip>
                 </v-tabs>
             </v-col>
           </v-row>
