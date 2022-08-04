@@ -131,7 +131,7 @@
                   class="tabs portfolio-slider"
                   v-model="activePage"
                 >
-                  <info-hover-tooltip :key="page.value" v-for="page in pages" :bottom="true" :contentName="page.contentName">
+                  <info-hover-tooltip attach=".portfolio-slider" :key="page.value" v-for="page in pages" :bottom="true" contentClass="tabs-tooltip" :contentName="page.contentName">
                     <template v-slot:button>
                     <v-tab   @change="transitionTo(page.value)" >
                         {{$t(`root.goals.${page.value}`)}}
@@ -613,6 +613,7 @@ export default {
 </script>
 <style media="screen">
   .portfolio-slider {
+    position: relative;
     max-width: 792px;
     margin-left: auto;
     margin-top: -22px;
@@ -687,5 +688,10 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
+  }
+  .tabs-tooltip {
+    width: 860px !important;
+    left: 50% !important;
+    transform: translateX(-50%);
   }
 </style>
