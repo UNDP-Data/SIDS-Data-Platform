@@ -6,7 +6,12 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col offset-md="2" md="6" xs="12" sm="12">
+      <v-col class="d-none d-md-block" md="3">
+        <template v-for="(resource, index) in resources">
+          <resource :key="index+'33'" v-if="index%2 === 1" :resource="resource" />
+        </template>
+      </v-col>
+      <v-col md="6" xs="12" sm="12">
         <v-expansion-panels class="mb-4" flat accordion>
           <v-expansion-panel>
             <v-expansion-panel-header>{{$t('about.whatSids')}}</v-expansion-panel-header>
@@ -103,16 +108,9 @@
         <v-card flat>
           <v-card-text>
             <div class="d-flex align-center">
-              <div class="text-field">
-                <v-text-field
-                  label="Follow our biweekly SIDS Bulletin"
-                  rounded
-                  outlined
-                  dense
-                  :rules="rules"
-                  hide-details="true"
-                ></v-text-field>
-              </div>
+              <p>
+                Follow our biweekly SIDS Bulletin
+              </p>
               <v-btn
                 class="mr-0 ml-2"
                 color="primary"
@@ -123,33 +121,31 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col md="4">
-        <v-card flat class="mb-4" :key="index+'doc'" v-for="(doc, index) in resources">
-          <v-card-title><a
-            target="_blank"
-            :href="doc.links[0].link"
-          >{{doc.name}}</a></v-card-title>
-          <v-card-text>
-            <p>{{doc.description}}</p>
-            <div>
-              <template v-for="(link, indexLink) in doc.links">
-                <a v-if="indexLink!==0"
-                  target="_blank"
-                  :key="indexLink+'link'"
-                  :href="link.link"
-                >
-                  {{link.name}}
-                </a>
-              </template>
-            </div>
-          </v-card-text>
-        </v-card>
+
+      <v-col class="d-none d-md-block" md="3">
+        <template v-for="(resource, index) in resources">
+          <resource :key="index" v-if="index%2 === 0" :resource="resource" />
+        </template>
+      </v-col>
+
+      <v-col :key="index+'11'" class="d-none d-sm-block d-md-none" md="3" v-for="(resource, index) in resources">
+        <template >
+          <resource :resource="resource" />
+        </template>
+      </v-col>
+
+
+      <v-col cols="12" :key="index+'22'" class="d-block d-sm-none" v-for="(resource, index) in resources">
+        <template >
+          <resource :resource="resource" />
+        </template>
       </v-col>
     </v-row>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex';
+import Resource from './children/Resource';
 
 export default {
   name: 'Portfolio',
@@ -157,6 +153,9 @@ export default {
     return {
 
     }
+  },
+  components:{
+    Resource
   },
   computed: {
     ...mapState({
