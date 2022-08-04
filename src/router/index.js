@@ -203,7 +203,7 @@ const routes = [
       }, 500)
       next();
     },
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views//About/About.vue')
   },
   {
     path: '*',
