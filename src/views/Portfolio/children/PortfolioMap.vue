@@ -83,7 +83,7 @@ export default {
           scale: 1.5
         },
         'Pacific' : {
-          translate: [-1500, -350],
+          translate: [-1250, -350],
           scale: 2
         }
       },
