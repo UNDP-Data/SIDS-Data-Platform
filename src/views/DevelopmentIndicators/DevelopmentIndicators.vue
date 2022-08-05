@@ -3,11 +3,14 @@
     <div class="print-page-wrap">
       <printout-header>
         <template slot="text">
-          {{activeIndicatorsMeta.indicator}} <br/> {{year === 'recentValue' ? 'Most recent value' : year}}
+          <b>SIDS indicaot report</b> <br/> {{activeIndicatorsMeta.indicator}}
         </template>
       </printout-header>
       <p class="d-none d-print-block">
-        {{activeIndicatorsMeta.def}}
+        <b>Dataset:</b>{{datasetMeta[activeIndicatorsMeta.dataset]['Dataset Name']}}
+      </p>
+      <p class="d-none d-print-block">
+        <b>Definition:</b>{{activeIndicatorsMeta.def}}
       </p>
       <p class="d-none d-print-block">
         <b>Source:</b>{{activeIndicatorsMeta.sourcce}}{{activeIndicatorsMeta.link}}
@@ -16,6 +19,9 @@
         <v-col cols='12'>
           <indicators-choro-chart class="choro-printabe" v-if='!noData' :chartId="'choro-print'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'bars'" :indicatorCode="indicator"/>
           <h4 class="text-center" v-else>No data for selected indicator</h4>
+          <p v-if="year === 'recentValue'" class="text-center">
+            Bar chart values are for the most recent year avaliable
+          </p>
           <p class="text-center">
             <span class="choro-print-legend choro-print-legend_caribean">Caribbean</span>
             <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">AIS</span>
@@ -203,6 +209,7 @@ import InfoButton from '@/components/InfoButton.vue'
 import sizeMixin from '@/mixins/size.mixin'
 import { mapState } from 'vuex'
 import store from '@/store'
+import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
 export default {
   name: 'DevelopmentIndicators',
@@ -211,6 +218,7 @@ export default {
   data: function() {
     return {
       dialog:false,
+      datasetMeta: datasetMeta,
       resizeTimeout:null,
       mlMode:false,
       mviCodes:[
