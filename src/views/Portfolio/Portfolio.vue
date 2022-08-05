@@ -16,6 +16,9 @@
         :fundingCategory="fundingCategory"
         :fundingSource="fundingSource"
       />
+      <p class="d-none mt-6 d-print-block">
+        {{$t('portfolio.export.intro')}}
+      </p>
       <portfolio-mobile-nav
         class="d-md-none d-print-none"
         :region="region"
@@ -111,16 +114,8 @@
           </portfolio-map>
         </v-col>
       </v-row>
-      <v-row class="bars-row d-print-block d-none d-lg-block mb-3 mt-negative">
+      <v-row class="bars-row d-none d-lg-block mb-3 mt-negative">
         <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
-      </v-row>
-      <p class="d-none d-print-block chart-caption chart-caption-goals text-center">
-        Visualization of the portfolio by budget allocation across {{pages[activePage].name}}
-      </p>
-
-      <v-row class="d-none d-print-block">
-        <v-col cols="12" v-html="$t(`tooltips.${pages[activePage].contentName}.content`)">
-        </v-col>
       </v-row>
       <v-row class="d-none d-print-block d-md-flex mt-md-0 mt-lg-2 flex-lg-nowrap" justify="center">
         <v-col class="d-none d-print-none d-lg-block margin-wrap-right"></v-col>
@@ -148,12 +143,12 @@
                 chartName="region"
                 :colorScheme="regionColors"
               ></portfolio-pie-chart>
-              <p class="d-none d-print-block chart-caption text-center">
-                Visualization of budget allocation across regions
-              </p>
+              <h3 class="d-none d-print-block chart-caption text-center">
+                <b>Funding by regions</b>
+              </h3>
             </v-col>
             <v-col class="position-relative" cols="6" md="5" lg="6">
-              <div class="pie-tooltip-container">
+              <div class="pie-tooltip-container d-print-none">
                 <info-hover-tooltip :bottom="true" contentName="portfolioTooltip-solutions">
                   <template slot="content">
                     <v-card class="pie-tooltip-content">
@@ -174,14 +169,11 @@
                 :activeCategory="fundingCategory"
                 :colorScheme="sourcesColor"
               ></portfolio-pie-chart>
-              <p class="d-none d-print-block chart-caption text-center">
-                Visualization of finance sources
-              </p>
+              <h3 class="d-none d-print-block chart-caption text-center">
+                <b>Funding by category</b>
+              </h3>
             </v-col>
           </v-row>
-          <p class="d-none d-print-block mt-4">
-            These two charts visualise investment across SIDS. Second pie chart can be used to identify organisations that invest in similar projects or are focused on the same regions, first one shows invesment across regions.
-          </p>
         </v-col>
         <v-col class="selects-col d-print-none d-none d-lg-block margin-wrap-right">
           <v-row dense justify="center">
@@ -249,6 +241,19 @@
               </div>
             </v-col>
           </v-row>
+        </v-col>
+      </v-row>
+      <v-row class="bars-row d-none d-print-block">
+        <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
+      </v-row>
+      <v-row class="d-none d-print-block">
+
+        <v-col class="chart-caption-goals" cols="12">
+          <h3>
+              Projects and finance by {{$t(`root.goals.${goalsType}`)}}
+          </h3>
+        </v-col>
+        <v-col class="mt-0 pt-0" cols="12" v-html="$t(`portfolio.export.${goalsType}`)">
         </v-col>
       </v-row>
       <portfolio-mobile-nav
@@ -661,13 +666,13 @@ export default {
     z-index: 2;
   }
   .chart-caption {
-    font-weight: 200;
+    font-weight: 400;
     font-size: 18px;
     margin-top: 45px;
   }
   .chart-caption-goals{
-    margin-top: -28px;
-    margin-left: 15px;
+    font-weight: 400;
+    margin-top: -28px !important;
   }
   .prinout-goal-header {
     -webkit-print-color-adjust: exact !important;
