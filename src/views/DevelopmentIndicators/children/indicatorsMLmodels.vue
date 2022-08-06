@@ -1,10 +1,17 @@
 <template>
   <v-card flat>
     <v-card-title class="justify-center d-print-none">
-      <h3 class="ml-auto page-header text-center">
+      <div class="flex-spacer mr-auto">
+
+      </div>
+      <h3 class=" ml-auto page-header text-center">
         AI Mode
       </h3>
-      <v-btn class="mr-0 ml-auto" icon @click="autoMode ? closeAiMode() : autoMode = true">
+      <div class="mr-2 ml-auto">
+        <info-button   :contentName="'aboutThis-ai'"/>
+      </div>
+
+      <v-btn class="mr-0 ml-2" icon @click="autoMode ? closeAiMode() : autoMode = true">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card-title>
@@ -73,7 +80,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-      <div v-if="autoMode" class="d-flex d-print-none align-center">
+      <!-- <div v-if="autoMode" class="d-flex d-print-none align-center">
         <p class="mr-4 mb-0">
           Or, you can design your own machine learning model to train in real-time in our Azure environment, with custom parameters and model types
         </p>
@@ -82,7 +89,7 @@
           <p class="caption mt-2" v-if="designErr">{{designErr}}</p>
         </div>
       </div>
-      <indicators-ML @close="autoMode = false" :indicatorCode="indicator" :year="year" v-else/>
+      <indicators-ML @close="autoMode = false" :indicatorCode="indicator" :year="year" v-else/> -->
     </v-card-text>
   </v-card>
 </template>
@@ -90,9 +97,10 @@
 <script>
 import service from '@/services';
 import { mapState } from 'vuex';
-import IndicatorsML from './IndicatorsML';
+// import IndicatorsML from './IndicatorsML';
 import IndicatorsPieChart from './IndicatorsPieChart';
 import IndicatorsBarChart from './IndicatorsBarChart';
+import InfoButton from '@/components/InfoButton.vue'
 import store from '@/store';
 
 export default {
@@ -155,8 +163,9 @@ export default {
     }
   },
   components:{
-    IndicatorsML,
+    // IndicatorsML,
     IndicatorsPieChart,
+    InfoButton,
     IndicatorsBarChart
   },
   methods: {
