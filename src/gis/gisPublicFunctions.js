@@ -17,32 +17,30 @@ export function updateData(
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
   let layerId = activeLayer.layerId;
-  this.removeLayer(cls.hexSize, comparison)
-  this.removeLayer(cls.hexSize+'-3d', comparison)
-  this.removeSource(cls.hexSize, comparison)
-  if(comparison) {
-    this.secondDataset = activeDataset;
-    this.secondLayer = activeLayer;
-  } else {
+  if(!comparison) {
     this.activeDataset = activeDataset;
     this.activeLayer = activeLayer;
+  } else {
+    this.secondDataset = activeDataset;
+    this.secondLayer = activeLayer;
   }
   this._handleOceanData(activeDataset, activeLayer, comparison)
   this.clearHexHighlight();
   // this.remove3d();
 
   cls.dataLayer = layerId; //update global to reflect selected datalayer
-  if(activeLayer.years) {
-    cls.dataLayer = `${layerId}-${activeLayer.activeYear}`
-  }
+
   //-------------------------------------------
-  this._addDataVectorSource(comparison, cls.dataLayer, cls.hexSize)
-  if (!map.getLayer(cls.hexSize+cls.dataLayer)) {
+  if (!map.getSource("hex5")) {
+    this._addVectorSources(comparison);
+  }
+  if (!map.getLayer(cls.hexSize)) {
+    let currentSourceData = this.options.sourceData[`${cls.hexSize}Source`]
     map.addLayer({
       id: cls.hexSize,
       type: "fill",
-      source: cls.hexSize+cls.dataLayer,
-      "source-layer": cls.hexSize+'_'+cls.dataLayer,
+      source: cls.hexSize,
+      "source-layer": currentSourceData.layer,
       layout: {
         visibility: "visible",
       },
@@ -58,135 +56,134 @@ export function updateData(
   }
   let self = this;
   setTimeout(() => {
-      var features = map.queryRenderedFeatures({
-        layers: [cls.hexSize],
-      });
-      if (features && features.length && features.some(f => typeof f.properties.mean !== 'undefined')) {
-        var uniFeatures;
-        uniFeatures = self.getUniqueFeatures(features, "fid");
-        var selectedData = uniFeatures.map((x) => x.properties.mean);
-        var breaks = chroma.limits(selectedData, "q", 4);
-        var breaks_new = [];
-        self.options.precision = 1;
-        do {
-          self.options.precision++;
-          for (let i = 0; i < breaks.length; i++) {
-            breaks_new[i] = parseFloat(
-              breaks[i].toPrecision(this.options.precision)
-            );
-            if(self.options.precision > 4)  {
-              breaks = chroma.limits(selectedData, "e", 4);
-              self.options.precision = 1;
-            }
-          }
-        } while (self.checkForDuplicates(breaks_new));
-        breaks = breaks_new;
-        let colorRamp;
-        if(self.options.colorSCheme.color && self.options.colorSCheme.color !=='original') {
-          if (self.options.colorSCheme.color === "red") {
-            colorRamp = colors.colorSeq["pinkish"];
-          } else if (self.options.colorSCheme.color === "purple") {
-            colorRamp = colors.colorSeq["purple"];
-          } else if (self.options.colorSCheme.color === "blue") {
-            colorRamp = colors.colorSeq["blues"];
-          } else if (self.options.colorSCheme.color === "colorblind-safe") {
-            colorRamp = colors.colorSeq["colorBlindGreen"];
-          }
-        } else {
-          colorRamp = colors.colorSeq["yellow-blue"];
+    var features = map.queryRenderedFeatures({
+      layers: [cls.hexSize],
+    });
+    if (features) {
+      var uniFeatures;
+      if (cls.hexSize === "admin1") {
+        uniFeatures = self.getUniqueFeatures(features, "GID_1");
+      } else if (cls.hexSize === "admin2") {
+        uniFeatures = self.getUniqueFeatures(features, "GID_2");
+      } else {
+        uniFeatures = self.getUniqueFeatures(features, "hexid");
+      }
+      var selectedData = uniFeatures.map((x) => x.properties[layerId]);
 
-          if (layerId.substring(0, 2) === "1a") {
-            colorRamp = colors.colorDiv.gdpColor;
-          } else if (layerId.substring(0, 2) === "1c") {
-            colorRamp = colors.colorSeq["pop"];
-          } else if (layerId === "7d10") {
-            colorRamp = colors.colorSeq["combo"];
-          } else if (layerId === "7d5") {
-            colorRamp = colors.colorSeq["minty"];
-          } else if (layerId === "7d7") {
-            colorRamp = colors.colorSeq["blues"];
-          } else if (layerId === "7d4") {
-            colorRamp = colors.colorSeq["pinkish"];
-          } else if (layerId === "7d8") {
-            colorRamp = colors.colorSeq["silvers"];
-          } else if (layerId === "d") {
-            breaks = [-4841, -3805, -2608, -1090, 1322];
-            colorRamp = colors.colorSeq["ocean"];
-          }
+      var breaks = chroma.limits(selectedData, "q", 4);
+
+      var breaks_new = [];
+      this.options.precision = 1;
+      do {
+        this.options.precision++;
+        for (let i = 0; i < 5; i++) {
+          breaks_new[i] = parseFloat(
+            breaks[i].toPrecision(this.options.precision)
+          );
         }
-
-        if(self.options.colorSCheme.invert) {
-          colorRamp = [...colorRamp].reverse()
+      } while (self.checkForDuplicates(breaks_new) && this.options.precision < 10);
+      breaks = breaks_new;
+      let colorRamp;
+      if(self.options.colorSCheme.color && self.options.colorSCheme.color !=='original') {
+        if (self.options.colorSCheme.color === "red") {
+          colorRamp = colors.colorSeq["pinkish"];
+        } else if (self.options.colorSCheme.color === "purple") {
+          colorRamp = colors.colorSeq["purple"];
+        } else if (self.options.colorSCheme.color === "blue") {
+          colorRamp = colors.colorSeq["blues"];
+        } else if (self.options.colorSCheme.color === "colorblind-safe") {
+          colorRamp = colors.colorSeq["colorBlindGreen"];
         }
-        cls.breaks = breaks;
-        cls.color = colorRamp;
-        map.setPaintProperty(cls.hexSize, "fill-color", [
-          "case",
-          ["boolean", ["feature-state", "hover"], false],
-          "yellow",
-          [
-            "interpolate",
-            ["linear"],
-            ["get", 'mean'],
-            breaks[0],
-            colorRamp[0],
-            breaks[1],
-            colorRamp[1],
-            breaks[2],
-            colorRamp[2],
-            breaks[3],
-            colorRamp[3],
-            breaks[4],
-            colorRamp[4],
-          ],
-        ]);
+      } else {
+        colorRamp = colors.colorSeq["yellow-blue"];
 
-        if (isNaN(breaks[3]) || breaks[1] == 0) {
+        if (layerId.substring(0, 2) === "1a") {
+          colorRamp = colors.colorDiv.gdpColor;
+        } else if (layerId.substring(0, 2) === "1c") {
+          colorRamp = colors.colorSeq["pop"];
+        } else if (layerId === "7d10") {
+          colorRamp = colors.colorSeq["combo"];
+        } else if (layerId === "7d5") {
+          colorRamp = colors.colorSeq["minty"];
+        } else if (layerId === "7d7") {
+          colorRamp = colors.colorSeq["blues"];
+        } else if (layerId === "7d4") {
+          colorRamp = colors.colorSeq["pinkish"];
+        } else if (layerId === "7d8") {
+          colorRamp = colors.colorSeq["silvers"];
+        } else if (layerId === "d") {
+          breaks = [-4841, -3805, -2608, -1090, 1322];
+          colorRamp = colors.colorSeq["ocean"];
+        }
+      }
+
+      if(self.options.colorSCheme.invert) {
+        colorRamp = [...colorRamp].reverse()
+      }
+      cls.breaks = breaks;
+      cls.color = colorRamp;
+      map.setPaintProperty(cls.hexSize, "fill-color", [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        "yellow",
+        [
+          "interpolate",
+          ["linear"],
+          ["get", layerId],
+          breaks[0],
+          colorRamp[0],
+          breaks[1],
+          colorRamp[1],
+          breaks[2],
+          colorRamp[2],
+          breaks[3],
+          colorRamp[3],
+          breaks[4],
+          colorRamp[4],
+        ],
+      ]);
+
+      if (isNaN(breaks[3]) || breaks[1] == 0) {
+        map.setPaintProperty(
+          cls.hexSize,
+          "fill-opacity",
+          0.0
+          //this.options.opacity
+        );
+        setTimeout(() => {
+          map.setFilter(cls.hexSize, null);
+        }, 100);
+        this.addNoDataLegend(activeLayer)
+      } else {
+        map.setFilter(cls.hexSize, [">=", layerId, 0]);
+        this.emit('layerUpdate', {
+          activeLayer,
+          colorRamp,
+          breaks,
+          selectedData,
+          precision: this.options.precision
+        });
+        let self = this;
+        setTimeout(() => {
           map.setPaintProperty(
             cls.hexSize,
             "fill-opacity",
-            0.0
-            //this.options.opacity
+            self.options.bivariateMode ? 0 : self.options.opacity // 0.8
           );
-          setTimeout(() => {
-            map.setFilter(cls.hexSize, null);
-          }, 100);
-          this.addNoDataLegend(activeLayer)
-        } else {
-          map.setFilter(cls.hexSize, [">=", 'mean', 0]);
-          this.emit('layerUpdate', {
-            activeLayer,
-            colorRamp,
-            breaks,
-            selectedData,
-            precision: this.options.precision
-          });
-          let self = this;
-          setTimeout(() => {
-            map.setPaintProperty(
-              cls.hexSize,
-              "fill-opacity",
-              self.options.bivariateMode ? 0 : self.options.opacity // 0.8
-            );
-          }, 100);
-        }
-      } else {
-        if (!comparison) {
-          self.addNoDataLegend(activeLayer);
-        } else {
-          self.addNoDataLegend(activeLayer);
-        }
-        this.emit('loadingEnd')
+        }, 100);
       }
-      map.once('idle', () => {
-        if(this.options.mode3d) {
-          let layerState = comparison ? this.options.comparisonLayerState : this.options.currentLayerState
-          this.add3dLayer(map, layerState, layerState.hexSize + "-3d")
-        }
-        this.emit('loadingEnd')
-      })
-  }, 2000);
-  this._moveServiceLayersToTop(comparison)
+    }
+    map.once('idle', () => {
+      if(this.options.mode3d) {
+        let layerState = comparison ? this.options.comparisonLayerState : this.options.currentLayerState
+        this.add3dLayer(map, layerState, layerState.hexSize + "-3d")
+      }
+      this.emit('loadingEnd')
+    })
+  }, 1000);
+  if(map.getLayer('allsids')) {
+    map.moveLayer("allsids", this.options.firstSymbolId);
+  }
 }
 
 export function addOcean(activeDataset, activeLayer, comparison = false) {
@@ -234,7 +231,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
         -1090,
         "#bdd7e7",
         1322,
-        "#e ff3ff",
+        "#eff3ff",
       ],
       "fill-opacity": this.options.opacity, //0.8,
     },
@@ -249,7 +246,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
         let features = map.queryRenderedFeatures({
           layers: ["ocean"],
         });
-        if (features && features.length) {
+        if (features) {
           let uniFeatures;
           uniFeatures = this.getUniqueFeatures(features, "depth");
           let selectedData = uniFeatures.map((x) => x.properties["depth"]);
@@ -327,29 +324,53 @@ export function changeHexagonSize(resolution) {
   let map = this.map;
   let map2 = this.map2;
 
-  let cls = this.options.currentLayerState;
   this.clearHexHighlight();
 
   if(this.options.mode3d) {
-    this.removeLayer(cls.hexSize + "-3d")
+    this.removeLayer(this.options.currentLayerState.hexSize + "-3d", this.map)
   }
   if(this.options.mode3d && this.options.compareModeEnabled) {
-    this.removeLayer(this.options.currentLayerState.hexSize + "-3d", true)
+    this.removeLayer(this.options.currentLayerState.hexSize + "-3d", this.map2)
   }
 
   if(this.options.bivariateMode) {
     this.removeBivariateLayer()
   }
 
-  if(map.getLayer(cls.hexSize)) {
-    this.removeLayer(cls.hexSize)
-    this.removeSource(cls.hexSize)
+  if(map.getLayer(this.options.currentLayerState.hexSize)) {
 
     this.options.currentLayerState.hexSize = resolution;
+    //clear maplayers that are usercontrolled
+    for (let x in constants.userLayers) {
+      if (map.getLayer(constants.userLayers[x])) {
+        map.removeLayer(constants.userLayers[x]);
+      }
+    }
+
     //get source name
-    this.updateData(this.activeDataset, this.activeLayer)
+    let currentSourceData = Object.values(this.options.sourceData).find((o) => {
+      return o.name === this.options.currentLayerState.hexSize;
+    });
+
+    let options = {
+      id: resolution,
+      type: "fill",
+      source: resolution,
+      "source-layer": currentSourceData.layer,
+      layout: {
+        visibility: "visible",
+      },
+      paint: {
+        "fill-color": "blue",
+        "fill-opacity": 0.0, //globals.opacity, // 0
+      },
+    };
+    map.addLayer(options, this.options.firstSymbolId);
     let self = this;
     map.once('idle', () => {
+      if(this.options.mode3d) {
+        self.add3dLayer(map, this.options.currentLayerState , this.options.currentLayerState.hexSize + "-3d")
+      }
       if(self.options.bivariateMode) {
         self.createBivariate(
           self.options.bivarConfig.firstDataset,
@@ -360,31 +381,49 @@ export function changeHexagonSize(resolution) {
       }
       map.once("idle", () => {
         this.recolorBasedOnWhatsOnPage();
-        this._moveServiceLayersToTop()
+        map.moveLayer(resolution, "allsids");
       });
     })
-    //
-    // if (map.getStyle().name === "Mapbox Satellite") {
-    //   map.moveLayer(resolution);
-    // }
-    //
-    //
+
+    if (map.getStyle().name === "Mapbox Satellite") {
+      map.moveLayer(resolution);
+    }
+
+
+    map.once("idle", () => {
+      this.recolorBasedOnWhatsOnPage();
+      map.moveLayer(resolution, "allsids");
+    });
   }
-
   if (this.options.compareModeEnabled && map2.getLayer(this.options.comparisonLayerState.hexSize)) {
-    this.removeLayer(cls.hexSize, true)
-    this.removeSource(cls.hexSize, true)
+    for (let x in constants.userLayers) {
+      if (map2.getLayer(constants.userLayers[x])) {
+        map2.removeLayer(constants.userLayers[x]);
+      }
+    }
+    this.options.comparisonLayerState.hexSize = resolution;
+    let currentSourceData = Object.values(this.options.sourceData).find((o) => {
+      return o.name === this.options.comparisonLayerState.hexSize;
+    });
 
-    this.options.currentLayerState.hexSize = resolution;
-    //get source name
-    this.updateData(this.secondDataset, this.secondLayer, true)
-    let self = this;
-    map2.once('idle', () => {
-      map.once("idle", () => {
-        self.recolorBasedOnWhatsOnPage();
-        self._moveServiceLayersToTop()
-      });
-    })
+    let options = {
+      id: resolution,
+      type: "fill",
+      source: resolution,
+      "source-layer": currentSourceData.layer,
+      layout: {
+        visibility: "visible",
+      },
+      paint: {
+        "fill-color": "blue",
+        "fill-opacity": 0.0, //globals.opacity, // 0
+      },
+    };
+    map2.addLayer(options, this.options.firstSymbolId);
+    map2.once("idle", () => {
+      this.recolorBasedOnWhatsOnPage(true);
+      map2.moveLayer(resolution, "allsids");
+    });
   }
 
   this.options.currentLayerState.hexSize = resolution;
@@ -416,11 +455,10 @@ export function changeHexagonSize(resolution) {
 export function add3D() {
   let map = this.map;
   let map2 = this.map2;
-  let cls = this.options.currentLayerState
 
-  // this.clearHexHighlight();
+  this.clearHexHighlight();
 
-  let id = cls.hexSize + "-3d";
+  let id = this.options.currentLayerState.hexSize + "-3d";
   if (this.options.mode3d) {
     map.easeTo({
       center: map.getCenter(),
@@ -430,7 +468,7 @@ export function add3D() {
       map.removeLayer(id);
     }
   } else {
-    if(map.getLayer(cls.hexSize)) {
+    if(map.getLayer(this.options.currentLayerState.hexSize)) {
       this.add3dLayer(map, this.options.currentLayerState, id)
     }
     map.easeTo({
@@ -457,7 +495,6 @@ export function add3D() {
 
 
 export function changeColor(selectedColor) {
-let cls = this.options.currentLayerState
   let map = this.map;
   let currentColor = this.options.currentLayerState.color;
   if(selectedColor === ' invert') {
@@ -466,7 +503,7 @@ let cls = this.options.currentLayerState
     this.options.colorSCheme.invert = false,
     this.options.colorSCheme.color = selectedColor
   }
-  if(!this.getLayer(cls.hexSize+cls.dataLayer)) {
+  if(!this.getLayer(this.options.currentLayerState.hexSize)) {
     return;
   }
   if (selectedColor === "original") {
@@ -507,10 +544,10 @@ let cls = this.options.currentLayerState
   } else if (selectedColor === "colorblind-safe") {
     this.options.currentLayerState.color = colors.colorSeq["colorBlindGreen"];
   }
-  map.setPaintProperty(cls.hexSize+cls.dataLayer, "fill-color", [
+  map.setPaintProperty(this.options.currentLayerState.hexSize, "fill-color", [
     "interpolate",
     ["linear"],
-    ["get", 'mean'],
+    ["get", this.options.currentLayerState.dataLayer],
     this.options.currentLayerState.breaks[0],
     this.options.currentLayerState.color[0],
     this.options.currentLayerState.breaks[1],
@@ -524,10 +561,10 @@ let cls = this.options.currentLayerState
   ]);
 
   if(this.options.mode3d) {
-    map.setPaintProperty(cls.hexSize+cls.dataLayer+'-3d', "fill-extrusion-color", [
+    map.setPaintProperty(this.options.currentLayerState.hexSize+'-3d', "fill-extrusion-color", [
       "interpolate",
       ["linear"],
-      ["get", 'mean'],
+      ["get", this.options.currentLayerState.dataLayer],
       this.options.currentLayerState.breaks[0],
       this.options.currentLayerState.color[0],
       this.options.currentLayerState.breaks[1],
@@ -542,17 +579,23 @@ let cls = this.options.currentLayerState
   }
 
   let features = map.queryRenderedFeatures({
-    layers: [cls.hexSize+cls.dataLayer],
+    layers: [this.options.currentLayerState.hexSize],
   });
 
   let selectedData = features.map(
-    (x) => x.properties.mean
+    (x) => x.properties[this.options.currentLayerState.dataLayer]
+  );
+
+  let breaksAndColors= this.computeBreaksAndColorRamp(
+    selectedData,
+    this.options.currentLayerState.color,
+     "q", 4,
+    this.options.currentLayerState.breaks
   );
 
   this.emit('layerUpdate', {
-    activeLayer: this.activeLayer,
-    colorRamp: this.options.currentLayerState.color,
-    breaks: this.options.currentLayerState.breaks,
+    colorRamp: breaksAndColors.colorRamp,
+    breaks: breaksAndColors.histogramBreaks,
     selectedData,
     precision: this.options.precision
   });
@@ -571,7 +614,6 @@ export function changeOpacity(opacity, noUpdate) {
       opacity
     );
   }
-
   if(!this.options.bivariateMode && map.getLayer(this.options.currentLayerState.hexSize)) {
     map.setPaintProperty(
       this.options.currentLayerState.hexSize,
@@ -798,8 +840,7 @@ export function toggleBivariateComponents(e) {
   if (!e) {
     this.removeBivariateLayer();
     this.changeOpacity(this.options.opacity);
-    this.clearHexHighlight();
-    this.updateData(this.activeDataset, this.activeLayer)
+    this.clearHexHighlight()
   } else {
     if(this.options.mode3d) {
       this.add3D()
@@ -819,233 +860,233 @@ export function createBivariate(
   self = this,
   cls = this.options.currentLayerState,
   bvls = this.options.bivariateLayerState;
-  this.bivarLayer = secondLayer;
-  this.removeLayer('bivar2');
-  this.removeSource(bvls.dataLayer);
   this.options.bivarConfig = {
     firstDataset,
     firstLayer,
     secondDataset,
     secondLayer
   }
-  map.setPaintProperty(
-    this.options.currentLayerState.hexSize,
-    "fill-opacity",
-    0
-  );
+  bvls.dataLayer[0] = firstLayer;
+  bvls.dataLayer[1] = secondLayer;
 
   if(secondLayer == null || firstLayer == null) {
     return;
   }
-  bvls.dataLayer = `${secondLayer.layerId}-${secondLayer.activeYear}`;
   if(
     [firstLayer.Name, secondLayer.Name].includes("Ocean Data") &&
     firstLayer.Name !== secondLayer.Name
   ) {
     return;
   } else {
-    this.emit('loadingStart')
-    this._addDataVectorSource(false, bvls.dataLayer, cls.hexSize)
-    map.addLayer({
-      id: 'bivar2',
-      type: "fill",
-      source: cls.hexSize+bvls.dataLayer,
-      "source-layer": cls.hexSize+'_'+bvls.dataLayer,
-      layout: {
-        visibility: "visible",
-      },
-      paint: {
-        "fill-color": "blue",
-        "fill-opacity": 0.0,
-      },
+    let features = map.querySourceFeatures(cls.hexSize, {
+      sourceLayer: [cls.hexSize === "ocean" ? "oceans" : cls.hexSize]
     });
-    setTimeout(()=> {
-      let features = map.querySourceFeatures(cls.hexSize+cls.dataLayer, {
-        sourceLayer: [cls.hexSize+'_'+cls.dataLayer]
+    if (features?.length != 0) {
+      this.emit('loadingStart')
+      // let uniqueFeatures;
+      let idProperty = null;
+      // if (cls.hexSize === "admin1") {
+      //   uniqueFeatures = this.getUniqueFeatures(features, "GID_1");
+      //   idProperty = "GID_1";
+      // } else if (cls.hexSize === "admin2") {
+      //   uniqueFeatures = this.getUniqueFeatures(features, "GID_2");
+      //   idProperty = "GID_2";
+      // } else {
+      //   uniqueFeatures = this.getUniqueFeatures(features, "hexid");
+      // }
+
+      let featuresUsed = features;
+      let attrId_1 = firstLayer.layerId;
+      let attrId_2 = secondLayer.layerId;
+      let negativeAttrIds = ["depth"];
+
+      let data_1 = featuresUsed.map((x_feat) => {
+        let isNegative = negativeAttrIds.includes(attrId_1) ? -1 : 1;
+        let propertyValue = x_feat.properties[attrId_1];
+        return propertyValue * isNegative;
       });
-      let features2 = map.querySourceFeatures(cls.hexSize+bvls.dataLayer, {
-        sourceLayer: [cls.hexSize+'_'+bvls.dataLayer]
+      let data_2 = featuresUsed.map((y_feat) => {
+        let isNegative = negativeAttrIds.includes(attrId_2) ? -1 : 1;
+        let propertyValue = y_feat.properties[attrId_2];
+        return propertyValue * isNegative;
       });
 
+      let hasData = {
+        data_1: data_1.some((x) => !Number.isNaN(x)),
+        data_2: data_2.some((y) => !Number.isNaN(y)),
+      };
 
-      if (features && features.length != 0 && features.some(f => typeof f.properties.mean !== 'undefined') && features2 && features2.length != 0 && features2.some(f => typeof f.properties.mean !== 'undefined')) {
-
-        let data_1 = features.map((v) => {
-          return v.properties.mean;
-        });
-        let data_2 = features2.map((v) => {
-          return v.properties.mean;
-        });
-
-        let X_breaks = chroma.limits(data_1, "q", 3);
-        let Y_breaks = chroma.limits(data_2, "q", 3);
-        bvls.breaks.X = X_breaks;
-        bvls.breaks.Y = Y_breaks;
-
-        let bivar_colors = colors.colorSeqSeq3["blue-pink-purple"];
-        bvls.color = bivar_colors;
-
-        let bivarClass = Array(features.length).fill(0);
-        let bivarScatter = new Array(10);
-        for (let i = 0; i < 10; i++) {
-          bivarScatter[i] = [];
-        }
-
-        for (let i = 0; i < features.length; i++) {
-
-          let x_val = data_1[i];
-          let y_val = data_2[i];
-
-          let range_1, range_2;
-          if (x_val < X_breaks[1]) range_1 = 1;
-          else if (x_val < X_breaks[2]) range_1 = 2;
-          else range_1 = 3;
-          if (y_val < Y_breaks[1]) range_2 = 1;
-          else if (y_val < Y_breaks[2]) range_2 = 2;
-          else range_2 = 3;
-          var coord = String(range_1) + String(range_2);
-          if (Number.isNaN(x_val) || Number.isNaN(y_val)) {
-            coord = null;
-          }
-          switch (coord) {
-            case "11":
-              bivarClass[i] = 0;
-              break; //LL
-            case "12":
-              bivarClass[i] = 1;
-              break; //LM
-            case "13":
-              bivarClass[i] = 2;
-              break; //LH
-            case "21":
-              bivarClass[i] = 3;
-              break; //ML
-            case "22":
-              bivarClass[i] = 4;
-              break; //MM
-            case "23":
-              bivarClass[i] = 5;
-              break; //MH
-            case "31":
-              bivarClass[i] = 6;
-              break; //HL
-            case "32":
-              bivarClass[i] = 7;
-              break; //HM
-            case "33":
-              bivarClass[i] = 8;
-              break; //HH
-            case null: //"Null":
-              bivarClass[i] = 9;
-              break; //NULL
-          }
-          bivarScatter[bivarClass[i]].push({ x: x_val, y: y_val }); //assign the bivarPairValues object to the counter of the scatterObject for hte appropriate class
-          features[i]["properties"]["bivarClass"] = bivarClass[i]; //adding a property to the hex features; //TODO needs a better way especially for after switch to non-aggregated features
-          features[i]["properties"].x_val = x_val
-          features[i]["properties"].y_val = y_val
-        }
-
-        var fc = featureCollection(features);
-        //remove preexisting bivariate layer
+      if (!hasData.data_1 || !hasData.data_2) {
         if (map.getLayer("bivariate")) {
           map.removeLayer("bivariate");
           map.removeSource("bivariate");
         }
-
-        map.addSource("bivariate", {
-          type: "geojson",
-          data: fc,
-          promoteId: 'mean',
-        });
-        map.addLayer({
-          id: "bivariate",
-          source: "bivariate",
-          type: "fill",
-          paint: {
-            "fill-color": [
-              "step", //step operator
-              ["get", "bivarClass"], //the input;retreive a number literal ie. the bivariate class;
-              //values changed from Atlases code, the first output value is used if the input value is less than the first numeric-stop value i.e 1
-              //his code had the first as 0, which was wrong
-              bivar_colors[0],
-              1,
-              bivar_colors[1],
-              2,
-              bivar_colors[2],
-              3,
-              bivar_colors[3],
-              4,
-              bivar_colors[4],
-              5,
-              bivar_colors[5],
-              6,
-              bivar_colors[6],
-              7,
-              bivar_colors[7],
-              8,
-              bivar_colors[8],
-              9,
-              "rgba(255,255,255,0)",
-            ],
-            "fill-opacity": self.options.opacity,
-          },
-        });
-
-        if (!cls.hexSize === "bivariate") {
-          cls.hexSize = "bivariate";
-        }
-        let point_radius;
-        if (features.length < 100) {
-          point_radius = 3.3;
-        } else if (features.length > 1000) {
-          point_radius = 1.5;
-        } else {
-          point_radius = ((features.length - 100) / 100) * 0.2;
-        }
-
-        let bivarClasses = [
-          "L-L",
-          "L-Mid",
-          "L-H",
-          "Mid-L",
-          "Mid-Mid",
-          "Mid-H",
-          "H-L",
-          "H-Mid",
-          "H-H",
-        ];
-        let bivarDatasets = [];
-        for (let i = 0; i < 9; i++) {
-          bivarDatasets.push({
-            label: bivarClasses[i],
-            data: bivarScatter[i],
-            pointRadius: point_radius,
-            pointHoverRadius: 3,
-            backgroundColor: bivar_colors[i],
-            hoverBorderColor: "rgba(0,0,0,1)",
-            pointHoverBorderWidth: 2,
-            borderWidth: 1.5,
-          });
-        }
-        map.once('idle',() => {
-          self.emit('loadingEnd')
-        })
-        this.emit('bivarDataUpdate', {
-          data:bivarDatasets,
-          minX: X_breaks[0], //minimum tick
-          maxX: X_breaks[3],
-          minY: Y_breaks[0], //minimum tick
-          maxY: Y_breaks[3],
-          X_breaks,
-          Y_breaks
-        })
-      } else {
-        self.removeLayer("bivariate");
-        self.removeSource("bivariate");
-        this.emit('bivarDataUpdate', {noData: true})
-        this.emit('loadingEnd')
+        return;
       }
-    },2000)
+
+      let X_breaks = chroma.limits(data_1, "q", 3);
+      let Y_breaks = chroma.limits(data_2, "q", 3);
+      bvls.breaks.X = X_breaks;
+      bvls.breaks.Y = Y_breaks;
+
+      let bivar_colors = colors.colorSeqSeq3["blue-pink-purple"];
+      bvls.color = bivar_colors;
+
+      let bivarClass = Array(featuresUsed.length).fill(0);
+      let bivarScatter = new Array(10);
+      for (let i = 0; i < 10; i++) {
+        bivarScatter[i] = [];
+      }
+
+      for (let i = 0; i < featuresUsed.length; i++) {
+
+        let x_val = data_1[i];
+        let y_val = data_2[i];
+
+        let range_1, range_2;
+        if (x_val < X_breaks[1]) range_1 = 1;
+        else if (x_val < X_breaks[2]) range_1 = 2;
+        else range_1 = 3;
+        if (y_val < Y_breaks[1]) range_2 = 1;
+        else if (y_val < Y_breaks[2]) range_2 = 2;
+        else range_2 = 3;
+        var coord = String(range_1) + String(range_2);
+        if (Number.isNaN(x_val) || Number.isNaN(y_val)) {
+          coord = null;
+        }
+        switch (coord) {
+          case "11":
+            bivarClass[i] = 0;
+            break; //LL
+          case "12":
+            bivarClass[i] = 1;
+            break; //LM
+          case "13":
+            bivarClass[i] = 2;
+            break; //LH
+          case "21":
+            bivarClass[i] = 3;
+            break; //ML
+          case "22":
+            bivarClass[i] = 4;
+            break; //MM
+          case "23":
+            bivarClass[i] = 5;
+            break; //MH
+          case "31":
+            bivarClass[i] = 6;
+            break; //HL
+          case "32":
+            bivarClass[i] = 7;
+            break; //HM
+          case "33":
+            bivarClass[i] = 8;
+            break; //HH
+          case null: //"Null":
+            bivarClass[i] = 9;
+            break; //NULL
+        }
+        bivarScatter[bivarClass[i]].push({ x: x_val, y: y_val }); //assign the bivarPairValues object to the counter of the scatterObject for hte appropriate class
+        featuresUsed[i]["properties"]["bivarClass"] = bivarClass[i]; //adding a property to the hex features; //TODO needs a better way especially for after switch to non-aggregated features
+      }
+
+      var fc = featureCollection(featuresUsed);
+      //remove preexisting bivariate layer
+      if (map.getLayer("bivariate")) {
+        map.removeLayer("bivariate");
+        map.removeSource("bivariate");
+      }
+
+      map.addSource("bivariate", {
+        type: "geojson",
+        data: fc,
+        promoteId: idProperty,
+      });
+      map.addLayer({
+        id: "bivariate",
+        source: "bivariate",
+        type: "fill",
+        paint: {
+          "fill-color": [
+            "step", //step operator
+            ["get", "bivarClass"], //the input;retreive a number literal ie. the bivariate class;
+            //values changed from Atlases code, the first output value is used if the input value is less than the first numeric-stop value i.e 1
+            //his code had the first as 0, which was wrong
+            bivar_colors[0],
+            1,
+            bivar_colors[1],
+            2,
+            bivar_colors[2],
+            3,
+            bivar_colors[3],
+            4,
+            bivar_colors[4],
+            5,
+            bivar_colors[5],
+            6,
+            bivar_colors[6],
+            7,
+            bivar_colors[7],
+            8,
+            bivar_colors[8],
+            9,
+            "rgba(255,255,255,0)",
+          ],
+          "fill-opacity": self.options.opacity,
+        },
+      });
+
+      if (!cls.hexSize === "bivariate") {
+        cls.hexSize = "bivariate";
+      }
+      let point_radius;
+      if (featuresUsed.length < 100) {
+        point_radius = 3.3;
+      } else if (featuresUsed.length > 1000) {
+        point_radius = 1.5;
+      } else {
+        point_radius = ((featuresUsed.length - 100) / 100) * 0.2;
+      }
+
+      let bivarClasses = [
+        "L-L",
+        "L-Mid",
+        "L-H",
+        "Mid-L",
+        "Mid-Mid",
+        "Mid-H",
+        "H-L",
+        "H-Mid",
+        "H-H",
+      ];
+      let bivarDatasets = [];
+      for (let i = 0; i < 9; i++) {
+        bivarDatasets.push({
+          label: bivarClasses[i],
+          data: bivarScatter[i],
+          pointRadius: point_radius,
+          pointHoverRadius: 3,
+          backgroundColor: bivar_colors[i],
+          hoverBorderColor: "rgba(0,0,0,1)",
+          pointHoverBorderWidth: 2,
+          borderWidth: 1.5,
+        });
+      }
+      map.once('idle',() => {
+        self.emit('loadingEnd')
+      })
+      this.emit('bivarDataUpdate', {
+        data:bivarDatasets,
+        minX: X_breaks[0], //minimum tick
+        maxX: X_breaks[3],
+        minY: Y_breaks[0], //minimum tick
+        maxY: Y_breaks[3],
+        X_breaks,
+        Y_breaks
+      })
+    } else {
+      return;
+    }
   }
 }
 
