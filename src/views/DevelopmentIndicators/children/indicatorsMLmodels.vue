@@ -98,6 +98,7 @@
 import service from '@/services';
 import { mapState } from 'vuex';
 // import IndicatorsML from './IndicatorsML';
+import sidsList from '@/assets/sidsList'
 import IndicatorsPieChart from './IndicatorsPieChart';
 import IndicatorsBarChart from './IndicatorsBarChart';
 import InfoButton from '@/components/InfoButton.vue'
@@ -177,6 +178,15 @@ export default {
           model:this.activePanel+1,
           dataset:this.indicator.split('-')[0]
         })
+        res.data = Object.keys(res.data).reduce((dataObject, year) => {
+          dataObject[year] = Object.keys(res.data[year]).filter(cCode => {
+            return sidsList.some(c => c.iso === cCode)
+          }).reduce((yearObj, cCode) => {
+            yearObj[cCode] = res.data[year][cCode]
+            return yearObj
+          }, {});
+          return dataObject
+        },{})
         store.dispatch('ml/loadMlPredictionData', res)
       }
     },
