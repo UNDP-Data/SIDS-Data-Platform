@@ -31,9 +31,9 @@
                :class="{
                  'button-resolution-icon-boundary-1': activeResolution === 'admin1',
                  'button-resolution-icon-boundary-2': activeResolution === 'admin2',
-                 'button-resolution-icon-hex-1': activeResolution === 'hex-1km',
-                 'button-resolution-icon-hex-5': activeResolution === 'hex-5km',
-                 'button-resolution-icon-hex-10': activeResolution === 'hex-10km'
+                 'button-resolution-icon-hex-1': activeResolution === 'hex1',
+                 'button-resolution-icon-hex-5': activeResolution === 'hex5',
+                 'button-resolution-icon-hex-10': activeResolution === 'hex10'
                }"></i>
             </v-btn>
           </template>
@@ -51,21 +51,21 @@
           >
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex-1km')"
+              @click="handleResolutionChange('hex1')"
             >
               1 km
               <i class="button-resolution-icon button-resolution-icon-hex-1"></i>
             </v-btn>
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex-5km')"
+              @click="handleResolutionChange('hex5')"
             >
               5 km
               <i class="button-resolution-icon button-resolution-icon-hex-5"></i>
             </v-btn>
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex-10km')"
+              @click="handleResolutionChange('hex10')"
             >
               10 km
               <i class="button-resolution-icon button-resolution-icon-hex-10"></i>
@@ -105,12 +105,12 @@ export default {
   data() {
     return {
       open:false,
-      activeResolution:'hex-5km'
+      activeResolution:'hex5'
     }
   },
   computed:{
     activeHexResolution() {
-      let index = ['hex-1km','hex-5km','hex-10km'].indexOf(this.activeResolution)
+      let index = ['hex1','hex5','hex10'].indexOf(this.activeResolution)
       if(index === -1) {
         return null
       }

@@ -16,7 +16,7 @@ export function updateData(
   let cls = !comparison
     ? this.options.currentLayerState
     : this.options.comparisonLayerState;
-  let layerId = activeLayer.layerId;
+  let Field_Name = activeLayer.Field_Name;
   if(!comparison) {
     this.activeDataset = activeDataset;
     this.activeLayer = activeLayer;
@@ -28,7 +28,7 @@ export function updateData(
   this.clearHexHighlight();
   // this.remove3d();
 
-  cls.dataLayer = layerId; //update global to reflect selected datalayer
+  cls.dataLayer = Field_Name; //update global to reflect selected datalayer
 
   //-------------------------------------------
   if (!map.getSource("hex5")) {
@@ -68,7 +68,7 @@ export function updateData(
       } else {
         uniFeatures = self.getUniqueFeatures(features, "hexid");
       }
-      var selectedData = uniFeatures.map((x) => x.properties[layerId]);
+      var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
 
       var breaks = chroma.limits(selectedData, "q", 4);
 
@@ -97,21 +97,21 @@ export function updateData(
       } else {
         colorRamp = colors.colorSeq["yellow-blue"];
 
-        if (layerId.substring(0, 2) === "1a") {
+        if (Field_Name.substring(0, 2) === "1a") {
           colorRamp = colors.colorDiv.gdpColor;
-        } else if (layerId.substring(0, 2) === "1c") {
+        } else if (Field_Name.substring(0, 2) === "1c") {
           colorRamp = colors.colorSeq["pop"];
-        } else if (layerId === "7d10") {
+        } else if (Field_Name === "7d10") {
           colorRamp = colors.colorSeq["combo"];
-        } else if (layerId === "7d5") {
+        } else if (Field_Name === "7d5") {
           colorRamp = colors.colorSeq["minty"];
-        } else if (layerId === "7d7") {
+        } else if (Field_Name === "7d7") {
           colorRamp = colors.colorSeq["blues"];
-        } else if (layerId === "7d4") {
+        } else if (Field_Name === "7d4") {
           colorRamp = colors.colorSeq["pinkish"];
-        } else if (layerId === "7d8") {
+        } else if (Field_Name === "7d8") {
           colorRamp = colors.colorSeq["silvers"];
-        } else if (layerId === "d") {
+        } else if (Field_Name === "d") {
           breaks = [-4841, -3805, -2608, -1090, 1322];
           colorRamp = colors.colorSeq["ocean"];
         }
@@ -129,7 +129,7 @@ export function updateData(
         [
           "interpolate",
           ["linear"],
-          ["get", layerId],
+          ["get", Field_Name],
           breaks[0],
           colorRamp[0],
           breaks[1],
@@ -155,7 +155,7 @@ export function updateData(
         }, 100);
         this.addNoDataLegend(activeLayer)
       } else {
-        map.setFilter(cls.hexSize, [">=", layerId, 0]);
+        map.setFilter(cls.hexSize, [">=", Field_Name, 0]);
         this.emit('layerUpdate', {
           activeLayer,
           colorRamp,
@@ -196,7 +196,7 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
   this.clearHexHighlight();
   // this.remove3d();
 
-  cls.dataLayer = activeLayer.layerId; //corresponds to the attributeId
+  cls.dataLayer = activeLayer.Field_Name; //corresponds to the attributeId
   cls.hexSize = "ocean";
 
   cls.breaks = [-4841, -3805, -2608, -1090, 0];
@@ -337,6 +337,7 @@ export function changeHexagonSize(resolution) {
     this.removeBivariateLayer()
   }
 
+  this.emit('loadingStart')
   if(map.getLayer(this.options.currentLayerState.hexSize)) {
 
     this.options.currentLayerState.hexSize = resolution;
@@ -381,6 +382,7 @@ export function changeHexagonSize(resolution) {
       }
       map.once("idle", () => {
         this.recolorBasedOnWhatsOnPage();
+        this.emit('loadingEnd')
         map.moveLayer(resolution, "allsids");
       });
     })
@@ -544,6 +546,7 @@ export function changeColor(selectedColor) {
   } else if (selectedColor === "colorblind-safe") {
     this.options.currentLayerState.color = colors.colorSeq["colorBlindGreen"];
   }
+
   map.setPaintProperty(this.options.currentLayerState.hexSize, "fill-color", [
     "interpolate",
     ["linear"],
@@ -594,6 +597,7 @@ export function changeColor(selectedColor) {
   );
 
   this.emit('layerUpdate', {
+
     colorRamp: breaksAndColors.colorRamp,
     breaks: breaksAndColors.histogramBreaks,
     selectedData,
@@ -829,8 +833,6 @@ export function startRegionAnalisys(){
       this.draw.onAdd(this.map)
     );
     this._addDrawListeners(this);
-  } else {
-    this.map.fire('draw.delete')
   }
   this.draw.changeMode("draw_polygon");
 }
@@ -896,8 +898,8 @@ export function createBivariate(
       // }
 
       let featuresUsed = features;
-      let attrId_1 = firstLayer.layerId;
-      let attrId_2 = secondLayer.layerId;
+      let attrId_1 = firstLayer.Field_Name;
+      let attrId_2 = secondLayer.Field_Name;
       let negativeAttrIds = ["depth"];
 
       let data_1 = featuresUsed.map((x_feat) => {

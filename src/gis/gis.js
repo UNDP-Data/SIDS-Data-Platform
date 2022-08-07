@@ -165,9 +165,9 @@ export default class Map {
     let cls = !comparison
       ? this.options.currentLayerState
       : this.options.comparisonLayerState;
-    let layerId = activeLayer.layerId;
+    let Field_Name = activeLayer.Field_Name;
     if (map.getLayer("ocean")) {
-      if (!layerId.includes("fl")) {
+      if (!Field_Name.includes("fl")) {
 
         map.removeLayer("ocean");
 
@@ -196,7 +196,7 @@ export default class Map {
       }
     } else if (
       activeLayer.Name === "Ocean Data" &&
-      !(activeLayer.layerId === "depths")
+      !(activeLayer.Field_Name === "depths")
     ) {
 
       cls.hexSize = "ocean";
