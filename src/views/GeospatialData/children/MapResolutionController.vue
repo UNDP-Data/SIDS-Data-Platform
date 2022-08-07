@@ -21,6 +21,7 @@
             <v-btn
               class="toolbar-button"
               color="gray"
+              :disabled="disabled"
               @click="open = !open"
               dark
               v-bind="attrs"
@@ -125,7 +126,8 @@ export default {
     }
   },
   props:[
-    'map'
+    'map',
+    'disabled'
   ],
   methods: {
     handleResolutionChange(resolution) {
