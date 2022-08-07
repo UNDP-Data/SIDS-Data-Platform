@@ -59,7 +59,7 @@ export default {
       })
     },
     updateChart(data) {
-      this.chart.data = this.parsePieData(data);
+      this.chart.data = this.parseBarData(data);
       this.chart.update(0);
     },
     parseBarData(data) {
