@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column">
-    <v-card class="mb-0 mb-md-1  controller-block">
-      <v-row class="d-none d-md-flex">
+    <v-card class="mb-1  controller-block">
+      <v-row>
         <v-col cols="6">
           <v-list class="bt-0 pb-0" color="transparent" dense>
             <v-list-item-group class="goal-type-list" v-model="activeGoalType" mandatory>
@@ -31,7 +31,7 @@
                     </v-list-item-content>
                   </v-list-item>
                 </template>
-                <v-card flat class="tooltip-card">
+                <v-card class="tooltip-card">
                   <v-card-title>
                     <v-img
                       class="tooltip-card_img"
@@ -88,7 +88,7 @@
                     </v-list-item-content>
                   </v-list-item>
                 </template>
-                <v-card flat>
+                <v-card>
                   <v-card-title>
                     <v-img
                       class="pillar-tooltip_img"
@@ -120,7 +120,7 @@
                 open-on-hover
                 bottom
                 :nudge-left="256"
-                :nudge-bottom="98"
+                :nudge-bottom="118"
                 content-class="sdg-menu"
               >
                 <template v-slot:activator="{ on }">
@@ -156,7 +156,7 @@
                         width="80"
                       />
                     </template>
-                    <v-card flat>
+                    <v-card>
                       <v-card-title class="coal-title">
                         {{ n.name }}
                       </v-card-title>
@@ -172,41 +172,34 @@
         </v-col>
       </v-row>
       <layer-selector
-        class="mb-0 mb-md-4 ml-4 mr-4"
+        class="mb-4 ml-4 mr-4"
         :dataset="activeDataset"
-        :year="activeYear"
         :datasets="filteredDatasets"
         :datasetLabel="firstDatasetName"
         :layer="activeLayer"
         :layerLabel="firstLayerName"
         @datasetChange="firstDatasetChange"
         @layerChange="firstLayerChange"
-        @yearChange="firstYearChange"
       />
 
       <layer-selector
-        class="mb-0 mb-md-4 ml-4 mr-4"
+        class="mb-4 ml-4 mr-4"
         :disabled="!activeLayer"
         v-if="bivariateModeEnabled || dualModeEnabled"
         :dataset="secondDataset"
-        :year="secondYear"
         :datasets="filteredDatasets"
         :datasetLabel="dualModeEnabled ? 'Right Dataset' : 'Second Dataset'"
         :layer="secondLayer"
         :layerLabel="dualModeEnabled ? 'Right Layer' : 'Second Layer'"
         @datasetChange="secondDatasetChange"
         @layerChange="secondLayerChange"
-        @yearChange="secondYearChange"
       />
     </v-card>
     <layers-tabs
-      class="d-none d-md-flex"
       :dataset="activeDataset"
       :firstLayer="activeLayer"
       :secondDataset="secondDataset"
       :secondLayer="secondLayer"
-      :activeYear="activeYear"
-      :secondYear="secondYear"
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       :pillar="activeGoal"
@@ -218,15 +211,16 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import datasets from "@/gis/static/layers";
+// import { mapState } from 'vuex';
 import { goalTypesGis, goals } from '@/assets/goalsList'
 import LayerSelector from './LayerSelector'
 import LayersTabs from './LayersTabs'
-
 export default {
   name: 'LayersController',
   data() {
     return {
+      datasets:datasets,
       activeGoalType: "sdgs",
       goalTypes: goalTypesGis,
       goals,
@@ -236,8 +230,6 @@ export default {
       activeLayer:null,
       secondDataset:null,
       secondLayer:null,
-      activeYear: null,
-      secondYear: null
     }
   },
   props:[
@@ -249,21 +241,24 @@ export default {
     LayersTabs
   },
   computed:{
-    ...mapState({
-      datasets: state => state.gis.datasets
-    }),
     filteredDatasets() {
       let filteredDatasets = this.datasets.reduce((array, dataset) => {
-        let hasGoal = false;
+        let filtered = Object.assign({}, dataset);
         if (this.activeGoalType === "pillars") {
-          hasGoal = dataset.pillars.includes(this.activePillar)
+          filtered.layers = filtered.layers.filter((layer) =>
+            layer.pillars.includes(this.activePillar)
+          );
         } else if (this.activeGoalType === "sdgs") {
-          hasGoal = dataset.sdg.includes(this.activeGoal)
+          filtered.layers = filtered.layers.filter((layer) =>
+            layer.SDG.includes(this.activeGoal)
+          );
         } else if (this.activeGoalType === "samoa") {
-          hasGoal = dataset.samoa.includes(this.activeGoal)
+          filtered.layers = filtered.layers.filter((layer) =>
+            layer.samoa_pathway.includes(this.activeGoal)
+          );
         }
-        if (hasGoal) {
-          array.push(dataset);
+        if (filtered.layers.length > 0) {
+          array.push(filtered);
         }
         return array;
       }, []);
@@ -320,27 +315,27 @@ export default {
     },
     selectGoal(goalNumber) {
       this.activeGoal = goalNumber;
-      this.$refs.slider.scrollOffset = 100 * (goalNumber - 1);
+      this.$refs.slider.scrollOffset = 120 * (goalNumber - 1);
     },
     firstDatasetChange(dataset) {
       this.activeDataset = dataset;
+      if(dataset.type==='single' || dataset.type==='temporal') {
+        this.firstLayerChange(dataset.layers[0])
+      }
     },
     firstLayerChange(layer) {
       this.activeLayer = layer;
       this.emitUpdate()
     },
-    firstYearChange(year) {
-      this.activeYear = year;
-    },
     secondDatasetChange(dataset) {
       this.secondDataset = dataset;
+      if(dataset.type==='single' || dataset.type==='temporal') {
+        this.secondLayerChange(dataset.layers[0])
+      }
     },
     secondLayerChange(layer) {
       this.secondLayer = layer;
       this.emitUpdate()
-    },
-    secondYearChange(year) {
-      this.secondYear = year;
     },
     emitUpdate() {
       return this.$emit('layersChange', {
@@ -353,8 +348,6 @@ export default {
     hadleTabUpdate(e) {
       this.activeDataset = e.layers.dataset
       this.activeLayer = e.layers.firstLayer
-      this.activeYear = e.layers.activeYear
-      this.secondYear = e.layers.secondYear
       this.secondDataset = e.layers.secondDataset
       this.secondLayer = e.layers.secondLayer
       this.activeGoalType = e.filters.goalType
@@ -373,6 +366,7 @@ export default {
   }
 }
 </script>
+
 
 <style>
   .goals-slider {
@@ -414,10 +408,5 @@ export default {
   }
   .goal-type-list .v-list-item{
     min-height: 28px !important;
-  }
-  @media (max-width:959px) {
-    .controller-block {
-      background-color: transparent !important;
-    }
   }
 </style>

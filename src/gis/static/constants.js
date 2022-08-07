@@ -2,26 +2,27 @@ const constants = {
   filepath: {
     //dirpath + attributeID + resolution+pathtemplate + sas = mvt tile path
     vectorTilesDirPath:
-      "https://data.undpgeohub.org/sids-data/",
+      "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vtiles2/",
     vectorTilesPathTemplate: "{z}/{x}/{y}.pbf",
-    SAS: "",
+    SAS: "?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
   },
   sourceURLs: {
-  //   hex1: "https://data.undpgeohub.org/sids-data/hex1/{z}/{x}/{y}.pbf",
-  //   hex5: "https://data.undpgeohub.org/sids-data/hex5/{z}/{x}/{y}.pbf",
-  //   hex10:
-  //     "https://data.undpgeohub.org/sids-data/hex10/{z}/{x}/{y}.pbf",
-  //   hex5clipped:
-  //     "https://data.undpgeohub.org/sids-data/hex5clipped/{z}/{x}/{y}.pbf",
-    admin1Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin1/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
-    admin2Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin2/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
-
-  //   ocean:
-  //     "https://data.undpgeohub.org/sids-data/oceans/{z}/{x}/{y}.pbf",
+    hex1: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/hex1/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    hex5: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/hex5/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    hex10:
+      "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/hex10/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    hex5clipped:
+      "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/hex5clipped/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    admin1:
+      "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin1/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    admin2:
+      "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin2/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    ocean:
+      "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/oceans/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
     allSids:
-    "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/allsids/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+      "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/allsids/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
   },
-  hexes: ["hex-1km", "hex-5km", "hex-10km", "hex5clipped"],
+  hexes: ["hex1", "hex5", "hex10", "hex5clipped"],
   admins: ["admin1", "admin2"],
   userLayers: [
     //user interactive data layers
