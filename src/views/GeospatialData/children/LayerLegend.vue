@@ -6,7 +6,7 @@
     >
       <div v-if="hasData" class="d-flex d-md-block">
         <div  class="d-flex justify-center legend-title mr-4 ml-4 align-center">
-          <span v-html="activeLayer.units"></span>
+          <span v-html="activeLayer.Units"></span>
         </div>
         <div
           class="d-flex justify-space-evenly legend main-legend pb-1 pb-md-0"
