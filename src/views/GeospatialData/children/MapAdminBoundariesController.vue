@@ -79,7 +79,7 @@ export default {
   ],
   methods: {
     boundary1Update(state) {
-      let source = "admin1Overlay",
+      let source = "admin1",
       slayer = "admin1",
       color = "red";
       if(state){
@@ -97,7 +97,7 @@ export default {
       }
     },
     boundary2Update(state) {
-      let source = "admin2Overlay",
+      let source = "admin2",
       slayer = "admin2",
       color = "#003399";
       if(state){

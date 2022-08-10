@@ -25,7 +25,6 @@
 
 <script>
 import VueTabsChrome from "vue-tabs-chrome";
-
 export default {
   name: 'LayersTabs',
   data() {
@@ -58,7 +57,6 @@ export default {
       if(this.activeTab) {
         this.$emit('tabUpdate', this.activeTab)
       }
-      console.log(this.tabs)
     },
     addEmptyTab() {
       let key = Date.now();
@@ -81,12 +79,19 @@ export default {
           bivariateModeEnabled: this.bivariateModeEnabled
         }
       };
-
       this.$refs.tab.addTab(newTab);
       this.tab = key;
     },
     createTabLabel() {
-      return this.firstLayer && this.firstLayer.description;
+      let labelString = "New Tab";
+      if (this.dataset && this.dataset.type === "single") {
+        labelString = this.dataset.name;
+      } else if (this.dataset && this.dataset.type === "temporal") {
+        labelString = `${this.firstLayer.Temporal}:${this.dataset.name}`;
+      } else if (this.dataset && this.dataset.type === "layers" && this.firstLayer) {
+        labelString = this.firstLayer.Description;
+      }
+      return labelString;
     }
   },
   mounted() {
@@ -99,12 +104,6 @@ export default {
     firstLayer(){
       this.$set(this.activeTab, 'label', this.createTabLabel())
       this.activeTab.layers.firstLayer = this.firstLayer
-    },
-    activeYear(){
-      this.activeTab.layers.activeYear = this.activeYear
-    },
-    secondYear(){
-      this.activeTab.layers.secondYear = this.secondYear
     },
     secondDataset(){
       this.activeTab.layers.secondDataset = this.secondDataset
