@@ -4,12 +4,19 @@ import service from '@/services';
 import axios from 'axios';
 
 Vue.use(VueI18n);
+let i18n;
+export function initI18n() {
+  const lang = ['en', 'pt', 'fr', 'es'].some(l => l === navigator.language.split('-')[0]) ? navigator.language.split('-')[0] : 'en'
 
-export const i18n = new VueI18n({
-  locale: 'en', // set locale
-  fallbackLocale: 'en',
-  messages: {}
-})
+  return service.loadLang(lang).then(function(data) {
+    i18n = new VueI18n({
+      locale: lang,
+      fallbackLocale: 'en',
+      messages: data
+    })
+    return i18n;
+  })
+}
 
 const loadedLanguages = [] // our default language that is preloaded
 
@@ -29,9 +36,8 @@ export async function loadLanguageAsync(lang = 'en') {
 
   let messages = await service.loadLang(lang)
   i18n.setLocaleMessage(lang, messages)
-  console.log(i18n)
   loadedLanguages.push(lang)
   return setI18nLanguage(lang)
 }
 
-export default i18n;
+export default initI18n;

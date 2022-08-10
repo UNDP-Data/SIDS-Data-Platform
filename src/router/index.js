@@ -222,7 +222,6 @@ const router = new VueRouter({
 
 router.beforeEach(async (toRoute, fromRoute, next) => {
   await loadLanguageAsync(toRoute.params.lang);
-  await store.dispatch('texts/getTextContent');
   let pagetitle = toRoute && toRoute.name ? toRoute.name : 'Home';
   window.document.title = `${pagetitle} - UNDP SIDS Data Platform`
   next();
