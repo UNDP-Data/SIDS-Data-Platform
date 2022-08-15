@@ -3,7 +3,7 @@
     <div class="print-page-wrap">
       <printout-header>
         <template slot="text">
-          <b>SIDS indicaot report</b> <br/> {{activeIndicatorsMeta.indicator}}
+          <b>SIDS indicator report</b> <br/> {{activeIndicatorsMeta.indicator}}
         </template>
       </printout-header>
       <p class="d-none d-print-block">

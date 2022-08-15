@@ -2,13 +2,13 @@
   <v-card flat class="overflow background-grey">
     <v-row dense>
       <v-col class="printing-4" cols="7" md="4">
-        <v-subheader class="d-none d-md-block info-bar_header block-header">{{name}}</v-subheader>
+        <v-subheader class="d-none d-md-block info-bar_header block-header">{{$t('countryNames.'+id)}}</v-subheader>
         <v-list dense class="indicators-list background-grey">
           <v-list-item v-if="checkIndicator('key-1')">
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="indicatorsMetadata['key-1'].indicator"
+                v-text="$t('countryProfile.infoBox.regionally')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header"
@@ -21,7 +21,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="indicatorsMetadata['key-2'].indicator"
+                v-text="$t('countryProfile.infoBox.office')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header"
@@ -34,7 +34,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="indicatorsMetadata['key-3'].indicator"
+                v-text="$t('countryProfile.infoBox.memberState')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header"
@@ -45,7 +45,7 @@
           </v-list-item>
           <v-list-item v-if="checkIndicator('key-wdi2-SP.POP.TOTL')">
             <v-list-item-content class="small-padding">
-              <v-list-item-title class="one-line_header" v-text="indicatorsMetadata['key-wdi2-SP.POP.TOTL'].indicator"></v-list-item-title>
+              <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.population')"></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
             </v-list-item-content>
@@ -54,7 +54,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="indicatorsMetadata['key-7'].indicator"
+                v-text="$t('countryProfile.infoBox.lang')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
@@ -64,7 +64,7 @@
           </v-list-item>
           <v-list-item v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')">
             <v-list-item-content class="small-padding">
-              <v-list-item-title class="one-line_header" v-text="indicatorsMetadata['key-wdi-AG.SRF.TOTL.K2'].indicator"></v-list-item-title>
+              <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.area')"></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}} <span v-if="checkNoData('key-wdi-AG.SRF.TOTL.K2')">km<sup>2</sup></span></v-list-item-subtitle>
             </v-list-item-content>
@@ -73,11 +73,11 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="indicatorsMetadata['key-10'].indicator"
+                v-text="$t('countryProfile.infoBox.income')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
-                getIndicator("key-10").value
+                computeIncome(getIndicator("key-10").value)
               }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -85,7 +85,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="indicatorsMetadata['key-hdr-137506'].indicator"
+                v-text="$t('countryProfile.infoBox.hdi')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
@@ -97,7 +97,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="indicatorsMetadata['key-wdi2-SI.POV.GINI'].indicator"
+                v-text="$t('countryProfile.infoBox.gini')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
@@ -109,7 +109,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title class="one-line_header">
                 <a :href="getIndicator('key-13').value" target="_blank">
-                  {{ indicatorsMetadata["key-13"].indicator }}
+                  {{ $t('countryProfile.infoBox.countryPage') }}
                 </a>
               </v-list-item-title>
             </v-list-item-content>
@@ -152,20 +152,29 @@ export default {
     }),
   },
   methods: {
+    computeIncome(income) {
+      if (income === "Lower-middle income") {
+        return this.$t('countryProfile.infoBox.incomeLowMiddle')
+      } else if (income === "High income") {
+        return this.$t('countryProfile.infoBox.incomeHigh')
+      } else if (income === "Upper-middle income") {
+        return this.$t('countryProfile.infoBox.incomeUpMiddle')
+      }
+    },
     computeHDI(hdi) {
       let hdiNum = parseFloat(hdi),
         hdiClass = "No data";
       if (hdi >= 0.8) {
-        hdiClass = "Very high human development";
+        hdiClass = this.$t('countryProfile.infoBox.hdiVHigh');
       } else if (hdi >= 0.7) {
-        hdiClass = "High human development";
+        hdiClass = this.$t('countryProfile.infoBox.hdiHigh');
       } else if (hdi >= 0.55) {
-        hdiClass = "Medium human development";
+        hdiClass = this.$t('countryProfile.infoBox.hdiMedium');
       } else if (hdi > 0) {
-        hdiClass = "Low human development";
+        hdiClass = this.$t('countryProfile.infoBox.hdiLow');
       } else {
-        hdiClass = "No data";
-        hdiNum = "No data";
+        hdiClass =  this.$t('root.noData');
+        hdiNum =  this.$t('root.noData');
       }
       return `${hdiNum}, ${hdiClass}`;
     },

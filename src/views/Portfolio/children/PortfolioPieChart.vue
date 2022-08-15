@@ -6,7 +6,7 @@
     <div :style="{visibility: !noData ? 'visible' : 'hidden'}" class="pie-chart" :id="chartName + postfix">
     </div>
     <div class="d-none" v-for="(axis, index) in data" :id="chartName + postfix +'tooltip'+ index" :key="index">
-      <portfolio-pieChart-tooltip :header="axis.category" :budget="axis.value" :finance="nFormatter(axis.value)" :percetage="data"/>
+      <portfolio-pieChart-tooltip :header="chartName === 'region' ? $t(`regions.${axis.category}`) : $t(`portfolio.fundingTypes.${axis.category}`)" :budget="axis.value" :finance="nFormatter(axis.value)" :percetage="data"/>
     </div>
   </div>
 </template>
@@ -56,6 +56,9 @@ export default {
     }
   },
   computed: {
+    locale() {
+      return this.$i18n.locale
+    },
     noData() {
       return this.data.every(item => item.value === 0)
     }
@@ -157,7 +160,8 @@ export default {
         })
         .text(function (d) {
           if (d.data.value == 0) { return ""; } else {
-            return d.data.category + " - " + rootThis.nFormatter(d.data.value, 1);
+            let text = rootThis.chartName === 'region' ? rootThis.$t(`regions.${d.data.category}`) : rootThis.$t(`portfolio.fundingTypes.${d.data.category}`)
+            return text + " - " + rootThis.nFormatter(d.data.value, 1);
           }
         });
       let sumall = 0
@@ -172,7 +176,8 @@ export default {
         }
 
         if (!showText) { return ""; } else {
-          return d.data.category + " - " + rootThis.nFormatter(d.data.value, 1);
+          let text = rootThis.chartName === 'region' ? rootThis.$t(`regions.${d.data.category}`) : rootThis.$t(`portfolio.fundingTypes.${d.data.category}`)
+          return text + " - " + rootThis.nFormatter(d.data.value, 1);
         }
       });
       text.transition().duration(1000)
@@ -263,6 +268,9 @@ export default {
     },
     watch: {
       data() {
+        this.$nextTick(this.drawChart);
+      },
+      locale() {
         this.$nextTick(this.drawChart);
       }
     },

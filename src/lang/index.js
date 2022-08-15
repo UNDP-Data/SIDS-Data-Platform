@@ -5,23 +5,40 @@ import axios from 'axios';
 
 Vue.use(VueI18n);
 let i18n;
+const loadedLanguages = []
 export function initI18n() {
-  const lang = ['en', 'pt', 'fr', 'es'].some(l => l === navigator.language.split('-')[0]) ? navigator.language.split('-')[0] : 'en'
-
-  return service.loadLang(lang).then(function(data) {
+  let lang = localStorage.getItem('lang');
+  if(!lang) {
+    lang = ['en', 'pt', 'fr', 'es'].some(l => l === navigator.language.split('-')[0]) ? navigator.language.split('-')[0] : 'en'
+  }
+  let promise;
+  if(lang !== "en") {
+    promise = Promise.all([service.loadLang(lang), service.loadLang('en')])
+  } else {
+    promise = Promise.all([service.loadLang(lang)])
+  }
+  return promise.then(function([data, enData]) {
+    let messages = {};
+    messages[lang] = data;
+    if(lang !== "en") {
+      messages["en"] = enData;
+    }
     i18n = new VueI18n({
       locale: lang,
       fallbackLocale: 'en',
-      messages: data
+      messages
     })
+
+    loadedLanguages.push(lang)
+    localStorage.setItem('lang', lang);
     return i18n;
   })
 }
-
-const loadedLanguages = [] // our default language that is preloaded
+ // our default language that is preloaded
 
 function setI18nLanguage (lang) {
   i18n.locale = lang
+  localStorage.setItem('lang', lang);
   axios.defaults.headers.common['Accept-Language'] = lang
   document.querySelector('html').setAttribute('lang', lang)
   return lang

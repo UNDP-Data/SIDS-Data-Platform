@@ -49,7 +49,7 @@ import size from '@/mixins/size.mixin';
 
 export default {
   name: 'InfoHoverTooltip',
-  props:['contentName', 'large', 'disabled', 'contentClass', 'bottom', 'attach'],
+  props:['contentName', 'large', 'noMaxHeight', 'disabled', 'contentClass', 'bottom', 'attach'],
   mixins:[size],
   computed: {
     textContent() {
@@ -68,7 +68,7 @@ export default {
       return this.isMobile ? '95%' : '800px'
     },
     maxHeight() {
-      return this.isMobile ? '60%' : 'auto'
+      return this.isMobile && !this.noMaxHeight ? '60%' : 'auto'
     }
   }
 }
