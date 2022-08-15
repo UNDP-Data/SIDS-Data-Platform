@@ -67,16 +67,9 @@ import {
   parse
 } from './timeSeries'
 
-    // <script src="scripts/vizEngineUpdate.js"></script>
-    // <script src="scripts/vizEngineElementAttributes.js"></script>
-    // <script src="scripts/vizEngineGlobals.js"></script>
-    // <script src="scripts/vizEngineHandlers.js"></script>
-    // <script src="scripts/vizEngineHelperFunctions.js"></script>
-    // <script src="scripts/vizEngineInit.js"></script>
-    // <script src="scripts/processIndexData.js"></script>
 export default class Choro {
-  constructor({viz,countryList, timeSeriesContainer, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page, legendContainerSelector, mapContainerSelector, profileData, vizContainerWidth, vizContainerHeight, sidsXML, mapLocations}) {
-    this.initState({viz, countryList, timeSeriesContainer, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page,legendContainerSelector, mapLocations, mapContainerSelector, vizContainerWidth, vizContainerHeight, profileData})
+  constructor({viz, $t, vue, countryList, timeSeriesContainer, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page, legendContainerSelector, mapContainerSelector, profileData, vizContainerWidth, vizContainerHeight, sidsXML, mapLocations}) {
+    this.initState({viz, $t, vue, countryList, timeSeriesContainer, data, clickCallback, year, countryType, selectedIndis, indicatorCode, page,legendContainerSelector, mapLocations, mapContainerSelector, vizContainerWidth, vizContainerHeight, profileData})
     this.initVizEngine({sidsXML})
     if(indicatorCode!=='region' || this.vizWidth<800){
       this.updateVizEngine(indicatorCode)
@@ -84,6 +77,8 @@ export default class Choro {
   }
   initState({
     viz,
+    $t,
+    vue,
     countryList,
     timeSeriesContainer,
     data,
@@ -97,6 +92,8 @@ export default class Choro {
     vizContainerWidth,
     vizContainerHeight,
     profileData}){
+    this.$t = $t;
+    this.vue = vue;
     this.mapLocations = mapLocations;
     this.countryType = countryType || 'All';
     this.page = page || 'mvi' ;
@@ -124,6 +121,8 @@ export default class Choro {
     this.timeSeriesContainer = timeSeriesContainer;
     this.profileData = profileData;
     this.selectedIndis = selectedIndis;
+    d3.select(mapContainerSelector).select('svg').remove();
+    d3.select(legendContainerSelector).select('svg').remove();
     this.main_chart_svg = d3.select(mapContainerSelector)
       .append("svg")
       .attr("width", vizContainerWidth)

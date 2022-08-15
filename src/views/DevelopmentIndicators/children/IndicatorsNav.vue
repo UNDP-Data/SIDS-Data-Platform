@@ -231,7 +231,7 @@
           dense
         >
           <template slot="selection" slot-scope="data">
-            <span class="select-text-element">{{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.year}}</span>
+            <span class="select-text-element">{{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.name}}</span>
           </template>
           <template slot="item" slot-scope="data">
             {{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.name}}

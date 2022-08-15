@@ -9,7 +9,6 @@ import {
 import {
   regionColors,
   getRandomInt,
-  getIsoByName,
   nFormatter,
   filterObject
 } from './vizEngineHelperFunctions';
@@ -600,8 +599,8 @@ export function updateCountryTitles(
     .selectAll(".choroText")
     .transition()
     .duration(1200) //make transition time relative to to/from viz
-    .attr("transform", function () {
-      let country = getIsoByName(this.innerHTML);
+    .attr("transform", function (a,b,c) {
+      let country = c[b].id.replace('-text', '');
       try {
         return vizElementAttributes[country]["TT"];
       } catch (error) {
@@ -627,8 +626,8 @@ export function updateCountryTitles(
     if (this.indiSelections["viz"] == "series") {
       this.sidsMapSelection.selectAll('.choroText').attr('fill-opacity', 0)
     } else {
-      this.sidsMapSelection.selectAll('.choroText').each(function () {
-        let country = getIsoByName(this.innerHTML);
+      this.sidsMapSelection.selectAll('.choroText').each(function (a,b,c) {
+        let country = c[b].id.replace('-text', '');
 
         if (
           rootThis.indicatorCode == "Region" &&
@@ -1134,11 +1133,11 @@ export function updateRegionLables() {
     ) {
       regionTitleVals = {
         opacity: 1,
-        pacificX: 775,
+        pacificX: 815,
         pacificY: 460,
-        caribbeanX: 760,
+        caribbeanX: 815,
         caribbeanY: 130,
-        aisX: 785,
+        aisX: 815,
         aisY: 335,
       };
     } else if (
@@ -1147,11 +1146,11 @@ export function updateRegionLables() {
       if (this.indiSelections["sortby"] == "rank") {
         regionTitleVals = {
           opacity: 1,
-          pacificX: 695,
+          pacificX: 725,
           pacificY: 330,
-          caribbeanX: 680,
+          caribbeanX: 725,
           caribbeanY: 170,
-          aisX: 705,
+          aisX: 725,
           aisY: 250,
         };
 
@@ -1162,26 +1161,26 @@ export function updateRegionLables() {
         if (countryListLength > 0) {
           regionTitleVals = {
             opacity: 1,
-            pacificX: 695,
+            pacificX: 725,
             pacificY:
               40 * (regionRanks.findIndex(v => v === regionRank["pacific"]+'p')) +
               60,
-            caribbeanX: 680,
+            caribbeanX: 725,
             caribbeanY:
               40 * (regionRanks.findIndex(v => v === regionRank["caribbean"]+'c')) +
               60,
-            aisX: 705,
+            aisX: 725,
             aisY:
               40 * (regionRanks.findIndex(v => v === regionRank["ais"]+'a')) + 60,
           };
         } else {
           regionTitleVals = {
             opacity: 1,
-            pacificX: 695,
+            pacificX: 725,
             pacificY: 450,
-            caribbeanX: 680,
+            caribbeanX: 725,
             caribbeanY: 110,
-            aisX: 705,
+            aisX: 725,
             aisY: 300,
           };
         }
@@ -1190,17 +1189,13 @@ export function updateRegionLables() {
         }
         // }
       } else if (this.indiSelections["sortby"] == "region") {
-        console.log(indicatorDataYear)
         if(this.vizWidth < 800) {
-          let k = 0;
           let aisOffset = regionCountries.caribbean.reduce((offset, iso) => {
             if(indicatorDataYear[iso] && indicatorDataYear[iso] !== "No Data") {
               offset+=30
-              k+=1
             }
             return offset
           }, 30*2);
-          console.log(k, regionCountries.caribbean)
           let pacificOffset = regionCountries.ais.reduce((offset, iso) => {
             if(indicatorDataYear[iso] && indicatorDataYear[iso] !== "No Data") {
               offset+=30
@@ -1219,9 +1214,9 @@ export function updateRegionLables() {
         } else {
           regionTitleVals = {
             opacity: 1,
-            pacificX: 715,
+            pacificX: 725,
             pacificY: 450,
-            caribbeanX: 700,
+            caribbeanX: 725,
             caribbeanY: 110,
             aisX: 725,
             aisY: 300,

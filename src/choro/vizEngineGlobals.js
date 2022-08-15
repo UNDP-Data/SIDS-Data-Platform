@@ -14,7 +14,7 @@ export const countryListLongitude = ["Belize", "Jamaica", "Cayman Islands", "Cub
     "Cabo Verde", "Guinea-Bissau",
     "São Tomé and Príncipe", "Comoros", "Bahrain", "Mauritius", "Seychelles", "Maldives", "Singapore", "", "",
     "Timor Leste", "Palau", "Papua New Guinea", "Solomon Islands",
-    "Micronesia", "Marshall Islands", "Vanuatu", "Nauru", "Kiribati", "Fiji", "Tuvalu", "Tonga", "Niue", "Samoa", "Cook Islands"]
+    "Micronesia, Fed. Sts.", "Marshall Islands", "Vanuatu", "Nauru", "Kiribati", "Fiji", "Tuvalu", "Tonga", "Niue", "Samoa", "Cook Islands"]
 //
 export const regionCountries = {
     "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP", "AIS"],
