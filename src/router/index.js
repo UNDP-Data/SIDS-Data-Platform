@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store'
 import vuetify from '@/plugins/vuetify';
-import { loadLanguageAsync } from '@/lang';
 
 Vue.use(VueRouter)
 
@@ -12,15 +11,16 @@ const routes = [
     link: '/portfolio',
     name: 'UNDP SIDS Portfolio',
     props: (to) => ({
-      region: to.query.region || 'All',
+      region: to.query.region || 'allSids',
       year: to.query.year || 'all',
       fundingCategory: decodeURIComponent(to.query.fundingCategory || 'All') ,
       fundingSource: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
       goalsType: to.params.goalsType || 'sdgs'
     }),
     meta:{
-      header:'UNDP Portfolio in Small Island Developing States',
+      header:'portfolio.header',
       infoContent:'aboutThis-portfolio',
+      linkText:'portfolio',
       icon:'portfolio'
     },
     // route level code-splitting
@@ -33,7 +33,7 @@ const routes = [
       await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
       await store.dispatch('sids/generatePortfolioData', {
-        region: to.query.region || 'All',
+        region: to.query.region || 'allSids',
         year: to.query.year || 'all',
         category: decodeURIComponent(to.query.fundingCategory || 'All') ,
         source: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
@@ -85,9 +85,10 @@ const routes = [
       }
     },
     meta:{
-      header:'Development Indicators',
+      header:'indicators.headerIndicators',
       infoContent:'aboutThis-indicators',
-      icon:'indicators'
+      icon:'indicators',
+      linkText:'indicators'
     },
     props: (to) => (
       {
@@ -128,9 +129,10 @@ const routes = [
       }
     },
     meta:{
-      header:'Multidimensional Vulnerability Index',
+      header:'indicators.headerMVI',
       infoContent:'aboutThis-mvi',
-      icon:'MVI'
+      icon:'MVI',
+      linkText:'mvi'
     },
     props: (to) => (
       {
@@ -161,9 +163,10 @@ const routes = [
       next();
     },
     meta:{
-      header:'Country Profiles',
+      header:'countryProfile.header',
       infoContent:'aboutThis-profiles',
-      icon:'profiles'
+      icon:'profiles',
+      linkText:'profiles'
     },
     props: (route) => ({
       activeCountryId: route.params.country || '',
@@ -175,8 +178,9 @@ const routes = [
     link: '/geospatial-data',
     name: 'Geospatial Data',
     meta:{
-      header:'Geospatial Data',
-      icon:'GIS'
+      header:'gis.header',
+      icon:'GIS',
+      linkText:'gis'
     },
     beforeEnter: async (to, from, next) => {
       await store.dispatch('gis/loadDatasets');
@@ -192,8 +196,9 @@ const routes = [
     link: '/about',
     name: 'About',
     meta:{
-      header:'About the SIDS Data Platform',
-      icon:'about'
+      header:'about.header',
+      icon:'about',
+      linkText:'about'
     },
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
@@ -221,7 +226,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (toRoute, fromRoute, next) => {
-  await loadLanguageAsync(toRoute.params.lang);
   let pagetitle = toRoute && toRoute.name ? toRoute.name : 'Home';
   window.document.title = `${pagetitle} - UNDP SIDS Data Platform`
   next();

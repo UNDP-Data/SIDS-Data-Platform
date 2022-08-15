@@ -12,20 +12,20 @@
         v-bind="attrs"
         v-on="on"
       >
-        <span v-if="isDesktop">Export</span>
+        <span v-if="isDesktop">{{$t('root.buttons.export')}}</span>
         <v-icon dark v-else>mdi-export-variant</v-icon>
       </v-btn>
     </template>
     <v-list dense>
       <v-list-item-group>
         <v-list-item @click="exportCSV">
-          <v-list-item-title>Summary CSV</v-list-item-title>
+          <v-list-item-title>{{$t('root.export.csv')}}</v-list-item-title>
         </v-list-item>
         <v-list-item @click="exportProjectList">
-          <v-list-item-title>Project List</v-list-item-title>
+          <v-list-item-title>{{$t('root.export.list')}}</v-list-item-title>
         </v-list-item>
         <v-list-item @click="exportPDF">
-          <v-list-item-title>Summary PDF</v-list-item-title>
+          <v-list-item-title>{{$t('root.export.pdf')}}</v-list-item-title>
         </v-list-item>
       </v-list-item-group>
     </v-list>

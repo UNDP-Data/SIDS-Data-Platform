@@ -1,5 +1,5 @@
 <template>
-  <div class="tooltip-root" :style="`max-width:${maxWidth}px`">
+  <div class="tooltip-root-sdg" :style="`max-width:${maxWidth}px`">
     <h4 class="block-subheader">{{header}}</h4>
     <div class="tableContainer">
 
@@ -42,19 +42,19 @@ export default {
     headers() {
       let headers = [
         {
-          text: 'Country',
+          text: this.$t('portfolio.country'),
           align: 'start',
           sortable: false,
           value: 'country',
         },
-        { text: 'Budget', value: 'budget',
+        { text: this.$t('portfolio.budget'), value: 'budget',
         sortable: false, },
-        { text: 'Project title', value: 'title',
+        { text: this.$t('portfolio.projectTitle'), value: 'title',
         sortable: false, },
       ];
       if(!this.$route.query.year || this.$route.query.year === 'all') {
         headers.push({
-          text: 'Year', value: 'year',
+          text: this.$t('portfolio.year'), value: 'year',
           sortable: false
         })
       }
@@ -66,7 +66,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.tooltip-root {
+.tooltip-root-sdg {
   padding: 0;
 }
 .tableContainer {

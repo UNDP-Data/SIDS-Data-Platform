@@ -51,10 +51,7 @@ export default {
   computed: {
     ...mapState({
       loading: state => state.loader.loading
-    }),
-    hasTexts() {
-      return this.$route.meta.header
-    }
+    })
   },
   methods: {
     handleScroll () {

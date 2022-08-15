@@ -60,3 +60,9 @@
 .v-slider__tick {
   cursor: pointer;
 }
+.select-text-element{
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
