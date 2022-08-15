@@ -63,8 +63,8 @@
               <div class="mb-1">{{item.units}}</div>
               {{item.def}}
               <v-divider class="mb-1 mt-1"></v-divider>
-              <b>Source:</b>{{item.source}} <br/>
-              <a :href="item.link" target="_blank">Link</a>
+              <b>{{$t('root.source')}}::</b>{{item.source}} <br/>
+              <a :href="item.link" target="_blank">{{$t('root.link')}}:</a>
             </v-card-text>
           </v-card>
         </v-menu>
@@ -133,7 +133,14 @@
       hide-details
       @change="changeCategory"
       :items="indicatorCategories"
-    ></v-select>
+    >
+      <template slot="selection" slot-scope="data">
+        <span class="select-text-element">{{data.item === 'allCategories' ? $t('indicators.forms.allCategories') : data.item}}</span>
+      </template>
+      <template slot="item" slot-scope="data">
+        {{data.item === 'allCategories' ? $t('indicators.forms.allCategories') : data.item}}
+      </template>
+    </v-select>
     <v-select
       v-if="dataset && indicatorSubCategories && indicatorSubCategories.length > 1"
       class="ml-2 mr-2"
@@ -141,7 +148,14 @@
       hide-details
       v-model="activeSubCategory"
       :items="indicatorSubCategories"
-    ></v-select>
+    >
+      <template slot="selection" slot-scope="data">
+        <span class="select-text-element">{{data.item === 'allSubcategories' ? $t('indicators.forms.allSubcategories') : data.item}}</span>
+      </template>
+      <template slot="item" slot-scope="data">
+        {{data.item === 'allSubcategories' ? $t('indicators.forms.allSubcategories') : data.item}}
+      </template>
+    </v-select>
     <v-text-field v-if="dataset"
         class="search-input ml-2 mr-2 mb-2"
         v-model="deepSearch"
@@ -215,7 +229,14 @@
           @change="emitYearChange"
           label="Year"
           dense
-        ></v-select>
+        >
+          <template slot="selection" slot-scope="data">
+            <span class="select-text-element">{{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.year}}</span>
+          </template>
+          <template slot="item" slot-scope="data">
+            {{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.name}}
+          </template>
+        </v-select>
         <v-btn
           @click="toggleYearPlay"
           icon
@@ -233,14 +254,14 @@
           item-value="code"
           :disabled="playingYear"
           @change="emitindicatorChange"
-          label="Dimension"
+          :label="$t('indicators.forms.dimension')"
           dense
         ></v-select>
       </div>
       {{activeIndicator.def}}
       <v-divider class="mb-1 mt-1"></v-divider>
-      <b>Source:</b>{{activeIndicator.source}} <br/>
-      <a :href="activeIndicator.link" target="_blank">Link</a>
+      <b>{{$t('root.source')}}:</b>{{activeIndicator.source}} <br/>
+      <a :href="activeIndicator.link" target="_blank">{{$t('root.link')}}</a>
     </v-card-text>
   </v-card>
   </div>
@@ -262,8 +283,8 @@ export default {
       dataset: null,
       deepSearch:'',
       activeIndicatorDimension:null,
-      activeCategory: 'All categories',
-      activeSubCategory: 'All subcategories',
+      activeCategory: 'allCategories',
+      activeSubCategory: 'allSubcategories',
       activeIndicator:null,
       datasetMeta: datasetMeta,
       datasets: [
@@ -320,16 +341,16 @@ export default {
       if(this.activeDataset) {
         let categories = Object.keys(this.activeDataset);
         categories = categories.filter((categoriy) => { return categoriy !== 'None' });
-        categories.push('All categories')
+        categories.push('allCategories')
         return categories
       }
       return null
     },
     indicatorSubCategories() {
-      if(this.activeCategory !== 'All categories') {
+      if(this.activeCategory !== 'allCategories') {
         let categories = Object.keys(this.activeDataset[this.activeCategory]);
         categories = categories.filter((categoriy) => { return categoriy !== 'none' && categoriy !== 'None' });
-        categories.push('All subcategories')
+        categories.push('allSubcategories')
         return categories
       }
       return null
@@ -353,8 +374,8 @@ export default {
     },
     activeIndicators() {
       let indicatorsArray = [];
-      if(this.activeCategory && this.activeCategory !== 'All categories') {
-        if(this.activeSubCategory && this.activeSubCategory !== 'All subcategories') {
+      if(this.activeCategory && this.activeCategory !== 'allCategories') {
+        if(this.activeSubCategory && this.activeSubCategory !== 'allSubcategories') {
           return this.getSubcategoryindicators(this.activeCategory, this.activeSubCategory)
         }
         for(let subCategory in this.activeDataset[this.activeCategory]) {
@@ -422,8 +443,8 @@ export default {
   },
   methods: {
     toggleDataset(name) {
-      this.activeCategory = 'All categories';
-      this.activeSubCategory = 'All subcategories';
+      this.activeCategory = 'allCategories';
+      this.activeSubCategory = 'allSubcategories';
       this.activeIndicator = null;
       if(this.dataset === name) {
         this.dataset = null;
@@ -433,8 +454,8 @@ export default {
     },
     selectDataset(name) {
       if(name !== this.dataset) {
-        this.activeCategory = 'All categories';
-        this.activeSubCategory = 'All subcategories';
+        this.activeCategory = 'allCategories';
+        this.activeSubCategory = 'allSubcategories';
         this.dataset = name;
       }
     },
@@ -446,7 +467,7 @@ export default {
       return indicatorsList
     },
     changeCategory() {
-      this.activeSubCategory = 'All subcategories'
+      this.activeSubCategory = 'allSubcategories'
     },
     emitindicatorChange(indicator) {
       this.$emit('indicatorChange', indicator)

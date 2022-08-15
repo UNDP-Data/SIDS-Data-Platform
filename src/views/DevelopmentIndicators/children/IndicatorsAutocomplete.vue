@@ -2,7 +2,7 @@
   <v-row class="d-flex justify-center">
     <v-col class="d-flex" cols="8">
       <div class="select indicators-autocomplete">
-        <label class="input-label">Indicator</label>
+        <label class="input-label">{{$t('indicators.forms.indicator')}}</label>
         <v-autocomplete
           class="autocomplete-select"
           rounded

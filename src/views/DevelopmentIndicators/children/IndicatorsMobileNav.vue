@@ -5,7 +5,7 @@
         <v-row class="justify-center">
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">Chart type</label>
+              <label class="input-label">{{$t('indicators.forms.chartType')}}</label>
               <v-select
                 rounded
                 dense
@@ -16,12 +16,19 @@
                 :items="chartTypes"
                 @change="emitChartTypeChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{$t('indicators.tabs.' + data.item.chartType)}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{$t('indicators.tabs.' + data.item.chartType)}}
+                </template>
+              </v-select>
             </div>
           </v-col>
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">Dimension</label>
+              <label class="input-label">{{$t('indicators.forms.dimension')}}</label>
               <v-select
                 rounded
                 dense
@@ -40,7 +47,7 @@
         <v-row class="mt-0">
           <v-col class="d-flex align-end justify-space-between" cols="6">
             <div class="select min-0">
-              <label class="input-label">Year</label>
+              <label class="input-label">{{$t('portfolio.year')}}</label>
               <v-select
                 :disabled="chartType !== 'bars' || years.length === 1"
                 rounded
@@ -52,7 +59,14 @@
                 :items="years"
                 @change="emitYearChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.year}}</span>
+                </template>
+                <template slot="item" slot-scope="data">
+                  {{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.year}}
+                </template>
+              </v-select>
             </div>
             <v-btn
                 class="ml-2 filter-sm-button"
@@ -68,7 +82,7 @@
           </v-col>
           <v-col cols="6">
             <div v-if="chartType === 'bars'" class="select">
-              <label class="input-label">Sorting</label>
+              <label class="input-label">{{$t('indicators.forms.sorting')}}</label>
               <v-select
                 rounded
                 dense
@@ -79,10 +93,17 @@
                 :items="sortingTypes"
                 @change="emitSortingChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{$t('indicators.filters.' + data.item.value)}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{$t('indicators.filters.' + data.item.value)}}
+                </template>
+              </v-select>
             </div>
             <div v-else class="select">
-              <label class="input-label">Region</label>
+              <label class="input-label">{{$t('indicators.forms.region')}}</label>
               <v-select
                 :disabled="chartType === 'choro' || chartType === 'global'"
                 rounded
@@ -94,7 +115,14 @@
                 :items="regions"
                 @change="emitRegionChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{$t('regions.' + data.item)}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{$t('regions.' + data.item)}}
+                </template>
+              </v-select>
             </div>
           </v-col>
         </v-row>

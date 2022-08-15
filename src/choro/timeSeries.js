@@ -717,16 +717,16 @@ export function updateTimeChart({ dataset, optionSelected }) {
   function dataFilter(dataset, countryList, vizWidth) {
     const { datasetOption, countryGroupOption } = optionSelected;
     let filtered0 = dataset[datasetOption]["data"];
-    filtered0.push(computeAverage('AIS', filtered0))
-    filtered0.push(computeAverage('Caribbean', filtered0))
-    filtered0.push(computeAverage('Pacific', filtered0))
+    filtered0.push(computeAverage('ais', filtered0))
+    filtered0.push(computeAverage('caribbean', filtered0))
+    filtered0.push(computeAverage('pacific', filtered0))
     filtered0 = filtered0.filter(c => c.data.length > 0)
     if(vizWidth<800) {
       return filtered0.filter((d) => countryList.includes(d.country)) || []
     }
-    if (countryGroupOption == "All") {
+    if (countryGroupOption == "allSids") {
       return filtered0;
-    } else if (countryGroupOption == "Regional average") {
+    } else if (countryGroupOption == "regionalAvg") {
       return filtered0.filter((d) => d.avg);
     } else {
       const countries = Object.keys(countryGroup[countryGroupOption]);
