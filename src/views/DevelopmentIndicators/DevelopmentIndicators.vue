@@ -52,10 +52,10 @@
           <v-row class="d-none d-md-flex d-print-none nav-filter-row" >
             <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
               <h2 v-if="page!=='mvi'" class="page-header">
-                Development Indicators
+                {{$t('indicators.headerIndicators')}}
               </h2>
               <h2 v-else class="page-header text-left">
-                Multidimensional Vulnerability Index
+                {{$t('indicators.headerMVI')}}
               </h2>
             </v-col>
             <v-col cols='2' sm="1" lg="2">
@@ -119,7 +119,7 @@
                   }"
                   class="tabs tabs-small"
                 >
-                  <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{tab.name}}</v-tab>
+                  <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{$t('indicators.tabs.'+ tab.chartType)}}</v-tab>
                 </v-tabs>
               </div>
             </v-col>
@@ -131,20 +131,27 @@
                   v-model="sorting"
                   class="tabs tabs-small tabs-slider sorting sorting-tabs"
                 >
-                  <v-tab key="rank" value="rank">Rank</v-tab>
-                  <v-tab key="region" value="region">Region</v-tab>
+                  <v-tab key="rank" value="rank">{{$t('indicators.filters.rank')}}</v-tab>
+                  <v-tab key="region" value="region">{{$t('indicators.filters.region')}}</v-tab>
                 </v-tabs>
             </div>
             <div v-if="chartType === 'series'" class="sorting-row">
               <div class="select sorting sorting-select">
-              <v-select
-                rounded
-                dense
-                hide-details
-                v-model="region"
-                :items="regionsDesctop"
-                outlined
-              ></v-select>
+                <v-select
+                  rounded
+                  dense
+                  hide-details
+                  v-model="region"
+                  :items="regionsDesctop"
+                  outlined
+                >
+                  <template slot="selection" slot-scope="data">
+                    <span class="select-text-element">{{$t('regions.' + data.item)}}</span>
+                  </template>
+                  <template  slot="item" slot-scope="data">
+                    {{$t('regions.' + data.item)}}
+                  </template>
+                </v-select>
               </div>
             </div>
           </v-row>
@@ -162,13 +169,13 @@
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">Regional averages</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-avg'" region="Regional average" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-avg'" region="regionalAvg" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">Caribbean</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-car'" region="Caribbean" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-car'" region="caribbean" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
     </div>
@@ -176,13 +183,13 @@
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">AIS</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-ais'" region="AIS" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-ais'" region="ais" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">Pacific</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="Pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
       <p class="print-page-wrap_footer">
@@ -234,19 +241,19 @@ export default {
         ,"mvi-wdi-BX.TRF.PWKR.DT.GD.ZS"
         ,"mvi-wdi-BX.KLT.DINV.WD.GD.ZS"
       ],
-      region: 'All',
+      region: 'allSids',
       regions:[
-        'All',
-        'AIS',
-        'Caribbean',
-        'Pacific'
+        'allSids',
+        'ais',
+        'caribbean',
+        'pacific'
       ],
       regionsDesctop:[
-        'All',
-        'AIS',
-        'Caribbean',
-        'Pacific',
-        'Regional average'
+        'allSids',
+        'ais',
+        'caribbean',
+        'pacific',
+        'regionalAvg'
       ],
       sorting:0,
       menuBar:{
@@ -385,7 +392,7 @@ export default {
           rootThis.transitionTo('bars')
         }
         if(rootThis.isMobile) {
-          rootThis.region = 'All'
+          rootThis.region = 'allSids'
         }
       }, 100);
     },

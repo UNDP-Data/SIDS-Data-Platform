@@ -37,7 +37,7 @@
         class="pt-0 pb-0"
         flat
       >
-      <v-subheader :style="'background-color:'+indicatorCatery.color" class="block-subheader">{{indicatorCatery.category}}</v-subheader>
+      <v-subheader :style="'background-color:'+indicatorCatery.color" class="block-subheader">{{$t('indicators.mvi.'+indicatorCatery.category)}}</v-subheader>
       <v-list-item
       class="mvi-indi-list_item"
         dense
@@ -53,7 +53,7 @@
           ></v-checkbox>
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title>{{indicator.name}}</v-list-item-title>
+          <v-list-item-title>{{$t('indicators.mvi.'+indicator.code.replaceAll('.','-'))}}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>

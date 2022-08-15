@@ -111,7 +111,7 @@ export default {
           if(!country.average) {
             return (typeof this.chartData.data.recentValue[country.iso] !== 'undefined' &&
               this.chartData.data.recentValue[country.iso] !== 'No Data') &&
-              (this.region === 'All' || this.region === country.region || this.compareIdsList.includes(country.id))
+              (this.region === 'allSids' || this.region === country.region.toLowerCase() || this.compareIdsList.includes(country.id))
           } else if (countryGroupJson[country.iso]) {
             return Object.keys(countryGroupJson[country.iso]).some((iso) => {
               return typeof this.chartData.data.recentValue[iso] !== 'undefined' &&
