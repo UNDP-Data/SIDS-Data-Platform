@@ -231,7 +231,14 @@
                   @change="updateRegion"
                   :items="regionsToSelect"
                   outlined
-                ></v-select>
+                >
+                  <template slot="selection" slot-scope="data">
+                    <span class="select-text-element">{{data.item.id ? $t('countryNames.'+data.item.id) : $t('regions.'+data.item.iso)}}</span>
+                  </template>
+                  <template  slot="item" slot-scope="data">
+                   {{data.item.id ? $t('countryNames.'+data.item.id) : $t('regions.'+data.item.iso)}}
+                  </template>
+                </v-select>
               </div>
             </v-col>
             <v-col cols='5'  md="5" lg="12">

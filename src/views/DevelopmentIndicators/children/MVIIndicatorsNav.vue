@@ -9,15 +9,15 @@
         >
           <v-tab :value="0" @change="setPreset('MVI')">
             <info-hover-tooltip :bottom="true" contentName="mviSelectTooltip">
-              <template v-slot:button>MVI</template>
+              <template v-slot:button>{{$t('indicators.mviFilters.mvi')}}</template>
             </info-hover-tooltip>
           </v-tab>
           <v-tab :value="1" @change="setPreset('EVI')">
             <info-hover-tooltip :bottom="true" contentName="eviSelectTooltip">
-              <template v-slot:button>EVI</template>
+              <template v-slot:button>{{$t('indicators.mviFilters.evi')}}</template>
             </info-hover-tooltip>
           </v-tab>
-          <v-tab :value="2">Custom</v-tab>
+          <v-tab :value="2">{{$t('indicators.mviFilters.custom')}}</v-tab>
         </v-tabs>
       </v-col>
       <v-col class="flex-grow-0 d-md-none">
