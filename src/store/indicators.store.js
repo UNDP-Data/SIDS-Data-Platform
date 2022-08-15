@@ -1,5 +1,6 @@
 import service from '@/services'
 import { indexCodes } from '@/choro/index-data';
+import sidsList from '@/assets/sidsList';
 
 export default {
   namespaced: true,
@@ -70,7 +71,14 @@ export default {
     },
     async getProfileData({ state, commit }) {
       if(!state.profileData){
-        const profileData = await service.loadProfileData();
+        let profileData = await service.loadProfileData();
+        Object.keys(profileData).map(c => {
+          try {
+            profileData[c].id = sidsList.find(cs => cs.iso === c).id
+          } catch (e) {
+            delete profileData[c]
+          }
+        })
         commit("setProfileData", profileData);
       }
     },

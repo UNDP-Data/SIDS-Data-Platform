@@ -3,7 +3,7 @@ import tippy, {delegate} from 'tippy.js';
 
 import { indexColors } from './index-data'
 import {regionColors, getBoundingBox, nFormatter} from './vizEngineHelperFunctions'
-import {countryListLongitude, sidsDict, regionsDict, isoToIds} from './vizEngineGlobals'
+import {countryListLongitude, isoToIds} from './vizEngineGlobals'
 //runs this right away (it works, for some reason it doesn't draw the titles if executed on click )
 ///////////////////////////////////
 
@@ -104,6 +104,7 @@ export function showChoroLegend(choroLegend, quantize) {
 ///////////////////////////////
 
 function appendLinesMapAndRegions() {
+  let rootThis = this;
   this.main_chart_svg
     .append("svg:image")
     .attr("x", -18)
@@ -137,9 +138,9 @@ function appendLinesMapAndRegions() {
 
   this.main_chart_svg
     .append("text")
-    .attr("x", 775)
+    .attr("x", 815)
     .attr("y", 460)
-    .text("Pacific")
+    .text(() => { return rootThis.$t.call(rootThis.vue, 'regions.pacific')})
     .style("fill", "#" + regionColors("Pacific", "Y").substring(1))
     .attr("fill-opacity", 1)
     .style("font-size", "18px")
@@ -148,9 +149,9 @@ function appendLinesMapAndRegions() {
 
   this.main_chart_svg
     .append("text")
-    .attr("x", 760)
+    .attr("x", 815)
     .attr("y", 130)
-    .text("Caribbean")
+    .text(() => { return rootThis.$t.call(rootThis.vue, 'regions.caribbean')})
     .style("font-size", "18px")
     .style("font-weight", 1000)
     .style("fill", "#" + regionColors("Caribbean", "Y").substring(1))
@@ -159,9 +160,9 @@ function appendLinesMapAndRegions() {
 
   this.main_chart_svg
     .append("text")
-    .attr("x", 785)
+    .attr("x", 815)
     .attr("y", 335)
-    .text("AIS")
+    .text(() => { return rootThis.$t.call(rootThis.vue, 'regions.ais')})
     .style("fill", "#" + regionColors("AIS", "Y").substring(1))
     .attr("fill-opacity", 1)
     .style("font-size", "18px")
@@ -267,11 +268,14 @@ this.sidsMapSelection
     .append("svg:text")
     .text(function () {
       try {
-        let text = rootThis.profileData[this.parentNode.id].Country;
+        let text = rootThis.$t.call(rootThis.vue, 'countryNames.' + rootThis.profileData[this.parentNode.id].id);
         return text;
       } catch {
         return this.parentNode.id;
       }
+    })
+    .attr("id", function () {
+      return this.parentNode.id+'-text';
     })
     .attr("x", function () {
       return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
@@ -301,7 +305,7 @@ this.sidsMapSelection
 
     .text(function () {
       try {
-        let text = rootThis.profileData[this.parentNode.id].Country;
+        let text = rootThis.$t.call(rootThis.vue, 'countryNames.' + rootThis.profileData[this.parentNode.id].id);
         return text;
       } catch {
         return this.parentNode.id;
@@ -315,7 +319,7 @@ this.sidsMapSelection
     .attr("y", function () {
       try {
         let text = rootThis.profileData[this.parentNode.id].Country;
-        return -1 * 9.65 * countryListLongitude.indexOf(text) + 265;
+        return -1 * 9.5 * countryListLongitude.indexOf(text) + 265;
       } catch {
         return 0;
       }
@@ -324,8 +328,9 @@ this.sidsMapSelection
       let text = rootThis.profileData[this.parentNode.id].Country,
       index = countryListLongitude.indexOf(text);
       if (index >= 0) {
-        return 9.65 * index + 345;
+        return 9.5 * index + 345;
       } else {
+        console.log(text)
         //not the best way of making these hidden. should be improved
         return -1000;
       }
@@ -383,18 +388,18 @@ export function initVizEngineTooltips() {
 
       let content = instance.popper.getElementsByClassName('tippyContent')[0];
       let countryCode = instance.reference.parentElement.id;
-      let year = rootThis.indiSelections.year === 'recentValue' ? 'Most recent value' : rootThis.indiSelections.year;
+      let year = rootThis.indiSelections.year === 'recentValue' ? rootThis.$t.call(rootThis.vue, 'indicators.forms.recent') : rootThis.indiSelections.year;
       let value = 1;
       if(rootThis.vizMode === 'index' && rootThis.indexData) {
         value = rootThis.indexData.index.data[rootThis.indiSelections.year][countryCode];
       } else if (rootThis.indicatorData) {
         value = rootThis.indicatorData.data[rootThis.indiSelections.year][countryCode];
-        year = rootThis.indiSelections.year === 'recentValue' ? `Most recent value (${rootThis.indicatorData.data.recentYear[countryCode]})` : year;
-        year = rootThis.indicatorData.data[rootThis.indiSelections.year][countryCode] === 'No Data' ? rootThis.indicatorData.data.recentYear[countryCode] : year;
+        year = rootThis.indiSelections.year === 'recentValue' ? `${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')} (${rootThis.indicatorData.data.recentYear[countryCode]})` : year;
+        year = (rootThis.indicatorData.data[rootThis.indiSelections.year][countryCode] === 'No Data' || typeof rootThis.indicatorData.data[rootThis.indiSelections.year][countryCode] === 'undefined') ? rootThis.$t.call(rootThis.vue, 'root.noData') : year;
       }
       if(rootThis.indexData || rootThis.indicatorData) {
-        value = typeof value === 'string' ? value : nFormatter(value,2);
-        content.innerHTML = `Value: ${value} <br/> Year: ${year}`;
+        value = (typeof value === 'string' || typeof value === 'undefined') ?  rootThis.$t.call(rootThis.vue, 'root.noData') : nFormatter(value,2);
+        content.innerHTML = `${rootThis.$t.call(rootThis.vue, 'spiders.value')}: ${value} <br/> ${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')}: ${year}`;
       }
     },
     content: function (reference) {
@@ -408,8 +413,10 @@ export function initVizEngineTooltips() {
 
 
         let countryCode = reference.parentElement.id;
-        header.innerHTML = sidsDict[countryCode];
-
+        console.log(reference.parentElement.id, rootThis.profileData[countryCode])
+        if(countryCode && rootThis.profileData[countryCode]) {
+          header.innerHTML = rootThis.$t.call(rootThis.vue, 'countryNames.' + rootThis.profileData[countryCode].id);
+        }
         return tooltipElement
     }
   });
@@ -421,7 +428,7 @@ export function initVizEngineTooltips() {
       let content = instance.popper.getElementsByClassName('tippyContent')[0];
       let regionCode = instance.reference.classList[1].replace('RegionTitle', '');
       let value =  nFormatter(rootThis.regionAverages[regionCode],2);
-      content.innerHTML = `Average: ${value}`;
+      content.innerHTML = `${rootThis.$t.call(rootThis.vue, 'countryNames.'+regionCode+'Average')}: ${value}`;
     },
     content: function (reference) {
         let tooltipElement = document.createElement('div'),
@@ -434,8 +441,9 @@ export function initVizEngineTooltips() {
 
 
         let regionCode = reference.classList[1].replace('RegionTitle', '');
-        header.innerHTML = regionsDict[regionCode];
-
+        if(regionCode) {
+          header.innerHTML = rootThis.$t.call(rootThis.vue, 'regions.'+regionCode);
+        }
         return tooltipElement
     }
   });

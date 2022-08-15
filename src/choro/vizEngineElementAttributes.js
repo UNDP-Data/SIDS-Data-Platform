@@ -108,7 +108,12 @@ export function updateCountryAVGbars(dataObj) {
             }) //
           g.append('text')
             .attr("font-size", 10)
-            .text(avgs[i] + ' Average')
+            .text(() => {
+              return rootThis.$t.call(rootThis.vue, 'countryNames.' + avgs[i].toLowerCase() + 'Average')
+            })
+            .attr("id", function () {
+              return avgs[i] + '-text';
+            })
             .attr("x", function () {
               return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
             })
