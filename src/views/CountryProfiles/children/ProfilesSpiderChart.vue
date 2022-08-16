@@ -104,6 +104,9 @@ export default {
     fullGraphOptions(){
       return Object.assign({} ,this.defaultGraphOptions, this.graphOptions);
     },
+    locale() {
+      return this.$i18n.locale
+    },
     maxAxisValue() {
       return this.ranks.reduce((maxCountriesValue, country)=>{
         const currentCountryMax = country.axes.reduce((maxAxesValue, axe)=>{
@@ -527,6 +530,9 @@ export default {
   },
   watch: {
     ranks() {
+      this.$nextTick(this.drawGraph);
+    },
+    locale() {
       this.$nextTick(this.drawGraph);
     }
   },

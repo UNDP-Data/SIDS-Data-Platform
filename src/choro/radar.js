@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import {nFormatter} from './vizEngineHelperFunctions'
-import { sidsDict } from './vizEngineGlobals'
+import sidsListFull from '@/assets/sidsListFull'
 
-export function RadarChart(parent_selector, options, countryList, pillar, dataFull) {
+export function RadarChart(parent_selector, options, countryList, pillar, dataFull, $t, vue) {
 	let data = dataFull[pillar]
 	const wrap = (text, width) => {
 		text.each(function () {
@@ -360,7 +360,7 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 					.style('display', 'block')
 					.text(function () {
 						//console.log(d)
-						return d.name
+						return $t.call(vue, 'indicators.mvi.' + d.name.toLowerCase())
 					});//["Profile"].Country
 			})
 			.on('mouseout', () => {
@@ -481,10 +481,10 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 				tooltip.transition()
 					.style('display', 'block')
 					.text(nFormatter(d.value,2));
-			}else if (pillar=="customIndex") {
+			} else if (pillar=="customIndex") {
 				tooltip.transition()
 					.style('display', 'block')
-					.text(nFormatter(d.value,2)+", "+ sidsDict[d.axis]);
+					.text(nFormatter(d.value,2)+", "+ $t.call(vue, 'countryNames.' + sidsListFull.find(c => c.iso === d.axis).id))
 			} else {
 				tooltip.transition()
 					.style('display', 'block')
@@ -492,9 +492,7 @@ export function RadarChart(parent_selector, options, countryList, pillar, dataFu
 						let value = dataFull[pillar.slice(0, -4)][0].axes.filter(obj => { return obj.axis === d.axis })[0].value
 						if (isNaN(value)) {
 							return ""
-
 						}
-
 						else {
 							return nFormatter(value,2) + ", " + rankFormat(d.value.toString()) + cfg.unit;
 						}

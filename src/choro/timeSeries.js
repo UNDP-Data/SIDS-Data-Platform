@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import paper from 'paper'
 import { interpolatePath } from 'd3-interpolate-path';
+import sidsListFull from '@/assets/sidsListFull'
 
 paper.setup(document.getElementById("myCanvas"));
 
@@ -618,7 +619,10 @@ export function updateTimeChart({ dataset, optionSelected }) {
           return d.y
         })
         .attr("cursor", "pointer")
-        .text((d) => countryNames[d.country]);
+        .text((d) => {
+          let cId = sidsListFull.find( c => c.iso === d.country).id
+          return rootThis.$t.call(rootThis.vue, 'countryNames.' + cId);
+        });
 
         g.selectAll("text")
         .attr("x", () => {
