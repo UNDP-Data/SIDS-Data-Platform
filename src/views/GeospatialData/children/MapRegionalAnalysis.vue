@@ -21,7 +21,7 @@
       </div>
     </template>
     <span>
-      <b>Regional Analysis</b> - Draw an area of interest to compute statistics for the region
+      <b>{{$t('gis.toolbar.regionalAnalysis[0]')}}</b> {{$t('gis.toolbar.regionalAnalysis[1]')}}
     </span>
   </v-tooltip>
     <div class="d-none" id="drawControls">
