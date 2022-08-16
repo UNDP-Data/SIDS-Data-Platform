@@ -244,7 +244,9 @@ export function drawIndexSpider() {
     radarChartOptionsCustom,
     subindexList,
     "customIndex",
-    { customIndex: this.spiderData }
+    { customIndex: this.spiderData },
+    this.$t,
+    this.vue
   );
 }
 

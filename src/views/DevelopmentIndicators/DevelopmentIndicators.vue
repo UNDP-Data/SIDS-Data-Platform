@@ -3,29 +3,29 @@
     <div class="print-page-wrap">
       <printout-header>
         <template slot="text">
-          <b>SIDS indicator report</b> <br/> {{activeIndicatorsMeta.indicator}}
+          <b>{{$t('indicators.export.report')}}</b> <br/> {{activeIndicatorsMeta.indicator}}
         </template>
       </printout-header>
       <p class="d-none d-print-block">
-        <b>Dataset:</b>{{datasetMeta[activeIndicatorsMeta.dataset]['Dataset Name']}}
+        <b>{{$t('gis.controller.datasets')}}:</b>{{datasetMeta[activeIndicatorsMeta.dataset]['Dataset Name']}}
       </p>
       <p class="d-none d-print-block">
-        <b>Definition:</b>{{activeIndicatorsMeta.def}}
+        <b>{{$t('spiders.definition')}}:</b>{{activeIndicatorsMeta.def}}
       </p>
       <p class="d-none d-print-block">
-        <b>Source:</b>{{activeIndicatorsMeta.sourcce}}{{activeIndicatorsMeta.link}}
+        <b>{{$t('spiders.source')}}:</b>{{activeIndicatorsMeta.sourcce}}{{activeIndicatorsMeta.link}}
       </p>
       <v-row  v-if="page!=='mvi'" dense class="printable-hidden">
         <v-col cols='12'>
           <indicators-choro-chart class="choro-printabe" v-if='!noData' :chartId="'choro-print'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'bars'" :indicatorCode="indicator"/>
-          <h4 class="text-center" v-else>No data for selected indicator</h4>
+          <h4 class="text-center" v-else>{{$t('root.noData')}}</h4>
           <p v-if="year === 'recentValue'" class="text-center">
-            Bar chart values are for the most recent year avaliable
+            {{$t('indicators.export.valuesLast')}}
           </p>
           <p class="text-center">
-            <span class="choro-print-legend choro-print-legend_caribean">Caribbean</span>
-            <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">AIS</span>
-            <span class="choro-print-legend choro-print-legend_pacific">Pacific</span>
+            <span class="choro-print-legend choro-print-legend_caribean">{{$t('countryNames.caribbean')}}</span>
+            <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">{{$t('countryNames.ais')}}</span>
+            <span class="choro-print-legend choro-print-legend_pacific">{{$t('countryNames.pacific')}}</span>
           </p>
           </v-col>
       </v-row>

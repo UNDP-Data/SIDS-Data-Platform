@@ -1237,9 +1237,9 @@ export function updateRegionLables() {
       if (this.indiSelections["sortby"] == "rank") {
         regionTitleVals = {
           opacity: 1,
-          pacificX: 735,
+          pacificX: 745,
           pacificY: 330,
-          caribbeanX: 720,
+          caribbeanX: 745,
           caribbeanY: 170,
           aisX: 745,
           aisY: 250,
