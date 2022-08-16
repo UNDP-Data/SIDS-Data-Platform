@@ -82,6 +82,9 @@ export default {
     ...mapState({
       portfolioData: state => state.sids.portfolioData,
     }),
+    locale() {
+      return this.$i18n.locale
+    },
     barsHeight(){ return this.svgHeight - this.barsMargin.top - this.barsMargin.bottom },
     barWidth() {
       let barsWidth = 56;
@@ -444,7 +447,7 @@ export default {
                     return template.innerHTML;
                   },
                   onTrigger() {
-                    rootThis.tooltipGoalTitle = data.title
+                    rootThis.tooltipGoalTitle = rootThis.$t(`root.${rootThis.goalsType}.${data.id}.title`)
                     rootThis.tooltipGoalName = data.name
                   },
                   onShow(instance) {
@@ -545,6 +548,9 @@ export default {
       this.goals = goals[this.goalsType];
     },
     barsData() {
+      this.$nextTick(this.drawBars);
+    },
+    locale() {
       this.$nextTick(this.drawBars);
     }
   },

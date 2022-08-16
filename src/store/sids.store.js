@@ -108,7 +108,7 @@ export default {
     generatePortfolioData({ state, commit }, {year, region, category, source}) {
       let sourcesFilteringProjects = [];
       let filteredData = state.SIDSDataWithDonors.filter(project => {
-        if(region !== 'All' && (project.region !== region && project.country !== region)) {
+        if(region !== 'allSids' && (project.region.toLowerCase() !== region && project.country !== region)) {
           return false
         }
         if(year !== 'all' && project.year !== year) {
@@ -143,6 +143,7 @@ export default {
         sources = sources.filter((donor) => checkDonorsCategory(donor, category))
       }
       sources.unshift({
+        text: 'allSources',
         name:'All Funding Sources',
         subCategory:'all'
       })

@@ -13,6 +13,7 @@
   color: #082753;
   font-size: 18px !important;
   font-weight: 600 !important;
+  text-transform: capitalize;
 }
 @media all and (max-width:959px) {
   .page-header {

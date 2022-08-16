@@ -1,5 +1,5 @@
 export const countryGroupJson = {
-  AIS: {
+  ais: {
     BHR: "Bahrain",
     COM: "Comoros",
     CPV: "Cabo Verde",
@@ -10,7 +10,7 @@ export const countryGroupJson = {
     STP: "Sao Tome and Principe",
     SYC: "Seychelles",
   },
-  Caribbean: {
+  caribbean: {
     AIA: "Anguilla",
     ABW: "Aruba",
     ATG: "Antigua and Barbuda",
@@ -37,7 +37,7 @@ export const countryGroupJson = {
     VCT: "Saint Vincent and the Grenadines",
     VGB: "Virgin Islands, British",
   },
-  Pacific: {
+  pacific: {
     COK: "Cook Islands",
     FJI: "Fiji",
     FSM: "Micronesia, Federated States of",
@@ -56,4 +56,4 @@ export const countryGroupJson = {
     WSM: "Samoa",
   },
 };
-export const countryColors = ['#DDA63A', '#4C9F38', '#C5192D', '#FF3A21', '#26BDE2', '#FCC30B', '#A21942', '#FD6925', '#DD1367', '#FD9D24', '#8F8B2E', '#3F7E44', '#0A97D9', '#56C02B', '#00689D', '#19486A', '#E5243B'] 
+export const countryColors = ['#DDA63A', '#4C9F38', '#C5192D', '#FF3A21', '#26BDE2', '#FCC30B', '#A21942', '#FD6925', '#DD1367', '#FD9D24', '#8F8B2E', '#3F7E44', '#0A97D9', '#56C02B', '#00689D', '#19486A', '#E5243B']

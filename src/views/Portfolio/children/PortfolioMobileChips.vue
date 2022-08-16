@@ -55,11 +55,11 @@ export default {
   computed:{
     projectsNumber() {
       switch (this.region) {
-        case 'Caribbean':
+        case 'caribbean':
           return 25;
-        case 'AIS':
+        case 'ais':
           return 9;
-        case 'Pacific':
+        case 'pacific':
           return 16;
         default:
           return 50;
@@ -67,11 +67,11 @@ export default {
     },
     memberStates() {
       switch (this.region) {
-        case 'Caribbean':
+        case 'caribbean':
           return 16
-        case 'AIS':
+        case 'ais':
           return 9
-        case 'Pacific':
+        case 'pacific':
           return 13
         default:
           return 38

@@ -2,373 +2,373 @@ export default [
   {
     id:'anguilla',
     name: 'Anguilla',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'AIA',
     unMeber: false
   },
   {
     id:'antiguaAndBarbuda',
     name: 'Antigua and Barbuda',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'ATG',
     unMeber: true
   },
   {
     id:'aruba',
     name: 'Aruba',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'ABW',
     unMeber: false
   },
   {
     id:'bahamas',
     name: 'Bahamas',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'BHS',
     unMeber: true
   },
   {
     id:'bahrain',
     name: 'Bahrain',
-    region:'AIS',
+    region:'ais',
     iso:'BHR',
     unMeber: true
   },
   {
     id:'barbados',
     name: 'Barbados',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'BRB',
     unMeber: true
   },
   {
     id:'belize',
     name: 'Belize',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'BLZ',
     unMeber: true
   },
   {
     id:'bermuda',
     name: 'Bermuda',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'BMU',
     unMeber: false
   },
   {
     id:'britishVirginIslands',
     name: 'Virgin Islands, British',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'VGB',
     unMeber: false
   },
   {
     id:'caboVerde',
     name: 'Cabo Verde',
-    region:'AIS',
+    region:'ais',
     iso:'CPV',
     unMeber: true
   },
   {
     id:'caymanIslands',
     name: 'Cayman Islands',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'CYM',
     unMeber: false
   },
   {
     id:'comoros',
     name: 'Comoros',
-    region:'AIS',
+    region:'ais',
     iso:'COM',
     unMeber: true
   },
   {
     id:'cookIslands',
     name: 'Cook Islands',
-    region:'Pacific',
+    region:'pacific',
     iso:'COK',
     unMeber: false
   },
   {
     id:'cuba',
     name: 'Cuba',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'CUB',
     unMeber: true
   },
   {
     id:'curacao',
     name: 'Curaçao',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'CUW',
     unMeber: false
   },
   {
     id:'dominica',
     name: 'Dominica',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'DMA',
     unMeber: true
   },
   {
     id:'dominicanRepublic',
     name: 'Dominican Republic',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'DOM',
     unMeber: true
   },
   {
     id:'fiji',
     name: 'Fiji',
-    region:'Pacific',
+    region:'pacific',
     iso:'FJI',
     unMeber: true
   },
   {
     id:'grenada',
     name: 'Grenada',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'GRD',
     unMeber: true
   },
   {
     id:'guineaBissau',
     name: 'Guinea-Bissau',
-    region:'AIS',
+    region:'ais',
     iso:'GNB',
     unMeber: true
   },
   {
     id:'guyana',
     name: 'Guyana',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'GUY',
     unMeber: true
   },
   {
     id:'haiti',
     name: 'Haiti',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'HTI',
     unMeber: true
   },
   {
     id:'jamaica',
     name: 'Jamaica',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'JAM',
     unMeber: true
   },
   {
     id:'kiribati',
     name: 'Kiribati',
-    region:'Pacific',
+    region:'pacific',
     iso:'KIR',
     unMeber: true
   },
   {
     id:'kittsAndNevis',
     name: 'Saint Kitts and Nevis',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'KNA',
     unMeber: true
   },
   {
     id:'maldives',
     name: 'Maldives',
-    region:'AIS',
+    region:'ais',
     iso:'MDV',
     unMeber: true
   },
   {
     id:'marshallIslands',
     name: 'Marshall Islands',
-    region:'Pacific',
+    region:'pacific',
     iso:'MHL',
     unMeber: true
   },
   {
     id:'mauritius',
     name: 'Mauritius',
-    region:'AIS',
+    region:'ais',
     iso:'MUS',
     unMeber: true
   },
   {
     id:'micronesia',
     name: 'Micronesia, Federated States of',
-    region:'Pacific',
+    region:'pacific',
     iso:'FSM',
     unMeber: true
   },
   {
     id:'montserrat',
     name: 'Montserrat',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'MSR',
     unMeber: false
   },
   {
     id:'nauru',
     name: 'Nauru',
-    region:'Pacific',
+    region:'pacific',
     iso:'NRU',
     unMeber: true
   },
   {
     id:'niue',
     name: 'Niue',
-    region:'Pacific',
+    region:'pacific',
     iso:'NIU',
     unMeber: false
   },
   {
     id:'palau',
     name: 'Palau',
-    region:'Pacific',
+    region:'pacific',
     iso:'PLW',
     unMeber: true
   },
   {
     id:'papuaNewGuinea',
     name: 'Papua New Guinea',
-    region:'Pacific',
+    region:'pacific',
     iso:'PNG',
     unMeber: true
   },
   {
     id:'saintLucia',
     name: 'Saint Lucia',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'LCA',
     unMeber: true
   },
   {
     id:'samoa',
     name: 'Samoa',
-    region:'Pacific',
+    region:'pacific',
     iso:'WSM',
     unMeber: true
   },
   {
     id:'saoTomeAndPrincipe',
     name: 'Sao Tome and Principe',
-    region:'AIS',
+    region:'ais',
     iso:'STP',
     unMeber: true
   },
   {
     id:'seychelles',
     name: 'Seychelles',
-    region:'AIS',
+    region:'ais',
     iso:'SYC',
     unMeber: true
   },
   {
     id:'singapore',
     name: 'Singapore',
-    region:'AIS',
+    region:'ais',
     iso:'SGP',
     unMeber: true
   },
   {
     id:'sintMaarten',
     name: 'Sint Maarten',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'SXM',
     unMeber: false
   },
   {
     id:'solomonIslands',
     name: 'Solomon Islands',
-    region:'Pacific',
+    region:'pacific',
     iso:'SLB',
     unMeber: true
   },
   {
     id:'stVincent',
     name: 'Saint Vincent and the Grenadines',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'VCT',
     unMeber: true
   },
   {
     id:'suriname',
     name: 'Suriname',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'SUR',
     unMeber: true
   },
   {
     id:'timorLeste',
     name: 'Timor-Leste',
-    region:'Pacific',
+    region:'pacific',
     iso:'TLS',
     unMeber: true
   },
   {
     id:'tokelau',
     name: 'Tokelau',
-    region:'Pacific',
+    region:'pacific',
     iso:'TKL',
     unMeber: false
   },
   {
     id:'tonga',
     name: 'Tonga',
-    region:'Pacific',
+    region:'pacific',
     iso:'TON',
     unMeber: true
   },
   {
     id:'trinidadAndTobago',
     name: 'Trinidad and Tobago',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'TTO',
     unMeber: true
   },
   {
     id:'turksAndCaicos',
     name: 'Turks and Caicos Islands',
-    region:'Caribbean',
+    region:'caribbean',
     iso:'TCA',
     unMeber: false
   },
   {
     id:'tuvalu',
     name: 'Tuvalu',
-    region:'Pacific',
+    region:'pacific',
     iso:'TUV',
     unMeber: true
   },
   {
     id:'vanuatu',
     name: 'Vanuatu',
-    region:'Pacific',
+    region:'pacific',
     iso:'VUT',
     unMeber: true
   },
   {
     id:'aisAverage',
-    name: 'AIS average',
-    region:'AIS',
+    name: 'ais average',
+    region:'ais',
     average: true,
-    iso:'AIS'
+    iso:'ais'
   },
   {
     id:'caribbeanAverage',
-    name: 'Caribbean average',
-    region:'Caribbean',
+    name: 'caribbean average',
+    region:'caribbean',
     average: true,
-    iso:'Caribbean'
+    iso:'caribbean'
   },
   {
     id:'pacificAverage',
-    name: 'Pacific average',
-    region:'Pacific',
+    name: 'pacific average',
+    region:'pacific',
     average: true,
-    iso:'Pacific'
+    iso:'pacific'
   },
   {
     id:'Global',
