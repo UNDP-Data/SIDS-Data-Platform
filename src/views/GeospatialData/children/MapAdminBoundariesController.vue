@@ -30,7 +30,7 @@
             </v-btn>
           </template>
           <span>
-            <b>Boundaries</b> - Toggles the display of administrative boundaries.
+            <b>{{$t('gis.toolbar.boundary[0]')}}</b> {{$t('gis.toolbar.boundary[1]')}}
           </span>
         </v-tooltip>
       </template>
@@ -79,7 +79,7 @@ export default {
   ],
   methods: {
     boundary1Update(state) {
-      let source = "admin1",
+      let source = "admin1Overlay",
       slayer = "admin1",
       color = "red";
       if(state){
@@ -97,7 +97,7 @@ export default {
       }
     },
     boundary2Update(state) {
-      let source = "admin2",
+      let source = "admin2Overlay",
       slayer = "admin2",
       color = "#003399";
       if(state){

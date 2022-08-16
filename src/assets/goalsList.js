@@ -340,6 +340,7 @@ export const goals = {
   pillars: [
     {
       name: "Blue Economy",
+      id:"blueEconomy",
       icon: require("@/assets/media/goals-icons/pillars/blueEconomy.png"),
       type:'pillar',
       content:
@@ -347,6 +348,7 @@ export const goals = {
     },
     {
       name: "Climate Action",
+      id:"climateAction",
       icon: require("@/assets/media/goals-icons/pillars/climateAction.png"),
       type:'pillar',
       content:
@@ -354,6 +356,7 @@ export const goals = {
     },
     {
       name: "Digital transformation",
+      id:"digitalTransformation",
       icon: require("@/assets/media/goals-icons/pillars/digitalTransformation.png"),
       type:'pillar',
       content:
