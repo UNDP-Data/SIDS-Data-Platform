@@ -9,7 +9,11 @@
                 <v-list-item-title class="one-line_header">
                   {{indicatorsMetadata[indicator.axis].indicator}}
                 </v-list-item-title>
-                <v-list-item-subtitle class="one-line_subheader">{{formatNumber(indicator.value)}}</v-list-item-subtitle>
+                <v-list-item-subtitle class="one-line_subheader">{{formatNumber(indicator.value)}}
+                  <template v-if="indicator.year && indicator.year!=='No Year'">
+                    ({{indicator.year}})
+                  </template>
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>

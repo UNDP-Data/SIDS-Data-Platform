@@ -16,6 +16,7 @@
           :code="axis.code"
           :header="axis.axis"
           :rank="axis.value"
+          :year="axis.year"
           :value="values[0].axes[index].value"
           :source="indicatorsMetadata[axis.code].source"
           :definition="indicatorsMetadata[axis.code].longDefinition"

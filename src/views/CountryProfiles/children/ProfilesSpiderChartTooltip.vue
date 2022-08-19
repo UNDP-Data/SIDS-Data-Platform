@@ -33,6 +33,12 @@
             <v-list-item-subtitle>{{value}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item  class="p-0">
+          <v-list-item-content class="one-line">
+            <v-list-item-title class="one-line_header one-line_header_full" v-text="'Year:'"></v-list-item-title>
+            <v-list-item-subtitle>{{year}}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
       </v-list-item-group>
     </v-list>
   </div>
@@ -41,7 +47,7 @@
 <script>
 export default {
   name: 'ProfilesSpiderChartTooltip',
-  props: ['header','source','code','rank','value','definition', 'link'],
+  props: ['header','source','code','rank','value','year','definition', 'link'],
 }
 </script>
 
