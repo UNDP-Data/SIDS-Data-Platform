@@ -20,6 +20,7 @@ const routes = [
     }),
     meta:{
       header:'UNDP Portfolio in Small Island Developing States',
+      description:'A digital tool for analyzing the UNDP SIDS Offer Portfolio across the SDGs, SAMOA Pathway priorities, and six UNDP Signature Solutions.',
       infoContent:'aboutThis-portfolio',
       icon:'portfolio'
     },
@@ -86,6 +87,7 @@ const routes = [
     },
     meta:{
       header:'Development Indicators',
+      description:'A database of over 4000 development indicators for SIDS, compiled from 22 sources and featured alongside visualization and analytic tools.',
       infoContent:'aboutThis-indicators',
       icon:'indicators'
     },
@@ -130,6 +132,7 @@ const routes = [
     meta:{
       header:'Multidimensional Vulnerability Index',
       infoContent:'aboutThis-mvi',
+      description:'A customizable Multidimensional Vulnerability Index (MVI) for SIDS to analyze environmental, geographic, economic, and financial vulnerability.',
       icon:'MVI'
     },
     props: (to) => (
@@ -162,6 +165,7 @@ const routes = [
     },
     meta:{
       header:'Country Profiles',
+      description:'Country profiles for Small Island Developing States with data across the pillars of the UNDP’s SIDS Offer, financial statistics, and vulnerability index.',
       infoContent:'aboutThis-profiles',
       icon:'profiles'
     },
@@ -176,6 +180,7 @@ const routes = [
     name: 'Geospatial Data',
     meta:{
       header:'Geospatial Data',
+      description:'A SIDS GIS portal and database compiled from more than 80 datasets and research studies with coverage of Small Island Developing States.',
       icon:'GIS'
     },
     beforeEnter: async (to, from, next) => {
@@ -193,6 +198,7 @@ const routes = [
     name: 'About',
     meta:{
       header:'About the SIDS Data Platform',
+      description:'A digital instrument for supporting SIDS in following up on the SAMOA Pathway and building data-driven policy and development frameworks.',
       icon:'about'
     },
     beforeEnter: async (to, from, next) => {
@@ -223,7 +229,8 @@ const router = new VueRouter({
 router.beforeEach(async (toRoute, fromRoute, next) => {
   await loadLanguageAsync(toRoute.params.lang);
   let pagetitle = toRoute && toRoute.name ? toRoute.name : 'Home';
-  window.document.title = `${pagetitle} - UNDP SIDS Data Platform`
+  window.document.title = `${pagetitle} - UNDP SIDS Data Platform`;
+  document.querySelector('[data-description]').innerHTML = toRoute.meta.description
   next();
 })
 export { router, routes }

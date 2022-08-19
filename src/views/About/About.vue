@@ -107,14 +107,16 @@
         </v-expansion-panels>
         <v-card flat>
           <v-card-text>
-            <div class="d-flex align-center">
-              <p>
+            <div class="d-flex align-center justify-space-between">
+              <p class="mb-0">
                 Follow our biweekly SIDS Bulletin
               </p>
               <v-btn
                 class="mr-0 ml-2"
                 color="primary"
                 rounded
+                target="_blank"
+                href="https://undp.us4.list-manage.com/subscribe?u=cf50bc7216b0c4b063618fbac&id=c2c8d779ea"
                 small
               >Subscribe</v-btn>
             </div>
