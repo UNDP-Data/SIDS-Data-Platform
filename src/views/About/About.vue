@@ -115,6 +115,8 @@
               <v-btn
                 class="mr-0 ml-2"
                 color="primary"
+                href="https://undp.us4.list-manage.com/subscribe"
+                target="_blank"
                 rounded
                 small
               >{{$t('root.buttons.subscribe')}}</v-btn>
