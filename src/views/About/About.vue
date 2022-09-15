@@ -108,16 +108,16 @@
         </v-expansion-panels>
         <v-card flat>
           <v-card-text>
-            <div class="d-flex align-center">
+            <div class="d-flex align-center justify-space-between">
               <p  class="mr-auto mb-0">
                 {{$t('about.fBulletin')}}
               </p>
               <v-btn
                 class="mr-0 ml-2"
                 color="primary"
-                href="https://undp.us4.list-manage.com/subscribe"
-                target="_blank"
                 rounded
+                target="_blank"
+                href="https://undp.us4.list-manage.com/subscribe?u=cf50bc7216b0c4b063618fbac&id=c2c8d779ea"
                 small
               >{{$t('root.buttons.subscribe')}}</v-btn>
             </div>

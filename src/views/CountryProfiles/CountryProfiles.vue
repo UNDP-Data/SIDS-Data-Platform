@@ -492,7 +492,8 @@ export default {
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
               value: axis[rank] || axis.value,
-              code: axis.axis
+              code: axis.axis,
+              year: axis.year
             }
           })
           return {
