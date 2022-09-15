@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store'
 import vuetify from '@/plugins/vuetify';
-import { loadLanguageAsync } from '@/lang';
 
 Vue.use(VueRouter)
 
@@ -12,16 +11,17 @@ const routes = [
     link: '/portfolio',
     name: 'UNDP SIDS Portfolio',
     props: (to) => ({
-      region: to.query.region || 'All',
+      region: to.query.region || 'allSids',
       year: to.query.year || 'all',
       fundingCategory: decodeURIComponent(to.query.fundingCategory || 'All') ,
       fundingSource: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
       goalsType: to.params.goalsType || 'sdgs'
     }),
     meta:{
-      header:'UNDP Portfolio in Small Island Developing States',
+      header:'portfolio.header',
       description:'A digital tool for analyzing the UNDP SIDS Offer Portfolio across the SDGs, SAMOA Pathway priorities, and six UNDP Signature Solutions.',
       infoContent:'aboutThis-portfolio',
+      linkText:'portfolio',
       icon:'portfolio'
     },
     // route level code-splitting
@@ -34,7 +34,7 @@ const routes = [
       await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
       await store.dispatch('sids/generatePortfolioData', {
-        region: to.query.region || 'All',
+        region: to.query.region || 'allSids',
         year: to.query.year || 'all',
         category: decodeURIComponent(to.query.fundingCategory || 'All') ,
         source: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
@@ -86,10 +86,11 @@ const routes = [
       }
     },
     meta:{
-      header:'Development Indicators',
+      header:'indicators.headerIndicators',
       description:'A database of over 4000 development indicators for SIDS, compiled from 22 sources and featured alongside visualization and analytic tools.',
       infoContent:'aboutThis-indicators',
-      icon:'indicators'
+      icon:'indicators',
+      linkText:'indicators'
     },
     props: (to) => (
       {
@@ -130,10 +131,11 @@ const routes = [
       }
     },
     meta:{
-      header:'Multidimensional Vulnerability Index',
+      header:'indicators.headerMVI',
       infoContent:'aboutThis-mvi',
       description:'A customizable Multidimensional Vulnerability Index (MVI) for SIDS to analyze environmental, geographic, economic, and financial vulnerability.',
-      icon:'MVI'
+      icon:'MVI',
+      linkText:'mvi'
     },
     props: (to) => (
       {
@@ -164,10 +166,11 @@ const routes = [
       next();
     },
     meta:{
-      header:'Country Profiles',
+      header:'countryProfile.header',
       description:'Country profiles for Small Island Developing States with data across the pillars of the UNDP’s SIDS Offer, financial statistics, and vulnerability index.',
       infoContent:'aboutThis-profiles',
-      icon:'profiles'
+      icon:'profiles',
+      linkText:'profiles'
     },
     props: (route) => ({
       activeCountryId: route.params.country || '',
@@ -179,9 +182,10 @@ const routes = [
     link: '/geospatial-data',
     name: 'Geospatial Data',
     meta:{
-      header:'Geospatial Data',
+      header:'gis.header',
       description:'A SIDS GIS portal and database compiled from more than 80 datasets and research studies with coverage of Small Island Developing States.',
-      icon:'GIS'
+      icon:'GIS',
+      linkText:'gis'
     },
     beforeEnter: async (to, from, next) => {
       await store.dispatch('gis/loadDatasets');
@@ -197,9 +201,10 @@ const routes = [
     link: '/about',
     name: 'About',
     meta:{
-      header:'About the SIDS Data Platform',
+      header:'about.header',
       description:'A digital instrument for supporting SIDS in following up on the SAMOA Pathway and building data-driven policy and development frameworks.',
-      icon:'about'
+      icon:'about',
+      linkText:'about'
     },
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
@@ -227,7 +232,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (toRoute, fromRoute, next) => {
-  await loadLanguageAsync(toRoute.params.lang);
   let pagetitle = toRoute && toRoute.name ? toRoute.name : 'Home';
   window.document.title = `${pagetitle} - UNDP SIDS Data Platform`;
   document.querySelector('[data-description]').innerHTML = toRoute.meta.description

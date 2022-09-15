@@ -13,7 +13,7 @@
           <img class="menu-mobile-item_icon" :src="require(`@/assets/media/menu/${route.meta.icon}.png`)"/>
           <v-list-item-title
             class="menu-mobile-item_text"
-            v-text="route.meta.icon">
+            v-text="$t('navigationMobile.' + route.meta.linkText)">
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -66,7 +66,7 @@ export default {
   padding: 0 !important;
 }
 .menu-mobile-item {
-  width: 20%;
+  width: 16.6%;
   padding: 0 5px !important;
   margin: 0 !important;
   display: flex;

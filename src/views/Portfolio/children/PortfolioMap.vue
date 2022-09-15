@@ -40,7 +40,7 @@ import format from '@/mixins/format.mixin'
 import * as d3 from 'd3';
 import * as d3geo from "d3-geo-projection";
 import mapData from '@/assets/output.json'
-import pointData from '@/assets/sids.json'
+import pointData from '@/assets/outputSidsList.json'
 import sidsList from '@/assets/sidsList'
 
 export default {
@@ -52,7 +52,7 @@ export default {
       type: Array
     },
     region: {
-      default:'All',
+      default:'allSids',
       type:String
     }
   },
@@ -69,20 +69,20 @@ export default {
       activeRegion: null,
       g:null,
       titles:[
-        {"type":"Feature","geometry":{"type":"Point","coordinates":[-75.98267711245876,1.520880383123256]},"properties":{"OBJECTID":102, color:"#0a8080", "name":'Caribbean'}},
-        {"type":"Feature","geometry":{"type":"Point","coordinates":[-2.606592420403899,-8.23811497852346974]},"properties":{"OBJECTID":102, color:"#97032b", "name":'AIS'}},
-        {"type":"Feature","geometry":{"type":"Point","coordinates":[140.580479656511, -0.5129557776870115]},"properties":{"OBJECTID":102, color:"#f0a402", "name":'Pacific'}},
+        {"type":"Feature","geometry":{"type":"Point","coordinates":[-75.98267711245876,1.520880383123256]},"properties":{"OBJECTID":102, color:"#0a8080", "name":'Caribbean', id:'caribbean'}},
+        {"type":"Feature","geometry":{"type":"Point","coordinates":[-2.606592420403899,-8.23811497852346974]},"properties":{"OBJECTID":102, color:"#97032b", "name":'AIS', id:'ais'}},
+        {"type":"Feature","geometry":{"type":"Point","coordinates":[140.580479656511, -0.5129557776870115]},"properties":{"OBJECTID":102, color:"#f0a402", "name":'Pacific', id:'pacific'}},
       ],
       regionTransforms: {
-        'Caribbean' : {
+        'caribbean' : {
           translate: [0, -130],
           scale: 2
         },
-        'AIS' : {
+        'ais' : {
           translate: [-300, -130],
           scale: 1.5
         },
-        'Pacific' : {
+        'pacific' : {
           translate: [-1250, -350],
           scale: 2
         }
@@ -119,8 +119,11 @@ export default {
     }
   },
   computed:{
+    locale() {
+      return this.$i18n.locale
+    },
     projectsNumber() {
-      switch (this.regions) {
+      switch (this.region) {
         case 'caribbean':
           return 25;
         case 'ais':
@@ -132,7 +135,7 @@ export default {
       }
     },
     memberStates() {
-      switch (this.regions) {
+      switch (this.region) {
         case 'caribbean':
           return 16
         case 'ais':
@@ -235,7 +238,7 @@ export default {
             if(this.classList.contains("clickable")) {
               d3.event.stopPropagation()
               if(rootThis.region === d.properties.ISOB) {
-                rootThis.$emit('updateRegion', 'All');
+                rootThis.$emit('updateRegion', 'allSids');
               } else {
                 rootThis.$emit('updateRegion', d.properties.ISOB);
               }
@@ -246,14 +249,14 @@ export default {
             let coordinates = projection.invert(d3.mouse(this))[0],
             region;
             if(coordinates > -110 && coordinates < -30 ) {
-              region = 'Caribbean';
+              region = 'caribbean';
             } else if (coordinates > -30 && coordinates < 110) {
-              region = 'AIS';
+              region = 'ais';
             } else {
-              region = 'Pacific';
+              region = 'pacific';
             }
-            if(rootThis.region !== 'All') {
-              rootThis.$emit('updateRegion', 'All');
+            if(rootThis.region !== 'allSids') {
+              rootThis.$emit('updateRegion', 'allSids');
             } else {
               rootThis.$emit('updateRegion', region);
             }
@@ -262,7 +265,7 @@ export default {
           .data(pointDataFiltered)
           .enter().append('text')
           .attr("class", function (d) {return `country_label point_label ${rootThis.computeRegion(d.properties.ISOB)}`})
-          .text(function (d) { return d.properties.Admin})
+          .text(function (d) { return rootThis.$t('countryNames.' + d.properties.id)})
           .attr("fill", "black")
           .style("text-anchor", (d) => {
             if(rootThis.textTransform[d.properties.ISOB] && rootThis.textTransform[d.properties.ISOB][0] < 0) {
@@ -284,7 +287,7 @@ export default {
             d3.event.stopPropagation()
             let iso = d.properties.ISOB || d.properties.iso3;
             if(rootThis.region === iso) {
-              rootThis.$emit('updateRegion', 'All');
+              rootThis.$emit('updateRegion', 'allSids');
             } else {
               rootThis.$emit('updateRegion', iso);
             }
@@ -301,7 +304,10 @@ export default {
               var bounds = rootThis.path.bounds(d),
               x = (bounds[0][0] + bounds[1][0]) / 2,
               y = (bounds[0][1] + bounds[1][1]) / 2;
-              d3.select(this).text(d.properties.name)
+              d3.select(this)
+                .text((d) => {
+                  return rootThis.$t('countryNames.' + d.properties.id)
+                })
                 .attr("dx", x+5)
                 .attr("dy", y-5)
                 .attr("font-size", '10px')
@@ -342,12 +348,12 @@ export default {
             return d.properties.color
           })
           .text((d)=> {
-            return d.properties.name
+            return this.$t('regions.' + d.properties.id)
           })
           .attr("font-size", '20px')
           .on('mousedown.log', (d)=> {
             d3.event.stopPropagation()
-            rootThis.$emit('updateRegion', d.properties.name);
+            rootThis.$emit('updateRegion', d.properties.name.toLowerCase());
           })
       gLines.selectAll(".parish-line.point-line")
         .data(pointDataFiltered)
@@ -414,13 +420,13 @@ export default {
     computeFill(iso) {
       let region = this.computeRegion(iso)
       if(region) {
-        if(region === 'AIS') {
+        if(region === 'ais') {
           return  "#97032b"
         }
-        if(region === 'Pacific') {
+        if(region === 'pacific') {
           return  "#f0a402"
         }
-        if(region === 'Caribbean') {
+        if(region === 'caribbean') {
           return  "#0a8080"
         }
       }
@@ -435,6 +441,7 @@ export default {
         .call( this.zoom.transform, d3.zoomIdentity ); // updated for d3 v4
     },
     selectCountry(iso) {
+        let rootThis = this;
         d3.selectAll('#ctitle').remove()
         let d = mapData.features.find(d => d.properties.iso3 === iso)
         this.map.attr("class", 'zoomed');
@@ -456,7 +463,7 @@ export default {
         let center = this.path.centroid(d)
         this.g.append("text")
         .attr('id', 'ctitle')
-        .text(function () { return d.properties.name})
+        .text(function () { return rootThis.$t('countryNames.' + d.properties.id)})
         .style("text-anchor", 'middle')
         .attr("dx", center[0])
         .attr("dy", center[1])
@@ -479,8 +486,8 @@ export default {
   },
   watch: {
     region() {
-      if(this.region !== 'All') {
-        if(['AIS', 'Caribbean', 'Pacific'].includes(this.region)) {
+      if(this.region !== 'allSids') {
+        if(['ais', 'caribbean', 'pacific'].includes(this.region)) {
           this.selectRegion(this.region)
         } else {
           this.selectCountry(this.region)
@@ -488,12 +495,25 @@ export default {
       } else {
         this.resetMap();
       }
+    },
+    locale() {
+      this.$nextTick(() => {
+        this.map.selectAll("*").remove();
+        this.initMap();
+        if(this.region !== 'allSids') {
+          if(['ais', 'caribbean', 'pacific'].includes(this.region)) {
+            this.selectRegion(this.region)
+          } else {
+            this.selectCountry(this.region)
+          }
+        }
+      });
     }
   },
   mounted() {
     this.initMap();
-    if(this.region !== 'All') {
-      if(['AIS', 'Caribbean', 'Pacific'].includes(this.region)) {
+    if(this.region !== 'allSids') {
+      if(['ais', 'caribbean', 'pacific'].includes(this.region)) {
         this.selectRegion(this.region)
       } else {
         this.selectCountry(this.region)

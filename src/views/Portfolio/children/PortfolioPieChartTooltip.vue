@@ -1,17 +1,17 @@
 <template>
-  <div class="tooltip-root">
+  <div class="tooltip-root-pie">
     <h4 class="block-subheader">{{header}}</h4>
     <v-list dense class="indicators-list">
       <v-list-item-group>
         <v-list-item class="p-0">
           <v-list-item-content class="one-line">
-            <v-list-item-title class="" v-text="'Budget:'"></v-list-item-title>
+            <v-list-item-title>{{$t('portfolio.budget')}}:</v-list-item-title>
             <v-list-item-subtitle class="one-line_subtitle">{{finance}} USD</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item  class="p-0">
           <v-list-item-content class="one-line">
-            <v-list-item-title class="" v-text="'Share:'"></v-list-item-title>
+            <v-list-item-title>{{$t('portfolio.share')}}:</v-list-item-title>
             <v-list-item-subtitle class="one-line_subtitle">{{share}} %</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -35,8 +35,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.tooltip-root {
-  max-width: 360px;
+.tooltip-root-pie {
+  max-width: 500px;
 }
 .indicators-list {
   padding-bottom: 0;

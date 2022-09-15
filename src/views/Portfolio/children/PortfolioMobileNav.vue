@@ -5,7 +5,7 @@
         <v-row class="justify-center">
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">Region</label>
+              <label class="input-label">{{$t('root.forms.region')}}</label>
               <v-select
                 rounded
                 dense
@@ -16,12 +16,19 @@
                 :items="regions"
                 @change="emitRegionChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{data.item.id ? $t('countryNames.'+data.item.id) : $t('regions.'+data.item.iso)}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                 {{data.item.id ? $t('countryNames.'+data.item.id) : $t('regions.'+data.item.iso)}}
+                </template>
+              </v-select>
             </div>
           </v-col>
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">Year</label>
+              <label class="input-label">{{$t('portfolio.year')}}</label>
               <v-select
                 rounded
                 dense
@@ -32,14 +39,21 @@
                 :items="years"
                 @change="emitYearChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{data.item.text ? $t('portfolio.' + data.item.text) : data.item.value}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{data.item.text ? $t('portfolio.' + data.item.text) : data.item.value}}
+                </template>
+              </v-select>
             </div>
           </v-col>
         </v-row>
         <v-row class="justify-center">
           <v-col cols="6" class="position-relative">
             <div class="select">
-              <label class="input-label">Funding category</label>
+              <label class="input-label">{{$t('portfolio.fundingCategories')}}</label>
               <v-select
                 rounded
                 dense
@@ -48,13 +62,20 @@
                 :items="fundingCategories"
                 @change="emitCategoryChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{$t('portfolio.fundingTypes.' + data.item.text)}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{$t('portfolio.fundingTypes.' + data.item.text)}}
+                </template>
+              </v-select>
             </div>
             <v-icon dense class="child-select-icon">mdi-chevron-right</v-icon>
           </v-col>
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">Funding source</label>
+              <label class="input-label">{{$t('portfolio.fundingSources')}}</label>
               <v-select
                 rounded
                 dense
@@ -65,14 +86,21 @@
                 :items="fundingSources"
                 @change="emitSourceChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{data.item.text ? $t('portfolio.' + data.item.text) : data.item.name}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{data.item.text ? $t('portfolio.' + data.item.text) : data.item.name}}
+                </template>
+              </v-select>
             </div>
           </v-col>
         </v-row>
         <v-row class="justify-center">
           <v-col cols="6" class="position-relative">
             <div class="select">
-              <label class="input-label">Goal type</label>
+              <label class="input-label">{{$t('portfolio.goalType')}}</label>
               <v-select
                 rounded
                 dense
@@ -83,13 +111,20 @@
                 :items="goalTypes"
                 @change="emitGoalTypeChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{$t('root.goals.' + data.item.value)}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{$t('root.goals.' + data.item.value)}}
+                </template>
+              </v-select>
             </div>
             <v-icon dense class="child-select-icon">mdi-chevron-right</v-icon>
           </v-col>
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">Goal</label>
+              <label class="input-label">{{$t('portfolio.goal')}}</label>
               <v-select
                 rounded
                 dense
@@ -100,7 +135,14 @@
                 :items="activeGoals"
                 @change="emitGoalChange"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                  <span class="select-text-element">{{data.item.id ? $t('root.'+goalType + '.' + data.item.id + '.name') : $t('portfolio.fundingTypes.all')}}</span>
+                </template>
+                <template  slot="item" slot-scope="data">
+                  {{data.item.id ? $t('root.'+goalType + '.' + data.item.id + '.name') : $t('portfolio.fundingTypes.all')}}
+                </template>
+              </v-select>
             </div>
           </v-col>
         </v-row>

@@ -2,7 +2,7 @@
   <div class="about-page">
     <v-row class="d-none d-md-flex mt-0" justify="center">
       <v-col cols="12">
-        <h2 class="page-header">About the SIDS Data Platform</h2>
+        <h2 class="page-header">{{$t('about.header')}}</h2>
       </v-col>
     </v-row>
     <v-row>
@@ -40,13 +40,15 @@
                   <b>{{$t('about.whatOfferContent[1]')}}</b>
                 </a>
                   {{$t('about.whatOfferContent[2]')}}
-              </p>Offer
+              </p>
               <p>
                 <b>{{$t('about.whatOfferContent[3]')}}</b>
                 {{$t('about.whatOfferContent[4]')}}
+              </p>
               <p>
                 <b>{{$t('about.whatOfferContent[5]')}}</b>
                 {{$t('about.whatOfferContent[6]')}}
+              </p>
               <p>
                 <b>{{$t('about.whatOfferContent[7]')}}</b>
                 {{$t('about.whatOfferContent[8]')}}
@@ -95,12 +97,11 @@
               </p>
               <p>
                 {{$t('about.whatContactContent[2]')}}<br/>
-                {{$t('about.whatContactContent[3]')}}, <i>{{$t('about.whatContactContent[4]')}}</i> – riad.meddeb@undp.org<br/>
-                {{$t('about.whatContactContent[5]')}}, <i>{{$t('about.whatContactContent[6]')}}</i> – ines.benabdallah@undp.org
+                <i>{{$t('about.whatContactContent[3]')}}</i> – <i>{{$t('about.whatContactContent[4]')}}</i><br/>
               </p>
               <p>
-                {{$t('about.whatContactContent[7]')}}<br/>
-                {{$t('about.whatContactContent[8]')}} - benjamin.keller@undp.org
+                {{$t('about.whatContactContent[5]')}}<br/>
+                <i>{{$t('about.whatContactContent[6]')}}</i><br/>
               </p>
             </v-expansion-panel-content>
           </v-expansion-panel>
@@ -108,8 +109,8 @@
         <v-card flat>
           <v-card-text>
             <div class="d-flex align-center justify-space-between">
-              <p class="mb-0">
-                Follow our biweekly SIDS Bulletin
+              <p  class="mr-auto mb-0">
+                {{$t('about.fBulletin')}}
               </p>
               <v-btn
                 class="mr-0 ml-2"
@@ -118,7 +119,7 @@
                 target="_blank"
                 href="https://undp.us4.list-manage.com/subscribe?u=cf50bc7216b0c4b063618fbac&id=c2c8d779ea"
                 small
-              >Subscribe</v-btn>
+              >{{$t('root.buttons.subscribe')}}</v-btn>
             </div>
           </v-card-text>
         </v-card>

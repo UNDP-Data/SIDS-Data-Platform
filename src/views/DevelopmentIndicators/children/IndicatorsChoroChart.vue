@@ -66,6 +66,9 @@ export default {
       mlData: state => state.ml.mlData,
       mlModel: state => state.ml.mlModel
     }),
+    locale() {
+      return this.$i18n.locale
+    },
     activeIndicatorsMeta() {
       return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
     },
@@ -111,7 +114,7 @@ export default {
           if(!country.average) {
             return (typeof this.chartData.data.recentValue[country.iso] !== 'undefined' &&
               this.chartData.data.recentValue[country.iso] !== 'No Data') &&
-              (this.region === 'All' || this.region === country.region || this.compareIdsList.includes(country.id))
+              (this.region === 'allSids' || this.region === country.region.toLowerCase() || this.compareIdsList.includes(country.id))
           } else if (countryGroupJson[country.iso]) {
             return Object.keys(countryGroupJson[country.iso]).some((iso) => {
               return typeof this.chartData.data.recentValue[iso] !== 'undefined' &&
@@ -140,6 +143,8 @@ export default {
       let compareISOs = sidsList.filter(country => this.compareIdsList.includes(country.id)).map(country => country.iso)
       this.choro = new Choro({
         viz:this.chartType,
+        $t: this.$t,
+        vue: this,
         widthCached: document.body.clientWidth,
         sidsXML,
         mapLocations,
@@ -245,6 +250,11 @@ export default {
       if(this.choro && this.page === this.choro.page) {
         this.choro.updateVizYear(this.year)
       }
+    },
+    async locale() {
+      window.removeEventListener("resize", this.updateScreenSize);
+      await this.initChart();
+      window.addEventListener("resize", this.updateScreenSize);
     }
   },
   created() {

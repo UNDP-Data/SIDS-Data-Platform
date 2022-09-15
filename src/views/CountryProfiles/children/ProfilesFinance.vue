@@ -7,7 +7,7 @@
             <v-list-item v-for="(indicator) in financeData" :key="indicator.axis">
               <v-list-item-content class="one-line">
                 <v-list-item-title class="one-line_header">
-                  {{indicatorsMetadata[indicator.axis].indicator}}
+                  {{$t(`finance.${indicator.axis.replaceAll('.','-')}`)}}
                 </v-list-item-title>
                 <v-list-item-subtitle class="one-line_subheader">{{formatNumber(indicator.value)}}
                   <template v-if="indicator.year && indicator.year!=='No Year'">

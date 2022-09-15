@@ -24,7 +24,7 @@
               <v-list-item-content>
                 <v-list-item-title
                   class="menu-item_text"
-                  v-text="route.name">
+                  v-text="$t('navigation.' + route.meta.linkText)">
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -35,7 +35,6 @@
 </template>
 
 <script>
-
 import sizeMixin from '@/mixins/size.mixin';
 
 export default {

@@ -4,12 +4,12 @@
       <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
         <printout-header>
           <template slot="text">
-            <b>{{activeCountry.name}}</b> Country profile
+            <b>{{$t('countryNames.'+activeCountryId)}}</b> {{$t('countryProfile.header')}}
           </template>
         </printout-header>
         <v-row class="mt-0 d-none-print profile-header-row" justify="center" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
           <v-col class="d-none d-md-block" cols="12" md="4" offset-lg="2" lg="3">
-            <h2 class="page-header mr-3 country-profile-header text-md-right">Country profile</h2>
+            <h2 class="page-header mr-3 country-profile-header text-md-right">{{$t('countryProfile.header')}}</h2>
           </v-col>
           <v-col cols="7" sm="6" md="4" lg="3" class="offset-sm-1 offset-md-0 select-column">
             <v-select
@@ -32,7 +32,7 @@
                     class="flag-icon select_icon"
                     :class="'flag-icon-' + flagCodes[data.item.id]"
                   ></i>
-                  {{ data.item.name }}
+                  {{$t('countryNames.'+data.item.id)}}
                 </div>
               </template>
               <template  slot="item" slot-scope="data">
@@ -41,7 +41,7 @@
                     class="flag-icon select_icon"
                     :class="'flag-icon-' + flagCodes[data.item.id]"
                   ></i>
-                  {{ data.item.name }}
+                  {{$t('countryNames.'+data.item.id)}}
                 </div>
               </template>
             </v-select>
@@ -54,7 +54,14 @@
                 v-model="region"
                 :items="regions"
                 outlined
-              ></v-select>
+              >
+                <template slot="selection" slot-scope="data">
+                    {{$t('regions.'+data.item)}}
+                </template>
+                <template  slot="item" slot-scope="data">
+                    {{$t('regions.'+data.item)}}
+                </template>
+              </v-select>
             </div>
           </v-col>
           <v-col class="d-none-print d-flex flex-md-column align-md-end align-center justify-start" cols="2" sm="3" md='1' lg='2'>
@@ -188,7 +195,7 @@
         <v-row class="d-none-print" justify="center">
           <v-col cols="11" md="6">
             <country-multiselect
-              placeholder="Overlay countries to compare indicator rank"
+              :placeholder="$t('countryProfile.infoBox.overlayCountries')"
               :countryActiveIdsList="compareIdsList"
               :countriesToCompare="sidsListFiltered"
               :colorScheme="colorScheme"
@@ -196,7 +203,7 @@
             />
           </v-col>
           <v-col cols="3" class="d-flex align-center" md="1">
-            <p class="mt-auto mb-auto">among</p>
+            <p class="mt-auto mb-auto">{{$t('countryProfile.infoBox.among')}}</p>
           </v-col>
           <v-col cols="6" md="3" lg="2">
             <div class="select">
@@ -205,12 +212,18 @@
                 v-model="rankType"
                 :items="rankTypes"
                 @change="changeRankSelector"
-                item-text="name"
+                item-text="id"
                 item-value="id"
                 outlined
                 dense
                 hide-details
               >
+                <template slot="selection" slot-scope="data">
+                    {{$t('countryProfile.infoBox.'+data.item.id)}}
+                </template>
+                <template  slot="item" slot-scope="data">
+                    {{$t('countryProfile.infoBox.'+data.item.id)}}
+                </template>
               </v-select>
             </div>
           </v-col>
@@ -244,7 +257,7 @@
               :values="graphValueData[pillar.name]"/>
           </v-col>
           <v-col class="charts-description mt-0 mb-0" cols="12">
-            <p class="mt-0 mb-0 text-center desc-spiders">Values for radar charts for each of the pillars of the SIDS Offer are displayed by rank among {{region}} countries for visualization purposes</p>
+            <p class="mt-0 mb-0 text-center desc-spiders">{{$t('countryProfile.infoBox.radarAnnotation')}}</p>
           </v-col>
         </v-row>
       </div>
@@ -268,7 +281,7 @@
               :ranks="graphRankData['MVI']"
               :values="graphValueData['MVI']"/>
             <p :class="{'desc-mvi-one-page': !activeCountryProfile.CountryText}" class="desc-mvi desc-spiders mt-0 mb-0 text-center">
-              Values for each indicator for vulnerability are normalized among all countries with available data on a scale from 0 to 100
+              {{$t('countryProfile.infoBox.mviAnnotation')}}
             </p>
           </v-col>
           <v-col cols="5">
@@ -322,108 +335,107 @@ export default {
     InfoButton,
     CountryMultiselect
   },
-  data: () => ({
-    flagCodes,
-    region:'All SIDS',
-    regions:["All SIDS", "Caribbean", "AIS", "Pacific"],
-    rankType: 'sids',
-    rankTypes: [
-      {
-        name:'Globally',
-        id:'global'
-      },{
-        name:'Regionally',
-        id:'region'
-      },{
-        name:'SIDS countries',
-        id:'sids'
+  data() {
+    return {
+        flagCodes,
+        region:'allSids',
+        regions:["allSids","caribbean","ais", "pacific"],
+        rankType: 'sids',
+        rankTypes: [
+          {
+            id:'global'
+          },{
+            id:'region'
+          },{
+            id:'sids'
+          }
+        ],
+        colorScheme: ["#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"],
+        pillars:[{
+          name: 'Climate',
+          tabName: this.$t('root.pillars.climateAction.name'),
+          tooltipName: 'profileTooltip-climate',
+          icon: require(`@/assets/media/goals-icons/pillars/climateAction.png`)
+        }, {
+          name: 'Blue',
+          tabName: this.$t('root.pillars.blueEconomy.name'),
+          tooltipName: 'profiletooltip-blue',
+          icon: require(`@/assets/media/goals-icons/pillars/blueEconomy.png`)
+        }, {
+          name: 'Digital',
+          tabName: this.$t('root.pillars.digitalTransformation.name'),
+          tooltipName:'profileTooltip-digital',
+          icon: require(`@/assets/media/goals-icons/pillars/digitalTransformation.png`)
+        }, {
+          name: 'MVI',
+          tabName: this.$t('root.mv'),
+          tooltipName:'profileTooltip-mvi',
+          icon: false
+        }, {
+          name: 'Finance',
+          tabName: 'Finance'
+        }],
+        tab:'Climate',
+        tabs:['Climate','Blue Economy','Digital Transformation','Vulnerability','Finance'],
+        graphOptions:{
+          Climate: {
+            header:this.$t('root.pillars.climateAction.name'),
+            w: 200,
+            h: 180,
+            margin: { top: 50, right: 45, bottom: 30, left: 45 },
+            levels: 5,
+            spin: 0,
+            roundStrokes: false,
+            color: d3.scaleOrdinal().range(["#0DB14B", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
+            textColor: "#0DB14B"
+          },
+          Blue: {
+            header: this.$t('root.pillars.blueEconomy.name'),
+            w: 200,
+            h: 180,
+            margin: { top: 50, right: 45, bottom: 30, left: 45 },
+            levels: 5,
+            spin: 0,
+            roundStrokes: false,
+            color: d3.scaleOrdinal().range(["#0BC6FF", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
+            legend: { title: 'Legend', translateX: 0, translateY: 0 },
+            textColor: "#0BC6FF"
+          },
+          Digital: {
+            header:this.$t('root.pillars.digitalTransformation.name'),
+            w: 200,
+            h: 180,
+            margin: { top: 50, right: 45, bottom: 30, left: 45 },
+            levels: 5,
+            spin: 0,
+            roundStrokes: false,
+            color: d3.scaleOrdinal().range(["#F58220", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
+            textColor: "#F58220"
+          },
+          MVI: {
+            header:this.$t('root.mv'),
+            w: 320,
+            h: 200,
+            margin: { top: 70, right: 45, bottom: 60, left: 45 },
+            maxValue: 80,
+            levels: 4,
+            spin: 0,
+            textFormat: 1.2,
+            opacityArea: 0.2,
+            roundStrokes: false,
+            color: d3.scaleOrdinal().range(["#8f0045 ", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
+            textColor: "#9e0909"
+        }
+      },
+      maxValues:{
+        globally: 200,
+        sidsCountires:50,
+        caribbean:25,
+        ais:10,
+        pacific:16
       }
-    ],
-    colorScheme: ["#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"],
-    pillars:[{
-      name: 'Climate',
-      tabName: 'Climate Action',
-      tooltipName: 'profileTooltip-climate',
-      icon: require(`@/assets/media/goals-icons/pillars/climateAction.png`)
-    }, {
-      name: 'Blue',
-      tabName: 'Blue Economy',
-      tooltipName: 'profiletooltip-blue',
-      icon: require(`@/assets/media/goals-icons/pillars/blueEconomy.png`)
-    }, {
-      name: 'Digital',
-      tabName: 'Digital Transformation',
-      tooltipName:'profileTooltip-digital',
-      icon: require(`@/assets/media/goals-icons/pillars/digitalTransformation.png`)
-    }, {
-      name: 'MVI',
-      tabName: 'Multidimensional Vulnerability',
-      tooltipName:'profileTooltip-mvi',
-      icon: false
-    }, {
-      name: 'Finance',
-      tabName: 'Finance'
-    }],
-    tab:'Climate',
-    tabs:['Climate','Blue Economy','Digital Transformation','Vulnerability','Finance'],
-    graphOptions:{
-      Climate: {
-        header:'Climate Action',
-        w: 200,
-        h: 180,
-        margin: { top: 50, right: 45, bottom: 30, left: 45 },
-        levels: 5,
-        spin: 0,
-        roundStrokes: false,
-        color: d3.scaleOrdinal().range(["#0DB14B", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
-        textColor: "#0DB14B"
-      },
-      Blue: {
-        header:'Blue Economy',
-        w: 200,
-        h: 180,
-        margin: { top: 50, right: 45, bottom: 30, left: 45 },
-        levels: 5,
-        spin: 0,
-        roundStrokes: false,
-        color: d3.scaleOrdinal().range(["#0BC6FF", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
-        legend: { title: 'Legend', translateX: 0, translateY: 0 },
-        textColor: "#0BC6FF"
-      },
-      Digital: {
-        header:'Digital Transformation',
-        w: 200,
-        h: 180,
-        margin: { top: 50, right: 45, bottom: 30, left: 45 },
-        levels: 5,
-        spin: 0,
-        roundStrokes: false,
-        color: d3.scaleOrdinal().range(["#F58220", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
-        textColor: "#F58220"
-      },
-      MVI: {
-        header:'Multidimensional Vulnerability',
-        w: 320,
-        h: 200,
-        margin: { top: 70, right: 45, bottom: 60, left: 45 },
-        maxValue: 80,
-        levels: 4,
-        spin: 0,
-        textFormat: 1.2,
-        opacityArea: 0.2,
-        roundStrokes: false,
-        color: d3.scaleOrdinal().range(["#8f0045 ", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
-        textColor: "#9e0909"
-      }
-    },
-    maxValues:{
-      global: 200,
-      sids:50,
-      Caribbean:25,
-      AIS:10,
-      Pacific:16
     }
-  }),
+  },
   computed:{
     ...mapState({
       sidsList: state => state.profiles.sidsList,
@@ -431,7 +443,7 @@ export default {
       indicatorsMetadata: state => state.profiles.indicatorsMetadata
     }),
     sidsListFiltered() {
-      if(this.region === 'All SIDS') {
+      if(this.region === 'allSids') {
         return this.sidsList
       } else {
         return this.sidsList.filter(country => {
@@ -447,7 +459,7 @@ export default {
       })
     },
     maxValuePillars(){
-      if(this.rankType !== 'region') {
+      if(this.rankType !== 'regionally') {
         return this.maxValues[this.rankType]
       }
       return this.maxValues[this.activeCountryProfile.Profile[0].value]

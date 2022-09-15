@@ -9,15 +9,15 @@
         >
           <v-tab :value="0" @change="setPreset('MVI')">
             <info-hover-tooltip :bottom="true" contentName="mviSelectTooltip">
-              <template v-slot:button>MVI</template>
+              <template v-slot:button>{{$t('indicators.mviFilters.mvi')}}</template>
             </info-hover-tooltip>
           </v-tab>
           <v-tab :value="1" @change="setPreset('EVI')">
             <info-hover-tooltip :bottom="true" contentName="eviSelectTooltip">
-              <template v-slot:button>EVI</template>
+              <template v-slot:button>{{$t('indicators.mviFilters.evi')}}</template>
             </info-hover-tooltip>
           </v-tab>
-          <v-tab :value="2">Custom</v-tab>
+          <v-tab :value="2">{{$t('indicators.mviFilters.custom')}}</v-tab>
         </v-tabs>
       </v-col>
       <v-col class="flex-grow-0 d-md-none">
@@ -37,7 +37,7 @@
         class="pt-0 pb-0"
         flat
       >
-      <v-subheader :style="'background-color:'+indicatorCatery.color" class="block-subheader">{{indicatorCatery.category}}</v-subheader>
+      <v-subheader :style="'background-color:'+indicatorCatery.color" class="block-subheader">{{$t('indicators.mvi.'+indicatorCatery.category)}}</v-subheader>
       <v-list-item
       class="mvi-indi-list_item"
         dense
@@ -53,7 +53,7 @@
           ></v-checkbox>
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title>{{indicator.name}}</v-list-item-title>
+          <v-list-item-title>{{$t('indicators.mvi.'+indicator.code.replaceAll('.','-'))}}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>

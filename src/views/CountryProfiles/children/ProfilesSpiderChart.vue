@@ -14,12 +14,12 @@
       <div class="d-none" v-for="(axis, index) in ranks[0].axes" :id="`${pillarName}${index}`" :key="index">
         <profiles-spider-chart-tooltip
           :code="axis.code"
-          :header="axis.axis"
+          :header="$t(`spiders.${axis.code.replaceAll('.','-')}.indicator`)"
           :rank="axis.value"
           :year="axis.year"
           :value="values[0].axes[index].value"
           :source="indicatorsMetadata[axis.code].source"
-          :definition="indicatorsMetadata[axis.code].longDefinition"
+          :definition="$t(`spiders.${axis.code.replaceAll('.','-')}.def`)"
           :link="indicatorsMetadata[axis.code].sourceLink"
         />
       </div>
@@ -105,6 +105,9 @@ export default {
     fullGraphOptions(){
       return Object.assign({} ,this.defaultGraphOptions, this.graphOptions);
     },
+    locale() {
+      return this.$i18n.locale
+    },
     maxAxisValue() {
       return this.ranks.reduce((maxCountriesValue, country)=>{
         const currentCountryMax = country.axes.reduce((maxAxesValue, axe)=>{
@@ -140,7 +143,6 @@ export default {
           while (word) {
             line.push(word);
             tspan.text(line.join(" "));
-            console.log(tspan.node().getComputedTextLength)
             if (tspan.node().getComputedTextLength() > 80) {
               line.pop();
               tspan.text(line.join(" "));
@@ -156,7 +158,7 @@ export default {
         });
       }
 
-      let allAxis = this.ranks[0].axes.map((i) => i.axis),  //Names of each axis
+      let allAxis = this.ranks[0].axes.map((i) => i.code),  //Names of each axis
       total = allAxis.length,          //The number of different axes
       radius = Math.min(this.fullGraphOptions.w / 2, this.fullGraphOptions.h / 2),   //Radius of the outermost circle
       angleSlice = Math.PI * 2 / total,    //The width in radians of each "slice"
@@ -260,7 +262,7 @@ export default {
           .attr("width", '80px')
           .attr("x", (d, i) => this.fullGraphOptions.textFormat * rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.cos(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
           .attr("y", (d, i) => -15 / this.fullGraphOptions.textFormat ** 3 + rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.sin(angleSlice * i - HALF_PI - this.fullGraphOptions.spin))
-          .text(d => d)
+          .text((d) => {return this.$t(`spiders.${d.replaceAll('.','-')}.indicator`)})
           .call(wrap, this.fullGraphOptions.wrapWidth)
           .style("pointer-events","auto")
           .attr("id", (d, i) => `${rootThis.pillarName}axis${i}${this.postfix}`)
@@ -288,8 +290,8 @@ export default {
             let lines = document.getElementById(`${rootThis.pillarName}axis${i}${this.postfix}`).children.length
             return (-15 / this.fullGraphOptions.textFormat ** 3 + rScaleNormal(this.maxAxisValue * this.fullGraphOptions.labelFactor) * Math.sin(angleSlice * i - HALF_PI - this.fullGraphOptions.spin)) + lines * 14
           }).text((d) => {
-            let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d })[0].value;
-            let rank = rootThis.ranks[0].axes.filter(obj => { return obj.axis === d })[0].value;
+            let value = rootThis.values[0].axes.filter(obj => { return obj.code === d })[0].value;
+            let rank = rootThis.ranks[0].axes.filter(obj => { return obj.code === d })[0].value;
             let displayValue = ''
             if(rootThis.pillarName === 'MVI') {
               if(isNaN(rank)) {
@@ -337,7 +339,7 @@ export default {
             let values = d.axes.map(v => {
               if(v.value === 'No Data') {
                 return {
-                  axis: v.axis,
+                  axis: v.code,
                   value: 0
                 }
               }
@@ -386,7 +388,7 @@ export default {
                 let values = d.axes.map(v => {
                   if(v.value === 'No Data') {
                     return {
-                      axis: v.axis,
+                      axis: v.code,
                       value: 0
                     }
                   }
@@ -459,7 +461,7 @@ export default {
                 .style('display', 'block')
                 .text(()=>{
                   if(isNaN(d.value)) {
-                    return d.value;
+                    return rootThis.$t('root.noData');
                   } else {
                     return rootThis.nFormatter(d.value,2)
                   }
@@ -467,14 +469,14 @@ export default {
             } else if (rootThis.pillarName=="customIndex") {
               tooltip.transition()
                 .style('display', 'block')
-                .text(this.nFormatter(d.value,2)+", "+d.axis);
+                .text(this.nFormatter(d.value,2)+", "+d.code);
             } else {
               tooltip.transition()
                 .style('display', 'block')
                 .text(function () {
-                  let value = rootThis.values[0].axes.filter(obj => { return obj.axis === d.axis })[0].value
+                  let value = rootThis.values[0].axes.filter(obj => { return obj.code === d.code })[0].value
                   if (isNaN(value)) {
-                    return value   + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
+                    return rootThis.$t('root.noData') + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit
                   }
                   else {
                     return rootThis.nFormatter(value,2) + ", " + rootThis.rankFormat(d.value.toString()) + rootThis.fullGraphOptions.unit;
@@ -529,6 +531,9 @@ export default {
   },
   watch: {
     ranks() {
+      this.$nextTick(this.drawGraph);
+    },
+    locale() {
       this.$nextTick(this.drawGraph);
     }
   },

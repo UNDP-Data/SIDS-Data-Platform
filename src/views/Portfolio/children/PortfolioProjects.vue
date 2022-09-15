@@ -3,7 +3,7 @@
     <v-col cols="11">
       <v-card flat>
         <v-card-title>
-          <h3 class="block-subheader">Projects:</h3>
+          <h3 class="block-subheader">{{$t('portfolio.projects')}}:</h3>
         </v-card-title>
         <v-virtual-scroll
           height="400"
