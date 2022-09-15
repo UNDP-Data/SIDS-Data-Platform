@@ -129,29 +129,10 @@ export default class Map {
     });
   }
 
-  _addDataVectorSource(comparison = false, layerId, resolution) {
-    let map = !comparison ? this.map : this.map2;
-    if (!map.getSource(resolution + layerId)) {
-      map.addSource(resolution + layerId, {
-        type: "vector",
-        promoteId: 'mean',
-        tiles: [`https://data.undpgeohub.org/sids-data/${resolution}_${layerId}/{z}/{x}/{y}.pbf`],
-        //'minzoom': 3,
-        maxzoom: 20, //13.5,
-      });
-    }
-  }
-  _removeDataVectorSource(comparison = false, layerId, resolution) {
-    let map = !comparison ? this.map : this.map2;
-    if (map.getSource(resolution + layerId)) {
-      map.removeSource(resolution + layerId);
-    }
-  }
   _addVectorSources(comparison = false) {
     let map = !comparison ? this.map : this.map2;
-    //
+
     for (let idString of Object.keys(this.options.sources)) {
-      console.log(idString)
       if(!map.getSource(idString))
         map.addSource(idString, this.options.sources[idString]);
     }
@@ -184,9 +165,9 @@ export default class Map {
     let cls = !comparison
       ? this.options.currentLayerState
       : this.options.comparisonLayerState;
-    let layerId = activeLayer.layerId;
+    let Field_Name = activeLayer.Field_Name;
     if (map.getLayer("ocean")) {
-      if (!layerId.includes("fl")) {
+      if (!Field_Name.includes("fl")) {
 
         map.removeLayer("ocean");
 
@@ -215,7 +196,7 @@ export default class Map {
       }
     } else if (
       activeLayer.Name === "Ocean Data" &&
-      !(activeLayer.layerId === "depths")
+      !(activeLayer.Field_Name === "depths")
     ) {
 
       cls.hexSize = "ocean";
@@ -250,29 +231,40 @@ export default class Map {
 
   _bindMapClickListeners() {
     let instance = this;
-    this.map.on("click", "hex-5km", (e) => {
+    this.map.on("click", "hex5", (e) => {
       instance.clearOnClickQuery(instance.map);
-      instance.onDataClick(e, false);
+      instance.onDataClick(e, instance.map);
     });
 
-    this.map.on("click", "hex-10km", function (e) {
+    this.map.on("click", "hex10", function (e) {
       instance.clearOnClickQuery(instance.map);
-      instance.onDataClick(e, false);
+      instance.onDataClick(e, instance.map);
     });
 
-    this.map.on("click", "hex-1km", function (e) {
+    this.map.on("click", "hex1", function (e) {
       instance.clearOnClickQuery(instance.map);
-      instance.onDataClick(e, false);
+      instance.onDataClick(e, instance.map);
+    });
+
+    this.map.on("click", "hex5clipped", function (e) {
+        instance.clearOnClickQuery(instance.map);
+        instance.onDataClick(e, instance.map);
+      }
+    );
+
+    this.map.on("click", "ocean", function (e) {
+      instance.clearOnClickQuery(instance.map);
+      instance.onDataClick(e, instance.map);
     });
 
     this.map.on("click", "admin1", function (e) {
       instance.clearOnClickQuery(instance.map);
-      instance.onAdminClick(e, false);
+      instance.onAdminClick(e, "admin1", instance.map);
     });
 
     this.map.on("click", "admin2", function (e ) {
         instance.clearOnClickQuery(instance.map);
-        instance.onAdminClick(e, false);
+        instance.onAdminClick(e, "admin2", instance.map);
       }
     );
 
@@ -282,46 +274,46 @@ export default class Map {
       }
     );
 
-    this.map2.on("click", "hex-5km", (e) => {
+    this.map2.on("click", "hex5", (e) => {
       instance.clearOnClickQuery(instance.map2);
-      instance.onDataClick(e, true);
+      instance.onDataClick(e, instance.map2);
     });
 
-    this.map2.on("click", "hex-10km", function (e) {
+    this.map2.on("click", "hex10", function (e) {
       instance.clearOnClickQuery(instance.map2);
-      instance.onDataClick(e, true);
+      instance.onDataClick(e, instance.map2);
     });
 
-    this.map2.on("click", "hex-1km", function (e) {
+    this.map2.on("click", "hex1", function (e) {
       instance.clearOnClickQuery(instance.map2);
-      instance.onDataClick(e, true);
+      instance.onDataClick(e, instance.map2);
     });
 
     this.map2.on("click", "hex5clipped", function (e) {
         instance.clearOnClickQuery(instance.map2);
-        instance.onDataClick(e, true);
+        instance.onDataClick(e, instance.map2);
       }
     );
 
     this.map2.on("click", "ocean", function (e) {
       instance.clearOnClickQuery(instance.map2);
-      instance.onDataClick(e, true);
+      instance.onDataClick(e, instance.map2);
     });
 
     this.map2.on("click", "admin1", function (e) {
       instance.clearOnClickQuery(instance.map2);
-      instance.onAdminClick(e, "admin1", true);
+      instance.onAdminClick(e, "admin1", instance.map2);
     });
 
     this.map2.on("click", "admin2", function (e ) {
         instance.clearOnClickQuery(instance.map2);
-        instance.onAdminClick(e, "admin2", true);
+        instance.onAdminClick(e, "admin2", instance.map2);
       }
     );
 
     this.map2.on("click", "bivariate", function (e) {
         instance.clearOnClickQuery(instance.map2);
-        instance.onBivariateClick(e, instance.map);
+        instance.onBivariateClick(e, instance.map2);
       }
     );
   }
@@ -353,22 +345,18 @@ export default class Map {
       }
     })
   }
-  getLayer(layerName, comparison = false) {
-    let map = comparison ? this.map2 : this.map
+  getLayer(layerName, map = this.map) {
     return map.getLayer(layerName)
   }
-  removeLayer(layerName, comparison = false) {
-    let map = comparison ? this.map2 : this.map
+  removeLayer(layerName, map = this.map) {
     if(map.getLayer(layerName)){
       return map.removeLayer(layerName)
     }
   }
-  getSource(sourceName, comparison = false) {
-    let map = comparison ? this.map2 : this.map
+  getSource(sourceName, map = this.map) {
     return map.getSource(sourceName)
   }
-  removeSource(sourceName, comparison = false) {
-    let map = comparison ? this.map2 : this.map
+  removeSource(sourceName, map = this.map) {
     if(map.getSource(sourceName)){
       return map.removeSource(sourceName)
     }
@@ -383,12 +371,11 @@ export default class Map {
       this.map.removeLayer("highlight");
       this.clearOnClickQuery();
     }
-    this.emit('selectionPolyUpdate',
-      null
-    )
+
     this.emit('selectionUpdate', {
       value: null
     })
+
     this.emit('bivariateClick', null)
   }
 
@@ -405,55 +392,40 @@ export default class Map {
       layers: [cls.hexSize],
     });
 
-    if (!features || !features.length || !features.some(f => typeof f.properties.mean !== 'undefined')) {
+    if (!features) {
       if (!recolorComparison) {
         this.addNoDataLegend();
       }
     } else {
       var uniFeatures;
-      uniFeatures = this.getUniqueFeatures(features, "fid");
+      if (cls.hexSize === "admin1") {
+        uniFeatures = this.getUniqueFeatures(features, "GID_1");
+      } else if (cls.hexSize === "admin2") {
+        uniFeatures = this.getUniqueFeatures(features, "GID_2");
+      } else {
+        uniFeatures = this.getUniqueFeatures(features, "hexid");
+      }
 
-      var selectedData = uniFeatures.map((x) => x.properties.mean);
+      var selectedData = uniFeatures.map((x) => x.properties[cls.dataLayer]);
+
       var breaks = chroma.limits(selectedData, "q", 4);
 
       var breaks_new = [];
       this.options.precision = 1;
-
       do {
-        self.options.precision++;
-        for (let i = 0; i < breaks.length; i++) {
-          breaks_new[i] = parseFloat(
-            breaks[i].toPrecision(this.options.precision)
-          );
+        this.options.precision++;
+        for (let i = 0; i < 5; i++) {
+          breaks_new[i] = parseFloat(breaks[i].toPrecision(this.options.precision));
         }
-        if(self.options.precision > 4)  {
-          breaks_new = chroma.limits(selectedData, "e", 4);
-          self.options.precision = 1;
-          if(self.checkForDuplicates(breaks_new)) {
-            breaks_new = breaks_new.map((currentValue, index, array) => {
-              if(index === array.length - 1) {
-                return currentValue
-              }
-              array.map((dCurrentValue, dIndex) => {
-                if(dIndex <= index) {
-                  return
-                }
-                if(currentValue === dCurrentValue) {
-                  breaks_new[dIndex] +=1
-                }
-              })
-              return currentValue
-            })
-          }
-        }
-      } while (self.checkForDuplicates(breaks_new));
+      } while (this.checkForDuplicates(breaks_new) && this.options.precision < 10);
       breaks = breaks_new;
+
       cls.breaks = breaks;
 
       map.setPaintProperty(cls.hexSize, "fill-color", [
         "interpolate",
         ["linear"],
-        ["get", 'mean'],
+        ["get", cls.dataLayer],
         breaks[0],
         cls.color[0],
         breaks[1],
@@ -487,30 +459,14 @@ export default class Map {
         map.setFilter(cls.hexSize, [
           //">=",
           filterCondition,
-          'mean',
+          cls.dataLayer,
           0,
         ]);
         if(self.options.mode3d) {
-          map.setPaintProperty(cls.hexSize + '-3d', "fill-extrusion-color", [
-            "interpolate",
-            ["linear"],
-            ["get", 'mean'],
-            breaks[0],
-            cls.color[0],
-            breaks[1],
-            cls.color[1],
-            breaks[2],
-            cls.color[2],
-            breaks[3],
-            cls.color[3],
-            breaks[4],
-            cls.color[4],
-          ]);
           map.setFilter(cls.hexSize + '-3d',
           [filterCondition,
-          'mean',
+          cls.dataLayer,
           0]);
-
         }
         this.emit('layerUpdate', {
           activeLayer: this.activeLayer,
@@ -535,13 +491,15 @@ export default class Map {
     for (const eventType of ["zoomend", "dragend"]) {
       this.map.on(eventType, () => {
         if (!mapClassInstance.options.bivariateMode) {
+          console.log('kek')
           mapClassInstance.recolorBasedOnWhatsOnPage();
         } else {
+          let bvls = this.options.bivariateLayerState;
           mapClassInstance.createBivariate(
             null,
-            this.activeLayer,
+            bvls.dataLayer[0],
             null,
-            this.bivarLayer
+            bvls.dataLayer[1]
           );
         }
       });
@@ -578,6 +536,9 @@ export default class Map {
     });
   }
   add3dLayer(map, layerState, id) {
+    let current = Object.values(this.options.sourceData).find((o) => {
+      return o.name === layerState.hexSize;
+    });
     if(map.getLayer(id)) {
       map.removeLayer(id);
     }
@@ -589,8 +550,8 @@ export default class Map {
       {
         id: id,
         type: "fill-extrusion",
-        source: layerState.hexSize+layerState.dataLayer,
-        "source-layer": layerState.hexSize+'_'+layerState.dataLayer,
+        source: layerState.hexSize,
+        "source-layer": current.layer,
         layout: {
           visibility: "visible",
         },
@@ -599,7 +560,7 @@ export default class Map {
           "fill-extrusion-color": [
             "interpolate",
             ["linear"],
-            ["get", 'mean'],
+            ["get", layerState.dataLayer],
             layerState.breaks[0],
             layerState.color[0],
             layerState.breaks[1],
@@ -614,7 +575,7 @@ export default class Map {
           "fill-extrusion-height": [
             "interpolate",
             ["linear"],
-            ["get", 'mean'],
+            ["get", layerState.dataLayer],
             layerState.breaks[0],
             0,
             layerState.breaks[1],
@@ -638,8 +599,8 @@ export default class Map {
       lastSymbol
     );
 
-    if (map.getLayer(layerState.hexSize)) {
-      map.moveLayer(layerState.hexSize, id);
+    if (map.getLayer(this.options.firstSymbolId)) {
+      map.moveLayer(layerState.hexSize + '-3d', this.options.firstSymbolId);
     }
 
     let filterString =
@@ -647,48 +608,43 @@ export default class Map {
 
     map.setFilter(id, [
       filterString, // ">="
-      'mean',
+      layerState.dataLayer,
       0,
     ]);
   }
-  _moveServiceLayersToTop(comparison = false) {
-    let map = !comparison ? this.map : this.map2; //
-    let cls = !comparison
-      ? this.options.currentLayerState
-      : this.options.comparisonLayerState;
-    map.moveLayer(cls.hexSize, "allsids");
-    if(this.getLayer('admin1-overlay', comparison)) {
-      map.moveLayer(cls.hexSize, 'admin1-overlay');
-    }
-    if(this.getLayer('admin2-overlay', comparison)) {
-      map.moveLayer(cls.hexSize, 'admin2-overlay');
-    }
-  }
+
   computeBreaksAndColorRamp(
     data,
-    colors
+    colors,
+    breakMode,
+    numGroups,
+    currentBreaks,
   ) {
-    let limitsLength = data.filter((v,i) => { return i==data.lastIndexOf(v); }).length;
-    limitsLength = limitsLength > 4 ? 4 : limitsLength;
-    var breaks = chroma.limits(data, "q", limitsLength);
-    var breaks_new = [];
-    this.options.precision = 1;
-    do {
-      this.options.precision++;
-      for (let i = 0; i < breaks.length; i++) {
-        breaks_new[i] = parseFloat(
-          breaks[i].toPrecision(this.options.precision)
-        );
-        if(this.options.precision > 4) {
-          breaks_new = chroma.limits(data, "l", 4);
-          this.options.precision = 1;
-        }
+
+    let numBreaks = 4; //TODO: DETERMINE THIS IMPLICIT SOURCE
+    //calculate breaks and counts for use in histogram
+    let histogram_breaks = chroma.limits(data, breakMode, numGroups);
+    let break_index = 0;
+    let break_counters = Array(numBreaks).fill(0);
+    for (let i = 0; i < numGroups; i++) {
+      if (histogram_breaks[i] > currentBreaks[break_index + 1]) {
+        break_index++;
       }
-    } while (self.checkForDuplicates(breaks_new));
-    breaks = breaks_new;
+      break_counters[break_index]++; //increment the counter at current break
+    }
+
+    let colorRampNew = [];
+    for (let i = 0; i < numBreaks; i++) {
+      let colorRampPart = chroma
+        .scale([colors[i], colors[i + 1]]) //scale maps numeric values to a color palette
+        .mode("lch") //interpolation mode in which the colors are interpolated; affects color output results
+        .colors(break_counters[i]); //how many colors to generate in the palette
+      colorRampNew = colorRampNew.concat(colorRampPart);
+    }
+
     return {
-      colorRamp: colors,
-      histogramBreaks: breaks,
+      colorRamp: colorRampNew,
+      histogramBreaks: histogram_breaks,
     };
   }
 
@@ -754,11 +710,11 @@ export default class Map {
         var filter = features.reduce(
           function (memo, feature) {
             if (booleanIntersects(feature, createdPolygon)) {
-              memo.push(feature.properties.fid);
+              memo.push(feature.properties.hexid);
             }
             return memo;
           },
-          ["in", "fid"] //callback function using reduce - checks if the boundBox rendered features are "in" the array of "hexid"s
+          ["in", "hexid"] //callback function using reduce - checks if the boundBox rendered features are "in" the array of "hexid"s
         );
         self.map.setFilter(
           self.options.currentLayerState.hexSize,
@@ -768,11 +724,11 @@ export default class Map {
           var filter3d = features3d.reduce(
             function (memo, feature) {
               if (booleanIntersects(feature, createdPolygon)) {
-                memo.push(feature.properties.fid);
+                memo.push(feature.properties.hexid);
               }
               return memo;
             },
-            ["in", "fid"] //callback function using reduce - checks if the boundBox rendered features are "in" the array of "hexid"s
+            ["in", "hexid"] //callback function using reduce - checks if the boundBox rendered features are "in" the array of "hexid"s
           );
           self.map.setFilter(
             self.options.currentLayerState.hexSize+'-3d',
@@ -787,7 +743,7 @@ export default class Map {
           });
 
           onscreenFeatures.forEach(function (x) {
-            info.push(x.properties.mean);
+            info.push(x.properties[self.options.currentLayerState.dataLayer]);
           });
           let max = Math.max(...info);
           let min = Math.min(...info);
