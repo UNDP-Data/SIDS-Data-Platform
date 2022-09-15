@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import paper from 'paper'
 import { interpolatePath } from 'd3-interpolate-path';
+import sidsListFull from '@/assets/sidsListFull'
 
 paper.setup(document.getElementById("myCanvas"));
 
@@ -618,7 +619,10 @@ export function updateTimeChart({ dataset, optionSelected }) {
           return d.y
         })
         .attr("cursor", "pointer")
-        .text((d) => countryNames[d.country]);
+        .text((d) => {
+          let cId = sidsListFull.find( c => c.iso === d.country).id
+          return rootThis.$t.call(rootThis.vue, 'countryNames.' + cId);
+        });
 
         g.selectAll("text")
         .attr("x", () => {
@@ -717,16 +721,16 @@ export function updateTimeChart({ dataset, optionSelected }) {
   function dataFilter(dataset, countryList, vizWidth) {
     const { datasetOption, countryGroupOption } = optionSelected;
     let filtered0 = dataset[datasetOption]["data"];
-    filtered0.push(computeAverage('AIS', filtered0))
-    filtered0.push(computeAverage('Caribbean', filtered0))
-    filtered0.push(computeAverage('Pacific', filtered0))
+    filtered0.push(computeAverage('ais', filtered0))
+    filtered0.push(computeAverage('caribbean', filtered0))
+    filtered0.push(computeAverage('pacific', filtered0))
     filtered0 = filtered0.filter(c => c.data.length > 0)
     if(vizWidth<800) {
       return filtered0.filter((d) => countryList.includes(d.country)) || []
     }
-    if (countryGroupOption == "All") {
+    if (countryGroupOption == "allSids") {
       return filtered0;
-    } else if (countryGroupOption == "Regional average") {
+    } else if (countryGroupOption == "regionalAvg") {
       return filtered0.filter((d) => d.avg);
     } else {
       const countries = Object.keys(countryGroup[countryGroupOption]);

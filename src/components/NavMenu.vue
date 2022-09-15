@@ -24,9 +24,12 @@
               <v-list-item-content>
                 <v-list-item-title
                   class="menu-item_text"
-                  v-text="route.name">
+                  v-text="$t('navigation.' + route.meta.linkText)">
                 </v-list-item-title>
               </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <language-selector/>
             </v-list-item>
           </div>
       </v-list>
@@ -35,7 +38,7 @@
 </template>
 
 <script>
-
+import LanguageSelector from '@/components/LanguageSelector'
 import sizeMixin from '@/mixins/size.mixin';
 
 export default {
@@ -46,6 +49,9 @@ export default {
       type: Boolean,
       default: true
     }
+  },
+  components:{
+    LanguageSelector
   },
   data(){
     return {

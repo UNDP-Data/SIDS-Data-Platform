@@ -11,7 +11,7 @@
               <v-expansion-panel-header class="font-weight-bold"
                 :color="indicatorCatery.color"
               >
-                {{indicatorCatery.category}}
+              {{$t('indicators.mvi.'+indicatorCatery.category)}}
               </v-expansion-panel-header>
               <v-expansion-panel-content
               >
@@ -30,7 +30,7 @@
                       ></v-checkbox>
                     </v-list-item-action>
                     <v-list-item-content>
-                      <v-list-item-title>{{indicator.name}}</v-list-item-title>
+                      <v-list-item-title>{{$t('indicators.mvi.'+indicator.code.replaceAll('.','-'))}}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
@@ -49,12 +49,18 @@
                     dense
                     hide-details
                     item-value="chartType"
-                    item-text="name"
                     :value="chartType"
                     :items="chartTypes"
                     @change="emitChartTypeChange"
                     outlined
-                  ></v-select>
+                  >
+                    <template slot="selection" slot-scope="data">
+                      <span class="select-text-element">{{$t('indicators.tabs.' + data.item.chartType)}}</span>
+                    </template>
+                    <template  slot="item" slot-scope="data">
+                      {{$t('indicators.tabs.' + data.item.chartType)}}
+                    </template>
+                  </v-select>
                 </div>
               </v-col>
               <v-col cols="6">
@@ -70,7 +76,14 @@
                     :items="sortingTypes"
                     @change="emitSortingChange"
                     outlined
-                  ></v-select>
+                  >
+                    <template slot="selection" slot-scope="data">
+                      <span class="select-text-element">{{$t('indicators.filters.' + data.item.value)}}</span>
+                    </template>
+                    <template  slot="item" slot-scope="data">
+                      {{$t('indicators.filters.' + data.item.value)}}
+                    </template>
+                  </v-select>
                 </div>
                 <div v-else class="select">
                   <label class="input-label">Region</label>
@@ -84,7 +97,14 @@
                     :items="regions"
                     @change="emitRegionChange"
                     outlined
-                  ></v-select>
+                  >
+                    <template slot="selection" slot-scope="data">
+                      <span class="select-text-element">{{$t('regions.' + data.item)}}</span>
+                    </template>
+                    <template  slot="item" slot-scope="data">
+                      {{$t('regions.' + data.item)}}
+                    </template>
+                  </v-select>
                 </div>
               </v-col>
             </v-row>

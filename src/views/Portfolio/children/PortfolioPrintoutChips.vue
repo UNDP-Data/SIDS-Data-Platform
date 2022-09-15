@@ -3,27 +3,27 @@
     <v-col cols="6">
       <p class="portfolio-print-filters-list mb-0">
         <span class="portfolio-print-filters-list_name">
-          Region:
+          {{$t('root.forms.region')}}:
         </span>
-        {{region}}
+        {{$t('regions.'+ region)}}
       </p>
       <p class="portfolio-print-filters-list mb-0">
         <span class="portfolio-print-filters-list_name">
-          Years:
+          {{$t('root.forms.years')}}:
         </span>
         {{year}}
       </p>
       <p class="portfolio-print-filters-list mb-0">
         <span class="portfolio-print-filters-list_name">
-          Funding categories:
+          {{$t('portfolio.fundingCategories')}}:
         </span>
-        {{fundingCategory}}
+        {{$t('portfolio.fundingTypes.' + fundingCategory)}}
       </p>
       <p class="portfolio-print-filters-list mb-0">
         <span class="portfolio-print-filters-list_name">
-          Funding sources:
+          {{$t('portfolio.fundingSources')}}:
         </span>
-        {{fundingSource}}
+        {{fundingSource === 'All' ? $t('portfolio.' + fundingSource) : fundingSource}}
       </p>
     </v-col>
     <v-col cols="6" class="portfolio-print-chips">
@@ -53,7 +53,7 @@
           <portfolio-indicator-box
             class="portfolio-printout-chip"
             :value="projectsFundning"
-            :title="$t('portfolio.chips.funding')"
+            :title="$t('portfolio.chips.fundingSource')"
           />
         </v-col>
       </v-row>
@@ -153,15 +153,6 @@ export default {
 </script>
 
 <style>
-.portfolio-print-filters-list_name {
-  display: block;
-  font-size: 14px;
-  font-weight: normal;
-}
-.portfolio-print-filters-list {
-  font-size: 20px;
-  font-weight: bold;
-}
 .portfolio-print-chips {
   -webkit-print-color-adjust: exact !important;
   background: #418FDE;

@@ -22,7 +22,7 @@
           @click:close="removeCountry(item.id)"
           :style="getChipStyle(index, item)"
           :color="getColor(index, item)">
-          {{item.name}}
+          {{$t('countryNames.'+item.id)}}
         </v-chip>
       </template>
       <template slot="item" slot-scope="data">
@@ -30,7 +30,7 @@
         class="flag-icon select_icon"
         :class="'flag-icon-' + flagCodes[data.item.id]"
       ></i>
-      {{ data.item.name }}
+      {{ $t('countryNames.'+data.item.id)}}
       </template>
     </v-select>
   </div>

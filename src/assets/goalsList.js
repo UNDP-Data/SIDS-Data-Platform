@@ -340,6 +340,7 @@ export const goals = {
   pillars: [
     {
       name: "Blue Economy",
+      id:"blueEconomy",
       icon: require("@/assets/media/goals-icons/pillars/blueEconomy.png"),
       type:'pillar',
       content:
@@ -347,6 +348,7 @@ export const goals = {
     },
     {
       name: "Climate Action",
+      id:"climateAction",
       icon: require("@/assets/media/goals-icons/pillars/climateAction.png"),
       type:'pillar',
       content:
@@ -354,6 +356,7 @@ export const goals = {
     },
     {
       name: "Digital transformation",
+      id:"digitalTransformation",
       icon: require("@/assets/media/goals-icons/pillars/digitalTransformation.png"),
       type:'pillar',
       content:
@@ -404,7 +407,7 @@ export const goalTypesGis = [
 ]
 export const mviIndicators = [
   {
-    category:'Environmental',
+    category:'environmental',
     color:'rgba(0, 160, 176, 0.7)',
     indicators:[{
       code:'mvi-ldc-VIC-Index',
@@ -414,7 +417,7 @@ export const mviIndicators = [
       name:'Agriculture and Fishing (% of GDP)'
     }]
   },{
-    category:'Geographic',
+    category:'geographic',
     color: 'rgba(204, 51, 63, 0.7)',
     indicators:[{
       code:'mvi-ldc-REM-Index',
@@ -429,7 +432,7 @@ export const mviIndicators = [
       name:'% Population in Coastal Zones'
     }]
   },{
-    category:'Economic',
+    category:'economic',
     color:'rgba(240, 219, 58, 0.7)',
     indicators:[{
       code:'mvi-ldc-XCON-Index',
@@ -442,7 +445,7 @@ export const mviIndicators = [
       name:'Agricultural Instability'
     }]
   },{
-    category:'Financial',
+    category:'financial',
     color:'rgba(13, 177, 75, 0.7)',
     indicators:[{
       code:'mvi-wdi2-ST.INT.RCPT.XP.ZS',

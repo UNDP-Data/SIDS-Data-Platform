@@ -12,7 +12,6 @@
     </div>
     <div class="button-wrapper">
       <map-resolution-controller
-        :disabled="activeLayer && activeLayer.Name === 'Ocean Data'"
         :map="map"
       />
     </div>
@@ -110,8 +109,6 @@ export default {
   props:[
     'map',
     'dualModeEnabled',
-    'activeLayer',
-    'activeDataset',
     'bivariateModeEnabled'
   ],
   methods: {
