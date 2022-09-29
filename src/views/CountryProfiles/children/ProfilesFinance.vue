@@ -4,31 +4,17 @@
       <v-card flat class="overflow background-grey">
           <v-list dense class="indicators-list background-grey"
           >
-            <v-list-item v-for="(indicator) in financeData"
-              :ripple="false"
-              :to="`/development-indicators/${indicator.axis}`"
-              :key="indicator.axis">
-                    <info-hover-tooltip :large="true">
-                      <template slot="content">
-                        <v-card flat>
-                          <v-card-text class="active-indicator-info">
-                            {{indicatorsMetadata[indicator.axis].longDefinition}}
-                            <v-divider class="mb-1 mt-1"></v-divider>
-                            <b>{{$t('portfolio.year')}}:</b>
-                              <template v-if="indicator.year && indicator.year!=='No Year'">
-                                ({{indicator.year}})
-                              </template> <template v-else>
-                                {{$t('root.noData')}}
-                              </template> <br/>
-                            <b>{{$t('root.source')}}:</b> {{indicatorsMetadata[indicator.axis].source}} <br/>
-                            <a v-if="indicatorsMetadata[indicator.axis].sourceLink !== 'No Data'" :href="indicatorsMetadata[indicator.axis].sourceLink" target="_blank">Link</a>
-                          </v-card-text>
-                        </v-card>
-                      </template>
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </template>
-              </info-hover-tooltip>
+            <v-list-item v-for="(indicator) in financeData" :key="indicator.axis">
+              <v-list-item-content class="one-line">
+                <v-list-item-title class="one-line_header">
+                  {{$t(`finance.${indicator.axis.replaceAll('.','-')}`)}}
+                </v-list-item-title>
+                <v-list-item-subtitle class="one-line_subheader">{{formatNumber(indicator.value)}}
+                  <template v-if="indicator.year && indicator.year!=='No Year'">
+                    ({{indicator.year}})
+                  </template>
+                </v-list-item-subtitle>
+              </v-list-item-content>
             </v-list-item>
           </v-list>
       </v-card>

@@ -100,18 +100,17 @@ export default {
   },
   methods: {
     toggleBivar(e) {
-      if(this.dualModeEnabled){
-        this.toggleDual(!this.dualModeEnabled)
-      }
       this.bivariateModeEnabled = e;
-      this.map.toggleBivariateComponents(e);
+      this.map.toggleBivariateComponents(e)
     },
     toggleDual(e) {
-      if(this.bivariateModeEnabled){
-        this.toggleBivar(!this.bivariateModeEnabled)
-      }
       this.dualModeEnabled = e;
       this.map.toggleMapboxGLCompare(e);
+    },
+    toggleDualMode() {
+      this.dualModeEnabled = !this.dualModeEnabled;
+      // console.log("dualModeEnabled:", this.dualModeEnabled);
+      this.map.toggleMapboxGLCompare();
     },
     updateBivariate({dataset, layer, secondDataset, secondLayer}) {
       this.map.createBivariate(

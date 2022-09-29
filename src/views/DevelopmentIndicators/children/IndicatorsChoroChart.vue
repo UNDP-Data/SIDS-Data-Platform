@@ -70,7 +70,7 @@ export default {
       return this.$i18n.locale
     },
     activeIndicatorsMeta() {
-      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
+      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-hdi']
     },
     chartData() {
       if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {

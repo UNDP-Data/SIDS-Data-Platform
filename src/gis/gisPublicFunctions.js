@@ -68,44 +68,20 @@ export function updateData(
       } else {
         uniFeatures = self.getUniqueFeatures(features, "hexid");
       }
-      let selectedData = uniFeatures.map((x) => {
-        return x.properties[activeLayer.Field_Name]
-      }).filter(x => x!== undefined);
-      console.log(selectedData,uniFeatures)
-      let breaks = chroma.limits(selectedData, "q", 4);
-      let breaks_new = [];
-      self.options.precision = 1;
+      var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
+
+      var breaks = chroma.limits(selectedData, "q", 4);
+
+      var breaks_new = [];
+      this.options.precision = 1;
       do {
-        self.options.precision++;
-        for (let i = 0; i < breaks.length; i++) {
+        this.options.precision++;
+        for (let i = 0; i < 5; i++) {
           breaks_new[i] = parseFloat(
             breaks[i].toPrecision(this.options.precision)
           );
         }
-        if(self.options.precision > 4)  {
-          breaks_new = chroma.limits(selectedData, "e", 4);
-          if(breaks_new[0] === Number.MAX_VALUE) {
-            breaks_new = [0,1,2,3,4]
-          }
-          self.options.precision = 1;
-          if(self.checkForDuplicates(breaks_new)) {
-            breaks_new = breaks_new.map((currentValue, index, array) => {
-              if(index === array.length - 1) {
-                return currentValue
-              }
-              array.map((dCurrentValue, dIndex) => {
-                if(dIndex <= index) {
-                  return
-                }
-                if(currentValue === dCurrentValue) {
-                  breaks_new[dIndex] +=1
-                }
-              })
-              return currentValue
-            })
-          }
-        }
-      } while (self.checkForDuplicates(breaks_new));
+      } while (self.checkForDuplicates(breaks_new) && this.options.precision < 10);
       breaks = breaks_new;
       let colorRamp;
       if(self.options.colorSCheme.color && self.options.colorSCheme.color !=='original') {
@@ -167,7 +143,7 @@ export function updateData(
         ],
       ]);
 
-      if (selectedData.length === 0) {
+      if (isNaN(breaks[3]) || breaks[1] == 0) {
         map.setPaintProperty(
           cls.hexSize,
           "fill-opacity",

@@ -47,7 +47,7 @@
 <script>
 export default {
   name: 'ProfilesSpiderChartTooltip',
-  props: ['header','source','code','rank','value','year','definition', 'link', 'ismvi'],
+  props: ['header','source','code','rank','value','year','definition', 'link'],
 }
 </script>
 

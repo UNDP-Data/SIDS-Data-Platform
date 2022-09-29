@@ -218,8 +218,9 @@ export function initCountrySvgs(){
   this.sidsMapSelection
     .selectAll("path") // Map countries to regional colors
     .attr("class", function () {
+      console.log(this.id, rootThis.profileData)
        return (
-        regionColors(rootThis.profileData[this.id].Region,rootThis.profileData[this.id]["Member State (Y/N)"]
+        regionColors(rootThis.profileData[this.id].region,rootThis.profileData[this.id].unMeber
         ) + " shadow countrySvg"
       );
     });
@@ -235,7 +236,7 @@ this.sidsMapSelection
     .style("fill", function () {
       return (
         "#" +
-        regionColors(rootThis.profileData[this.parentNode.id].Region, "Y").substring(1)
+        regionColors(rootThis.profileData[this.parentNode.id].region, "Y").substring(1)
       );
     })
     .attr("r", 0)
@@ -368,7 +369,7 @@ this.sidsMapSelection
     .style("fill", function () {
       return (
         "#" +
-        regionColors(rootThis.profileData[this.parentNode.id].Region, "Y").substring(1)
+        regionColors(rootThis.profileData[this.parentNode.id].region, "Y").substring(1)
       );
     }) //
     .attr("x", 160)

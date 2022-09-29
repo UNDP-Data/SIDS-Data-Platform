@@ -93,9 +93,6 @@ export default {
   methods: {
     emitDatasetChange(dataset){
       this.$emit('datasetChange', dataset)
-      if(dataset.type === "layers") {
-        this.emitLayerChange(dataset.layers[0])
-      }
     },
     emitLayerChange(layer){
       this.$emit('layerChange', layer)

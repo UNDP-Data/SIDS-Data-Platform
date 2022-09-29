@@ -449,7 +449,6 @@ export default {
   },
   computed:{
     ...mapState({
-      countries: state => state.sids.countryList,
       fundingCategories: state => state.sids.fundingCategories,
       portfolioData: state => state.sids.portfolioData,
       portfolioSources: state => state.sids.portfolioSources

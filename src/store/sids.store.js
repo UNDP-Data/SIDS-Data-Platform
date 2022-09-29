@@ -6,19 +6,14 @@ export default {
   namespaced: true,
   state: {
     keyMetadata: null,
-    allKeyData: null,
     fundingCategories: null,
     SIDSDataWithDonors: null,
     portfolioSources:null,
-    countryList: null,
     portfolioData: null
   },
   mutations: {
     setMetaData(state, data) {
       state.keyMetadata = data;
-    },
-    setKeyData(state, data) {
-      state.allKeyData = data;
     },
     setFundingCategories(state, data) {
       state.fundingCategories = data;
@@ -28,9 +23,6 @@ export default {
     },
     setSIDSDataWithDonors(state, data) {
       state.SIDSDataWithDonors = data;
-    },
-    setCountryList(state, data) {
-      state.countryList = data;
     },
     setPortfolioData(state, data) {
       state.portfolioData = data;
@@ -44,13 +36,6 @@ export default {
       if(!state.keyMetadata){
         const metaData = await service.loadMetaData();
         commit("setMetaData", metaData);
-      }
-    },
-    async getAllKeyData({ dispatch, state, commit }) {
-      if(!state.allKeyData){
-        const allKeyData = await service.loadAllKeyData();
-        commit("setKeyData", allKeyData);
-        dispatch('generateCountryList', allKeyData)
       }
     },
     async setFundingCategories({ state, commit, dispatch }) {
@@ -70,16 +55,6 @@ export default {
         const SIDSData = await service.loadSIDSData();
         commit("setSIDSData", SIDSData);
       }
-    },
-    generateCountryList({ commit }, data) {
-      const countryList = [];
-      for(let country in data) {
-        let profile = data[country]['Profile'];
-        profile.id = country;
-        // profile.code = codes[country]
-        countryList.push(profile);
-      }
-      commit("setCountryList", countryList);
     },
     setFullDonorsInfo({ state, commit }) {
       let projectsWithDonorInfo = state.SIDSData.map(project => {

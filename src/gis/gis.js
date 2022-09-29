@@ -413,46 +413,20 @@ export default class Map {
         uniFeatures = this.getUniqueFeatures(features, "hexid");
       }
 
-      let selectedData = uniFeatures.map((x) => {
-        return x.properties[cls.dataLayer]
-      }).filter(x => x !== undefined);
+      var selectedData = uniFeatures.map((x) => x.properties[cls.dataLayer]);
+
       var breaks = chroma.limits(selectedData, "q", 4);
 
       var breaks_new = [];
       this.options.precision = 1;
-
       do {
         this.options.precision++;
-        for (let i = 0; i < breaks.length; i++) {
-          breaks_new[i] = parseFloat(
-            breaks[i].toPrecision(this.options.precision)
-          );
+        for (let i = 0; i < 5; i++) {
+          breaks_new[i] = parseFloat(breaks[i].toPrecision(this.options.precision));
         }
-        if(this.options.precision > 4)  {
-          breaks_new = chroma.limits(selectedData, "e", 4);
-          this.options.precision = 1;
-          if(breaks_new[0] === Number.MAX_VALUE) {
-            breaks_new = [0,1,2,3,4]
-          }
-          if(this.checkForDuplicates(breaks_new)) {
-            breaks_new = breaks_new.map((currentValue, index, array) => {
-              if(index === array.length - 1) {
-                return currentValue
-              }
-              array.map((dCurrentValue, dIndex) => {
-                if(dIndex <= index) {
-                  return
-                }
-                if(currentValue === dCurrentValue) {
-                  breaks_new[dIndex] +=1
-                }
-              })
-              return currentValue
-            })
-          }
-        }
-      } while (this.checkForDuplicates(breaks_new));
+      } while (this.checkForDuplicates(breaks_new) && this.options.precision < 10);
       breaks = breaks_new;
+
       cls.breaks = breaks;
 
       map.setPaintProperty(cls.hexSize, "fill-color", [
@@ -525,6 +499,7 @@ export default class Map {
     for (const eventType of ["zoomend", "dragend"]) {
       this.map.on(eventType, () => {
         if (!mapClassInstance.options.bivariateMode) {
+          console.log('kek')
           mapClassInstance.recolorBasedOnWhatsOnPage();
         } else {
           let bvls = this.options.bivariateLayerState;
@@ -631,6 +606,10 @@ export default class Map {
       },
       lastSymbol
     );
+
+    if (map.getLayer(this.options.firstSymbolId)) {
+      map.moveLayer(layerState.hexSize + '-3d', this.options.firstSymbolId);
+    }
 
     let filterString =
       layerState.dataLayer === "depth" ? "<" : ">=";

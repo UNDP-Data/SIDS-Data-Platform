@@ -342,7 +342,7 @@ export default {
       return this.tabs.findIndex(menuItem => menuItem.chartType === this.chartType)
     },
     activeIndicatorsMeta() {
-      return this.indicatorsMeta[this.indicator] || this.indicatorsMeta['hdr-137506']
+      return this.indicatorsMeta[this.indicator] || this.indicatorsMeta['hdr-hdi']
     },
     mlAvaliable() {
       return this.indicator && this.indicator.match(/.*key|mvi|ndgain|wdi.*/gm);

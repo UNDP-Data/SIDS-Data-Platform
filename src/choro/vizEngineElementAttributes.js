@@ -75,7 +75,7 @@ export function updateCountryAVGbars(dataObj) {
   if(this.indiSelections["viz"] === 'bars' && this.vizMode !== 'index') {
     for (let i = 0; i < avgs.length; i++) {
       let avg = Object.keys(dataObj).reduce((avg, country) => {
-        if(this.profileData[country].Region === avgs[i] && dataObj[country] !== 'No Data') {
+        if(rootThis.profileData[country].region === avgs[i] && dataObj[country] !== 'No Data') {
           avg[0] += 1;
           avg[1] += dataObj[country]
         }
@@ -101,40 +101,36 @@ export function updateCountryAVGbars(dataObj) {
           let g = this.sidsMapSelection
             .append("g")
             .attr('id', avgs[i])
-            g.append('path')
-              .attr('id', avgs[i])
-            g.append('rect')
-              .attr("x", 160)
-              .attr("y", 300)
-              .attr("width", 0)
-              .attr("height", 0)
-              .classed("choroRect", true)
-              .style("fill", function () {
-                return (
-                  "#" +
-                  regionColors(rootThis.profileData[avgs[i]].Region, "Y").substring(1)
-                );
-              }) //
-            g.append('text')
-              .attr("font-size", 10)
-              .attr('fill-opacity', 0)
-              .text(() => {
-                return rootThis.$t.call(rootThis.vue, 'countryNames.' + avgs[i].toLowerCase() + 'Average')
-              })
-              .attr("id", function () {
-                return avgs[i] + '-text';
-              })
-              .attr("x", function () {
-                return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
-              })
-              .attr("y", function () {
-                return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
-              })
-              .classed("choroText", true);
-            g.append('text')
-              .attr("font-size", 10)
-              .classed("countryLabel", true);
-          }
+          g.append('rect')
+            .attr("x", 160)
+            .attr("y", 300)
+            .attr("width", 0)
+            .attr("height", 0)
+            .classed("choroRect", true)
+            .style("fill", function () {
+              return (
+                "#" +
+                regionColors(rootThis.profileData[avgs[i]].region, "Y").substring(1)
+              );
+            }) //
+          g.append('text')
+            .attr("font-size", 10)
+            .text(() => {
+              return rootThis.$t.call(rootThis.vue, 'countryNames.' + avgs[i].toLowerCase() + 'Average')
+            })
+            .attr("id", function () {
+              return avgs[i] + '-text';
+            })
+            .attr("x", function () {
+              return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
+            })
+            .attr("y", function () {
+              return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
+            })
+            .classed("choroText", true);
+          g.append('text')
+            .attr("font-size", 10)
+            .classed("countryLabel", true);
         }
     }
     } else  if (this.vizMode !== 'index'){
@@ -157,7 +153,7 @@ export function updateCountryAVGMVIbars(dataObj) {
     if(this.indiSelections["viz"] === 'bars' && this.vizMode === 'index') {
       for (let i = 0; i < avgs.length; i++) {
         let avg = Object.keys(dataObj).reduce((avg, country) => {
-          if(this.profileData[country].Region === avgs[i] && dataObj[country] !== 'No Data') {
+          if(this.profileData[country].region === avgs[i] && dataObj[country] !== 'No Data') {
             avg[0] += 1;
             avg[1] += dataObj[country]
           }
@@ -173,7 +169,7 @@ export function updateCountryAVGMVIbars(dataObj) {
           Object.keys(this.indexData).map(indexName => {
             let indexDataObject = this.indexData[indexName].data.recentValue
             let avg = Object.keys(indexDataObject).reduce((avg, country) => {
-              if(this.profileData[country].Region === avgs[i] && indexDataObject[country] !== 'No Data') {
+              if(this.profileData[country].region === avgs[i] && indexDataObject[country] !== 'No Data') {
                 avg[0] += 1;
                 avg[1] += indexDataObject[country]
               }
