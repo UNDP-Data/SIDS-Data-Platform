@@ -631,7 +631,7 @@ export function updateCountryTitles(
 
         if (
           rootThis.indicatorCode == "Region" &&
-          rootThis.indiSelections["viz"] == "choro"
+          rootThis.indiSelections["viz"] === "choro"
         ) {
           d3.select(this).attr('fill-opacity', 1);
         } else {
