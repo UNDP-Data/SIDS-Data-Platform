@@ -30,7 +30,8 @@
             </v-btn>
           </template>
           <span>
-            <b>{{$t('gis.toolbar.basemap[0]')}}</b> {{$t('gis.toolbar.basemap[1]')}}
+            <b>Change Basemap</b> - Switch between Satellite Imagery and
+            abstract map themes
           </span>
         </v-tooltip>
       </template>
@@ -51,7 +52,7 @@
               :class="getMapIcon(item)"
             ></i>
             <span>
-              {{$t('gis.toolbar.'+item)}}
+              {{item}}
             </span>
           </template>
           <template slot="item" slot-scope="data">
@@ -59,7 +60,7 @@
             class="base-selection-select mr-2"
             :class="getMapIcon(data.item)"
           ></i>
-          {{$t('gis.toolbar.'+data.item)}}
+          {{ data.item }}
           </template>
         </v-select>
       </div>
@@ -71,8 +72,8 @@ export default {
   name: 'MapBasemapSelector',
   data() {
     return {
-      basemap: 'satellite',
-      basemaps:['satellite', 'light', 'dark'],
+      basemap: 'Satellite Imagery',
+      basemaps:['Satellite Imagery', 'Light Theme', 'Dark Theme'],
       open:false
     }
   },
@@ -81,10 +82,10 @@ export default {
   ],
   computed: {
     satelliteImage() {
-      if(this.basemap === 'light') {
+      if(this.basemap === 'Light Theme') {
         return 'satelite-white'
       }
-      if(this.basemap === 'dark') {
+      if(this.basemap === 'Dark Theme') {
         return 'satelite-dark'
       }
       return 'satelite'
@@ -97,10 +98,10 @@ export default {
       this.map.changeBasemap(basemap);
     },
     getMapIcon(basemap) {
-      if(basemap === 'light') {
+      if(basemap === 'Light Theme') {
         return 'satelite-white'
       }
-      if(basemap === 'dark') {
+      if(basemap === 'Dark Theme') {
         return 'satelite-dark'
       }
       return 'satelite'

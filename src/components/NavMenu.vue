@@ -28,9 +28,6 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item>
-              <language-selector/>
-            </v-list-item>
           </div>
       </v-list>
     </div>
@@ -38,7 +35,6 @@
 </template>
 
 <script>
-import LanguageSelector from '@/components/LanguageSelector'
 import sizeMixin from '@/mixins/size.mixin';
 
 export default {
@@ -49,9 +45,6 @@ export default {
       type: Boolean,
       default: true
     }
-  },
-  components:{
-    LanguageSelector
   },
   data(){
     return {

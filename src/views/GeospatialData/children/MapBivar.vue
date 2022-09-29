@@ -19,7 +19,7 @@
         </v-btn>
       </template>
       <span>
-        <b>{{$t('gis.toolbar.bivar[0]')}}</b> {{$t('gis.toolbar.bivar[1]')}}
+        <b>Bivariate Mode</b> - Show the relationships between two datasets
       </span>
     </v-tooltip>
   </div>

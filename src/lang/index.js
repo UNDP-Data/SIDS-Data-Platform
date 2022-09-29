@@ -13,15 +13,15 @@ export function initI18n() {
   }
   let promise;
   if(lang !== "en") {
-    promise = Promise.all([service.loadLang(lang), service.loadLang('en')])
+    promise = Promise.all([service.loadLang('en'), service.loadLang(lang)])
   } else {
     promise = Promise.all([service.loadLang(lang)])
   }
-  return promise.then(function([data, enData]) {
+  return promise.then(function([enData, data]) {
     let messages = {};
-    messages[lang] = data;
+    messages["en"] = enData;
     if(lang !== "en") {
-      messages["en"] = enData;
+      messages[lang] = data;
     }
     i18n = new VueI18n({
       locale: lang,

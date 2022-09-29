@@ -11,7 +11,6 @@ const names = [
     ],
     GID_0: "PCF",
     flagCode: null,
-    id:'pacific'
   },
   {
     NAME_0: "Caribbean Region", //corrected spelling from "Caribbean"
@@ -23,7 +22,6 @@ const names = [
     ],
     GID_0: "CBR",
     flagCode: null,
-    id:'caribbean'
   },
   {
     NAME_0: "Atlantic, Indian, and South China Sea",
@@ -35,7 +33,6 @@ const names = [
     // GID_0: "KNA", //duplicate; believed to be error
     GID_0: "AIS",
     flagCode: null,
-    id:'ais'
   },
   {
     NAME_0: "Aruba",
