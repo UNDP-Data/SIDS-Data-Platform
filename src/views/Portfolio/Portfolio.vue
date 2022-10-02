@@ -90,8 +90,8 @@
           >
             <template v-slot:header>
               <v-row class="map-header d-none d-lg-flex">
-                <v-col class="offset-xl-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2 pb-0" cols="8" sm="8" md='10' lg='8' xl="10">
-                  <h2 class="page-header mt-md-2 mb-0">{{$t('portfolio.header')}}</h2>
+                <v-col class="offset-lg-2 offset-xl-1 offset-md-1 offset-sm-2 offset-2" cols="8" sm="8" md='10' lg='8' xl="10">
+                  <h2 class="page-header mt-md-2 mb-2">{{$t('portfolio.header')}}</h2>
                 </v-col>
                 <v-col class="" cols="2" sm="1" md='1' lg='2' xl="1">
                   <div class="mt-2 float-md-right mb-2">

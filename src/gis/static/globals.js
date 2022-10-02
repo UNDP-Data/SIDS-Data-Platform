@@ -43,7 +43,7 @@ const globals = {
     /**String; id of the current data layer;
      * legacy code only had a few layer possibilities, mainly hex# and ocean
      */
-    hexSize: "hex-5km",
+    hexSize: "hex5",
     lastActive: { dataset: null, layer: null },
   },
   comparisonLayerState: {
@@ -53,22 +53,51 @@ const globals = {
     /**String; id of the current data layer;
      * legacy code only had a few layer possibilities, mainly hex# and ocean
      */
-    hexSize: "hex-5km",
+    hexSize: "hex5",
     lastActive: { dataset: null, layer: null },
   },
   sources: {
-    admin1Overlay: {
+    //{...ID:{SOURCE OBJECT}} USED WHEN ADDING LAYERSOURCES
+    hex1: {
       type: "vector",
-      promoteId: "GID_1",
-      tiles: [constants.sourceURLs.admin1Overlay],
+      promoteId: "hexid",
+      //tiles: [hex1],
+      tiles: [constants.sourceURLs.hex1],
+    },
+    hex5: {
+      type: "vector",
+      promoteId: "hexid",
+      tiles: [constants.sourceURLs.hex5],
       //'minzoom': 3,
       maxzoom: 20, //13.5,
     },
-    admin2Overlay: {
+    hex5clipped: {
+      type: "vector",
+      tiles: [constants.sourceURLs.hex5clipped],
+      promoteId: "hexid",
+    },
+    hex10: {
+      type: "vector",
+      tiles: [constants.sourceURLs.hex10],
+      promoteId: "hexid",
+    },
+    admin1: {
+      type: "vector",
+      promoteId: "GID_1",
+      tiles: [constants.sourceURLs.admin1],
+      //'minzoom': 3,
+      maxzoom: 20, //13.5,
+    },
+    admin2: {
       type: "vector",
       promoteId: "GID_2",
-      tiles: [constants.sourceURLs.admin2Overlay],
+      tiles: [constants.sourceURLs.admin2],
       //'minzoom': 3,
+      maxzoom: 20, //13.5,
+    },
+    ocean: {
+      type: "vector",
+      tiles: [constants.sourceURLs.ocean],
       maxzoom: 20, //13.5,
     },
     allsids: {

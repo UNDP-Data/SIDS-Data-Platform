@@ -19,7 +19,7 @@
       class="mode-chip d-none d-md-block"
       color="primary"
     >
-      {{$t('gis.compareEnabled')}}
+      Comparison mode enabled
     </v-chip>
     <v-chip
       v-if="bivariateModeEnabled"
@@ -27,7 +27,7 @@
       class="mode-chip d-none d-md-block"
       color="primary"
     >
-      {{$t('gis.bivarEnabled')}}
+      Bivariate mode enabled
     </v-chip>
     <map-controller
       :class="{'data-controller-colapsed': menuColapsed}"
@@ -86,9 +86,6 @@ export default {
   data() {
     return {
       activeLayer:null,
-      dataset: null,
-      secondLayer: null,
-      secondDataset: null,
       map: null,
       menuColapsed:false,
       dualModeEnabled: false,
@@ -105,34 +102,18 @@ export default {
   methods: {
     toggleBivar(e) {
       this.bivariateModeEnabled = e;
-      if(this.dualModeEnabled) {
-        this.dualModeEnabled = false;
-        this.map.toggleMapboxGLCompare(this.dualModeEnabled);
-      }
       this.map.toggleBivariateComponents(e)
-      if(e && this.activeLayer && this.secondLayer) {
-        this.updateBivariate({
-          layer: this.activeLayer,
-          dataset: this.dataset,
-          secondDataset: this.secondDataset,
-          secondLayer: this.secondLayer
-        })
-      }
     },
     toggleDual(e) {
       this.dualModeEnabled = e;
-      if(this.bivariateModeEnabled) {
-        this.bivariateModeEnabled = false;
-        this.map.toggleBivariateComponents(this.bivariateModeEnabled)
-      }
       this.map.toggleMapboxGLCompare(e);
-      if(e && this.secondLayer) {
-        this.updateComparisonMap(this.secondDataset, this.secondLayer)
-      }
+    },
+    toggleDualMode() {
+      this.dualModeEnabled = !this.dualModeEnabled;
+      // console.log("dualModeEnabled:", this.dualModeEnabled);
+      this.map.toggleMapboxGLCompare();
     },
     updateBivariate({dataset, layer, secondDataset, secondLayer}) {
-      this.secondLayer = secondLayer
-      this.secondDataset = secondDataset
       this.map.createBivariate(
         dataset,
         layer,
@@ -140,11 +121,8 @@ export default {
         secondLayer
       );
     },
-
     updateComparisonMap(activeDataset, activeLayer) {
       if (activeLayer) {
-        this.secondLayer = activeLayer
-        this.secondDataset = activeDataset
         if (activeLayer.Name === "Ocean Data") {
           if (activeLayer.Field_Name === "depth") {
             this.map.addOcean(activeDataset, activeLayer, true);
@@ -158,9 +136,16 @@ export default {
     },
     updateMap(e) {
       this.activeLayer = e.layer
-      this.dataset = e.dataset
       if (e.dataset) {
-        this.map.updateData(e.dataset, e.layer);
+        if (e.layer.Name === "Ocean Data") {
+          if (e.layer.Field_Name === "depth") {
+            this.map.addOcean(e.dataset, e.layer);
+          } else {
+            this.map.updateData(e.dataset, e.layer);
+          }
+        } else {
+          this.map.updateData(e.dataset, e.layer);
+        }
       }
     },
     enebleLoader() {

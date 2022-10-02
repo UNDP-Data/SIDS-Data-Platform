@@ -7,7 +7,8 @@ module.exports = {
   pages: {
     index: {
       entry: 'src/main.js',
-      title: 'UNDP SIDS Data Platform'
+      title: 'UNDP SIDS Data Platform',
+      description: 'A digital tool for analyzing the UNDP SIDS Offer Portfolio across the SDGs, SAMOA Pathway priorities, and six UNDP Signature Solutions.'
     }
   },
   configureWebpack: {

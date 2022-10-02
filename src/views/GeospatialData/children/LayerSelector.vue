@@ -11,8 +11,8 @@
           :value="dataset"
           @change="emitDatasetChange"
           :items="datasets"
-          item-text="title"
-          item-value="title"
+          item-text="name"
+          item-value="name"
           return-object
           :label="datasetLabel"
           outlined
@@ -21,7 +21,7 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-if="dataset && dataset.layers.length > 1"
+      v-if="dataset && dataset.type === 'layers'"
       dense
     >
       <v-col>
@@ -31,8 +31,8 @@
           hide-details
           class="map-input"
           :value="layer"
-          item-text="title"
-          item-value="layerId"
+          item-text="Description"
+          item-value="Description"
           :items="dataset.layers"
           :label="layerLabel"
           @change="emitLayerChange"
@@ -43,58 +43,35 @@
     </v-row>
     <v-row
       class="spacing-row"
-      v-if="layer && datasetLayer && layer.years.length > 1 && layer.years.length < 6 && !isMobile"
+      v-else-if="dataset && dataset.type === 'temporal'"
       dense
     >
       <v-col>
         <v-slider
-          class="map-year-s"
+          class="map-input"
+          :value="tickIndex"
           :tick-labels="ticksLabels"
-          :max="layer.years.length - 1"
+          :max="dataset.layers.length - 1"
           step="1"
           ticks="always"
           tick-size="4"
-          :value="activeYearIndex"
-          @change="updateYearByIndex"
+          @change="emitTemporalChange"
         ></v-slider>
       </v-col>
     </v-row>
     <v-row
       class="spacing-row"
-      v-else-if="layer && datasetLayer && (layer.years.length > 5 || (layer.years.length > 1 && isMobile))"
-      dense
-    >
-      <v-col>
-        <v-select
-          rounded
-          dense
-          hide-details
-          class="map-input"
-          :value="year"
-          :items="layer.years"
-          :label="layerLabel"
-          @change="updateYear"
-          outlined
-        ></v-select>
-      </v-col>
-    </v-row>
-    <v-row
-      class="spacing-row"
-      v-else-if="!dataset"
+      v-else
       dense
     ></v-row>
   </div>
 </template>
 
 <script>
-import service from '@/services'
-import size from '@/mixins/size.mixin';
 export default {
   name: 'LayersController',
-  mixins:[size],
   data() {
     return {
-      activeYear: null,
     }
   },
   props:[
@@ -102,49 +79,27 @@ export default {
     'dataset',
     'datasetLabel',
     'layer',
-    'year',
     'layerLabel',
-    'disabled',
+    'disabled'
   ],
   computed:{
     ticksLabels() {
-      return this.layer && this.layer.years
+      return this.dataset.layers.map((layer) => layer.Temporal);
     },
-    datasetLayer() {
-      return this.layer && this.dataset.layers.some(l => {
-        return l.layerId === this.layer.layerId
-      })
-    },
-    activeYearIndex() {
-      return this.layer && this.layer.years.findIndex(y => y === this.year);
+    tickIndex() {
+      return this.ticksLabels.indexOf(this.layer.Temporal)
     }
   },
   methods: {
-    async emitDatasetChange(dataset){
+    emitDatasetChange(dataset){
       this.$emit('datasetChange', dataset)
-      if(dataset.layers.length === 1) {
-        await this.emitLayerChange(dataset.layers[0])
-      }
     },
-    updateYearByIndex(yearIndex) {
-      this.$emit('yearChange', this.layer.years[yearIndex])
-      this.emitLayerChange(this.layer)
+    emitLayerChange(layer){
+      this.$emit('layerChange', layer)
     },
-    updateYear(year) {
-      this.$emit('yearChange', year)
-      this.emitLayerChange(this.layer)
-    },
-    async emitLayerChange(layer){
-      let layerData = await service.loadGISLayer(layer.layerId)
-      layerData.years = layer.years
-      if(this.year === null || !layer.years.some(y => y === this.year)) {
-        this.$emit('yearChange', layer.years[0])
-        layerData.activeYear = layer.years[0]
-      } else {
-        layerData.activeYear = this.year
-      }
-      this.$emit('layerChange', layerData)
-    },
+    emitTemporalChange(index) {
+      this.$emit('layerChange', this.dataset.layers[index])
+    }
   }
 }
 </script>

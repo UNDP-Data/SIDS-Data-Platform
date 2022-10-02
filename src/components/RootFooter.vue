@@ -1,14 +1,21 @@
 <template>
   <div class="footer-root">
-    <p class="footer-root_text">{{$t('root.footer.poweredBy')}}</p>
+    <div class="footer-spacer mr-auto ml-4">
+    </div>
+    <p class="footer-root_text mr-auto ml-auto">{{$t('root.footer.poweredBy')}}</p>
+    <language-selector class="ml-auto mr-4"/>
   </div>
 </template>
 
 <script>
+import LanguageSelector from '@/components/LanguageSelector'
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  components: {
+    LanguageSelector
   }
 }
 </script>
@@ -27,5 +34,8 @@ export default {
 .footer-root_text {
   margin: 0;
   color: #868686;
+}
+.footer-spacer {
+  min-width: 260px;
 }
 </style>
