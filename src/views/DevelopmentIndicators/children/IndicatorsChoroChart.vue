@@ -631,6 +631,9 @@ export default {
   position: relative;
   z-index: 2;
 }
+#chorotimeSeriesContainer {
+  margin-top: 25px;
+}
 /*# sourceMappingURL=vizEngine.css.map */
 
 </style>
