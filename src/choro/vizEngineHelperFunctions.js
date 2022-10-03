@@ -40,7 +40,7 @@ export function getBoundingBox(selection) {
 
 export function regionColors(region, member) {
     region = region.toLowerCase()
-    if (member == "N") { return "black" }
+    if (!member) { return "black" }
 
     else if (region == "caribbean") { return "c008080"; }
     else if (region == "pacific") { return "cF0A500"; }

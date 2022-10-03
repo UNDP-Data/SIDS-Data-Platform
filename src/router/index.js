@@ -19,6 +19,7 @@ const routes = [
     }),
     meta:{
       header:'portfolio.header',
+      description:'A digital tool for analyzing the UNDP SIDS Offer Portfolio across the SDGs, SAMOA Pathway priorities, and six UNDP Signature Solutions.',
       infoContent:'aboutThis-portfolio',
       linkText:'portfolio',
       icon:'portfolio'
@@ -29,7 +30,6 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
-      await store.dispatch('sids/getAllKeyData');
       await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
       await store.dispatch('sids/generatePortfolioData', {
@@ -55,7 +55,7 @@ const routes = [
       indicator = to.params.indicator || 'region',
       year = to.params.year || 'recentValue';
       if(document.body.clientWidth - 40 < 800 && indicator === 'region') {
-        indicator = 'hdr-137506'
+        indicator = 'hdr-hdi'
       }
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'
@@ -86,6 +86,7 @@ const routes = [
     },
     meta:{
       header:'indicators.headerIndicators',
+      description:'A database of over 4000 development indicators for SIDS, compiled from 22 sources and featured alongside visualization and analytic tools.',
       infoContent:'aboutThis-indicators',
       icon:'indicators',
       linkText:'indicators'
@@ -131,6 +132,7 @@ const routes = [
     meta:{
       header:'indicators.headerMVI',
       infoContent:'aboutThis-mvi',
+      description:'A customizable Multidimensional Vulnerability Index (MVI) for SIDS to analyze environmental, geographic, economic, and financial vulnerability.',
       icon:'MVI',
       linkText:'mvi'
     },
@@ -164,6 +166,7 @@ const routes = [
     },
     meta:{
       header:'countryProfile.header',
+      description:'Country profiles for Small Island Developing States with data across the pillars of the UNDP’s SIDS Offer, financial statistics, and vulnerability index.',
       infoContent:'aboutThis-profiles',
       icon:'profiles',
       linkText:'profiles'
@@ -179,6 +182,7 @@ const routes = [
     name: 'Geospatial Data',
     meta:{
       header:'gis.header',
+      description:'A SIDS GIS portal and database compiled from more than 80 datasets and research studies with coverage of Small Island Developing States.',
       icon:'GIS',
       linkText:'gis'
     },
@@ -197,6 +201,7 @@ const routes = [
     name: 'About',
     meta:{
       header:'about.header',
+      description:'A digital instrument for supporting SIDS in following up on the SAMOA Pathway and building data-driven policy and development frameworks.',
       icon:'about',
       linkText:'about'
     },
@@ -227,7 +232,8 @@ const router = new VueRouter({
 
 router.beforeEach(async (toRoute, fromRoute, next) => {
   let pagetitle = toRoute && toRoute.name ? toRoute.name : 'Home';
-  window.document.title = `${pagetitle} - UNDP SIDS Data Platform`
+  window.document.title = `${pagetitle} - UNDP SIDS Data Platform`;
+  document.querySelector('[data-description]').innerHTML = toRoute.meta.description
   next();
 })
 export { router, routes }

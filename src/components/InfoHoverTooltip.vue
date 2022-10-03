@@ -37,8 +37,8 @@
           <slot name="content"></slot>
       </div>
       <v-card v-else>
-        <v-card-title><slot v-if="hasIconSlot" name="icon"></slot>{{textContent[contentName].title}}</v-card-title>
-        <v-card-text v-html="textContent[contentName].content">
+        <v-card-title><slot v-if="hasIconSlot" name="icon"></slot>{{textContentTitle}}</v-card-title>
+        <v-card-text v-html="textContentText">
         </v-card-text>
       </v-card>
     </v-menu>
@@ -52,8 +52,11 @@ export default {
   props:['contentName', 'large', 'noMaxHeight', 'disabled', 'contentClass', 'bottom', 'attach'],
   mixins:[size],
   computed: {
-    textContent() {
-      return this.$t('tooltips')
+    textContentTitle() {
+      return this.$t('tooltips.'+this.contentName + '.title')
+    },
+    textContentText() {
+      return this.$t('tooltips.'+this.contentName + '.content')
     },
     hasContentSlot() {
       return this.$slots['content']

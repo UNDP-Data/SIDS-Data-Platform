@@ -398,7 +398,6 @@ export default {
             spin: 0,
             roundStrokes: false,
             color: d3.scaleOrdinal().range(["#0BC6FF", "#EDC951", "#CC333F", "#00A0B0", "#FFFFFF"]),
-            legend: { title: 'Legend', translateX: 0, translateY: 0 },
             textColor: "#0BC6FF"
           },
           Digital: {
@@ -492,7 +491,8 @@ export default {
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
               value: axis[rank] || axis.value,
-              code: axis.axis
+              code: axis.axis,
+              year: axis.year
             }
           })
           return {
