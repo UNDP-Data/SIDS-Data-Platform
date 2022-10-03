@@ -4,7 +4,7 @@
       <v-col class="printing-4" cols="7" md="4">
         <v-subheader class="d-none d-md-block info-bar_header block-header">{{$t('countryNames.'+id)}}</v-subheader>
         <v-list dense class="indicators-list background-grey">
-          <v-list-item v-if="checkIndicator('key-1')">
+          <v-list-item v-if="checkIndicator('key-sids-region')">
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
@@ -13,11 +13,11 @@
               <v-list-item-subtitle
                 class="one-line_header"
               >{{
-                getIndicator("key-1").value
+                getIndicator('key-sids-region').value
               }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="checkIndicator('key-2')">
+          <v-list-item v-if="checkIndicator('key-countryOffice')">
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
@@ -26,11 +26,11 @@
               <v-list-item-subtitle
                 class="one-line_header"
               >{{
-                getIndicator("key-2").value
+                getIndicator('key-countryOffice').value
               }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="checkIndicator('key-3')">
+          <v-list-item v-if="checkIndicator('key-un-member')">
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
@@ -39,7 +39,7 @@
               <v-list-item-subtitle
                 class="one-line_header"
               >{{
-                getIndicator("key-3").value
+                getIndicator("key-un-member").value
               }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -50,7 +50,7 @@
                 class="one-line_header">{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="checkIndicator('key-7')">
+          <v-list-item v-if="checkIndicator('key-language')">
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
@@ -58,7 +58,7 @@
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
-                getIndicator("key-7").value
+                getIndicator("key-language").value
               }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -69,7 +69,7 @@
                 class="one-line_header">{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}} <span v-if="checkNoData('key-wdi-AG.SRF.TOTL.K2')">km<sup>2</sup></span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="checkIndicator('key-10')">
+          <v-list-item v-if="checkIndicator('key-incomeClass')">
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
@@ -77,7 +77,7 @@
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
-                computeIncome(getIndicator("key-10").value)
+                computeIncome(getIndicator("key-incomeClass").value)
               }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -105,10 +105,10 @@
               }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="checkIndicator('key-13')">
+          <v-list-item v-if="checkIndicator('key-undpPage')">
             <v-list-item-content class="small-padding">
               <v-list-item-title class="one-line_header">
-                <a :href="getIndicator('key-13').value" target="_blank">
+                <a :href="getIndicator('key-undpPage').value" target="_blank">
                   {{ $t('countryProfile.infoBox.countryPage') }}
                 </a>
               </v-list-item-title>
@@ -179,10 +179,11 @@ export default {
       return `${hdiNum}, ${hdiClass}`;
     },
     getIndicator(code) {
-      return this.profile.find((indicators) => indicators.axis === code);
+      return this.profile.find((indicators) => indicators.axis === code)
     },
     checkIndicator(code) {
-      return this.getIndicator(code) && this.getIndicator(code).value;
+      let indi = this.profile.find((indicators) => indicators.axis === code)
+      return indi && indi.value;
     },
     checkNoData(code) {
       return this.getIndicator(code).value === 'No Data' ?
