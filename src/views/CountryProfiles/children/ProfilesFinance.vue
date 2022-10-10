@@ -1,11 +1,31 @@
 <template>
-  <div class="">
+  <div>
       <v-subheader class="finance-header block-subheader">Finance</v-subheader>
       <v-card flat class="overflow background-grey">
           <v-list dense class="indicators-list background-grey"
           >
             <v-list-item v-for="(indicator) in financeData" :key="indicator.axis">
               <v-list-item-content class="one-line">
+                <div class="one-line_header">
+                    <info-hover-tooltip :large="false">
+                      <template slot="content">
+                        <v-card flat>
+                          <v-card-text class="active-indicator-info">
+                            {{indicatorsMetadata[indicator.axis].longDefinition}}
+                            <v-divider class="mb-1 mt-1"></v-divider>
+                            <b>{{$t('portfolio.year')}}:</b>
+                              <template v-if="indicator.year && indicator.year!=='No Year'">
+                                ({{indicator.year}})
+                              </template> <template v-else>
+                                {{$t('root.noData')}}
+                              </template> <br/>
+                            <b>{{$t('root.source')}}:</b> {{indicatorsMetadata[indicator.axis].source}} <br/>
+                            <a v-if="indicatorsMetadata[indicator.axis].sourceLink !== 'No Data'" :href="indicatorsMetadata[indicator.axis].sourceLink" target="_blank">Link</a>
+                          </v-card-text>
+                        </v-card>
+                      </template>
+                    </info-hover-tooltip>
+                </div>
                 <v-list-item-title class="one-line_header">
                   {{$t(`finance.${indicator.axis.replaceAll('.','-')}`)}}
                 </v-list-item-title>
@@ -25,7 +45,7 @@
 <script>
 import { mapState } from 'vuex';
 import format from '@/mixins/format.mixin'
-
+import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
 
 export default {
   props: {
@@ -35,6 +55,9 @@ export default {
     }
   },
   mixins:[format],
+  components:{
+    InfoHoverTooltip
+  },
   computed:{
     ...mapState({
       profiles: state => state.profiles.profiles,
