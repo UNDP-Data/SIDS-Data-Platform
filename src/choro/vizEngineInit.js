@@ -330,7 +330,6 @@ this.sidsMapSelection
       if (index >= 0) {
         return 9.5 * index + 345;
       } else {
-        console.log(text)
         //not the best way of making these hidden. should be improved
         return -1000;
       }
@@ -413,7 +412,6 @@ export function initVizEngineTooltips() {
 
 
         let countryCode = reference.parentElement.id;
-        console.log(reference.parentElement.id, rootThis.profileData[countryCode])
         if(countryCode && rootThis.profileData[countryCode]) {
           header.innerHTML = rootThis.$t.call(rootThis.vue, 'countryNames.' + rootThis.profileData[countryCode].id);
         }

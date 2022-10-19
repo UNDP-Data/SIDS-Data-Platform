@@ -403,7 +403,6 @@ export function countriesWithNoData() {
 // //
 //
 export function updateVizBlocks(){
-  console.log(this.indiSelections["viz"])
   if (this.indiSelections["viz"] == "spider") {
     d3.selectAll(".indexSpider").style("display", "block");
   } else {
