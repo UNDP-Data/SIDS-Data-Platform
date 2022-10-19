@@ -83,13 +83,13 @@ export default {
       }
     },
     async getCategories({ state, commit }) {
-      if(!state.keyMetadata){
+      if(!state.indicatorsCategories){
         const categories = await service.loadIndicatorsCategories();
         commit("setCategories", categories);
       }
     },
     async getMeta({ state, commit }) {
-      if(!state.allKeyData){
+      if(!state.indicatorsMeta){
         let meta = await service.loadIndicatorsMeta();
         meta = Object.keys(meta)
           .filter( indicatorCode => meta[indicatorCode].indicator)
