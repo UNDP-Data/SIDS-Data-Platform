@@ -6,8 +6,13 @@
           >
             <v-list-item v-for="(indicator) in financeData" :key="indicator.axis">
               <v-list-item-content class="one-line">
-                <div class="one-line_header">
                     <info-hover-tooltip :large="false">
+
+                      <template slot="button">
+                        <v-list-item-title class="one-line_header">
+                          {{$t(`finance.${indicator.axis.replaceAll('.','-')}`)}}
+                        </v-list-item-title>
+                      </template>
                       <template slot="content">
                         <v-card flat>
                           <v-card-text class="active-indicator-info">
@@ -25,10 +30,7 @@
                         </v-card>
                       </template>
                     </info-hover-tooltip>
-                </div>
-                <v-list-item-title class="one-line_header">
-                  {{$t(`finance.${indicator.axis.replaceAll('.','-')}`)}}
-                </v-list-item-title>
+
                 <v-list-item-subtitle class="one-line_subheader">{{formatNumber(indicator.value)}}
                   <template v-if="indicator.year && indicator.year!=='No Year'">
                     ({{indicator.year}})
