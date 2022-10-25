@@ -326,7 +326,6 @@ export default {
   },
   computed: {
     ...mapState({
-      profileData: state => state.indicators.profileData,
       indicatorsMeta: state => state.indicators.indicatorsMeta,
       data: state => state.indicators.activeIndicatorData,
       MLTargetSize: state => state.indicators.MLTargetSize,
@@ -364,7 +363,7 @@ export default {
       }).name
     },
     activeIndicatorsMeta() {
-      return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-137506']
+      return this.indicatorsMeta[this.indicatorCode] || this.indicatorsMeta['hdr-hdi']
     },
     chipColor() {
       if(this.rmse > 0.7) return 'red'

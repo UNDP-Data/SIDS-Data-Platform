@@ -30,7 +30,6 @@ const routes = [
     component: () => import(/* webpackChunkName: "portfolio" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
-      await store.dispatch('sids/getAllKeyData');
       await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
       await store.dispatch('sids/generatePortfolioData', {
@@ -56,7 +55,7 @@ const routes = [
       indicator = to.params.indicator || 'region',
       year = to.params.year || 'recentValue';
       if(document.body.clientWidth - 40 < 800 && indicator === 'region') {
-        indicator = 'hdr-137506'
+        indicator = 'hdr-hdi'
       }
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'

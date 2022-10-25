@@ -71,14 +71,11 @@ export default {
     },
     async getProfileData({ state, commit }) {
       if(!state.profileData){
-        let profileData = await service.loadProfileData();
-        Object.keys(profileData).map(c => {
-          try {
-            profileData[c].id = sidsList.find(cs => cs.iso === c).id
-          } catch (e) {
-            delete profileData[c]
-          }
-        })
+        let profileData = sidsList.reduce((list, country) => {
+          list[country.iso] = country
+          return list
+        },{})
+        console.log(profileData)
         commit("setProfileData", profileData);
       }
     },
@@ -100,7 +97,11 @@ export default {
             for(let subCategory in state.indicatorsCategories[dataset.code][category]) {
               for(let indicator in state.indicatorsCategories[dataset.code][category][subCategory]) {
                 state.indicatorsCategories[dataset.code][category][subCategory][indicator].map(code => {
-                  meta[code].codesArray = state.indicatorsCategories[dataset.code][category][subCategory][indicator]
+                  if(meta[code]) {
+                    meta[code].codesArray = state.indicatorsCategories[dataset.code][category][subCategory][indicator]
+                  } else {
+                  console.log(code)
+                  }
                 })
               }
             }
@@ -113,7 +114,7 @@ export default {
       let APIcode = indicatorCode,
       code = indicatorCode;
       if (indicatorCode == "region") {
-        code = "hdr-137506";///temp so has something to attach to data
+        code = "hdr-hdi";///temp so has something to attach to data
       }
       if (Object.keys(indexCodes).includes(indicatorCode)) {
         APIcode="/indices/" + code.replace('-index','');
