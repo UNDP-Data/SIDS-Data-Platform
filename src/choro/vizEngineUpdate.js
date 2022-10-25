@@ -403,7 +403,6 @@ export function countriesWithNoData() {
 // //
 //
 export function updateVizBlocks(){
-  console.log(this.indiSelections["viz"])
   if (this.indiSelections["viz"] == "spider") {
     d3.selectAll(".indexSpider").style("display", "block");
   } else {
@@ -631,7 +630,7 @@ export function updateCountryTitles(
 
         if (
           rootThis.indicatorCode == "Region" &&
-          rootThis.indiSelections["viz"] == "choro"
+          rootThis.indiSelections["viz"] === "choro"
         ) {
           d3.select(this).attr('fill-opacity', 1);
         } else {

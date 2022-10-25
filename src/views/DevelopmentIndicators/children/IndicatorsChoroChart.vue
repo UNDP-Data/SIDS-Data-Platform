@@ -137,6 +137,7 @@ export default {
       this.choro && this.page === this.choro.page && this.choro.updateSeriesCountryList(res)
     },
     async initChart() {
+      console.log('initChart')
       let sidsXML = await service.loadSidsSVG();
       let mapLocations = await service.loadMapLocations();
       this.compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
@@ -630,6 +631,9 @@ export default {
 .choro-title{
   position: relative;
   z-index: 2;
+}
+#chorotimeSeriesContainer {
+  margin-top: 25px;
 }
 /*# sourceMappingURL=vizEngine.css.map */
 

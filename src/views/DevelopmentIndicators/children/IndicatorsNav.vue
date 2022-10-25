@@ -225,7 +225,7 @@
           :value="year"
           item-text="name"
           item-value="id"
-          :disabled="playingYear"
+          :disabled="playingYear || chartType==='series'"
           @change="emitYearChange"
           label="Year"
           dense

@@ -1,5 +1,5 @@
 import globals from "@/gis/static/globals.js";
-import filepaths from "@/gis/static/filepaths.js";
+// import filepaths from "@/gis/static/filepaths.js";
 import constants from "@/gis/static/constants.js";
 import chroma from "chroma-js";
 
@@ -10,7 +10,7 @@ import MapboxCompare from "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import booleanIntersects from "@turf/boolean-intersects";
 import bbox from "@turf/bbox";
-import axios from "axios";
+// import axios from "axios";
 
 import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, off, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys, toggleBivariateComponents, createBivariate, toggleMapboxGLCompare } from './gisPublicFunctions'
 import { onDataClick, onAdminClick, onBivariateClick } from './gisEventHandlers'
@@ -60,7 +60,7 @@ export default class Map {
       this._removeUnusedLayers();
       this._bindMapClickListeners();
       this._bindRecolorListeners();
-      this._addPointSources();
+      // this._addPointSources();
       this._addVectorSources();
       this._addVectorSources(true)
       this.getBasemapLabels();
@@ -119,15 +119,15 @@ export default class Map {
     });
   }
 
-  _addPointSources() {
-    let map = this.map;
-    axios.get(filepaths.pointdataFilePath).then(function ({data}) {
-      map.addSource("points-source", {
-        type: "geojson",
-        data: data,
-      });
-    });
-  }
+  // _addPointSources() {
+    // let map = this.map;
+    // axios.get(filepaths.pointdataFilePath).then(function ({data}) {
+    //   map.addSource("points-source", {
+    //     type: "geojson",
+    //     data: data,
+    //   });
+    // });
+  // }
 
   _addVectorSources(comparison = false) {
     let map = !comparison ? this.map : this.map2;
