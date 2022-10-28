@@ -1,7 +1,6 @@
 import globals from "@/gis/static/globals.js";
 import constants from "@/gis/static/constants.js";
 import chroma from "chroma-js";
-
 import mapboxgl from "@/gis/mapboxgl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -9,7 +8,6 @@ import MapboxCompare from "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import booleanIntersects from "@turf/boolean-intersects";
 import bbox from "@turf/bbox";
-
 import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, off, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys, toggleBivariateComponents, createBivariate, toggleMapboxGLCompare } from './gisPublicFunctions'
 import { onDataClick, onAdminClick, onBivariateClick } from './gisEventHandlers'
 
@@ -115,7 +113,6 @@ export default class Map {
       }
     });
   }
-
 
   _addDataVectorSource(comparison = false, layerId, resolution) {
     let map = !comparison ? this.map : this.map2;

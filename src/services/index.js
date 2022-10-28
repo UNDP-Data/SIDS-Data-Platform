@@ -1,8 +1,6 @@
 import axios from 'axios';
 import * as d3 from 'd3';
-console.log(process.env)
 const API_URl = process.env.VUE_APP_API_PATH;
-console.log(API_URl)
 const ML_API_URL = 'https://ml-aks-ingress.eastus.cloudapp.azure.com';
 
 export default {

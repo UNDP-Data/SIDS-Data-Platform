@@ -411,8 +411,10 @@ export function updateTimeChart({ dataset, optionSelected }) {
         cloestLine.path.getNearestPoint(point)
       );
 
+      let lineHover = cloestLineDist <= lineHoverWidth,
+      samePointLine = cloestLine.country === closestPoint.country;
       //if dot or line or not
-      if (closestPointDist <= dotHoverRadius) {
+      if (closestPointDist <= dotHoverRadius && ((lineHover && samePointLine) || !lineHover)) {
         //enlarge dot
         gMark
           .selectAll("circle.hover-dot")
@@ -445,6 +447,57 @@ export function updateTimeChart({ dataset, optionSelected }) {
               .join("div")
               .text((d) => d.key + " : " + d.value)
           );
+          gMark
+            .selectAll("circle.hover-dot")
+            .attr("cx", xScale(closestPoint.year))
+            .attr("cy", yScale(closestPoint.value))
+            .attr("fill", rootThis.timeColor(closestPoint.country))
+            .attr("visibility", "visible");
+
+          gHoverValueText
+            .selectAll("text.hover-value-text")
+            .attr("visibility", "visible")
+            .attr("fill", rootThis.timeColor(closestPoint.country))
+            .attr(
+              "x",
+              xScale(closestPoint.year) + 100 >= innerWidth
+                ? xScale(closestPoint.year) - 30
+                : xScale(closestPoint.year) + 30
+            )
+            .attr("y", yScale(closestPoint.value) - 20)
+            .text(nFormatter(closestPoint.value,3));
+
+          const tickText = gXAxis
+            .selectAll("g.tick")
+            .selectAll("text")
+            .attr("opacity", 1);
+
+          tickText
+            .transition()
+            .duration(timeVariable)
+            .attrTween("fill", function () {
+              const prev = d3.select(this).attr("fill");
+              return d3.interpolate(prev, "lightgrey");
+            })
+            .on("interrupt cancel", function () {
+              d3.select(this).attr("fill", "lightgrey");
+            });
+
+          tickText.filter((d) => d == closestPoint.year).attr("opacity", 0);
+
+          gXAxis
+            .selectAll("text.hover-x-axis")
+            .data(["hover-x-axis"])
+            .join("text")
+            .attr("class", "hover-x-axis")
+            .attr("dominant-baseline", "hanging")
+            .attr("text-anchor", "middle")
+            .attr("fill", "grey")
+            .attr("font-size", 11)
+            .attr("x", xScale(closestPoint.year))
+            .attr("y", 7)
+            .text(closestPoint.year);
+
       } else {
         //dot normal size
         gMark
@@ -460,11 +513,20 @@ export function updateTimeChart({ dataset, optionSelected }) {
           });
 
         timeSeriesTooltip.style("visibility", "hidden");
+        gHoverValueText
+          .selectAll("text.hover-value-text")
+          .attr("visibility", "hidden")
+        gMark
+          .selectAll("circle.hover-dot")
+          .attr("visibility", "hidden")
+
+        gXAxis.selectAll("text.hover-x-axis").remove();
+
       }
 
       gMark.selectAll("circle.hover-dot").raise();
 
-      if (cloestLineDist <= lineHoverWidth) {
+      if (lineHover) {
         lineMouseEnter(cloestLine);
       } else {
         lineMouseLeave();
@@ -485,62 +547,6 @@ export function updateTimeChart({ dataset, optionSelected }) {
       }
 
       //hover line move
-      gMark
-        .select("line.hover-line")
-        .attr("visibility", "visible")
-        .attr("x1", xScale(closestPoint.year))
-        .attr("x2", xScale(closestPoint.year));
-      gMark
-        .selectAll("circle.hover-dot")
-        .attr("cx", xScale(closestPoint.year))
-        .attr("cy", yScale(closestPoint.value))
-        .attr("fill", rootThis.timeColor(closestPoint.country))
-        .attr("visibility", "visible");
-
-      gHoverValueText
-        .selectAll("text.hover-value-text")
-        .attr("visibility", "visible")
-        .attr("fill", rootThis.timeColor(closestPoint.country))
-        .attr(
-          "x",
-          xScale(closestPoint.year) + 100 >= innerWidth
-            ? xScale(closestPoint.year) - 30
-            : xScale(closestPoint.year) + 30
-        )
-        .attr("y", yScale(closestPoint.value) - 20)
-        .text(nFormatter(closestPoint.value,3));
-
-      const tickText = gXAxis
-        .selectAll("g.tick")
-        .selectAll("text")
-        .attr("opacity", 1);
-
-      tickText
-        .transition()
-        .duration(timeVariable)
-        .attrTween("fill", function () {
-          const prev = d3.select(this).attr("fill");
-          return d3.interpolate(prev, "lightgrey");
-        })
-        .on("interrupt cancel", function () {
-          d3.select(this).attr("fill", "lightgrey");
-        });
-
-      tickText.filter((d) => d == closestPoint.year).attr("opacity", 0);
-
-      gXAxis
-        .selectAll("text.hover-x-axis")
-        .data(["hover-x-axis"])
-        .join("text")
-        .attr("class", "hover-x-axis")
-        .attr("dominant-baseline", "hanging")
-        .attr("text-anchor", "middle")
-        .attr("fill", "grey")
-        .attr("font-size", 11)
-        .attr("x", xScale(closestPoint.year))
-        .attr("y", 7)
-        .text(closestPoint.year);
-
       prevClosest = closestPoint;
     }
   }

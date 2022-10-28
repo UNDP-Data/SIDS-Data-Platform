@@ -80,7 +80,7 @@ export default {
       }
     },
     async getCategories({ state, commit }) {
-      if(!state.keyMetadata){
+      if(!state.indicatorsCategories){
         const categories = await service.loadIndicatorsCategories();
         commit("setCategories", categories);
       }

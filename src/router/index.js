@@ -27,7 +27,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Portfolio/Portfolio.vue'),
+    component: () => import(/* webpackChunkName: "portfolio" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
       await store.dispatch('sids/setSIDSData');
@@ -48,7 +48,7 @@ const routes = [
     path: '/development-indicators/:indicator?/:year?/:chartType?',
     link: '/development-indicators',
     name: 'Development Indicators',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "indicators" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
       let chartType = to.params.chartType || 'choro',
@@ -104,7 +104,7 @@ const routes = [
     path: '/vulnerability/:indicator?/:chartType?',
     link: '/vulnerability',
     name: 'Vulnerability',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "indicators" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
       let chartType = to.params.chartType || 'spider'
@@ -149,7 +149,7 @@ const routes = [
     path: '/country-profiles/:country?',
     link: '/country-profiles',
     name: 'Country Profiles',
-    component: () => import(/* webpackChunkName: "about" */ '../views/CountryProfiles/CountryProfiles.vue'),
+    component: () => import(/* webpackChunkName: "profiles" */ '../views/CountryProfiles/CountryProfiles.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
       await store.dispatch('profiles/getIndicatorsMetadata');
@@ -193,7 +193,7 @@ const routes = [
       }, 500)
       next();
     },
-    component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData/GeospatialData.vue')
+    component: () => import(/* webpackChunkName: "gis" */ '../views/GeospatialData/GeospatialData.vue')
   },
   {
     path: '/about',
@@ -213,7 +213,7 @@ const routes = [
       }, 500)
       next();
     },
-    component: () => import(/* webpackChunkName: "about" */ '../views//About/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/About/About.vue')
   },
   {
     path: '*',
