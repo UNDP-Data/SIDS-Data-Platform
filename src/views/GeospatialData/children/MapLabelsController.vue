@@ -21,7 +21,7 @@
       </v-btn>
     </template>
     <span>
-      <b>Map Labels</b> - Toggle On/Off labels (Towns, roads, etc.)
+      <b>{{$t('gis.toolbar.labels[0]')}}</b> {{$t('gis.toolbar.labels[1]')}}
     </span>
   </v-tooltip>
 </template>
