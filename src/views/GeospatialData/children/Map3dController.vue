@@ -25,7 +25,7 @@
       </div>
     </template>
     <span>
-      <b>3D mode</b> - Visualize data values using 3-dimensional {{activeLayer}}
+      <b>{{$t('gis.toolbar.mode3d[0]')}}</b> {{$t('gis.toolbar.mode3d[1]')}} {{activeLayer}}
     </span>
   </v-tooltip>
 </template>

@@ -32,7 +32,7 @@
             </v-btn>
           </template>
           <span>
-            <b>Country Select</b> - Focus map on the country or region of interest
+            <b>{{$t('gis.toolbar.countrySelect[0]')}}</b> {{$t('gis.toolbar.countrySelect[1]')}}
           </span>
         </v-tooltip>
       </template>
@@ -58,7 +58,7 @@
                 class="flag-icon select_icon mr-2"
                 :class="'flag-icon-' + computeFlagCode(item.flagCode)"
               ></i>
-              {{item.NAME_0}}
+              {{item.id ? $t('regions.' + item.id) : computeCountryName(item.GID_0) }}
             </span>
           </template>
           <template slot="item" slot-scope="data">
@@ -66,7 +66,7 @@
             class="flag-icon select_icon mr-2"
             :class="'flag-icon-' + computeFlagCode(data.item.flagCode)"
           ></i>
-          {{ data.item.NAME_0 }}
+          {{data.item.id ? $t('regions.' + data.item.id) : computeCountryName(data.item.GID_0) }}
           </template>
         </v-autocomplete>
       </div>
@@ -75,6 +75,7 @@
 
 <script>
 import names from "@/gis/static/names";
+import sidsList from "@/assets/sidsList";
 export default {
   name: 'MapCountrySelector',
   data() {
@@ -87,6 +88,14 @@ export default {
     'map'
   ],
   methods: {
+    computeCountryName(code) {
+      let sids = sidsList.find(c => c.iso === code);
+      if(sids) {
+        return this.$t('countryNames.'+sids.id)
+      } else {
+        console.log(code)
+      }
+    },
     computeFlagCode(code) {
       if(code) {
         return code.toLowerCase()

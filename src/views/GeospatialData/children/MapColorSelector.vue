@@ -33,8 +33,7 @@
             </div>
           </template>
           <span>
-            <b>Color scheme</b> - Change between several color palettes
-            for the displayed data
+            <b>{{$t('gis.toolbar.color[0]')}}</b> {{$t('gis.toolbar.color[1]')}}
           </span>
         </v-tooltip>
       </template>

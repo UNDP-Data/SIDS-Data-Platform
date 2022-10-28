@@ -25,7 +25,7 @@
               class="mt-1"
               v-model="xAxisLinear"
               @change="updateAxisType"
-              :label="`X axis: ${xAxisType}`"
+              :label="`${$t('gis.legend.x')}: ${xAxisType}`"
               hide-details
             ></v-switch>
           </v-col>
@@ -34,18 +34,18 @@
               class="mt-1"
               v-model="yAxisLinear"
               @change="updateAxisType"
-              :label="`Y axis: ${yAxisType}`"
+              :label="`${$t('gis.legend.y')}: ${yAxisType}`"
               hide-details
             ></v-switch>
           </v-col>
         </v-row>
       </div>
       <v-card-text v-else>
-        No Data for this Region
+        {{$t('gis.legend.noData')}}
       </v-card-text>
     </div>
     <v-card-text v-else>
-      Select a Datasets and Layers to view data on the map.
+      {{$t('gis.legend.selectDataset')}}
     </v-card-text>
   </v-card>
 </template>
