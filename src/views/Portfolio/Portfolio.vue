@@ -323,6 +323,7 @@
 </template>
 
 <script>
+/*global gtag*/
 import * as d3 from 'd3';
 // @ is an alias to /src
 import PortfolioMap from './children/PortfolioMap';
@@ -557,9 +558,15 @@ export default {
   },
   methods: {
     setYear(year) {
+      gtag('event', 'portfolio_filter', {
+        type: 'year', value: year
+      });
       this.$router.push({query: Object.assign({}, this.$route.query, {year})})
     },
     setCategory(category) {
+      gtag('event', 'portfolio_filter', {
+        type: 'category', value: category
+      });
       this.$router.push({query: Object.assign({}, this.$route.query, {
         fundingCategory : encodeURIComponent(category),
         fundingSource : encodeURIComponent('All Funding Sources')
@@ -569,6 +576,9 @@ export default {
       this.$router.push({query: Object.assign({}, this.$route.query, {fundingSource : encodeURIComponent(source)})})
     },
     updateRegion(region) {
+      gtag('event', 'portfolio_country_select', {
+        country: region
+      });
       this.changeFilter({
         type: 'region',
         value: region
@@ -584,6 +594,9 @@ export default {
         }
         this.$router.push({query: Object.assign({}, this.$route.query, {region : encodeURIComponent(regionToSet)})})
       } else {
+        gtag('event', 'portfolio_filter', {
+          type, value
+        });
         let categoryToSet = this.fundingCategoriesTypes.find(c => c.text === value).value;
         if(this.fundingCategory === categoryToSet) {
           categoryToSet = 'All'
@@ -601,6 +614,9 @@ export default {
       });
     },
     transitionTo(to) {
+      gtag('event', 'portfolio_goalChange', {
+        goal: to
+      });
       this.activePage = this.pages.findIndex((goal) => goal.value === to);
       this.$router.push({path:`/portfolio/${to}`, query: this.$route.query})
     },
