@@ -132,6 +132,7 @@
 </template>
 <script>
 
+/*global gtag*/
 import { mapState } from 'vuex';
 
 export default {
@@ -216,6 +217,9 @@ export default {
       this.$emit('indicatorChange', dimension)
     },
     emitYearChange(year){
+      gtag('event', 'indi_year', {
+        year
+      });
       this.$emit('yearChange', year)
     },
     emitSortingChange(sorting){

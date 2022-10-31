@@ -267,6 +267,7 @@
   </div>
 </template>
 <script>
+/*global gtag*/
 import { mapState } from 'vuex';
 import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
@@ -471,11 +472,17 @@ export default {
     },
     emitindicatorChange(indicator) {
       this.$emit('indicatorChange', indicator)
+      gtag('event', 'indi_select', {
+        indicator
+      });
       if(this.isSmallScreen){
         this.$emit('close', indicator)
       }
     },
     emitYearChange(year) {
+      gtag('event', 'indi_year', {
+        year
+      });
       this.$emit('yearChange', year)
     },
     setActiveindicator(indicator) {
@@ -483,6 +490,8 @@ export default {
       this.activeIndicatorDimension = indicator.dim;
     },
     showFullList() {
+      gtag('event', 'indi_search', {
+      });
       this.activeSearch = true;
     },
     hideFullList() {

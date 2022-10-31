@@ -305,6 +305,8 @@
 </template>
 
 <script>
+/*global gtag*/
+
 import flagCodes from '@/assets/flagCodes.js'
 
 import PrintoutHeader from '@/components/PrintoutHeader.vue'
@@ -521,6 +523,9 @@ export default {
       }
     },
     selectCountry(country) {
+      gtag('event', 'country_select_profiles', {
+        country
+      });
       this.$router.push({
         name:'Country Profiles',
         params:{country},
@@ -533,6 +538,9 @@ export default {
           compare: value.toString()
         }
       })
+      gtag('event', 'country_compare_list', {
+        compare: value.toString()
+      });
     },
     removeCountry(countryId) {
       this.setCompareCountries(this.compareIdsList.filter(compareCountryId => compareCountryId !== countryId))
