@@ -387,18 +387,24 @@ export function initVizEngineTooltips() {
 
       let content = instance.popper.getElementsByClassName('tippyContent')[0];
       let countryCode = instance.reference.parentElement.id;
-      let year = rootThis.indiSelections.year === 'recentValue' ? rootThis.$t.call(rootThis.vue, 'indicators.forms.recent') : rootThis.indiSelections.year;
+      let recentValue,
+      recenYear;
       let value = 1;
       if(rootThis.vizMode === 'index' && rootThis.indexData) {
         value = rootThis.indexData.index.data[rootThis.indiSelections.year][countryCode];
       } else if (rootThis.indicatorData) {
         value = rootThis.indicatorData.data[rootThis.indiSelections.year][countryCode];
-        year = rootThis.indiSelections.year === 'recentValue' ? `${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')} (${rootThis.indicatorData.data.recentYear[countryCode]})` : year;
-        year = (rootThis.indicatorData.data[rootThis.indiSelections.year][countryCode] === 'No Data' || typeof rootThis.indicatorData.data[rootThis.indiSelections.year][countryCode] === 'undefined') ? rootThis.$t.call(rootThis.vue, 'root.noData') : year;
+        recentValue = rootThis.indicatorData.data.recentValue[countryCode];
+        recentValue = (recentValue === 'No Data' || typeof recentValue === 'undefined') ? rootThis.$t.call(rootThis.vue, 'root.noData') :  nFormatter(recentValue,2);
+        recenYear = rootThis.indicatorData.data.recentYear[countryCode] ? `(${rootThis.indicatorData.data.recentYear[countryCode]})` : '';
       }
       if(rootThis.indexData || rootThis.indicatorData) {
         value = (typeof value === 'string' || typeof value === 'undefined') ?  rootThis.$t.call(rootThis.vue, 'root.noData') : nFormatter(value,2);
-        content.innerHTML = `${rootThis.$t.call(rootThis.vue, 'spiders.value')}: ${value} <br/> ${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')}: ${year}`;
+        let textContent = `${rootThis.$t.call(rootThis.vue, 'spiders.value')}: ${value}`;
+        if(!instance.reference.classList.contains('choroRectMvi')) {
+          textContent+= `<br/> ${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')}: ${recentValue} ${recenYear}`;
+        }
+        content.innerHTML = textContent
       }
     },
     content: function (reference) {
@@ -412,9 +418,8 @@ export function initVizEngineTooltips() {
 
 
         let countryCode = reference.parentElement.id;
-        if(countryCode && rootThis.profileData[countryCode]) {
-          header.innerHTML = rootThis.$t.call(rootThis.vue, 'countryNames.' + rootThis.profileData[countryCode].id);
-        }
+        countryCode = rootThis.profileData[countryCode] ? rootThis.profileData[countryCode].id : countryCode.toLowerCase() + 'Average';
+        header.innerHTML = rootThis.$t.call(rootThis.vue, 'countryNames.' + countryCode);
         return tooltipElement
     }
   });

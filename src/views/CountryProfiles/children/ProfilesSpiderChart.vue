@@ -295,13 +295,13 @@ export default {
             let rank = rootThis.ranks[0].axes.filter(obj => { return obj.code === d })[0].value;
             let displayValue = ''
             if(rootThis.pillarName === 'MVI') {
-              if(isNaN(rank)) {
-                displayValue = rank
+              if(isNaN(value)) {
+                displayValue = value
               } else {
-                displayValue = rootThis.nFormatter(rank,2);
+                displayValue = rootThis.nFormatter(value,2);
               }
             } else if (isNaN(value)) {
-              displayValue = `${value}, ${rootThis.rankFormat(rank.toString())}`
+              displayValue = `${value}, ${rootThis.rankFormat(value.toString())}`
             } else {
               displayValue = `${rootThis.nFormatter(value,2)}${rootThis.fullGraphOptions.unit}, ${rootThis.rankFormat(rank.toString())}`;
             }
