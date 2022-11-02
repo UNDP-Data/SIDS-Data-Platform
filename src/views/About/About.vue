@@ -12,7 +12,7 @@
         </template>
       </v-col>
       <v-col md="6" xs="12" sm="12">
-        <v-expansion-panels class="mb-4" flat accordion>
+        <v-expansion-panels v-model="expansion" class="mb-4" flat accordion>
           <v-expansion-panel>
             <v-expansion-panel-header>{{$t('about.whatSids')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -124,20 +124,16 @@
           </v-card-text>
         </v-card>
       </v-col>
-
       <v-col class="d-none d-md-block" md="3">
         <template v-for="(resource, index) in resources">
           <resource :key="index" v-if="index%2 === 0" :resource="resource" />
         </template>
       </v-col>
-
       <v-col :key="index+'11'" class="d-none d-sm-block d-md-none" md="3" v-for="(resource, index) in resources">
         <template >
           <resource :resource="resource" />
         </template>
       </v-col>
-
-
       <v-col cols="12" :key="index+'22'" class="d-block d-sm-none" v-for="(resource, index) in resources">
         <template >
           <resource :resource="resource" />
@@ -154,7 +150,7 @@ export default {
   name: 'Portfolio',
   data() {
     return {
-
+      expansion:0
     }
   },
   components:{

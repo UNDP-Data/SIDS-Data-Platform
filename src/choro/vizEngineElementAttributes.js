@@ -85,6 +85,7 @@ export function updateCountryAVGbars(dataObj) {
         avg = avg[1]/avg[0]
         dataObj[avgs[i]] = avg
         this.profileData[avgs[i]] = {
+          id:avgs[i].toLowerCase()+'Average',
           Region: avgs[i]
         }
         let g = this.sidsMapSelection.select(`g#${avgs[i]}`);
