@@ -400,7 +400,11 @@ export function initVizEngineTooltips() {
       }
       if(rootThis.indexData || rootThis.indicatorData) {
         value = (typeof value === 'string' || typeof value === 'undefined') ?  rootThis.$t.call(rootThis.vue, 'root.noData') : nFormatter(value,2);
-        content.innerHTML = `${rootThis.$t.call(rootThis.vue, 'spiders.value')}: ${value} <br/> ${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')}: ${recentValue} ${recenYear}`;
+        let textContent = `${rootThis.$t.call(rootThis.vue, 'spiders.value')}: ${value}`;
+        if(!instance.reference.classList.contains('choroRectMvi')) {
+          textContent+= `<br/> ${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')}: ${recentValue} ${recenYear}`;
+        }
+        content.innerHTML = textContent
       }
     },
     content: function (reference) {
@@ -414,7 +418,6 @@ export function initVizEngineTooltips() {
 
 
         let countryCode = reference.parentElement.id;
-        console.log(rootThis.profileData[countryCode], reference.parentElement.id)
         countryCode = rootThis.profileData[countryCode] ? rootThis.profileData[countryCode].id : countryCode.toLowerCase() + 'Average';
         header.innerHTML = rootThis.$t.call(rootThis.vue, 'countryNames.' + countryCode);
         return tooltipElement

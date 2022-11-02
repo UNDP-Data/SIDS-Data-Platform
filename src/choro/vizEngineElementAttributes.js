@@ -167,7 +167,8 @@ export function updateCountryAVGMVIbars(dataObj) {
           avg = avg[1]/avg[0]
           dataObj[avgs[i]] = avg
           this.profileData[avgs[i]] = {
-            Region: avgs[i]
+            Region: avgs[i],
+            id:avgs[i].toLowerCase()+'Average',
           }
           Object.keys(this.indexData).map(indexName => {
             let indexDataObject = this.indexData[indexName].data.recentValue
