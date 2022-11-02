@@ -215,7 +215,7 @@ export default {
           if(this.classList.contains("clickable")) {
             d3.event.stopPropagation()
             if(rootThis.region === d.properties.iso3) {
-              rootThis.$emit('updateRegion', 'All');
+              rootThis.$emit('updateRegion', 'allSids');
             } else {
               rootThis.$emit('updateRegion', d.properties.iso3);
             }
