@@ -13,20 +13,105 @@
 </template>
 
 <script>
+import services from '@/services';
+import sidsList from '@/assets/sidsList';
+import { mapState } from 'vuex';
+
 export default {
   name: 'RootSocial',
-  props: {
-    msg: String
+  data(){
+    return {
+      textTemplates: ''
+    }
   },
   computed:{
+    ...mapState({
+      indicatorsMeta: state => state.indicators.indicatorsMeta
+    }),
+    twShareText() {
+      let text = ''
+      if(this.$route.path.indexOf('/portfolio') !== -1) {
+        text = this.textTemplates.twitter.portfolio
+      } else if(this.$route.path.indexOf('/development') !== -1) {
+        text = this.textTemplates.twitter.indicators
+        let indicator = this.indicatorsMeta[this.$route.params.indicator]
+        if(!indicator) {
+          indicator = 'SIDS'
+        } else {
+          indicator = indicator.indicator
+        }
+        text = text.replaceAll('{indicator}', indicator)
+      } else if(this.$route.path.indexOf('/vulnerability') !== -1) {
+        text = this.textTemplates.twitter.mvi
+      } else if(this.$route.path.indexOf('/country-profiles') !== -1) {
+        text = this.textTemplates.twitter.profiles
+        let country = sidsList.find(c => c.id === this.$route.params.country).name
+        text = text.replaceAll('{country}', country)
+      } else if(this.$route.path.indexOf('/geospatial-data') !== -1) {
+        text = this.textTemplates.twitter.gis;
+        let layer = ''
+        if (document.getElementById('gisDataset')) {
+          layer = document.getElementById('gisDataset').value
+        }
+        if(document.getElementById('gisLayer') && document.getElementById('gisLayer').previousSibling) {
+          layer = document.getElementById('gisLayer').previousSibling.innerHTML
+        }
+        if (layer === 'Dataset' || layer === 'Layer') {
+          layer = 'SIDS'
+        }
+        text = text.replaceAll('{layerTitle}', layer)
+      } else {
+        text = this.textTemplates.twitter.general
+      }
+      text += this.textTemplates.all
+      return text;
+    },
+    fbShareText() {
+      let text = ''
+      if(this.$route.path.indexOf('/portfolio') !== -1) {
+        text = this.textTemplates.twitter.portfolio
+      } else if(this.$route.path.indexOf('/development') !== -1) {
+        text = this.textTemplates.twitter.indicators
+        let indicator = this.indicatorsMeta[this.$route.params.indicator]
+        if(!indicator) {
+          indicator = 'SIDS'
+        } else {
+          indicator = indicator.indicator
+        }
+        text = text.replaceAll('{indicator}', indicator)
+      } else if(this.$route.path.indexOf('/vulnerability') !== -1) {
+        text = this.textTemplates.twitter.mvi
+      } else if(this.$route.path.indexOf('/country-profiles') !== -1) {
+        text = this.textTemplates.twitter.profiles
+        let country = sidsList.find(c => c.id === this.$route.params.country).name
+        text = text.replaceAll('{country}', country)
+      } else if(this.$route.path.indexOf('/geospatial-data') !== -1) {
+        text = this.textTemplates.twitter.gis;
+        let layer = ''
+        if (document.getElementById('gisDataset')) {
+          layer = document.getElementById('gisDataset').value
+        }
+        if(document.getElementById('gisLayer') && document.getElementById('gisLayer').previousSibling) {
+          layer = document.getElementById('gisLayer').previousSibling.innerHTML
+        }
+        if (layer === 'Dataset' || layer === 'Layer') {
+          layer = 'SIDS'
+        }
+        text = text.replaceAll('{layerTitle}', layer)
+      } else {
+        text = this.textTemplates.twitter.general
+      }
+      text += this.textTemplates.all
+      return text;
+    },
     twShareLink() {
-      return `https://twitter.com/share?url=${window.location.href}&hashtags=RisingUpForSIDS&text=Explore SIDS data platform`
+      return `https://twitter.com/share?url=${window.location.href}&text=${this.twShareText}&hashtags=RisingUpForSIDS`
     },
     fbShareLink() {
-      return `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}&hashtag=%23RisingUpForSIDS`
+      return `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`
     },
     liShareLink() {
-      return `https://www.linkedin.com/shareArticle?mini=true&url=https://data.undp.org/sids/development-indicators/region/recentValue/choro`
+      return `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`
     }
   },
   methods: {
@@ -51,6 +136,9 @@ export default {
        'width=250,height=400');
       return false;
     }
+  },
+  async beforeMount() {
+    this.textTemplates = await services.loadShareText();
   }
 }
 </script>

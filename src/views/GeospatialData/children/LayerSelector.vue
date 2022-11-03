@@ -7,6 +7,7 @@
           class="map-input"
           dense
           hide-details
+          id="gisDataset"
           :disabled='disabled'
           :value="dataset"
           @change="emitDatasetChange"
@@ -29,6 +30,7 @@
           rounded
           dense
           hide-details
+          id="gisLayer"
           class="map-input"
           :value="layer"
           item-text="title"

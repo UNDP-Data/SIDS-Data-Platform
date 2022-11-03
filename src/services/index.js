@@ -26,7 +26,8 @@ export default {
   loadMLPredictorSize,
   loadGISLayer,
   loadLang,
-  loadResourcesData
+  loadResourcesData,
+  loadShareText
 }
 
 async function loadCountryProfile(isoCode) {
@@ -144,5 +145,10 @@ async function loadMLPredictorSize () {
 
 async function loadLang(lang) {
   let resp = await axios.get(`${API_URl}/cms/app/${lang}.json`);
+  return resp.data
+}
+
+async function loadShareText() {
+  let resp = await axios.get(`${API_URl}/cms/shareText.json`);
   return resp.data
 }
