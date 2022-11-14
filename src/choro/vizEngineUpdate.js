@@ -980,7 +980,7 @@ export function updateBarAxis() {
 export function updateYAxis() {
   let indicatorDataYear = this.indicatorData["data"][this.indiSelections["year"]],
 
-  yAxisContainer = this.sidsMapSelection.select(".multiYAxis");
+  yAxisContainer = d3.select(this.mapContainerSelector).select(".multiYAxis");
   const yScale = d3.scaleLinear();
   var yAxis = d3.axisLeft(yScale);
   yAxis.tickFormat(d3.format(".2s"));
