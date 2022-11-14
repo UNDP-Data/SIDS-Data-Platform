@@ -963,16 +963,12 @@ export function updateBarAxis() {
     this.indiSelections["viz"] == "series"
   ) {
     x.range([0, 0]);
-    // setTimeout(function () {
       barAxis.attr("visibility", "hidden");
-    // }, 1100);
   } else if (this.indiSelections["viz"] == "bars"||this.indiSelections["viz"] == "Multi-indicator") {
     barAxis.attr("visibility", "visible");
   }
 
   barAxis
-    // .transition()
-    // .duration(1200)
     .attr("transform", `translate(${margin.left}, 25)`)
     .call(xAxis);
 }
