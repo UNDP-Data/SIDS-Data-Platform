@@ -80,6 +80,11 @@
             />
           </v-col>
         </v-row>
+        <v-row>
+          <v-col offset="2" cols="8">
+            <p class="text-center grey--text">Insufficient data available for visualization.</p>
+          </v-col>
+        </v-row>
         <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
           <v-col cols="12">
             <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
