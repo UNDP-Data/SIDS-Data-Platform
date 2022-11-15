@@ -461,10 +461,11 @@ export default {
       })
     },
     maxValuePillars(){
-      if(this.rankType !== 'regionally') {
+      if(this.rankType !== 'region') {
         return this.maxValues[this.rankType]
       }
-      return this.maxValues[this.activeCountryProfile.Profile[0].value]
+      console.log(this.activeCountryProfile.Profile[0].value)
+      return this.maxValues[this.activeCountryProfile.Profile[0].value.toLowerCase()]
     },
     graphValueData() {
       let result = {};
@@ -519,7 +520,9 @@ export default {
   methods:{
     changeRankSelector(e) {
       if(e === 'region') {
-        this.region = this.activeCountryProfile.Profile[0].value
+        this.region = this.activeCountryProfile.Profile[0].value.toLowerCase()
+      } else {
+        this.region = 'allSids'
       }
     },
     selectCountry(country) {
