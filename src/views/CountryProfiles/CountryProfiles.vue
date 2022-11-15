@@ -464,7 +464,6 @@ export default {
       if(this.rankType !== 'region') {
         return this.maxValues[this.rankType]
       }
-      console.log(this.activeCountryProfile.Profile[0].value)
       return this.maxValues[this.activeCountryProfile.Profile[0].value.toLowerCase()]
     },
     graphValueData() {
