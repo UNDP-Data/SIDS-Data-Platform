@@ -4,7 +4,6 @@
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       @layersChange="emitUpdate"
-      @modeUpdate="toggleBivarUpdate"
     />
     <layer-description
       class="d-none d-md-block"
@@ -87,6 +86,16 @@ export default {
     },
     emitDualUpdate(e) {
       this.$emit("updateDual", e);
+    }
+  },
+  watch: {
+    dualModeEnabled(){
+      this.secondLayer = null;
+      this.secondDataset = null;
+    },
+    bivariateModeEnabled(){
+      this.secondLayer = null;
+      this.secondDataset = null;
     }
   }
 }

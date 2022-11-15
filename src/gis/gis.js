@@ -775,19 +775,21 @@ export default class Map {
   createComparison(containerId, map1Instance, map2Instance) {
     document.getElementById("map2").classList.remove("d-none"); //enabling show the comparison map
     console.log(MapboxCompare)
-    this.mapCompare = new mapboxgl.Compare(
-      map1Instance,
-      map2Instance,
-      containerId,
-    );
+
     map2Instance.setPitch(map1Instance.getPitch());
     map2Instance.setCenter(map1Instance.getCenter());
     map2Instance.setZoom(map1Instance.getZoom());
 
     map2Instance.resize();
+    this.mapCompare = new mapboxgl.Compare(
+      map1Instance,
+      map2Instance,
+      containerId,
+    );
   }
   removeComparison() {
     this.mapCompare.remove();
+    this.removeLayer(this.options.comparisonLayerState.hexSize, this.map2);
     document.getElementById("map2").classList.add("d-none");
   }
 }

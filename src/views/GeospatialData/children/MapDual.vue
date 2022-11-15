@@ -46,6 +46,7 @@ export default {
   },
   watch: {
     dualEnabled() {
+      console.log(this.modeOn, 'dual')
       this.modeOn = this.dualEnabled
     }
   }

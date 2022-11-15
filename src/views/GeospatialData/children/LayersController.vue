@@ -363,6 +363,16 @@ export default {
         this.emitUpdate()
       })
     }
+  },
+  watch: {
+    dualModeEnabled(){
+      this.secondLayer = null;
+      this.secondDataset = null;
+    },
+    bivariateModeEnabled(){
+      this.secondLayer = null;
+      this.secondDataset = null;
+    }
   }
 }
 </script>
