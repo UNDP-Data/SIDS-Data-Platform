@@ -100,6 +100,8 @@
             '';
             this.idsList.map(countryId => {
               newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value.replace(/,/g, ' ')
+              console.log(this.profiles[countryId][pillarName][indicator])
+              newIndi[countryId + ' Year'] = this.profiles[countryId][pillarName][indicator].year
             })
             countryExport.push(newIndi)
           }
@@ -115,6 +117,7 @@
             '';
             this.idsList.map(countryId => {
               newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value
+              newIndi[countryId + ' Year'] = this.profiles[countryId][pillarName][indicator].year
             })
             countryExport.push(newIndi)
           }
@@ -133,8 +136,10 @@
         headers.source = "Source";
         this.idsList.map(countryId => {
           headers[countryId] = this.sidsList.find(sids => sids.id === countryId).name
+          headers[countryId + ' Year'] = this.sidsList.find(sids => sids.id === countryId).name + ' Year'
         })
-        exportCSVFile(headers, countryExport, "sids_profile_data", "")
+        let filename = window.location.pathname.substring(1).replaceAll('/', '_')
+        exportCSVFile(headers, countryExport, filename, "")
       },
     }
   }

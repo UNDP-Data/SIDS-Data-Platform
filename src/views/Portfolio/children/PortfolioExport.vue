@@ -85,13 +85,17 @@ export default {
       let projectExport = this.projecctExportRender(),
       fileData = [this.portfolioHeaders].concat(projectExport),
       note = `This dataset is the list of UNDP projects filtered by the ${this.region}  region, the year(s) ${this.year} , and the funding category ${this.funding} . All data is used with permission from the UNDP open data portal.`
-      this.exportCSVFile(fileData, 'sids_projects_' + this.region + "_" + this.year, note)
+
+      let filename = window.location.pathname.substring(1).replaceAll('/', '_') + '_projects'
+      this.exportCSVFile(fileData, filename, note)
     },
     exportCSV(){
       let summaryExport = this.summaryExportRender(),
       fileData = [this.summaryHeaders].concat(summaryExport),
       note = `This dataset is the compiled budget and project totals per category for all UNDP projects filtered by the ${this.region}  region, the year(s) ${this.year} , and the funding category ${this.funding} . All data is used with permission from the UNDP open data portal.`
-      this.exportCSVFile(fileData, 'sids_projects_' + this.region + "_" + this.year, note)
+
+      let filename = window.location.pathname.substring(1).replaceAll('/', '_') + '_summary'
+      this.exportCSVFile(fileData, filename, note)
     },
     exportCSVFile(fileData, fileTitle, note) {
       // Convert Object to JSON
@@ -266,6 +270,7 @@ export default {
                   }
               }
           }
+          label = label.value ? label.value : label;
           newEl = {}
           newEl["category"] = label.replace(/,/g, '')
           newEl["budget"] = totalBudg
