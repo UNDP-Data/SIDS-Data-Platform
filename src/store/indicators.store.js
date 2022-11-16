@@ -110,6 +110,7 @@ export default {
             }
           }
         })
+
         commit("setMeta", meta);
       }
     },
