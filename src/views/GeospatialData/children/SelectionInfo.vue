@@ -76,7 +76,6 @@ export default {
       }
     },
     polyUpdate(e) {
-      console.log(e)
       if(e !== null) {
         this.min = this.nFormatter(e.min,2)
         this.max = this.nFormatter(e.max,2)
