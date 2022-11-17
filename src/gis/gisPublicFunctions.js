@@ -68,20 +68,43 @@ export function updateData(
       } else {
         uniFeatures = self.getUniqueFeatures(features, "hexid");
       }
-      var selectedData = uniFeatures.map((x) => x.properties[Field_Name]);
-
-      var breaks = chroma.limits(selectedData, "q", 4);
-
-      var breaks_new = [];
-      this.options.precision = 1;
+      let selectedData = uniFeatures.map((x) => {
+        return x.properties[activeLayer.Field_Name]
+      });
+      let breaks = chroma.limits(selectedData, "q", 4);
+      let breaks_new = [];
+      self.options.precision = 1;
       do {
-        this.options.precision++;
-        for (let i = 0; i < 5; i++) {
+        self.options.precision++;
+        for (let i = 0; i < breaks.length; i++) {
           breaks_new[i] = parseFloat(
             breaks[i].toPrecision(this.options.precision)
           );
         }
-      } while (self.checkForDuplicates(breaks_new) && this.options.precision < 10);
+        if(self.options.precision > 4)  {
+          breaks_new = chroma.limits(selectedData, "e", 4);
+          if(breaks_new[0] === Number.MAX_VALUE) {
+            breaks_new = [0,1,2,3,4]
+          }
+          self.options.precision = 1;
+          if(self.checkForDuplicates(breaks_new)) {
+            breaks_new = breaks_new.map((currentValue, index, array) => {
+              if(index === array.length - 1) {
+                return currentValue
+              }
+              array.map((dCurrentValue, dIndex) => {
+                if(dIndex <= index) {
+                  return
+                }
+                if(currentValue === dCurrentValue) {
+                  breaks_new[dIndex] +=1
+                }
+              })
+              return currentValue
+            })
+          }
+        }
+      } while (self.checkForDuplicates(breaks_new));
       breaks = breaks_new;
       let colorRamp;
       if(self.options.colorSCheme.color && self.options.colorSCheme.color !=='original') {
@@ -205,6 +228,11 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
   for (var layer in constants.userLayers) {
     if (map.getLayer(constants.userLayers[layer])) {
       map.removeLayer(constants.userLayers[layer]);
+    }
+    if(this.options.mode3d) {
+      if (map.getLayer(constants.userLayers[layer]+'-3d')) {
+        map.removeLayer(constants.userLayers[layer]+'-3d');
+      }
     }
   }
 
@@ -430,28 +458,6 @@ export function changeHexagonSize(resolution) {
 
   this.options.currentLayerState.hexSize = resolution;
   this.options.comparisonLayerState.hexSize = resolution;
-  /* if (resolution === "hex1") {
-      //showing loader in expectation of hex1 taking longer to display
-      // $(".loader-gis").show();
-      console.log("handling spinner for hex1 loading");
-      this.showSpinner();
-
-      map.once("idle", () => {
-        // $(".loader-gis").hide();
-        this.hideSpinner();
-      });
-    } */
-
-
-  /*     map.once("idle", function (e) {
-      console.log(`map.once on idle triggered by ${e}`);
-      console.log("map idle-> recoloring");
-      this.recolorBasedOnWhatsOnPage();
-
-      //console.log('change bins');
-      //map.setPaintProperty(globals.currentLayerState.hexSize, 'fill-opacity', 0.7)
-      map.moveLayer(resolution, "allsids");
-    }); */
 }
 
 export function add3D() {

@@ -137,7 +137,6 @@ export default {
       this.choro && this.page === this.choro.page && this.choro.updateSeriesCountryList(res)
     },
     async initChart() {
-      console.log('initChart')
       let sidsXML = await service.loadSidsSVG();
       let mapLocations = await service.loadMapLocations();
       this.compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)

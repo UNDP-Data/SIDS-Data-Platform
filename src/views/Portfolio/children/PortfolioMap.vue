@@ -454,7 +454,6 @@ export default {
           x = (bounds[0][0] + bounds[1][0]) / 2,
           y = (bounds[0][1] + bounds[1][1]) / 2,
           scale = Math.max(1, Math.min(35, 0.9 / Math.max(dx / (this.width-250), dy / (this.height-250))));
-          console.log(scale)
           let translate = [this.width / 2 - scale * x, this.height / 2 - scale * y];
         this.map.transition()
           .duration(1350)
