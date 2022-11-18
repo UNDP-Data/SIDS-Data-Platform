@@ -80,7 +80,7 @@
             />
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mt-8" v-if="noData">
           <v-col offset="2" cols="8">
             <p class="text-center grey--text">Insufficient data available for visualization.</p>
           </v-col>
