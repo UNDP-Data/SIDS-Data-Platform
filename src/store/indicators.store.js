@@ -93,7 +93,11 @@ export default {
         let meta = await service.loadIndicatorsMeta();
         meta = Object.keys(meta)
           .filter( indicatorCode => meta[indicatorCode].indicator)
-          .reduce( (res, indicatorCode) => (res[indicatorCode] = meta[indicatorCode], res), {} );
+          .reduce( (res, indicatorCode) => {
+            res[indicatorCode] = meta[indicatorCode]
+            res[indicatorCode].codesArray = [indicatorCode]
+            return res
+          }, {} );
 
         state.datasetsList.map((dataset) => {
           for(let category in state.indicatorsCategories[dataset.code]) {

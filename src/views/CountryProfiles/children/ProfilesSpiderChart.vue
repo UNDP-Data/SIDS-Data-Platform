@@ -267,6 +267,9 @@ export default {
           .call(wrap, this.fullGraphOptions.wrapWidth)
           .style("pointer-events","auto")
           .attr("id", (d, i) => `${rootThis.pillarName}axis${i}${this.postfix}`)
+          .on('click', (d)=>{
+            rootThis.$router.push(`/development-indicators/${d}`)
+          })
           this.ranks[0].axes.map((axis, i) => {
             tippy(`#${rootThis.pillarName}axis${i}${this.postfix}`, {
               content() {
