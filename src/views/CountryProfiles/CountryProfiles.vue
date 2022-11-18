@@ -80,7 +80,12 @@
             />
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
+        <v-row class="mt-8" v-if="noData">
+          <v-col offset="2" cols="8">
+            <p class="text-center grey--text">{{$t('countryProfile.noCountryData')}}</p>
+          </v-col>
+        </v-row>
+        <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
           <v-col cols="12">
             <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
             <v-row>
@@ -96,7 +101,7 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-row class="d-md-none d-none-print justify-center">
+        <v-row class="d-md-none d-none-print justify-center" v-if="!noData">
           <v-col cols="11">
             <v-expansion-panels flat accordion>
               <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
@@ -126,7 +131,7 @@
             </v-expansion-panels>
           </v-col>
         </v-row>
-        <v-row justify="center" class="d-none-print d-md-none">
+        <v-row justify="center" class="d-none-print d-md-none"  v-if="!noData">
           <v-col cols="9">
             <v-select
               class="country-select"
@@ -192,7 +197,7 @@
             </div>
           </v-col>
         </v-row>
-        <v-row class="d-none-print" justify="center">
+        <v-row class="d-none-print" justify="center"  v-if="!noData">
           <v-col cols="11" md="6">
             <country-multiselect
               :placeholder="$t('countryProfile.infoBox.overlayCountries')"
@@ -244,7 +249,7 @@
             </info-hover-tooltip>
           </v-col>
         </v-row>
-        <v-row class="mb-4 d-none d-md-flex d-print-flex no-page-break" v-if="graphRankData && graphValueData" justify="space-between">
+        <v-row class="mb-4 d-none d-md-flex d-print-flex no-page-break" v-if="!noData && graphRankData && graphValueData" justify="space-between">
           <v-col class="no-page-break" v-for="pillar in pillars.slice(0, 3)" cols="4" :key="pillar.name">
             <profiles-spider-chart
               :graphOptions="graphOptions[pillar.name]"
@@ -262,13 +267,13 @@
         </v-row>
       </div>
       <div class="print-page page-break">
-        <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="!noData && activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
           <v-col cols="12">
             <h2 class="mb-0 px-4">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
             <div class="px-4" v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex no-page-break mb-4 mb-print-0">
+        <v-row class="d-none d-md-flex d-print-flex no-page-break mb-4 mb-print-0" v-if="!noData">
           <v-col class="mvi-wrapper d-flex flex-column" cols="7">
             <profiles-spider-chart
               class="no-page-break"
@@ -289,7 +294,7 @@
               :countryId="activeCountryId"/>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
           <v-col cols="12">
             <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
             <div class="px-4" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
@@ -444,6 +449,18 @@ export default {
       profiles: state => state.profiles.profiles,
       indicatorsMetadata: state => state.profiles.indicatorsMetadata
     }),
+    noData() {
+      let dataPoints = Object.keys(this.graphValueData).reduce((sum, pillarCode) => {
+        let pillarSum = this.graphValueData[pillarCode][0].axes.reduce((pillarSum, indi) => {
+          if(indi.value !== 'No Data') {
+            return pillarSum + 1;
+          }
+          return pillarSum
+        },0)
+        return sum + pillarSum
+      },0)
+      return dataPoints < 4
+    },
     sidsListFiltered() {
       if(this.region === 'allSids') {
         return this.sidsList
