@@ -315,7 +315,7 @@ export default {
     },
     selectGoal(goalNumber) {
       this.activeGoal = goalNumber;
-      this.$refs.slider.scrollOffset = 120 * (goalNumber - 1);
+      this.$refs.slider.scrollOffset = 100 * (goalNumber - 1);
     },
     firstDatasetChange(dataset) {
       this.activeDataset = dataset;
