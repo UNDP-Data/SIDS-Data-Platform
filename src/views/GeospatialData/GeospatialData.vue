@@ -3,15 +3,19 @@
     <v-btn
       @click="menuColapsed = !menuColapsed"
       class="button-collapse d-none d-md-block"
-      :class="{'button-collapse-rotated' : menuColapsed}"
       fab
       x-small
       >
       <v-icon
+        class="button-collapse_icon"
+        :class="{'button-collapse_icon-rotated' : menuColapsed}"
         large
       >
         mdi-chevron-left
       </v-icon>
+      <span>
+
+      </span>
     </v-btn>
     <v-chip
       v-if="dualModeEnabled"
@@ -19,7 +23,7 @@
       class="mode-chip d-none d-md-block"
       color="primary"
     >
-      {{$t('gis.compareEnabled')}}
+      Comparison mode enabled
     </v-chip>
     <v-chip
       v-if="bivariateModeEnabled"
@@ -27,8 +31,14 @@
       class="mode-chip d-none d-md-block"
       color="primary"
     >
-      {{$t('gis.bivarEnabled')}}
+      Bivariate mode enabled
     </v-chip>
+    <h3
+      @click="menuColapsed = !menuColapsed"
+      class="d-none d-md-flex map-layer-title"
+      v-if="menuColapsed && activeDataset && activeLayer">
+        {{activeLayer.activeYear ? activeLayer.title + ' ' +  activeLayer.activeYear : activeLayer.title}}
+    </h3>
     <map-controller
       :class="{'data-controller-colapsed': menuColapsed}"
       class="data-controller"
@@ -52,9 +62,15 @@
       v-if="map"
       :map="map"
       :activeLayer="activeLayer"
+      :secondLayer="secondLayer"
     />
     <map-loader
       v-if="gisLoader"
+    />
+    <layer-legend-small class="d-none d-md-flex layer-legend-small" v-if="map"
+      :class="{'layer-legend-small_hidden' : !menuColapsed}"
+      :activeLayer="activeLayer"
+      :map="map"
     />
     <div id="mapsContainer">
       <div id="map">
@@ -76,6 +92,7 @@
 <script>
 import GIS from "@/gis/gis";
 import MapController from "./children/MapController";
+import LayerLegendSmall from "./children/LayerLegendSmall";
 import SelectionInfo from "./children/SelectionInfo";
 import MapToolbar from "./children/MapToolbar";
 import MapLoader from "./children/MapLoader";
@@ -84,10 +101,9 @@ export default {
   name: "GeospatialData",
   data() {
     return {
+      activeDataset:null,
       activeLayer:null,
-      dataset: null,
       secondLayer: null,
-      secondDataset: null,
       map: null,
       menuColapsed:false,
       dualModeEnabled: false,
@@ -99,39 +115,25 @@ export default {
     MapToolbar,
     MapController,
     SelectionInfo,
-    MapLoader
+    MapLoader,
+    LayerLegendSmall
   },
   methods: {
     toggleBivar(e) {
+      if(this.dualModeEnabled){
+        this.toggleDual(!this.dualModeEnabled)
+      }
       this.bivariateModeEnabled = e;
-      if(this.dualModeEnabled) {
-        this.dualModeEnabled = false;
-        this.map.toggleMapboxGLCompare(this.dualModeEnabled);
-      }
-      this.map.toggleBivariateComponents(e)
-      if(e && this.activeLayer && this.secondLayer) {
-        this.updateBivariate({
-          layer: this.activeLayer,
-          dataset: this.dataset,
-          secondDataset: this.secondDataset,
-          secondLayer: this.secondLayer
-        })
-      }
+      this.map.toggleBivariateComponents(e);
     },
     toggleDual(e) {
+      if(this.bivariateModeEnabled){
+        this.toggleBivar(!this.bivariateModeEnabled)
+      }
       this.dualModeEnabled = e;
-      if(this.bivariateModeEnabled) {
-        this.bivariateModeEnabled = false;
-        this.map.toggleBivariateComponents(this.bivariateModeEnabled)
-      }
       this.map.toggleMapboxGLCompare(e);
-      if(e && this.secondLayer) {
-        this.updateComparisonMap(this.secondDataset, this.secondLayer)
-      }
     },
     updateBivariate({dataset, layer, secondDataset, secondLayer}) {
-      this.secondLayer = secondLayer
-      this.secondDataset = secondDataset
       this.map.createBivariate(
         dataset,
         layer,
@@ -139,11 +141,9 @@ export default {
         secondLayer
       );
     },
-
     updateComparisonMap(activeDataset, activeLayer) {
+      this.secondLayer = activeLayer;
       if (activeLayer) {
-        this.secondLayer = activeLayer
-        this.secondDataset = activeDataset
         if (activeLayer.Name === "Ocean Data") {
           if (activeLayer.Field_Name === "depth") {
             this.map.addOcean(activeDataset, activeLayer, true);
@@ -156,10 +156,18 @@ export default {
       }
     },
     updateMap(e) {
+      this.activeDataset = e.dataset
       this.activeLayer = e.layer
-      this.dataset = e.dataset
       if (e.dataset) {
-        this.map.updateData(e.dataset, e.layer);
+        if (e.layer.Name === "Ocean Data") {
+          if (e.layer.Field_Name === "depth") {
+            this.map.addOcean(e.dataset, e.layer);
+          } else {
+            this.map.updateData(e.dataset, e.layer);
+          }
+        } else {
+          this.map.updateData(e.dataset, e.layer);
+        }
       }
     },
     enebleLoader() {
@@ -190,6 +198,30 @@ export default {
   z-index:98;
   top: 2em;
   right:11px;
+}
+.map-layer-title {
+  position: absolute;
+  z-index: 98;
+  top: 4px;
+  left: 5px;
+  background: #f5f5f5;
+  padding-left: 3.5em;
+  padding-right: 1em;
+  height: 50px;
+  align-items: center;
+  display: flex;
+  border-radius: 25px;
+}
+
+.layer-legend-small {
+  position: absolute;
+  z-index: 98;
+  left: 5px;
+  bottom: 5px;
+  min-width: 200px;
+}
+.layer-legend-small.layer-legend-small_hidden {
+  display: none !important;
 }
 /* portrait devices smaller than tablets */
 @media (orientation: portrait) and (max-width: 750px) {
@@ -301,11 +333,13 @@ export default {
   top: 4px;
   left: 4px;
   z-index: 1000;
-  transform: rotate(0deg);
-  transition: all 200ms;
   background: rgba(221, 221, 221, 0.9);
 }
-.button-collapse-rotated {
+.button-collapse_icon {
+  transform: rotate(0deg);
+  transition: all 200ms;
+}
+.button-collapse_icon-rotated {
   transform: rotate(180deg);
 }
 .mode-chip {
