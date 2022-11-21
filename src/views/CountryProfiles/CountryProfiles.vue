@@ -262,7 +262,9 @@
               :values="graphValueData[pillar.name]"/>
           </v-col>
           <v-col class="charts-description mt-0 mb-0" cols="12">
-            <p class="mt-0 mb-0 text-center desc-spiders">{{$t('countryProfile.infoBox.radarAnnotation')}}</p>
+            <p class="mt-0 mb-0 text-center desc-spiders">
+              {{radarAnnotation}}
+            </p>
           </v-col>
         </v-row>
       </div>
@@ -449,6 +451,9 @@ export default {
       profiles: state => state.profiles.profiles,
       indicatorsMetadata: state => state.profiles.indicatorsMetadata
     }),
+    radarAnnotation() {
+      return this.$t('countryProfile.infoBox.radarAnnotation.'+this.rankType)
+    },
     noData() {
       let dataPoints = Object.keys(this.graphValueData).reduce((sum, pillarCode) => {
         let pillarSum = this.graphValueData[pillarCode][0].axes.reduce((pillarSum, indi) => {
