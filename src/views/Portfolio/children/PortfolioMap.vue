@@ -469,6 +469,17 @@ export default {
         .attr("font-size", 30 / scale + 'px')
 
     },
+    updateScreenSize() {
+      this.map.selectAll("*").remove();
+      this.initMap();
+      if(this.region !== 'allSids') {
+        if(['ais', 'caribbean', 'pacific'].includes(this.region)) {
+          this.selectRegion(this.region)
+        } else {
+          this.selectCountry(this.region)
+        }
+      }
+    },
     selectRegion(name) {
       let transforms = this.regionTransforms[name];
 
@@ -518,7 +529,13 @@ export default {
         this.selectCountry(this.region)
       }
     }
-  }
+  },
+  created() {
+    window.addEventListener("resize", this.updateScreenSize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.updateScreenSize);
+  },
 }
 </script>
 
