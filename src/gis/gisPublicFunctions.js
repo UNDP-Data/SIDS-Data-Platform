@@ -70,7 +70,8 @@ export function updateData(
       }
       let selectedData = uniFeatures.map((x) => {
         return x.properties[activeLayer.Field_Name]
-      });
+      }).filter(x => x!== undefined);
+      console.log(selectedData,uniFeatures)
       let breaks = chroma.limits(selectedData, "q", 4);
       let breaks_new = [];
       self.options.precision = 1;
@@ -166,7 +167,7 @@ export function updateData(
         ],
       ]);
 
-      if (isNaN(breaks[3]) || breaks[1] == 0) {
+      if (selectedData.length === 0) {
         map.setPaintProperty(
           cls.hexSize,
           "fill-opacity",

@@ -414,27 +414,27 @@ export default class Map {
       }
 
       let selectedData = uniFeatures.map((x) => {
-        return x.properties[cls.activeLayer.Field_Name]
-      });
+        return x.properties[cls.dataLayer]
+      }).filter(x => x !== undefined);
       var breaks = chroma.limits(selectedData, "q", 4);
 
       var breaks_new = [];
       this.options.precision = 1;
 
       do {
-        self.options.precision++;
+        this.options.precision++;
         for (let i = 0; i < breaks.length; i++) {
           breaks_new[i] = parseFloat(
             breaks[i].toPrecision(this.options.precision)
           );
         }
-        if(self.options.precision > 4)  {
+        if(this.options.precision > 4)  {
           breaks_new = chroma.limits(selectedData, "e", 4);
-          self.options.precision = 1;
+          this.options.precision = 1;
           if(breaks_new[0] === Number.MAX_VALUE) {
             breaks_new = [0,1,2,3,4]
           }
-          if(self.checkForDuplicates(breaks_new)) {
+          if(this.checkForDuplicates(breaks_new)) {
             breaks_new = breaks_new.map((currentValue, index, array) => {
               if(index === array.length - 1) {
                 return currentValue
@@ -451,7 +451,7 @@ export default class Map {
             })
           }
         }
-      } while (self.checkForDuplicates(breaks_new));
+      } while (this.checkForDuplicates(breaks_new));
       breaks = breaks_new;
       cls.breaks = breaks;
 
@@ -472,7 +472,8 @@ export default class Map {
       ]);
 
       let self = this;
-      if (isNaN(breaks[3]) || breaks[1] == 0) {
+      console.log(selectedData, selectedData.length)
+      if (selectedData.length === 0) {
         map.setPaintProperty(
           cls.hexSize,
           "fill-opacity",
