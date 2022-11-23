@@ -216,7 +216,6 @@
                 rounded
                 v-model="rankType"
                 :items="rankTypes"
-                @change="changeRankSelector"
                 item-text="id"
                 item-value="id"
                 outlined
@@ -539,21 +538,13 @@ export default {
     },
   },
   methods:{
-    changeRankSelector(e) {
-      if(e === 'region') {
-        this.region = this.activeCountryProfile.Profile[0].value.toLowerCase()
-      } else {
-        this.region = 'allSids'
-      }
-    },
     selectCountry(country) {
       gtag('event', 'country_select_profiles', {
         country
       });
       this.$router.push({
         name:'Country Profiles',
-        params:{country},
-        query: this.$route.query
+        params:{country}
       })
     },
     setCompareCountries(value) {
