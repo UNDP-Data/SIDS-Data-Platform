@@ -39,6 +39,12 @@
 .v-select__selections {
   color: #082753 !important
 }
+.v-select.v-input--is-disabled .v-select__selections {
+  color: rgba(0, 0, 0, 0.38) !important
+}
+.v-select.v-input--is-disabled .v-icon:before {
+  color: rgba(0, 0, 0, 0.38) !important
+}
 .v-select.v-select--is-multi.v-input--is-dirty .v-input__slot {
   padding: 0 8px 0 1px !important;
 }
