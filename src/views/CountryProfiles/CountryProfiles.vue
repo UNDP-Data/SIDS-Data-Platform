@@ -639,7 +639,7 @@ export default {
      bottom: 0px;
    }
    .single-page-print-footer {
-     bottom: 30px;
+     bottom: 100px;
    }
    .desc-mvi-one-page {
      position: absolute;
