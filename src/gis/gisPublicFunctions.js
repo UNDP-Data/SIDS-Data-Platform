@@ -1054,6 +1054,7 @@ export function toggleMapboxGLCompare() {
     return;
   }
   if (!this.options.compareModeEnabled) {
+    this.clearHexHighlight();
     this.createComparison(this.containerId, this.map, this.map2);
   } else {
     this.removeComparison();
