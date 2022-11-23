@@ -202,7 +202,7 @@
             <country-multiselect
               :placeholder="$t('countryProfile.infoBox.overlayCountries')"
               :countryActiveIdsList="compareIdsList"
-              :countriesToCompare="sidsListFiltered"
+              :countriesToCompare="sidsListMultiselectFiltered"
               :colorScheme="colorScheme"
               @countryChange="setCompareCountries"
             />
@@ -216,7 +216,6 @@
                 rounded
                 v-model="rankType"
                 :items="rankTypes"
-                @change="changeRankSelector"
                 item-text="id"
                 item-value="id"
                 outlined
@@ -466,6 +465,15 @@ export default {
       },0)
       return dataPoints < 4
     },
+    sidsListMultiselectFiltered() {
+      if(this.rankType === 'region') {
+        return this.sidsList.filter(country => {
+          return country.region === this.activeCountryProfile.sidsData.region
+        });
+      } else {
+        return this.sidsList
+      }
+    },
     sidsListFiltered() {
       if(this.region === 'allSids') {
         return this.sidsList
@@ -539,21 +547,13 @@ export default {
     },
   },
   methods:{
-    changeRankSelector(e) {
-      if(e === 'region') {
-        this.region = this.activeCountryProfile.Profile[0].value.toLowerCase()
-      } else {
-        this.region = 'allSids'
-      }
-    },
     selectCountry(country) {
       gtag('event', 'country_select_profiles', {
         country
       });
       this.$router.push({
         name:'Country Profiles',
-        params:{country},
-        query: this.$route.query
+        params:{country}
       })
     },
     setCompareCountries(value) {
