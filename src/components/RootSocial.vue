@@ -111,7 +111,7 @@ export default {
       return `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`
     },
     liShareLink() {
-      return `https://www.linkedin.com/shareArticle?mini=true&url=${window.location.href}`
+      return `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent('https://data.undp.org/sids' + window.location.pathname)}`
     }
   },
   methods: {
