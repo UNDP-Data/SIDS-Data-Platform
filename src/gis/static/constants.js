@@ -62,12 +62,12 @@ const constants = {
   },
   styles: [
     {
-      name: "Satellite Imagery", //"Mapbox Satellite Streets",
+      name: "satellite", //"Mapbox Satellite Streets",
       // title: "Satellite With Labels",
       uri: "mapbox://styles/mapbox/satellite-streets-v11",
     },
     {
-      name: "Light Theme", //"Mapbox Light",
+      name: "light", //"Mapbox Light",
       // title: "Light",
       uri: "mapbox://styles/mapbox/light-v10",
     },
@@ -77,7 +77,7 @@ const constants = {
       uri: "mapbox://styles/mapbox/satellite-v9",
     },
     {
-      name: "Dark Theme", //"Mapbox Dark",
+      name: "dark", //"Mapbox Dark",
       // title: "Mapbox Dark",
       uri: "mapbox://styles/mapbox/dark-v10",
     },
