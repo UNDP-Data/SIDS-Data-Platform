@@ -202,7 +202,7 @@
             <country-multiselect
               :placeholder="$t('countryProfile.infoBox.overlayCountries')"
               :countryActiveIdsList="compareIdsList"
-              :countriesToCompare="sidsListFiltered"
+              :countriesToCompare="sidsListMultiselectFiltered"
               :colorScheme="colorScheme"
               @countryChange="setCompareCountries"
             />
@@ -464,6 +464,15 @@ export default {
         return sum + pillarSum
       },0)
       return dataPoints < 4
+    },
+    sidsListMultiselectFiltered() {
+      if(this.rankType === 'region') {
+        return this.sidsList.filter(country => {
+          return country.region === this.activeCountryProfile.sidsData.region
+        });
+      } else {
+        return this.sidsList
+      }
     },
     sidsListFiltered() {
       if(this.region === 'allSids') {
