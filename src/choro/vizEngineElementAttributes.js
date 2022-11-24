@@ -70,7 +70,7 @@ export function processVizElementAttributes() {
 export function updateCountryAVGbars(dataObj) {
 
   let rootThis = this;
-  let avgs = ['AIS', 'Caribbean', 'Pacific']
+  let avgs = ['ais', 'caribbean', 'pacific']
 
   if(this.indiSelections["viz"] === 'bars' && this.vizMode !== 'index') {
     for (let i = 0; i < avgs.length; i++) {
@@ -148,7 +148,7 @@ export function updateCountryAVGbars(dataObj) {
 export function updateCountryAVGMVIbars(dataObj) {
 
     // let rootThis = this;
-    let avgs = ['AIS', 'Caribbean', 'Pacific']
+    let avgs = ['ais', 'caribbean', 'pacific']
 
     if(this.indiSelections["viz"] === 'bars' && this.vizMode === 'index') {
       for (let i = 0; i < avgs.length; i++) {
