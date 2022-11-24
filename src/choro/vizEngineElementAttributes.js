@@ -149,7 +149,7 @@ export function updateCountryAVGMVIbars(dataObj) {
 
     // let rootThis = this;
     let avgs = ['ais', 'caribbean', 'pacific']
-
+    let rootThis = this;
     if(this.indiSelections["viz"] === 'bars' && this.vizMode === 'index') {
       for (let i = 0; i < avgs.length; i++) {
         let avg = Object.keys(dataObj).reduce((avg, country) => {
@@ -229,7 +229,9 @@ export function updateCountryAVGMVIbars(dataObj) {
               g.append('text')
                 .attr("font-size", 10)
                 .attr('fill-opacity', 0)
-                .text(avgs[i] + ' Average')
+                .text(() => {
+                  return rootThis.$t.call(rootThis.vue, 'countryNames.' + avgs[i].toLowerCase() + 'Average')
+                })
                 .attr("id", function () {
                   return avgs[i] + '-text';
                 })
