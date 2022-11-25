@@ -124,9 +124,7 @@ export default {
   methods: {
     async emitDatasetChange(dataset){
       this.$emit('datasetChange', dataset)
-      if(dataset.layers.length === 1) {
-        await this.emitLayerChange(dataset.layers[0])
-      }
+      await this.emitLayerChange(dataset.layers[0])
     },
     updateYearByIndex(yearIndex) {
       this.$emit('yearChange', this.layer.years[yearIndex])
