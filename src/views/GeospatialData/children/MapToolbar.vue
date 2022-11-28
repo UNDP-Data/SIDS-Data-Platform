@@ -24,7 +24,7 @@
     </div>
     <div class="button-wrapper">
       <map-color-selector
-        :disabled="dualModeEnabled"
+        :disabled="dualModeEnabled || bivariateModeEnabled"
         :map="map"
       />
     </div>
@@ -52,7 +52,7 @@
     </div>
     <div class="button-wrapper">
       <map-regional-analysis v-if="map"
-        :disabled="dualModeEnabled"
+        :disabled="dualModeEnabled || bivariateModeEnabled"
         :map="map"
       />
     </div>
