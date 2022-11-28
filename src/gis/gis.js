@@ -1,7 +1,8 @@
 import globals from "@/gis/static/globals.js";
 import constants from "@/gis/static/constants.js";
 import chroma from "chroma-js";
-
+import colors from "@/gis/static/colors.js";
+import { featureCollection } from "@turf/helpers";
 import mapboxgl from "@/gis/mapboxgl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -386,7 +387,21 @@ export default class Map {
     })
     this.emit('bivariateClick', null)
   }
+  recolorBivarBasedOnWhatsOnPage() {
+    let map = this.map,
+    self = this,
+    cls = this.options.currentLayerState,
+    bvls = this.options.bivariateLayerState;
 
+    let callback = function () {
+      let isBothLoaded = map.isSourceLoaded(cls.hexSize+cls.dataLayer) && map.isSourceLoaded(cls.hexSize+bvls.dataLayer)
+      if(isBothLoaded) {
+        self.renderBivarFeatures.apply(self,[cls, bvls]);
+        map.off('sourcedata', callback)
+      }
+    }
+    map.on('sourcedata', callback)
+  }
   recolorBasedOnWhatsOnPage(recolorComparison = false) {
     let map = !recolorComparison ? this.map : this.map2; //this.map;
     let cls = !recolorComparison
@@ -396,133 +411,14 @@ export default class Map {
       return;
     }
     let self = this;
-    var features = map.queryRenderedFeatures({
-      layers: [cls.hexSize],
-    });
-
-    if (!features || !features.length || !features.some(f => typeof f.properties.mean !== 'undefined')) {
-      if (!recolorComparison) {
-        this.addNoDataLegend();
-      }
-    } else {
-      var uniFeatures;
-      uniFeatures = this.getUniqueFeatures(features, "fid");
-
-      var selectedData = uniFeatures.map((x) => x.properties.mean);
-      var breaks = chroma.limits(selectedData, "q", 4);
-
-      var breaks_new = [];
-      this.options.precision = 1;
-
-      do {
-        self.options.precision++;
-        for (let i = 0; i < breaks.length; i++) {
-          breaks_new[i] = parseFloat(
-            breaks[i].toPrecision(this.options.precision)
-          );
-        }
-        if(self.options.precision > 4)  {
-          breaks_new = chroma.limits(selectedData, "e", 4);
-          self.options.precision = 1;
-          if(self.checkForDuplicates(breaks_new)) {
-            breaks_new = breaks_new.map((currentValue, index, array) => {
-              if(index === array.length - 1) {
-                return currentValue
-              }
-              array.map((dCurrentValue, dIndex) => {
-                if(dIndex <= index) {
-                  return
-                }
-                if(currentValue === dCurrentValue) {
-                  breaks_new[dIndex] +=1
-                }
-              })
-              return currentValue
-            })
-          }
-        }
-      } while (self.checkForDuplicates(breaks_new));
-      breaks = breaks_new;
-      cls.breaks = breaks;
-
-      map.setPaintProperty(cls.hexSize, "fill-color", [
-        "interpolate",
-        ["linear"],
-        ["get", 'mean'],
-        breaks[0],
-        cls.color[0],
-        breaks[1],
-        cls.color[1],
-        breaks[2],
-        cls.color[2],
-        breaks[3],
-        cls.color[3],
-        breaks[4],
-        cls.color[4],
-      ]);
-
-      if (isNaN(breaks[3]) || breaks[1] == 0) {
-        map.setPaintProperty(
-          cls.hexSize,
-          "fill-opacity",
-          0.0 //globals.opacity
-        );
-        setTimeout(() => {
-          map.setFilter(cls.hexSize, null);
-          if(self.options.mode3d) {
-            map.setFilter(cls.hexSize + '-3d', null);
-          }
-        }, 1000);
-        if (!recolorComparison) {
-          this.addNoDataLegend();
-        }
-      } else {
-        let filterCondition = cls.dataLayer === "depth" ? "<" : ">=";
-        map.setFilter(cls.hexSize, [
-          //">=",
-          filterCondition,
-          'mean',
-          0,
-        ]);
-        if(self.options.mode3d) {
-          map.setPaintProperty(cls.hexSize + '-3d', "fill-extrusion-color", [
-            "interpolate",
-            ["linear"],
-            ["get", 'mean'],
-            breaks[0],
-            cls.color[0],
-            breaks[1],
-            cls.color[1],
-            breaks[2],
-            cls.color[2],
-            breaks[3],
-            cls.color[3],
-            breaks[4],
-            cls.color[4],
-          ]);
-          map.setFilter(cls.hexSize + '-3d',
-          [filterCondition,
-          'mean',
-          0]);
-
-        }
-        this.emit('layerUpdate', {
-          activeLayer: this.activeLayer,
-          colorRamp: cls.color,
-          breaks,
-          selectedData,
-          precision: this.options.precision
-        });
-
-        setTimeout(() => {
-          map.setPaintProperty(
-            cls.hexSize,
-            "fill-opacity",
-            this.options.opacity // 0.8
-          );
-        }, 400);
+    let callback = function () {
+      let isloaded = map.isSourceLoaded(cls.hexSize+cls.dataLayer)
+      if(isloaded) {
+        self.renderFeatures.apply(self,[map, cls, recolorComparison])
+        map.off('sourcedata', callback);
       }
     }
+    map.on('sourcedata', callback)
   }
   _bindRecolorListeners() {
     let mapClassInstance = this;
@@ -531,27 +427,16 @@ export default class Map {
         if (!mapClassInstance.options.bivariateMode) {
           mapClassInstance.recolorBasedOnWhatsOnPage();
         } else {
-          mapClassInstance.createBivariate(
-            null,
-            this.activeLayer,
-            null,
-            this.bivarLayer
-          );
+          mapClassInstance.recolorBivarBasedOnWhatsOnPage()
         }
       });
       //
       // //add listener for the comparison map i.e map2
-      // this.map2.on(eventType, function (e, mapClassInstance = instance) {
-      //   //this. in here would ref the mapboxmap and not our mapClass which has the recolor method
-      //   if (debug) {
-      //     console.log(
-      //       "_bindRecolorListeners",
-      //       "event is:",
-      //       e,
-      //       "instance is:",
-      //       instance
-      //     );
-      //   }
+      this.map.on(eventType, () => {
+        if (!mapClassInstance.options.bivariateMode) {
+          mapClassInstance.recolorBasedOnWhatsOnPage(true);
+        }
+      });
       //
       //   if (!globals.bivariateMode) {
       //     let recolorComparison = true;
@@ -829,5 +714,298 @@ export default class Map {
     this.mapCompare.remove();
     this.removeLayer(this.options.comparisonLayerState.hexSize, this.map2);
     document.getElementById("map2").classList.add("d-none");
+  }
+  renderFeatures(map, cls, comparison) {
+    console.log('render')
+    var features = map.queryRenderedFeatures({
+      layers: [cls.hexSize],
+    });
+    let self = this;
+    if (features && features.length && features.some(f => typeof f.properties.mean !== 'undefined')) {
+      let uniFeatures;
+      uniFeatures = self.getUniqueFeatures(features, "fid");
+      let selectedData = uniFeatures.map((x) => x.properties.mean);
+      let breaks = chroma.limits(selectedData, "q", 4);
+      let breaks_new = [];
+      self.options.precision = 1;
+      do {
+        self.options.precision++;
+        for (let i = 0; i < breaks.length; i++) {
+          breaks_new[i] = parseFloat(
+            breaks[i].toPrecision(this.options.precision)
+          );
+        }
+        if(self.options.precision > 4)  {
+          breaks_new = chroma.limits(selectedData, "e", 4);
+          self.options.precision = 1;
+          if(self.checkForDuplicates(breaks_new)) {
+            breaks_new = breaks_new.map((currentValue, index, array) => {
+              if(index === array.length - 1) {
+                return currentValue
+              }
+              array.map((dCurrentValue, dIndex) => {
+                if(dIndex <= index) {
+                  return
+                }
+                if(currentValue === dCurrentValue) {
+                  breaks_new[dIndex] +=1
+                }
+              })
+              return currentValue
+            })
+          }
+        }
+      } while (self.checkForDuplicates(breaks_new));
+      breaks = breaks_new;
+      let colorRamp;
+      if(self.options.colorSCheme.color && self.options.colorSCheme.color !=='original') {
+        if (self.options.colorSCheme.color === "red") {
+          colorRamp = colors.colorSeq["pinkish"];
+        } else if (self.options.colorSCheme.color === "purple") {
+          colorRamp = colors.colorSeq["purple"];
+        } else if (self.options.colorSCheme.color === "blue") {
+          colorRamp = colors.colorSeq["blues"];
+        } else if (self.options.colorSCheme.color === "colorblind-safe") {
+          colorRamp = colors.colorSeq["colorBlindGreen"];
+        }
+      } else {
+        colorRamp = colors.colorSeq["yellow-blue"];
+      }
+
+      if(self.options.colorSCheme.invert) {
+        colorRamp = [...colorRamp].reverse()
+      }
+      cls.breaks = breaks;
+      cls.color = colorRamp;
+      map.setPaintProperty(cls.hexSize, "fill-color", [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        "yellow",
+        [
+          "interpolate",
+          ["linear"],
+          ["get", 'mean'],
+          breaks[0],
+          colorRamp[0],
+          breaks[1],
+          colorRamp[1],
+          breaks[2],
+          colorRamp[2],
+          breaks[3],
+          colorRamp[3],
+          breaks[4],
+          colorRamp[4],
+        ],
+      ]);
+
+      if (isNaN(breaks[3]) || breaks[1] == 0) {
+        map.setPaintProperty(
+          cls.hexSize,
+          "fill-opacity",
+          0.0
+          //this.options.opacity
+        );
+        map.setFilter(cls.hexSize, null);
+        this.addNoDataLegend()
+      } else {
+        map.setFilter(cls.hexSize, [">=", 'mean', 0]);
+        console.log('legupd')
+        this.emit('layerUpdate', {
+          activeLayer: !comparison ? this.activeLayer : this.secondLayer,
+          colorRamp,
+          breaks,
+          selectedData,
+          precision: this.options.precision
+        });
+        let self = this;
+        map.setPaintProperty(
+          cls.hexSize,
+          "fill-opacity",
+          self.options.bivariateMode ? 0 : self.options.opacity // 0.8
+        );
+      }
+    } else {
+      self.addNoDataLegend();
+      this.emit('loadingEnd')
+    }
+    map.once('idle', () => {
+      if(this.options.mode3d) {
+        let layerState = comparison ? this.options.comparisonLayerState : this.options.currentLayerState
+        this.add3dLayer(map, layerState, layerState.hexSize + "-3d")
+      }
+      this.emit('loadingEnd')
+    })
+  }
+  renderBivarFeatures(cls, bvls) {
+    let self = this,
+    map = this.map;
+    let features = map.querySourceFeatures(cls.hexSize+cls.dataLayer, {
+      sourceLayer: [cls.hexSize+'_'+cls.dataLayer]
+    });
+    let features2 = map.querySourceFeatures(cls.hexSize+bvls.dataLayer, {
+      sourceLayer: [cls.hexSize+'_'+bvls.dataLayer]
+    });
+
+
+    if (features && features.length != 0 && features.some(f => typeof f.properties.mean !== 'undefined') && features2 && features2.length != 0 && features2.some(f => typeof f.properties.mean !== 'undefined')) {
+
+      let data_1 = features.map((v) => {
+        return v.properties.mean;
+      });
+      let data_2 = features2.map((v) => {
+        return v.properties.mean;
+      });
+
+      let X_breaks = chroma.limits(data_1, "q", 3);
+      let Y_breaks = chroma.limits(data_2, "q", 3);
+      bvls.breaks.X = X_breaks;
+      bvls.breaks.Y = Y_breaks;
+
+      let bivar_colors = colors.colorSeqSeq3["blue-pink-purple"];
+      bvls.color = bivar_colors;
+
+      let bivarClass = Array(features.length).fill(0);
+      let bivarScatter = new Array(10);
+      for (let i = 0; i < 10; i++) {
+        bivarScatter[i] = [];
+      }
+
+      for (let i = 0; i < features.length; i++) {
+
+        let x_val = data_1[i];
+        let y_val = data_2[i];
+
+        let range_1, range_2;
+        if (x_val < X_breaks[1]) range_1 = 1;
+        else if (x_val < X_breaks[2]) range_1 = 2;
+        else range_1 = 3;
+        if (y_val < Y_breaks[1]) range_2 = 1;
+        else if (y_val < Y_breaks[2]) range_2 = 2;
+        else range_2 = 3;
+        var coord = String(range_1) + String(range_2);
+        if (Number.isNaN(x_val) || Number.isNaN(y_val)) {
+          coord = null;
+        }
+        switch (coord) {
+          case "11":
+            bivarClass[i] = 0;
+            break; //LL
+          case "12":
+            bivarClass[i] = 1;
+            break; //LM
+          case "13":
+            bivarClass[i] = 2;
+            break; //LH
+          case "21":
+            bivarClass[i] = 3;
+            break; //ML
+          case "22":
+            bivarClass[i] = 4;
+            break; //MM
+          case "23":
+            bivarClass[i] = 5;
+            break; //MH
+          case "31":
+            bivarClass[i] = 6;
+            break; //HL
+          case "32":
+            bivarClass[i] = 7;
+            break; //HM
+          case "33":
+            bivarClass[i] = 8;
+            break; //HH
+          case null: //"Null":
+            bivarClass[i] = 9;
+            break; //NULL
+        }
+        bivarScatter[bivarClass[i]].push({ x: x_val, y: y_val }); //assign the bivarPairValues object to the counter of the scatterObject for hte appropriate class
+        features[i]["properties"]["bivarClass"] = bivarClass[i]; //adding a property to the hex features; //TODO needs a better way especially for after switch to non-aggregated features
+        features[i]["properties"].x_val = x_val
+        features[i]["properties"].y_val = y_val
+      }
+
+      var fc = featureCollection(features);
+      //remove preexisting bivariate layer
+
+      const bivaeSource = map.getSource('bivariate');
+      // Update the data after the GeoJSON source was created
+      bivaeSource.setData(fc);
+      map.setPaintProperty('bivariate', 'fill-color', [
+        "step", //step operator
+        ["get", "bivarClass"], //the input;retreive a number literal ie. the bivariate class;
+        //values changed from Atlases code, the first output value is used if the input value is less than the first numeric-stop value i.e 1
+        //his code had the first as 0, which was wrong
+        bivar_colors[0],
+        1,
+        bivar_colors[1],
+        2,
+        bivar_colors[2],
+        3,
+        bivar_colors[3],
+        4,
+        bivar_colors[4],
+        5,
+        bivar_colors[5],
+        6,
+        bivar_colors[6],
+        7,
+        bivar_colors[7],
+        8,
+        bivar_colors[8],
+        9,
+        "rgba(255,255,255,0)",
+      ]);
+
+      let point_radius;
+      if (features.length < 100) {
+        point_radius = 3.3;
+      } else if (features.length > 1000) {
+        point_radius = 1.5;
+      } else {
+        point_radius = ((features.length - 100) / 100) * 0.2;
+      }
+
+      let bivarClasses = [
+        "L-L",
+        "L-Mid",
+        "L-H",
+        "Mid-L",
+        "Mid-Mid",
+        "Mid-H",
+        "H-L",
+        "H-Mid",
+        "H-H",
+      ];
+      let bivarDatasets = [];
+      for (let i = 0; i < 9; i++) {
+        bivarDatasets.push({
+          label: bivarClasses[i],
+          data: bivarScatter[i],
+          pointRadius: point_radius,
+          pointHoverRadius: 3,
+          backgroundColor: bivar_colors[i],
+          hoverBorderColor: "rgba(0,0,0,1)",
+          pointHoverBorderWidth: 2,
+          borderWidth: 1.5,
+        });
+      }
+      map.once('idle',() => {
+        self.emit('loadingEnd')
+      })
+      this.emit('bivarDataUpdate', {
+        data:bivarDatasets,
+        minX: X_breaks[0], //minimum tick
+        maxX: X_breaks[3],
+        minY: Y_breaks[0], //minimum tick
+        maxY: Y_breaks[3],
+        X_breaks,
+        Y_breaks
+      })
+    } else {
+      self.removeLayer("bivariate");
+      self.removeSource("bivariate");
+      self.emit('bivarDataUpdate', {noData: true})
+      self.emit('loadingEnd')
+    }
   }
 }
