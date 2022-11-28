@@ -46,7 +46,7 @@
       :bivariateModeEnabled="bivariateModeEnabled"
       :map="map"
       @update="updateMap"
-      @updateDual="updateComparisonMap($event.dataset, $event.layer, true)"
+      @updateDual="updateComparisonMap"
       @updateBivariate="updateBivariate"
     />
     <map-toolbar
@@ -103,6 +103,7 @@ export default {
     return {
       activeDataset:null,
       activeLayer:null,
+      secondDataset:null,
       secondLayer: null,
       map: null,
       menuColapsed:false,
@@ -125,6 +126,14 @@ export default {
       }
       this.bivariateModeEnabled = e;
       this.map.toggleBivariateComponents(e);
+      if(this.bivariateModeEnabled) {
+        this.updateBivariate({
+          dataset: this.activeDataset,
+          layer: this.activeLayer,
+          secondDataset: this.secondDataset,
+          secondLayer: this.secondLayer
+        })
+      }
     },
     toggleDual(e) {
       if(this.bivariateModeEnabled){
@@ -132,8 +141,22 @@ export default {
       }
       this.dualModeEnabled = e;
       this.map.toggleMapboxGLCompare(e);
+      if(this.dualModeEnabled) {
+        this.updateMap({
+          dataset: this.activeDataset,
+          layer: this.activeLayer
+        })
+        this.updateComparisonMap({
+          dataset: this.secondDataset,
+          layer: this.secondLayer
+        })
+      }
     },
     updateBivariate({dataset, layer, secondDataset, secondLayer}) {
+      this.activeDataset = dataset;
+      this.activeLayer = layer;
+      this.secondDataset = secondDataset;
+      this.secondLayer = secondLayer;
       this.map.createBivariate(
         dataset,
         layer,
@@ -141,24 +164,25 @@ export default {
         secondLayer
       );
     },
-    updateComparisonMap(activeDataset, activeLayer) {
-      this.secondLayer = activeLayer;
-      if (activeLayer) {
-        if (activeLayer.Name === "Ocean Data") {
-          if (activeLayer.Field_Name === "depth") {
-            this.map.addOcean(activeDataset, activeLayer, true);
+    updateComparisonMap(e) {
+      this.secondDataset = e.dataset;
+      this.secondLayer = e.layer;
+      if (e.layer) {
+        if (e.layer.Name === "Ocean Data") {
+          if (e.layer.Field_Name === "depth") {
+            this.map.addOcean(e.dataset, e.layer, true);
           } else {
-            this.map.updateData(activeDataset, activeLayer, true);
+            this.map.updateData(e.dataset, e.layer, true);
           }
         } else {
-          this.map.updateData(activeDataset, activeLayer, true);
+          this.map.updateData(e.dataset, e.layer, true);
         }
       }
     },
     updateMap(e) {
       this.activeDataset = e.dataset
       this.activeLayer = e.layer
-      if (e.dataset) {
+      if (e.layer) {
         if (e.layer.Name === "Ocean Data") {
           if (e.layer.Field_Name === "depth") {
             this.map.addOcean(e.dataset, e.layer);

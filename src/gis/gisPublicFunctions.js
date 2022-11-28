@@ -36,7 +36,7 @@ export function updateData(
   }
   //-------------------------------------------
   this._addDataVectorSource(comparison, cls.dataLayer, cls.hexSize)
-  if (!map.getLayer(cls.hexSize+cls.dataLayer)) {
+  if (!map.getLayer(cls.hexSize)) {
     map.addLayer({
       id: cls.hexSize,
       type: "fill",
@@ -56,7 +56,6 @@ export function updateData(
     }
   }
   let callback = function (e) {
-    console.log(e.sourceId, e.isSourceLoaded, 'single')
     if(e.dataType === 'source' && e.sourceDataType !== 'visibility' && e.sourceDataType !== "metadata" && e.sourceId === cls.hexSize+cls.dataLayer && e.isSourceLoaded) {
       self.renderFeatures.apply(self,[map, cls, comparison])
       map.off('sourcedata', callback);
@@ -206,67 +205,38 @@ export function zoomToCountry(selection) {
 }
 
 export function changeHexagonSize(resolution) {
-  let map = this.map;
-  let map2 = this.map2;
 
   let cls = this.options.currentLayerState;
   this.clearHexHighlight();
+  this.removeBivariateLayer()
+  this.removeLayer(cls.hexSize)
+  this.removeLayer(cls.hexSize + "-3d")
+  this._removeDataVectorSource(false, cls.dataLayer, cls.hexSize)
 
-  if(this.options.mode3d) {
-    this.removeLayer(cls.hexSize + "-3d")
-  }
-  if(this.options.mode3d && this.options.compareModeEnabled) {
-    this.removeLayer(this.options.currentLayerState.hexSize + "-3d", true)
-  }
+  this.options.currentLayerState.hexSize = resolution;
 
-  if(this.options.bivariateMode) {
-    this.removeBivariateLayer()
-  }
-
-  if(map.getLayer(cls.hexSize)) {
-    this.removeLayer(cls.hexSize)
-    this.removeSource(cls.hexSize)
-
-    this.options.currentLayerState.hexSize = resolution;
-    //get source name
+  if(this.activeLayer){
     this.updateData(this.activeDataset, this.activeLayer)
-    let self = this;
-    map.once('idle', () => {
-      if(self.options.bivariateMode) {
-        self.createBivariate(
-          self.options.bivarConfig.firstDataset,
-          self.options.bivarConfig.firstLayer,
-          self.options.bivarConfig.secondDataset,
-          self.options.bivarConfig.secondLayer
-        )
-      }
-      map.once("idle", () => {
-        this.recolorBasedOnWhatsOnPage();
-        this._moveServiceLayersToTop()
-      });
-    })
-    //
-    // if (map.getStyle().name === "Mapbox Satellite") {
-    //   map.moveLayer(resolution);
-    // }
-    //
-    //
+  }
+  if(this.options.bivariateMode && this.options.bivarConfig.firstLayer && this.options.bivarConfig.secondLayer) {
+    this.createBivariate(
+      this.options.bivarConfig.firstDataset,
+      this.options.bivarConfig.firstLayer,
+      this.options.bivarConfig.secondDataset,
+      this.options.bivarConfig.secondLayer
+    )
   }
 
-  if (this.options.compareModeEnabled && map2.getLayer(this.options.comparisonLayerState.hexSize)) {
+  if (this.options.compareModeEnabled) {
+    cls = this.options.comparisonLayerState;
     this.removeLayer(cls.hexSize, true)
-    this.removeSource(cls.hexSize, true)
-
-    this.options.currentLayerState.hexSize = resolution;
+    this.removeLayer(cls.hexSize + "-3d", true)
+    this._removeDataVectorSource(true, cls.dataLayer, cls.hexSize)
+    this.options.comparisonLayerState.hexSize = resolution;
     //get source name
-    this.updateData(this.secondDataset, this.secondLayer, true)
-    let self = this;
-    map2.once('idle', () => {
-      map.once("idle", () => {
-        self.recolorBasedOnWhatsOnPage();
-        self._moveServiceLayersToTop()
-      });
-    })
+    if(this.secondLayer){
+      this.updateData(this.secondDataset, this.secondLayer, true)
+    }
   }
 
   this.options.currentLayerState.hexSize = resolution;
@@ -317,45 +287,23 @@ export function add3D() {
 
 
 export function changeColor(selectedColor) {
-let cls = this.options.currentLayerState
+  let cls = this.options.currentLayerState
   let map = this.map;
-  let currentColor = this.options.currentLayerState.color;
+  let currentColor = cls.color;
   if(selectedColor === ' invert') {
     this.options.colorSCheme.invert = true
   } else {
     this.options.colorSCheme.invert = false,
     this.options.colorSCheme.color = selectedColor
   }
-  if(!this.getLayer(cls.hexSize+cls.dataLayer)) {
+  if(!this.getLayer(cls.hexSize)) {
     return;
   }
   if (selectedColor === "original") {
-    if (this.options.currentLayerState.dataLayer === "depth") {
-      this.options.currentLayerState.color = colors.colorNatural["ocean-depth"]; //colors.colorSeq["ocean"];
-    } else if (this.options.currentLayerState.dataLayer.substring(0, 2) === "1a") {
-      this.options.currentLayerState.color = colors.colorDiv.gdpColor;
-    } else if (this.options.currentLayerState.dataLayer.substring(0, 2) === "1c") {
-      this.options.currentLayerState.color = colors.colorSeq["pop"];
-    } else if (this.options.currentLayerState.dataLayer === "7d10") {
-      this.options.currentLayerState.color = colors.colorSeq["combo"];
-    } else if (this.options.currentLayerState.dataLayer === "7d5") {
-      this.options.currentLayerState.color = colors.colorSeq["minty"];
-    } else if (this.options.currentLayerState.dataLayer === "7d7") {
-      this.options.currentLayerState.color = colors.colorSeq["blues"];
-    } else if (this.options.currentLayerState.dataLayer === "7d4") {
-      this.options.currentLayerState.color = colors.colorSeq["pinkish"];
-    } else if (this.options.currentLayerState.dataLayer === "7d8") {
-      this.options.currentLayerState.color = colors.colorSeq["silvers"];
-    } else if (this.options.currentLayerState.dataLayer === "d") {
-      //breaks = [-4841, -3805, -2608, -1090, 1322];
-      this.options.currentLayerState.color = colors.colorNatural["ocean-depth"]; //colors.colorSeq["ocean"];
-    } else {
-      this.options.currentLayerState.color = colors.colorSeq["yellow-blue"];
-    }
+    cls.color = colors.colorSeq["yellow-blue"];
   }
 
   if (selectedColor === "invert") {
-    // var reverse = currentColor.reverse();
     let reverse = [...currentColor].reverse();
     this.options.currentLayerState.color = reverse;
   } else if (selectedColor === "red") {
@@ -367,7 +315,7 @@ let cls = this.options.currentLayerState
   } else if (selectedColor === "colorblind-safe") {
     this.options.currentLayerState.color = colors.colorSeq["colorBlindGreen"];
   }
-  map.setPaintProperty(cls.hexSize+cls.dataLayer, "fill-color", [
+  map.setPaintProperty(cls.hexSize, "fill-color", [
     "interpolate",
     ["linear"],
     ["get", 'mean'],
@@ -384,7 +332,7 @@ let cls = this.options.currentLayerState
   ]);
 
   if(this.options.mode3d) {
-    map.setPaintProperty(cls.hexSize+cls.dataLayer+'-3d', "fill-extrusion-color", [
+    map.setPaintProperty(cls.hexSize+'-3d', "fill-extrusion-color", [
       "interpolate",
       ["linear"],
       ["get", 'mean'],
@@ -402,20 +350,21 @@ let cls = this.options.currentLayerState
   }
 
   let features = map.queryRenderedFeatures({
-    layers: [cls.hexSize+cls.dataLayer],
+    layers: [cls.hexSize],
   });
 
   let selectedData = features.map(
     (x) => x.properties.mean
   );
-
-  this.emit('layerUpdate', {
-    activeLayer: this.activeLayer,
-    colorRamp: this.options.currentLayerState.color,
-    breaks: this.options.currentLayerState.breaks,
-    selectedData,
-    precision: this.options.precision
-  });
+  if(features.length) {
+    this.emit('layerUpdate', {
+      activeLayer: this.activeLayer,
+      colorRamp: this.options.currentLayerState.color,
+      breaks: this.options.currentLayerState.breaks,
+      selectedData,
+      precision: this.options.precision
+    });
+  }
 }
 
 export function changeOpacity(opacity, noUpdate) {
@@ -460,8 +409,6 @@ export function changeBasemap (selectedBasemap) {
   let map = this.map;
   let map2 = this.map2;
 
-  // let currentBasemap = map.getStyle().name;
-
   let thisStyle = Object.values(constants.styles).find((style) => {
     return style.name === selectedBasemap;
   });
@@ -469,129 +416,31 @@ export function changeBasemap (selectedBasemap) {
   map.setStyle(thisStyle.uri);
   map2.setStyle(thisStyle.uri);
   this._removeUnusedLayers();
-
-  //when done, update: firstSymbolId, basemapLabels
-
   map.once("idle", function () {
     self.getBasemapLabels();
     self._addVectorSources();
-    // let currentSource = Object.values(globals.sourceData).find((o) => {
-    //   return o.name === globals.currentLayerState.hexSize;
-    // });
-
-    // let cls = globals.currentLayerState;
-
     map.once("idle", function () {
       if(self.activeLayer) {
         self.updateData(self.activeDataset, self.activeLayer)
       }
+      if(self.options.bivariateMode && self.options.bivarConfig.firstLayer && self.options.bivarConfig.secondLayer) {
+        self.createBivariate(
+          self.options.bivarConfig.firstDataset,
+          self.options.bivarConfig.firstLayer,
+          self.options.bivarConfig.secondDataset,
+          self.options.bivarConfig.secondLayer,
+        )
+      }
     })
-    // try {
-    //   map.addLayer(
-    //     {
-    //       id: cls.hexSize,
-    //       type: "fill",
-    //       source: cls.hexSize,
-    //       "source-layer": currentSource.layer,
-    //       layout: {
-    //         visibility: "visible",
-    //       },
-    //       paint: {
-    //         "fill-opacity": globals.opacity, //0.8
-    //         "fill-color": [
-    //           "interpolate",
-    //           ["linear"],
-    //           ["get", cls.dataLayer],
-    //           cls.breaks[0],
-    //           cls.color[0],
-    //           cls.breaks[1],
-    //           cls.color[1],
-    //           cls.breaks[2],
-    //           cls.color[2],
-    //           cls.breaks[3],
-    //           cls.color[3],
-    //           cls.breaks[4],
-    //           cls.color[4],
-    //         ],
-    //       },
-    //     },
-    //     globals.firstSymbolId
-    //   );
-    //
-    //   let filterString = cls.dataLayer === "depth" ? "<=" : ">=";
-    //   map.setFilter(cls.hexSize, [filterString, cls.dataLayer, 0]);
-    //   map.moveLayer("allsids", globals.firstSymbolId);
-    // }
-
-    // self._addVectorSources(true);
-    // let comparisonSource = Object.values(this.options.sourceData).find((o) => {
-    //   return o.name === this.options.comparisonLayerState.hexSize;
-    // });
-
-    // let comparison_cls = this.options.comparisonLayerState;
-
-  //   try {
-  //     map2.addLayer(
-  //       {
-  //         id: comparison_cls.hexSize,
-  //         type: "fill",
-  //         source: comparison_cls.hexSize,
-  //         "source-layer": comparisonSource.layer,
-  //         layout: {
-  //           visibility: "visible",
-  //         },
-  //         paint: {
-  //           "fill-opacity": globals.opacity, //0.8
-  //           "fill-color": [
-  //             "interpolate",
-  //             ["linear"],
-  //             ["get", comparison_cls.dataLayer],
-  //             comparison_cls.breaks[0],
-  //             comparison_cls.color[0],
-  //             comparison_cls.breaks[1],
-  //             comparison_cls.color[1],
-  //             comparison_cls.breaks[2],
-  //             comparison_cls.color[2],
-  //             comparison_cls.breaks[3],
-  //             comparison_cls.color[3],
-  //             comparison_cls.breaks[4],
-  //             comparison_cls.color[4],
-  //           ],
-  //         },
-  //       },
-  //       globals.firstSymbolId
-  //     );
-  //
-  //     let filterString = comparison_cls.dataLayer === "depth" ? "<=" : ">=";
-  //     map2.setFilter(comparison_cls.hexSize, [
-  //       filterString,
-  //       comparison_cls.dataLayer,
-  //       0,
-  //     ]);
-  //
-  //     map2.moveLayer("allsids", globals.firstSymbolId); //ensure allsids outline ontop
-  //   } catch (err) {
-  //     if (debug) {
-  //       console.warn(
-  //         "attempted while no data layer is loaded on comparison map"
-  //       );
-  //       console.warn(err.stack);
-  //     }
-  //     //placed to catch error when attempted while no data layer is loaded on main map
-  //   }
-  //
-  //   self.hideSpinner();
-  });
-  if(this.options.compareModeEnabled) {
-    map2.once("idle", function () {
-      self._addVectorSources(true);
-      map2.once("idle", function () {
-        if(self.secondDataset) {
-          self.updateData(self.secondDataset, self.secondLayer, true)
-        }
-      });
-    });
-  }
+  })
+  map2.once("idle", function () {
+    self._addVectorSources(true);
+    map.once("idle", function () {
+      if(self.secondLayer) {
+        self.updateData(self.secondDataset, self.secondLayer, true)
+      }
+    })
+  })
 }
 export function toggleLabels(label) {
   let map = this.map;
@@ -742,7 +591,6 @@ export function createBivariate(
           },
         });
         self.renderBivarFeatures.apply(self,[cls, bvls]);
-        console.log('bivar', true)
         map.off('sourcedata', callback2)
       }
     }
