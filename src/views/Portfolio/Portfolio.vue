@@ -8,7 +8,7 @@
       </printout-header>
       <portfolio-printout-chips
         :region="getCountryName(region)"
-        :projects="portfolioData"
+        :projects="filteredProjects"
         :year="yearText"
         :goalType="goalsType"
         :goal="goal"
@@ -29,7 +29,7 @@
         :fundingCategory="fundingCategory"
         :fundingCategories="fundingCategoriesTypes"
         :fundingSource="fundingSource"
-        :fundingSources="portfolioSources"
+        :fundingSources="fundingCategoriesList"
         @sourceChange="setSource"
         @categoryChange="setCategory"
         @yearChange="setYear"
@@ -39,7 +39,8 @@
       />
       <portfolio-mobile-chips
         :region="region"
-        :projects="portfolioData"
+        :year="year"
+        :projects="filteredProjects"
         :goalType="goalsType"
         :goal="goal"
         class="d-md-none mt-sm-6 d-print-none"
@@ -84,9 +85,9 @@
         <v-col cols="12">
           <portfolio-map
             :region="region"
+            :year="year"
             @updateRegion="updateRegion"
-            :projects="portfolioData"
-
+            :projects="filteredProjects"
           >
             <template v-slot:header>
               <v-row class="map-header d-none d-lg-flex">
@@ -102,8 +103,8 @@
                       :region="region"
                       :year="year"
                       :funding="fundingCategory"
-                      :projects="portfolioData"
-                      :data="portfolioSources"
+                      :projects="filteredProjects"
+                      :data="fundingCategoriesList"
                       :categories="fundingCategoriesTypes"
                     />
                   </div>
@@ -114,7 +115,7 @@
         </v-col>
       </v-row>
       <v-row class="bars-row d-none d-lg-block mb-3 mt-negative">
-        <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
+        <portfolio-bars :projects="filteredProjects" :year="year" :goalsType='goalsType'></portfolio-bars>
       </v-row>
       <v-row class="d-none d-print-block d-md-flex mt-md-0 mt-lg-2 flex-lg-nowrap" justify="center">
         <v-col class="d-none d-print-none d-lg-block margin-wrap-right"></v-col>
@@ -186,10 +187,10 @@
                 outlined
               >
                 <template slot="selection" slot-scope="data">
-                  <span class="select-text-element">{{data.item.text ? $t('portfolio.' + data.item.text) : data.item.value}}</span>
+                  <span class="select-text-element">{{data.item == 'all' ? $t('portfolio.yearsAll') : data.item}}</span>
                 </template>
                 <template  slot="item" slot-scope="data">
-                  {{data.item.text ? $t('portfolio.' + data.item.text) : data.item.value}}
+                  {{data.item == 'all' ? $t('portfolio.yearsAll') : data.item}}
                 </template>
               </v-select>
               </div>
@@ -250,16 +251,16 @@
                   dense
                   :value="fundingSource"
                   @change="setSource"
-                  :items="portfolioSources"
+                  :items="fundingCategoriesList"
                   item-text="name"
-                  item-value="name"
+                  item-value="id"
                   outlined
                   >
                   <template slot="selection" slot-scope="data">
-                    <span class="select-text-element">{{data.item.text ? $t('portfolio.' + data.item.text) : data.item.name}}</span>
+                    <span class="select-text-element">{{data.item.id === 'all' ? $t('portfolio.' + data.item.text) : data.item.text}}</span>
                   </template>
                   <template  slot="item" slot-scope="data">
-                    {{data.item.text ? $t('portfolio.' + data.item.text) : data.item.name}}
+                    {{data.item.id === 'all' ? $t('portfolio.' + data.item.text) : data.item.text}}
                   </template>
                   </v-autocomplete>
               </div>
@@ -268,7 +269,7 @@
         </v-col>
       </v-row>
       <v-row class="bars-row d-none d-print-block">
-        <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
+        <portfolio-bars :projects="filteredProjects" :year="year" :goalsType='goalsType'></portfolio-bars>
       </v-row>
       <v-row class="d-none d-print-block">
 
@@ -281,7 +282,7 @@
         </v-col>
       </v-row>
       <portfolio-mobile-nav
-        class="d-none d-md-flex d-print-none mt-2 mb-4 d-lg-none"
+        class="d-none d-md-flex d-print-none mt-4 mb-4 d-lg-none"
         :region="region"
         :regions="regionsToSelect"
         :goalType="goalsType"
@@ -291,7 +292,7 @@
         :fundingCategory="fundingCategory"
         :fundingCategories="fundingCategoriesTypes"
         :fundingSource="fundingSource"
-        :fundingSources="portfolioSources"
+        :fundingSources="fundingCategoriesList"
         @sourceChange="setSource"
         @categoryChange="setCategory"
         @yearChange="setYear"
@@ -299,7 +300,7 @@
         @goalTypeChange="transitionTo"
         @goalChange="updateGoal"
       />
-      <portfolio-projects class="d-lg-none d-print-none" :goalType="goalsType" :goal="goal"/>
+      <portfolio-projects class="d-lg-none d-print-none" :projects="filteredProjectsByGoal" :goalType="goalsType" :goal="goal"/>
     </div>
     <div class="d-none d-print-block">
       <h2 class="text-center">
@@ -332,18 +333,14 @@ import PrintoutHeader from '@/components/PrintoutHeader.vue'
 import PortfolioExport from './children/PortfolioExport';
 import PortfolioPieChart from './children/PortfolioPieChart';
 import PortfolioMobileNav from './children/PortfolioMobileNav';
-import PortfolioPrintoutChips from './children/PortfolioPrintoutChips'
+import PortfolioPrintoutChips from './children/PortfolioPrintoutChips';
 import PortfolioMobileChips from './children/PortfolioMobileChips';
 import InfoHoverTooltip from '@/components/InfoHoverTooltip';
 import PortfolioProjects from './children/PortfolioProjects';
-
-
 import InfoButton from '@/components/InfoButton.vue'
 
 import { mapState } from 'vuex';
-import sidsdata from '@/mixins/SIDSData.mixin'
 import format from '@/mixins/format.mixin'
-import store from '@/store'
 import sizeMixin from '@/mixins/size.mixin'
 
 import sidsList from '@/assets/sidsList'
@@ -366,14 +363,14 @@ export default {
     InfoHoverTooltip
   },
   props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalsType'],
-  mixins:[sidsdata, sizeMixin, format],
+  mixins:[sizeMixin, format],
   data: function () {
     return {
       goals,
       pages:goalTypes,
       activePage:goalTypes.findIndex((goal) => goal.value === this.goalsType),
       fundingCategoriesTypes:[{
-        value:'All',
+        value:'all',
         text: "all",
       },
       {
@@ -405,30 +402,18 @@ export default {
         text: "other"
       }],
       years:[
-        {
-          text:'yearsAll',
-          value: 'all',
-        },{
-          value: '2021',
-        },{
-          value: '2020',
-        },{
-          value: '2019',
-        },{
-          value: '2018',
-        },{
-          value: '2017',
-        },{
-          value: '2016',
-        },{
-          value: '2015',
-        },{
-          value: '2014',
-        },{
-          value: '2013',
-        },{
-          value: '2012',
-        }
+        'all',
+        '2022',
+        '2021',
+        '2020',
+        '2019',
+        '2018',
+        '2017',
+        '2016',
+        '2015',
+        '2014',
+        '2013',
+        '2012'
       ],
       regionsToSelect: [
         {iso: "caribbean", name:this.$t('regions.caribbean')},
@@ -450,110 +435,163 @@ export default {
   computed:{
     ...mapState({
       fundingCategories: state => state.sids.fundingCategories,
-      portfolioData: state => state.sids.portfolioData,
-      portfolioSources: state => state.sids.portfolioSources
+      projectData: state => state.sids.projectData,
     }),
-    regionFunding() {
-       let funding = this.regions.map(region => {
-        return {
-          category: region,
-          value: this.portfolioData.reduce((budget, project) => {
-              if(project.region.toLowerCase() === region &&
-                (this.fundingCategory === 'All' ||
-                project.donors.some((donor) =>this.checkProjectsCategory(project, donor))
-                )
-              ) {
-                return budget + parseInt(project.budget)
-              }
-              return budget
-          }, 0)
-        }
+    fundingCategoriesList() {
+      let list = [{
+        text: 'allSources',
+        id:'all'
+      }];
+      for (var sourceId in this.fundingCategories) {
+        list.push({
+          id: sourceId,
+          text: this.fundingCategories[sourceId].donor
+        })
+      }
+      return list
+    },
+    filteredProjects() {
+      let list = this.projectData;
+      if(this.region !== 'allSids') {
+        list = this.projectData.filter((project) => {
+          return this.checkProjectsRegion(project)
+        })
+      }
+      if(this.year !== 'all') {
+        list = list.filter((project) => {
+          return this.checkProjectsYear(project)
+        })
+      }
+      if(this.fundingCategory !== 'all') {
+        list = list.filter((project) => {
+          return this.checkProjectsCategory(project)
+        })
+      }
+      if(this.fundingSource !== 'all') {
+        list = list.filter((project) => {
+          return this.checkProjectsSources(project)
+        })
+      }
+      return list
+    },
+    filteredProjectsByGoal() {
+      let list = this.filteredProjects.filter((project) => {
+        return this.checkGoalValidity(project)
       })
-      return funding
+      return list
     },
     yearText() {
-      let year = this.years.find(y => y.value === this.year);
-      return year.text ? this.$t('portfolio.' + year.text) : year.value;
+      return this.year === 'all' ? this.$t('portfolio.yearsAll') : this.year;
     },
     fundingCategoryText() {
       return this.fundingCategoriesTypes.find(c => c.value === this.fundingCategory).text
     },
-    regionFundingMobile() {
-       let funding = this.regions.map(region => {
+    regionFunding() {
+      let funding = this.regions.map(region => {
+        let value = this.filteredProjects.reduce((budget, project) => {
+          if(project.region.toLowerCase() === region){
+            if(this.year === 'all'){
+              return budget += Object.values(project.budget).reduce((b, yb) => b+yb,0)
+            } else if(project.budget[this.year]) {
+              return budget+=project.budget[this.year]
+            }
+          }
+          return budget
+        },0)
         return {
           category: region,
-          value: this.portfolioData.reduce((budget, project) => {
-              if(project.region.toLowerCase() === region &&
-                (this.fundingCategory === 'All' ||
-                project.donors.some((donor) =>this.checkProjectsCategory(project, donor))
-              ) && this.checkGoalValidity(project)
-              ) {
-                return budget + parseInt(project.budget)
-              }
-              return budget
-          }, 0)
+          value
+        }
+      })
+      return funding
+    },
+    regionFundingMobile() {
+      let funding = this.regions.map(region => {
+        let value = this.filteredProjectsByGoal.reduce((budget, project) => {
+          if(this.year === 'all'){
+            return budget += Object.values(project.budget).reduce((b, yb) => b+yb,0)
+          } else if(project.budget[this.year]) {
+            return budget+=project.budget[this.year]
+          }
+          return budget
+        },0)
+        return {
+          category: region,
+          value
         }
       })
       return funding
     },
     sourcesFunding() {
       let labels = this.fundingCategoriesTypes.filter(c => c.value !== 'All').map(c => {
+        let value = this.projectData.reduce((budget, project) => {
+          let projectBudget = 0
+          if(this.year === 'all'){
+            projectBudget = Object.values(project.budget).reduce((b, yb) => b+yb,0)
+          } else if(project.budget[this.year]) {
+            projectBudget =project.budget[this.year]
+          }
+          let financing = project.donors.reduce((finance, donorId, index, donors )=> {
+            let donor = this.fundingCategories[donorId];
+            if (c.value == "Programme Countries") {
+              if (donor.category == "Government" && project.country == donor.subCategory) {
+                return finance + (projectBudget / donors.length)
+              }
+            }
+            else if (c.value == "Donor Countries") {
+              if (donor.category == "Government" && donor.subCategory != project.country) {
+                return finance + (projectBudget / donors.length)
+              }
+            }
+            else if (donor.category == c.value) {
+              return finance + (projectBudget / donors.length)
+            }
+            return finance
+          }, 0)
+          return budget + financing
+        }, 0)
         return {
           category: c.text,
-          value: this.portfolioData.reduce((budget, project) => {
-            let financing = project.donors.reduce((finance, donor, index, donors )=> {
-              if(this.fundingCategory === 'All' || donors.some((donor) => this.checkProjectsCategory(project, donor))) {
-                if (c.value == "Programme Countries") {
-                  if (donor.category == "Government" && project.country == donor.subCategory) {
-                    return finance + (project.budget / donors.length)
-                  }
-                }
-                else if (c.value == "Donor Countries") {
-                  if (donor.category == "Government" && donor.subCategory != project.country) {
-                    return finance + (project.budget / donors.length)
-                  }
-                }
-                else if (donor.category == c.value) {
-                  return finance + (project.budget / donors.length)
-                }
-              }
-              return finance
-            }, 0)
-            return budget + financing
-          }, 0)
+          value
         }
       });
       return labels
     },
     sourcesFundingMobile() {
-      let labels = this.fundingCategoriesTypes.filter(c => c.value !== 'All').map(c => {
+      let labels = this.fundingCategoriesTypes.filter(c => c.value !== 'all').map(c => {
+        let value = this.filteredProjectsByGoal.reduce((budget, project) => {
+          let projectBudget = 0
+          if(this.year === 'all'){
+            projectBudget = Object.values(project.budget).reduce((b, yb) => b+yb,0)
+          } else if(project.budget[this.year]) {
+            projectBudget =project.budget[this.year]
+          }
+          let financing = project.donors.reduce((finance, donorId, index, donors )=> {
+            let donor = this.fundingCategories[donorId];
+            if (c.value == "Programme Countries") {
+              if (donor.category == "Government" && project.country == donor.subCategory) {
+                return finance + (projectBudget / donors.length)
+              }
+            }
+            else if (c.value == "Donor Countries") {
+              if (donor.category == "Government" && donor.subCategory != project.country) {
+                return finance + (projectBudget / donors.length)
+              }
+            }
+            else if (donor.category == c.value) {
+              return finance + (projectBudget / donors.length)
+            }
+            return finance
+          }, 0)
+          return budget + financing
+        }, 0)
         return {
           category: c.text,
-          value: this.portfolioData.reduce((budget, project) => {
-            let financing = project.donors.reduce((finance, donor, index, donors )=> {
-              if((this.fundingCategory === 'All' || donors.some((donor) => this.checkProjectsCategory(project, donor))) && this.checkGoalValidity(project)) {
-                if (c.value == "Programme Countries") {
-                  if (donor.category == "Government" && project.country == donor.subCategory) {
-                    return finance + (project.budget / donors.length)
-                  }
-                }
-                else if (c.value == "Donor Countries") {
-                  if (donor.category == "Government" && donor.subCategory != project.country) {
-                    return finance + (project.budget / donors.length)
-                  }
-                }
-                else if (donor.category == c.value) {
-                  return finance + (project.budget / donors.length)
-                }
-              }
-              return finance
-            }, 0)
-            return budget + financing
-          }, 0)
+          value
         }
       });
       return labels
-    }
+    },
   },
   methods: {
     setYear(year) {
@@ -568,11 +606,14 @@ export default {
       });
       this.$router.push({query: Object.assign({}, this.$route.query, {
         fundingCategory : encodeURIComponent(category),
-        fundingSource : encodeURIComponent('All Funding Sources')
+        fundingSource : encodeURIComponent('all')
       })})
     },
     setSource(source) {
-      this.$router.push({query: Object.assign({}, this.$route.query, {fundingSource : encodeURIComponent(source)})})
+      this.$router.push({query: Object.assign({}, this.$route.query, {
+        fundingCategory : encodeURIComponent('all'),
+        fundingSource : encodeURIComponent(source)}
+      )})
     },
     updateRegion(region) {
       gtag('event', 'portfolio_country_select', {
@@ -598,19 +639,11 @@ export default {
         });
         let categoryToSet = this.fundingCategoriesTypes.find(c => c.text === value).value;
         if(this.fundingCategory === categoryToSet) {
-          categoryToSet = 'All'
+          categoryToSet = 'all'
         }
         this.$router.push({query: Object.assign({}, this.$route.query, {
           fundingCategory : encodeURIComponent(categoryToSet)})})
       }
-    },
-    callDataUpdate(route) {
-      store.dispatch('sids/generatePortfolioData', {
-        region: route.query.region || 'allSids',
-        year: route.query.year || 'all',
-        category: decodeURIComponent(route.query.fundingCategory || 'All') ,
-        source: decodeURIComponent(route.query.fundingSource || 'All Funding Sources'),
-      });
     },
     transitionTo(to) {
       gtag('event', 'portfolio_goalChange', {
@@ -635,28 +668,19 @@ export default {
         return project.solution.includes(this.goal)
       } else {
         if(this.goal === 'all') {
-          return project.sdg !== ''
+          return project.samoa !== ''
         }
-        let samoaNumber = goals.samoa.findIndex(goal => goal.name === this.goal) + 1,
-        sdgNumbers = this.sdgToSamoa[samoaNumber]
-
-        return sdgNumbers.some(number => {
-          return project.sdg.includes(goals.sdgs[number].name)
-        })
+        return project.samoa.includes(this.goal)
       }
     },
     getTopFiveProjeccts(goal) {
-      return this.portfolioData.filter(project => {
+      return this.projectData.filter(project => {
         if(this.goalsType === 'sdgs') {
-          return project.sdg.includes(goal.name)
+          return project.sdg.includes(goal.value)
         } else if (this.goalsType === 'signature-solutions') {
-          return project.solution.includes(goal.name)
+          return project.solution.includes(goal.value)
         } else {
-          let samoaNumber = goals.samoa.findIndex(goalSamoa => goal.name === goalSamoa.name) + 1,
-          sdgNumbers = this.sdgToSamoa[samoaNumber]
-          return sdgNumbers.some(number => {
-            return project.sdg.includes(goals.sdgs[number].name)
-          })
+          return project.samoa.includes(goal.value)
         }
       }).sort((a, b) => {
         return b.budget - a.budget
@@ -668,14 +692,36 @@ export default {
         return country.name
       }
       return iso
+    },
+    checkProjectsCategory(project) {
+      return project.donors.some((donorId) => {
+        let donor = this.fundingCategories[donorId];
+        if(this.fundingCategory === 'Programme Countries') {
+          if(donor.category === 'Government' && project.country) {
+            let country = sidsList.find(country => {
+              return project.country === country.iso
+            })
+            return country && country.name === donor.subCategory;
+          }
+        }
+        else if(this.fundingCategory === 'Donor Countries') {
+          return project.country  != donor.subCategory;
+        }
+        else {
+          return donor.category === this.fundingCategory;
+        }
+      })
+    },
+    checkProjectsSources(project) {
+      return project.donors.includes(parseInt(this.fundingSource))
+    },
+    checkProjectsRegion(project) {
+      return project.region.toLowerCase() === this.region || project.country === this.region
+    },
+    checkProjectsYear(project) {
+      return project.budget[this.year]
     }
-  },
-  async beforeRouteUpdate(to, from, next){
-    if(to.params.goalsType === from.params.goalsType) {
-      this.callDataUpdate(to)
-    }
-    next();
-  },
+  }
 }
 </script>
 <style media="screen">

@@ -41,10 +41,9 @@
 </template>
 <script>
 
-import sidsdata from '@/mixins/SIDSData.mixin'
 import format from '@/mixins/format.mixin'
-import { mapState } from 'vuex';
 import { goals } from '@/assets/goalsList'
+import sidsList from '@/assets/sidsList'
 import * as d3 from 'd3';
 import PortfolioTooltip from './PortfolioSDGSTooltip'
 import tippy from 'tippy.js';
@@ -76,12 +75,9 @@ export default {
       bars: null
     }
   },
-  props:['year', 'fundingCategory', 'fundingSource', 'goalsType'],
-  mixins:[sidsdata, format],
+  props:['projects', 'year', 'goalsType'],
+  mixins:[format],
   computed: {
-    ...mapState({
-      portfolioData: state => state.sids.portfolioData,
-    }),
     locale() {
       return this.$i18n.locale
     },
@@ -109,35 +105,23 @@ export default {
       }, {})
     },
     barsData() {
-      if(this.goalsType === 'samoa') {
-        let barsData = goals.samoa.map(() => {
-          return {
-            budget: 0,
-            projects: 0
-          }
-        });
-        this.portfolioData.map(project => {
-          let projectSdgs = project.sdg.split(",");
-          projectSdgs.map((projectSdg) => {
-            const sdgIndex = goals.sdgs.findIndex((sdg) => sdg.name === projectSdg);
-            if(sdgIndex !== -1) {
-              let priorities = this.sdgToSamoa[sdgIndex+1];
-              priorities.map((priority) => {
-                let budget = project.budget / projectSdgs.length / priorities.length;
-                barsData[priority-1].budget = barsData[priority-1].budget + budget;
-                barsData[priority-1].projects = barsData[priority-1].projects + 1;
-              })
+      let sdgsData = this.goals.map((goal, index) => {
+        return this.projects.reduce((data, project) => {
+        if(project[goal.type].includes(index+1)) {
+            let projectBudget;
+            let projects = data.projects;
+            if(this.year === 'all'){
+              projectBudget = Object.values(project.budget).reduce((b, yb) => b+yb,0)
+              projects+=project.year.length
+            } else if(project.budget[this.year]) {
+              projectBudget = project.budget[this.year]
+              projects+=1
             }
-          })
-        })
-        return barsData
-      }
-      let sdgsData = this.goals.map(goal => {
-        return this.portfolioData.reduce((data, project) => {
-          if(project[goal.type].includes(goal.name)) {
-            return {
-              projects: data.projects + 1,
-              budget: data.budget + parseInt(project.budget)
+            if(projectBudget !== 0) {
+              return {
+                projects,
+                budget: data.budget + projectBudget
+              }
             }
           }
           return data
@@ -156,15 +140,44 @@ export default {
     },
     tooltipData() {
       let res = {}
-      this.goals.map(goal => {
-        res[goal.name] = this.portfolioData.filter((project) => {
-          return project.sdg && project.sdg.includes(goal.name)
+      this.goals.map((goal,index) => {
+        res[goal.name] = this.projects.filter((project) => {
+          return project.sdg && project.sdg.includes(index+1)
+        }).map(project => {
+          let budget;
+          if(this.year === 'all'){
+            budget = Object.values(project.budget).reduce((b, yb) => b+yb,0)
+          } else if(project.budget[this.year]) {
+            budget = project.budget[this.year]
+          }
+          let country = this.$t('countryNames.'+sidsList.find((c => c.iso === project.country)).id);
+          return {
+            country,
+            budget,
+            title: project.title,
+            year:this.computeYear(project.year)
+          }
         });
       })
       return res
     }
   },
   methods: {
+    computeYear(yearsArr) {
+      return yearsArr.reduce((str, year, index) => {
+        if(index === 0) {
+          str+=year;
+          return str;
+        }
+        if(year-1 === yearsArr[index-1]) {
+          str = str.replace(` - ${year-1}`,'')
+          str+= ` - ${year}`
+        } else {
+          str+= `, ${year}`
+        }
+        return str;
+      },'')
+    },
     initBars() {
       this.svg = d3.select(`#tab${this.id} .svg-container`).append("svg");
       this.svg.attr('height', this.svgHeight)

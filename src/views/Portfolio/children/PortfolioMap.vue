@@ -15,7 +15,7 @@
         />
         <portfolio-indicator-box
           class="portfolio-chip"
-          :value="UNDPprojectsNumber"
+          :value="projects.length"
           :title="$t('portfolio.chips.projects')"
         />
         <portfolio-indicator-box
@@ -54,7 +54,11 @@ export default {
     region: {
       default:'allSids',
       type:String
-    }
+    },
+    year: {
+      default:'all',
+      type:String
+    },
   },
   components:{
     PortfolioIndicatorBox
@@ -146,19 +150,14 @@ export default {
           return 38
       }
     },
-    UNDPprojectsNumber() {
-      let distinctProjects = [];
-      this.projects.map(project => {
-          if (!distinctProjects.includes(project.title)) {
-            distinctProjects.push(project.title)
-          }
-      })
-      return distinctProjects.length
-    },
     projectsFundning() {
       let funding = 0;
       this.projects.map(project => {
-        funding = funding + parseInt(project.budget);
+        if(this.year === 'all') {
+          funding = funding + Object.values(project.budget).reduce((b, yb) => b + yb, 0);
+        } else {
+          funding = funding + project.budget[this.year]
+        }
       })
       return this.nFormatter(funding)
     }
@@ -186,6 +185,7 @@ export default {
         .data(pointDataFiltered);
       this.path = d3.geoPath().projection(projection);
       this.zoom = d3.zoom().on("zoom", () => {
+        if(isNaN(d3.event.transform.k)) return
         this.g.style("stroke-width", 1 / d3.event.transform.k + "px");
         this.g.attr("transform", d3.event.transform);
         pointsg.style("stroke-width", 1 / d3.event.transform.k + "px");

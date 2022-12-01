@@ -11,14 +11,16 @@
           :items="projectData"
         >
           <template v-slot:default="{ item }">
-            <v-list-item :key="item.year+item.title"
+            <v-list-item :key="item.title"
               >
               <v-list-item-content>
                 <v-list-item-title class="project-item_header">{{item.title}}</v-list-item-title>
-                <v-list-item-subtitle class="project-item_description">{{nameFormat(item.country)}} - {{item.year}} - {{nFormatter(item.budget)}}</v-list-item-subtitle>
+                <v-list-item-subtitle class="project-item_description">
+                  {{nameFormat(item.country)}}, {{computeBudget(item)}}, {{computeYear(item.year)}}
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-            <v-divider/>
+            <v-divider :key="item.title+'divider'"/>
           </template>
         </v-virtual-scroll>
       </v-card>
@@ -28,29 +30,19 @@
 
 <script>
 
-import { mapState } from 'vuex';
 import format from '@/mixins/format.mixin'
 import sidsList from '@/assets/sidsList'
-import { goals } from '@/assets/goalsList'
-
 
 export default {
   name: 'PortfolioIndicatorBox',
-  props: ['goalType', 'goal'],
+  props: ['goalType', 'goal', 'projects'],
   mixins:[format],
   data() {
-    return {
-      sdgToSamoa: { 1: [1], 2: [6], 3: [11], 4: [12, 13], 5: [13], 6: [7], 7: [3], 8: [1], 9: [1, 8], 10: [12, 13], 11: [1, 4, 8, 10], 12: [9, 10], 13: [2, 4], 14: [5, 10, 14], 15: [10, 15], 16: [1, 13], 17: [16] },
-    }
+    return {};
   },
   computed:{
-    ...mapState({
-      portfolioData: state => state.sids.portfolioData,
-    }),
     projectData() {
-      return this.portfolioData.filter((project) => {
-        return this.checkGoalValidity(project);
-      }).sort((p1,p2) => {
+      return [...this.projects].sort((p1,p2) => {
         if(p1.title.trim() < p2.title.trim()) { return -1; }
         if(p1.title.trim() > p2.title.trim()) { return 1; }
         return 0;
@@ -59,30 +51,29 @@ export default {
   },
   methods: {
     nameFormat(code) {
-      return sidsList.find(c => c.iso === code).name
+      return this.$t('countryNames.' + sidsList.find(c => c.iso === code).id);
     },
-    checkGoalValidity(project) {
-      if(this.goalType === 'sdgs') {
-        if(this.goal === 'all') {
-          return project.sdg !== ''
+    computeYear(yearsArr) {
+      return yearsArr.reduce((str, year, index) => {
+        if(index === 0) {
+          str+=year;
+          return str;
         }
-        return project.sdg.includes(this.goal)
-      } else if (this.goalType === 'signature-solutions') {
-        if(this.goal === 'all') {
-          return project.solution !== ''
+        if(year-1 === yearsArr[index-1]) {
+          str = str.replace(` - ${year-1}`,'')
+          str+= ` - ${year}`
+        } else {
+          str+= `, ${year}`
         }
-        return project.solution.includes(this.goal)
-      } else {
-        if(this.goal === 'all') {
-          return project.sdg !== ''
-        }
-        let samoaNumber = goals.samoa.findIndex(goal => goal.name === this.goal) + 1,
-        sdgNumbers = this.sdgToSamoa[samoaNumber]
-
-        return sdgNumbers.some(number => {
-          return project.sdg.includes(goals.sdgs[number].name)
-        })
-      }
+        return str;
+      },'')
+    },
+    computeBudget(project) {
+      let budget = 0;
+      project.year.map(year => {
+        budget += project.budget[year];
+      })
+      return this.nFormatter(budget)
     }
   }
 }

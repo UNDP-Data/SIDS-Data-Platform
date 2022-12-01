@@ -8,9 +8,8 @@ const ML_API_URL = 'https://ml-aks-ingress.eastus.cloudapp.azure.com';
 export default {
   loadMLestimate,
   loadMLindicatorData,
-  loadMetaData,
   loadFundingCategories,
-  loadSIDSData,
+  loadProjectData,
   loadIndicatorsCategories,
   loadGISDatasets,
   loadIndicatorsMeta,
@@ -43,22 +42,13 @@ async function loadDatasetsList(){
   const resp = await axios.get(`${API_URl}/indicators/datasetMeta.json`);
   return resp.data;
 }
-
-async function loadMetaData () {
-  const resp = await axios.get(`${API_URl}/exports/keyMetadata.json`)
-  return resp.data
-}
 async function loadFundingCategories () {
   const resp = await axios.get(`${API_URl}/portfolio/fundingCategories.json`);
-  const result = [];
-  for (let category in resp.data) {
-    result.push(Object.assign({},resp.data[category],{name:category}));
-  }
-  return result
+  return resp.data
 }
-async function loadSIDSData () {
-  const resp = await axios.get(`${API_URl}/portfolio/sidsPortfolioData.csv`)
-  return d3.csvParse(resp.data)
+async function loadProjectData () {
+  const resp = await axios.get(`${API_URl}/portfolio/sidsPortfolio.json`)
+  return resp.data
 }
 async function loadIndicatorsCategories () {
   const resp = await axios.get(`${API_URl}/indicators/indicatorCategories.json`)
