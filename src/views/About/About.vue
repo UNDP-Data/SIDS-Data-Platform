@@ -171,7 +171,7 @@ export default {
      border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
    }
 
-    .about-block .v-expansion-panel-header {
-      font-weight: 600;
-    }
+  .about-page .v-expansion-panel-header {
+    font-weight: 600;
+  }
 </style>
