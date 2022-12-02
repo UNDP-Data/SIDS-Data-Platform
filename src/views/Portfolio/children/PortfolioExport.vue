@@ -34,6 +34,11 @@
 
 <script>
 import sizeMixin from '@/mixins/size.mixin'
+import sidsList from '@/assets/sidsList'
+import { goals } from '@/assets/goalsList'
+
+import { mapState } from 'vuex';
+
 export default {
   name: 'PortfolioExport',
   mixins:[sizeMixin],
@@ -65,6 +70,7 @@ export default {
           expense: "Expense (USD)",
           sdg: "SDGs",
           solution: "Signature Solution",
+          samoa: "SAMOA Pathway",
           donors: "Funding Sources",
       },
       summaryHeaders: {
@@ -75,10 +81,12 @@ export default {
         type: "Donor or Recipient"
       },
       regions: ["Caribbean", "Pacific", "AIS"],
-      sdgs: ["No poverty", "Zero hunger", "Good health and well-being", "Quality education", "Gender equality", "Clean water and sanitation", "Affordable and clean energy", "Decent work and economic growth", "Industry, innovation and infrastructure", "Reduced inequalities", "Sustainable cities and communities", "Responsible consumption and production", "Climate action", "Life below water", "Life on Land", "Peace, justice, and strong institutions", "Partnerships for the goals"],
-      ss: ["Keeping people out of poverty", "Strengthen effective, inclusive and accountable governance", "Enhance national prevention and recovery capacities for resilient societies", "Promote nature-based solutions for a sustainable planet", "Close the energy gap", "Strengthen gender equality and the empowerment of women and girls"],
-
     }
+  },
+  computed:{
+    ...mapState({
+      fundingCategories: state => state.sids.fundingCategories,
+    }),
   },
   methods: {
     exportProjectList(){
@@ -139,57 +147,70 @@ export default {
       return str;
     },
     projecctExportRender() {
-      return this.projects.map(project => {
-        return {
-          country: project.country,
-          region: project.region,
-          year: project.year,
-          title: project.title,
-          budget: project.budget,
-          expense: project.expense,
-          sdg: project.sdg,
-          solution: project.solution,
-          donors: project.donors.map(donor => {
-            return donor.name
-          })
-        }
-      })
+      return this.projects.reduce((dataArray, project) => {
+        return dataArray.concat(project.year.map(year => {
+          return {
+            country: project.country,
+            region: project.region,
+            year,
+            title: project.title,
+            budget: project.budget[year],
+            expense: project.expense[year],
+            sdg: project.sdg.map(goalNumber => {
+              return goals.sdgs[goalNumber-1].title
+            }),
+            solution: project.solution.map(goalNumber => {
+              return goals['signature-solutions'][goalNumber-1] ? goals['signature-solutions'][goalNumber-1].title : 'Other';
+            }),
+            samoa: project.samoa.map(goalNumber => {
+              return goals.samoa[goalNumber-1].title
+            }),
+            donors: project.donors.map(donor => {
+              return this.fundingCategories[donor].donor
+            })
+          }
+        }))
+      },[])
     },
     summaryExportRender() {
       let summaryExport = [],
-      distinctProjects = [],
       distinctCountries = [],
-      totalBudg = 0;
+      totalBudg = this.projects.reduce((budget, project) => {
+        return budget + project.year.reduce((projectBudget, year) => {
+          return projectBudget+project.budget[year]
+        },0)
+      },0);
       for (let project in this.projects) {
-          totalBudg += parseInt(this.projects[project].budget)
-          if (!distinctProjects.includes(this.projects[project].title)) {
-              distinctProjects.push(this.projects[project].title)
-          }
-          if (!distinctCountries.includes(this.projects[project].country)) {
-              distinctCountries.push(this.projects[project].country)
-          }
+        if (!distinctCountries.includes(this.projects[project].country)) {
+          distinctCountries.push(this.projects[project].country)
+        }
       }
       let newEl = {};
       newEl["category"] = "Total";
       newEl["budget"] = totalBudg;
-      newEl["projects"] = distinctProjects.length;
+      newEl["projects"] = this.projects.length;
       newEl["countries"] = distinctCountries.length;
       newEl["type"] = "Recipient";
 
       summaryExport.push(newEl)
       for (let region in this.regions) {
           let regionDistinctProjects = [],
-          totalBudg = 0;
-          for (let project in this.projects.filter((d) => { return d.region == this.regions[region] })) {
-              totalBudg += parseInt(this.projects[project].budget)
-              if (!regionDistinctProjects.includes(this.projects[project].title)) {
-                  regionDistinctProjects.push(this.projects[project].title)
-              }
+          regionProjects = this.projects.filter((d) => { return d.region == this.regions[region] })
+          totalBudg = regionProjects.reduce((budget, project) => {
+            return budget + project.year.reduce((projectBudget, year) => {
+              return projectBudget+project.budget[year]
+            },0)
+          },0);
+
+          for (let project in regionProjects) {
+            if (!regionDistinctProjects.includes(this.projects[project].title)) {
+                regionDistinctProjects.push(this.projects[project].title)
+            }
           }
           newEl = {}
           newEl["category"] = this.regions[region]
           newEl["budget"] = totalBudg
-          newEl["projects"] = regionDistinctProjects.length
+          newEl["projects"] = regionProjects.length
           newEl["countries"] = 1//join(';')
           newEl["type"] = "Recipient"
           summaryExport.push(newEl)
@@ -198,128 +219,179 @@ export default {
 
       //by recipient country,
       for (let country in distinctCountries) {
-          let countryDistinctProjects = [],
-          totalBudg = 0;
-          for (let project in this.projects.filter((d) => { return d.country == distinctCountries[country] })) {
-              totalBudg += parseInt(this.projects[project].budget)
+        if(country !== 'all') {
+            let countryDistinctProjects = [],
+            regionProjects = this.projects.filter((d) => { return d.country == distinctCountries[country] })
+            totalBudg = regionProjects.reduce((budget, project) => {
+              return budget + project.year.reduce((projectBudget, year) => {
+                return projectBudget+project.budget[year]
+              },0)
+            },0);
+            for (let project in regionProjects) {
               if (!countryDistinctProjects.includes(this.projects[project].title)) {
                   countryDistinctProjects.push(this.projects[project].title)
               }
+            }
+            newEl = {}
+            newEl["category"] = distinctCountries[country]
+            newEl["budget"] = totalBudg
+            newEl["projects"] = regionProjects.length
+            newEl["countries"] = 1//join(';')
+            newEl["type"] = "Recipient"
+            summaryExport.push(newEl)
           }
-          newEl = {}
-          newEl["category"] = distinctCountries[country]
-          newEl["budget"] = totalBudg
-          newEl["projects"] = countryDistinctProjects.length
-          newEl["countries"] = 1//join(';')
-          newEl["type"] = "Recipient"
-
-          summaryExport.push(newEl)
       }
 
       //by funding category,
       for (let fundCat in this.categories) {
-          let label = this.categories[fundCat],
+          let label = this.categories[fundCat].value,
           categoryDistinctProjects = [],
           categoriesDistinctCountries = [],
           totalBudg = 0;
-          for (let project in this.projects) {
-              let donors = this.projects[project].donors;//["budget"])
-              for (let donor in donors) {
-                  try {
-                      let category = this.categories[donors[donor]].category;
-
-                      if (label == "Programme Countries") {
-                          if (category == "Government" && this.categories[donors[donor]].subCategory == this.projects[project].country) {
-                              let budget = parseInt(this.projects[project]["budget"]) / donors.length
-                              totalBudg += budget
-                              if (!categoryDistinctProjects.includes(this.projects[project].title)) {
-                                  categoryDistinctProjects.push(this.projects[project].title)
-                              }
-                              if (!categoriesDistinctCountries.includes(this.projects[project].country)) {
-                                  categoriesDistinctCountries.push(this.projects[project].country)
-                              }
-                          }
+          if(label !== 'all') {
+            this.projects.map(project => {
+              let donors = project.donors;//["budget"])
+              donors.map((donor) => {
+                try {
+                  let category = this.fundingCategories[donor].category;
+                  let country = sidsList.find(country => {
+                    return project.country === country.iso
+                  });
+                  country = country ? country.name : '';
+                  if (label == "Programme Countries") {
+                    if (category == "Government" && this.fundingCategories[donor].subCategory == country) {
+                      let budget = project.year.reduce((projectBudget, year) => {
+                        return projectBudget+project.budget[year]
+                      },0)
+                      totalBudg += budget / donors.length
+                      if (!categoryDistinctProjects.includes(project.title)) {
+                          categoryDistinctProjects.push(project.title)
                       }
-
-                      else if (label == "Donor Countries") {
-                          if (category == "Government" && this.categories[donors[donor]].subCategory != this.projects[project].country) {
-                              let budget = parseInt(this.projects[project]["budget"]) / donors.length
-                              totalBudg += budget
-                          }
-                          if (!categoryDistinctProjects.includes(this.projects[project].title)) {
-                              categoryDistinctProjects.push(this.projects[project].title)
-                          }
-                          if (!categoriesDistinctCountries.includes(this.projects[project].country)) {
-                              categoriesDistinctCountries.push(this.projects[project].country)
-                          }
+                      if (!categoriesDistinctCountries.includes(project.country)) {
+                          categoriesDistinctCountries.push(project.country)
                       }
+                    }
+                  }
 
-                      else if (category == label) {
-                          let budget = parseInt(this.projects[project]["budget"]) / donors.length;
-                          totalBudg += budget;
-                          if (!categoryDistinctProjects.includes(this.projects[project].title)) {
-                              categoryDistinctProjects.push(this.projects[project].title)
-                          }
-                          if (!categoriesDistinctCountries.includes(this.projects[project].country)) {
-                              categoriesDistinctCountries.push(this.projects[project].country)
-                          }
+                  else if (label == "Donor Countries") {
+                      if (category == "Government" && this.fundingCategories[donor].subCategory != country) {
+                        let budget = project.year.reduce((projectBudget, year) => {
+                          return projectBudget+project.budget[year]
+                        },0)
+                        totalBudg += budget / donors.length
+                      }
+                      if (!categoryDistinctProjects.includes(project.title)) {
+                          categoryDistinctProjects.push(project.title)
+                      }
+                      if (!categoriesDistinctCountries.includes(project.country)) {
+                          categoriesDistinctCountries.push(project.country)
                       }
                   }
-                  catch (error) {
-                      // console.log("no category");
+
+                  else if (category == label) {
+                      let budget = project.year.reduce((projectBudget, year) => {
+                        return projectBudget+project.budget[year]
+                      },0)
+                      totalBudg += budget / donors.length
+                      if (!categoryDistinctProjects.includes(project.title)) {
+                          categoryDistinctProjects.push(project.title)
+                      }
+                      if (!categoriesDistinctCountries.includes(project.country)) {
+                          categoriesDistinctCountries.push(project.country)
+                      }
                   }
               }
-          }
+              catch (error) {
+                  // console.log("no category");
+              }
+            })
+            })
           label = label.value ? label.value : label;
           newEl = {}
           newEl["category"] = label.replace(/,/g, '')
-          newEl["budget"] = totalBudg
+          newEl["budget"] = Math.round(totalBudg)
           newEl["projects"] = categoryDistinctProjects.length
           newEl["countries"] = categoriesDistinctCountries.length
           newEl["type"] = "Donor"
 
           summaryExport.push(newEl)
+        }
       }
 
 
       //by sdg,
-
-      for (let sdg in this.sdgs) {
-          let distinctProjects = [],
-          totalBudg = 0;
-          for (let project in this.projects.filter((d) => { return d.sdg.includes(this.sdgs[sdg]) })) {
-              totalBudg += parseInt(this.projects[project].budget)
-              if (!distinctProjects.includes(this.projects[project].title)) {
-                  distinctProjects.push(this.projects[project].title)
-              }
-          }
-          newEl = {}
-          newEl["category"] = "SDG " + (parseInt(sdg) + 1) + ": " + this.sdgs[sdg].replace(/,/g, '')
-          newEl["budget"] = totalBudg
-          newEl["projects"] = distinctProjects.length
-          newEl["countries"] = 1//join(';')
-          newEl["type"] = "Recipient"
-
-          summaryExport.push(newEl)
-      }
-      for (let ssss in this.ss) {
+      goals.sdgs.map((goal) => {
         let distinctProjects = [],
+        countries = [],
         totalBudg = 0;
-        for (let project in this.projects.filter((d) => { return d.solution.includes(this.ss[ssss]) })) {
-            totalBudg += parseInt(this.projects[project].budget)
-            if (!distinctProjects.includes(this.projects[project].title)) {
-                distinctProjects.push(this.projects[project].title)
-            }
-        }
+        this.projects.filter((d) => { return d.sdg.includes(goal.value)}).map(project => {
+          totalBudg += project.year.reduce((projectBudget, year) => {
+            return projectBudget+project.budget[year]
+          },0)
+          if (!distinctProjects.includes(project.title)) {
+            distinctProjects.push(project.title)
+          }
+          if (!countries.includes(project.country)) {
+            countries.push(project.country)
+          }
+        })
         newEl = {}
-        newEl["category"] = "Signature Solution " + (parseInt(ssss) + 1) + ": " + this.ss[ssss].replace(/,/g, '')
+        newEl["category"] = "SDG " + goal.title
         newEl["budget"] = totalBudg
         newEl["projects"] = distinctProjects.length
-        newEl["countries"] = 1//join(';')
+        newEl["countries"] = countries.length
         newEl["type"] = "Recipient"
 
         summaryExport.push(newEl)
-      }
+      })
+      goals['signature-solutions'].map((goal) => {
+        let distinctProjects = [],
+        countries = [],
+        totalBudg = 0;
+        this.projects.filter((d) => { return d.solution.includes(goal.value)}).map(project => {
+          totalBudg += project.year.reduce((projectBudget, year) => {
+            return projectBudget+project.budget[year]
+          },0)
+          if (!distinctProjects.includes(project.title)) {
+            distinctProjects.push(project.title)
+          }
+          if (!countries.includes(project.country)) {
+            countries.push(project.country)
+          }
+        })
+        newEl = {}
+        newEl["category"] = "Signature solution " + goal.title
+        newEl["budget"] = totalBudg
+        newEl["projects"] = distinctProjects.length
+        newEl["countries"] = countries.length
+        newEl["type"] = "Recipient"
+
+        summaryExport.push(newEl)
+      })
+      goals.samoa.map((goal) => {
+        let distinctProjects = [],
+        countries = [],
+        totalBudg = 0;
+        this.projects.filter((d) => { return d.samoa.includes(goal.value)}).map(project => {
+          totalBudg += project.year.reduce((projectBudget, year) => {
+            return projectBudget+project.budget[year]
+          },0)
+          if (!distinctProjects.includes(project.title)) {
+            distinctProjects.push(project.title)
+          }
+          if (!countries.includes(project.country)) {
+            countries.push(project.country)
+          }
+        })
+        newEl = {}
+        newEl["category"] = "SAMOA Pathway " + goal.title
+        newEl["budget"] = totalBudg
+        newEl["projects"] = distinctProjects.length
+        newEl["countries"] = countries.length
+        newEl["type"] = "Recipient"
+
+        summaryExport.push(newEl)
+      })
       return summaryExport;
     },
     exportPDF() {

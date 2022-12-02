@@ -9,9 +9,7 @@
       <portfolio-printout-chips
         :region="getCountryName(region)"
         :projects="filteredProjects"
-        :year="yearText"
-        :goalType="goalsType"
-        :goal="goal"
+        :year="year"
         :fundingCategory="fundingCategoryText"
         :fundingSource="fundingSource"
       />
@@ -314,8 +312,8 @@
           <v-row class="printout-project-row" :key="idex" v-for="(project, idex) in getTopFiveProjeccts(goal)">
             <v-col class="text-center" cols="3">{{getCountryName(project.country)}}</v-col>
             <v-col cols="5">{{project.title}}</v-col>
-            <v-col class="text-center" cols="2">{{project.year}}</v-col>
-            <v-col class="text-center" cols="2">{{nFormatter(project.budget)}}</v-col>
+            <v-col class="text-center" cols="2">{{computeYear(project.year)}}</v-col>
+            <v-col class="text-center" cols="2">{{nFormatter(projectFundning(project))}}</v-col>
           </v-row>
         </template>
       </div>
@@ -479,9 +477,6 @@ export default {
         return this.checkGoalValidity(project)
       })
       return list
-    },
-    yearText() {
-      return this.year === 'all' ? this.$t('portfolio.yearsAll') : this.year;
     },
     fundingCategoryText() {
       return this.fundingCategoriesTypes.find(c => c.value === this.fundingCategory).text
@@ -683,15 +678,18 @@ export default {
           return project.samoa.includes(goal.value)
         }
       }).sort((a, b) => {
-        return b.budget - a.budget
+        return a.year.reduce((budget, year) => {return budget + a.budget[year]},0) >
+        b.year.reduce((budget, year) => {return budget + b.budget[year]},0)
       }).slice(0,5);
     },
     getCountryName(iso) {
-      let country = sidsList.find(c => c.iso === iso);
-      if(country) {
-        return country.name
+      if(iso === 'allSids') {
+        return this.$t('regions.allSids')
       }
-      return iso
+      if(this.regions.includes(iso)) {
+        return this.$t('regions.'+iso)
+      }
+      return this.$t('countryNames.' + sidsList.find(c => c.iso === iso).id);
     },
     checkProjectsCategory(project) {
       return project.donors.some((donorId) => {
@@ -711,6 +709,24 @@ export default {
           return donor.category === this.fundingCategory;
         }
       })
+    },
+    projectFundning(project) {
+        return project.year.reduce((b, yb) => {return b + project.budget[yb]}, 0);
+    },
+    computeYear(yearsArr) {
+      return yearsArr.reduce((str, year, index) => {
+        if(index === 0) {
+          str+=year;
+          return str;
+        }
+        if(year-1 === yearsArr[index-1]) {
+          str = str.replace(` - ${year-1}`,'')
+          str+= ` - ${year}`
+        } else {
+          str+= `, ${year}`
+        }
+        return str;
+      },'')
     },
     checkProjectsSources(project) {
       return project.donors.includes(parseInt(this.fundingSource))
