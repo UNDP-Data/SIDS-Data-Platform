@@ -218,7 +218,6 @@ export function initCountrySvgs(){
   this.sidsMapSelection
     .selectAll("path") // Map countries to regional colors
     .attr("class", function () {
-      console.log(this.id, rootThis.profileData)
        return (
         regionColors(rootThis.profileData[this.id].region,rootThis.profileData[this.id].unMeber
         ) + " shadow countrySvg"
@@ -319,14 +318,15 @@ this.sidsMapSelection
 
     .attr("y", function () {
       try {
-        let text = rootThis.profileData[this.parentNode.id].Country;
+        console.log(rootThis.profileData[this.parentNode.id])
+        let text = rootThis.profileData[this.parentNode.id].name;
         return -1 * 9.5 * countryListLongitude.indexOf(text) + 265;
       } catch {
         return 0;
       }
     })
     .attr("x", function () {
-      let text = rootThis.profileData[this.parentNode.id].Country,
+      let text = rootThis.profileData[this.parentNode.id].name,
       index = countryListLongitude.indexOf(text);
       if (index >= 0) {
         return 9.5 * index + 345;
@@ -419,8 +419,10 @@ export function initVizEngineTooltips() {
 
 
         let countryCode = reference.parentElement.id;
-        countryCode = rootThis.profileData[countryCode] ? rootThis.profileData[countryCode].id : countryCode.toLowerCase() + 'Average';
-        header.innerHTML = rootThis.$t.call(rootThis.vue, 'countryNames.' + countryCode);
+        if(countryCode) {
+          countryCode = rootThis.profileData[countryCode] ? rootThis.profileData[countryCode].id : countryCode.toLowerCase() + 'Average';
+          header.innerHTML = rootThis.$t.call(rootThis.vue, 'countryNames.' + countryCode);
+        }
         return tooltipElement
     }
   });
@@ -429,10 +431,12 @@ export function initVizEngineTooltips() {
     theme: 'light',
     delay: 300,
     onShow: function(instance) {
-      let content = instance.popper.getElementsByClassName('tippyContent')[0];
-      let regionCode = instance.reference.classList[1].replace('RegionTitle', '');
-      let value =  nFormatter(rootThis.regionAverages[regionCode],2);
-      content.innerHTML = `${rootThis.$t.call(rootThis.vue, 'countryNames.'+regionCode+'Average')}: ${value}`;
+      if(rootThis.regionAverages) {
+        let content = instance.popper.getElementsByClassName('tippyContent')[0];
+        let regionCode = instance.reference.classList[1].replace('RegionTitle', '');
+        let value =  nFormatter(rootThis.regionAverages[regionCode],2);
+        content.innerHTML = `${rootThis.$t.call(rootThis.vue, 'countryNames.'+regionCode+'Average')}: ${value}`;
+      }
     },
     content: function (reference) {
         let tooltipElement = document.createElement('div'),

@@ -7,7 +7,8 @@
         </template>
       </printout-header>
       <p class="d-none d-print-block">
-        <b>{{$t('gis.controller.datasets')}}:</b>{{datasetMeta[activeIndicatorsMeta.dataset]['Dataset Name']}}
+        {{activeIndicatorsMeta}}
+        <!-- <b>{{$t('gis.controller.datasets')}}:</b>{{datasetMeta[activeIndicatorsMeta.dataset]['Dataset Name']}} -->
       </p>
       <p class="d-none d-print-block">
         <b>{{$t('spiders.definition')}}:</b>{{activeIndicatorsMeta.def}}
@@ -23,9 +24,9 @@
             {{$t('indicators.export.valuesLast')}}
           </p>
           <p class="text-center">
-            <span class="choro-print-legend choro-print-legend_caribean">{{$t('countryNames.caribbean')}}</span>
-            <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">{{$t('countryNames.ais')}}</span>
-            <span class="choro-print-legend choro-print-legend_pacific">{{$t('countryNames.pacific')}}</span>
+            <span class="choro-print-legend choro-print-legend_caribean">{{$t('regions.caribbean')}}</span>
+            <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">{{$t('regions.ais')}}</span>
+            <span class="choro-print-legend choro-print-legend_pacific">{{$t('regions.pacific')}}</span>
           </p>
           </v-col>
       </v-row>

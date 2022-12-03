@@ -6,7 +6,7 @@
     <div :style="{visibility: !noData ? 'visible' : 'hidden'}" class="pie-chart" :id="chartName + postfix">
     </div>
     <div class="d-none" v-for="(axis, index) in data" :id="chartName + postfix +'tooltip'+ index" :key="index">
-      <portfolio-pieChart-tooltip :header="chartName === 'region' ? $t(`regions.${axis.category}`) : $t(`portfolio.fundingTypes.${axis.category}`)" :budget="axis.value" :finance="nFormatter(axis.value)" :percetage="data"/>
+      <portfolio-pieChart-tooltip :header="chartName === 'region' ? $t(`regions.${axis.text}`) : $t(`portfolio.fundingTypes.${axis.text}`)" :budget="axis.value" :finance="nFormatter(axis.value)" :percetage="data"/>
     </div>
   </div>
 </template>
@@ -105,15 +105,38 @@ export default {
       this.pie.select(".labels").attr("transform", translate);
       this.pie.select(".lines").attr("transform", translate);
       /* ------- PIE SLICES -------*/
-      var slice = this.pie.select(".slices").selectAll("path.slice")
-        .data(this.makePie(this.data));
-
-      slice.enter()
-        .insert("path")
-        .style("fill", function(d) { return rootThis.colorScheme(d.data.category); })
-        .attr("class", "slice");
-
-      slice
+      let data = this.makePie(this.data)
+      this.pie.select(".slices").selectAll("path.slice").data(data)
+      .join(
+        (enter) => {
+        rootThis.tooltips.map((t)=>t.destroy())
+        let newTooltips = [];
+        rootThis.tooltips = newTooltips;
+         enter.append("path")
+          .style("fill", function(d) { return rootThis.colorScheme(d.data.category); })
+          .attr("class", "slice")
+          .attr("d", function (d) {
+            this._current = d;
+            return rootThis.arc(d);
+          })
+          .on('click',function (d) {
+            rootThis.setFilter(rootThis.chartName, d.data.category)
+          }).each((data, index, list) => {
+            newTooltips.push(
+              tippy(list[index], {
+                content() {
+                  const template = document.getElementById(`${rootThis.chartName}${rootThis.postfix}tooltip${index}`);
+                  return template.innerHTML;
+                },
+                theme: 'light',
+                interactive: true,
+                allowHTML: true,
+                appendTo: () => document.body
+              })
+            )
+          })
+      }, (update) => {
+        update
         .transition().duration(1000)
         .attrTween("d", function (d) {
           this._current = this._current || d;
@@ -123,110 +146,104 @@ export default {
             return rootThis.arc(interpolate(t));
           };
         })
-        slice.on('click', function (d) {
-          rootThis.setFilter(rootThis.chartName, d.data.category)
-        })
-      rootThis.tooltips.map((t)=>t.destroy())
-      let newTooltips = [];
-      slice.each((data, index, list) => {
-        newTooltips.push(
-          tippy(list[index], {
-            content() {
-              const template = document.getElementById(`${rootThis.chartName}${rootThis.postfix}tooltip${index}`);
-              return template.innerHTML;
-            },
-            theme: 'light',
-            interactive: true,
-            allowHTML: true,
-            appendTo: () => document.body
-          })
-        )
+      }, (exit) => {
+        rootThis.tooltips.map((t)=>t.destroy())
+        rootThis.tooltips = [];
+        exit.remove();
       })
-      slice.exit()
-        .remove();
-      rootThis.tooltips = newTooltips;
-      /* ------- TEXT LABELS -------*/
 
-      let text = this.pie.select(".labels").selectAll("text")
-        .data(this.makePie(this.data));
-      text.enter()
-        .append("text")
-        .attr("dy", ".35em")
-        .attr("font-size", "12px")
-        .attr('font-weight', (d) => {
-          if(d.data.category === rootThis.activeCategory) {
-            return "bold"
-          }
-        })
-        .text(function (d) {
-          if (d.data.value == 0) { return ""; } else {
-            let text = rootThis.chartName === 'region' ? rootThis.$t(`regions.${d.data.category}`) : rootThis.$t(`portfolio.fundingTypes.${d.data.category}`)
-            return text + " - " + rootThis.nFormatter(d.data.value, 1);
-          }
-        });
+      this.pie.select(".labels").selectAll("text").data(data)
+      .join(
+        (enter) => {
+        let sumall = 0
+        for (let source in this.data) {
+          sumall += this.data[source].value
+        }
+         enter.append("text")
+           .attr("dy", ".35em")
+           .attr("font-size", "12px")
+           .attr('font-weight', (d) => {
+             if(d.data.category === rootThis.activeCategory) {
+               return "bold"
+             }
+           }).attr("transform", function (d) {
+             this._current = d;
+             var pos = rootThis.outerArc.centroid(d);
+             pos[0] = radius * (rootThis.midAngle(d) < Math.PI ? 1 : -1);
+             return "translate(" + pos + ")";
+           })
+           .style("text-anchor", function (d) {
+             return rootThis.midAngle(d) < Math.PI ? "start" : "end";
+           }).text(function (d,c,g) {
+             if (d.data.value === 0) { return ""; }
+             let showText = !((d.data.value / sumall) < 0.0236);
+             if(c !== 0) {
+               showText = showText && !(((d.data.value + g[c-1].__data__.data.value) / sumall) < 0.1);
+             }
+
+             if (!showText) { return ""; } else {
+               let text = rootThis.chartName === 'region' ? rootThis.$t(`regions.${d.data.text}`) : rootThis.$t(`portfolio.fundingTypes.${d.data.text}`)
+               return text + " - " + rootThis.nFormatter(d.data.value, 1);
+             }
+            })
+      }, (update) => {
       let sumall = 0
       for (let source in this.data) {
         sumall += this.data[source].value
       }
+        update.transition().duration(1000)
+          .attrTween("transform", function (d) {
+            this._current = this._current || d;
+            var interpolate = d3.interpolate(this._current, d);
+            this._current = interpolate(0);
+            return function (t) {
+              var d2 = interpolate(t);
+              var pos = rootThis.outerArc.centroid(d2);
+              pos[0] = radius * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
+              return "translate(" + pos + ")";
+            };
+          }).text(function (d,c,g) {
+            if (d.data.value == 0) { return ""; }
+            let showText = !((d.data.value / sumall) < 0.0236);
+            if(c !== 0) {
+              showText = showText && !(((d.data.value + g[c-1].__data__.data.value) / sumall) < 0.1);
+            }
+            if (!showText) { return ""; } else {
+              let text = rootThis.chartName === 'region' ? rootThis.$t(`regions.${d.data.text}`) : rootThis.$t(`portfolio.fundingTypes.${d.data.text}`)
+              return text + " - " + rootThis.nFormatter(d.data.value, 1);
+            }
+           })
+          .attr('font-weight', (d) => {
+            if(d.data.category === rootThis.activeCategory) {
+              return "bold"
+            }
+          })
+          .styleTween("text-anchor", function (d) {
+            this._current = this._current || d;
+            var interpolate = d3.interpolate(this._current, d);
+            this._current = interpolate(0);
+            return function (t) {
+              var d2 = interpolate(t);
+              return rootThis.midAngle(d2) < Math.PI ? "start" : "end";
+            };
+          });
+      }, (exit) => {
+        exit.remove();
+      })
 
-      text.text(function (d,c,g) {
-        let showText = !((d.data.value / sumall) < 0.0236);
-        if(c !== 0) {
-          showText = showText && !(((d.data.value + g[c-1].__data__.data.value) / sumall) < 0.1);
+      this.pie.select(".lines").selectAll("polyline").data(data)
+      .join(
+        (enter) => {
+        let sumall = 0
+        for (let source in this.data) {
+          sumall += this.data[source].value
         }
-
-        if (!showText) { return ""; } else {
-          let text = rootThis.chartName === 'region' ? rootThis.$t(`regions.${d.data.category}`) : rootThis.$t(`portfolio.fundingTypes.${d.data.category}`)
-          return text + " - " + rootThis.nFormatter(d.data.value, 1);
-        }
-      });
-      text.transition().duration(1000)
-        .attrTween("transform", function (d) {
-          this._current = this._current || d;
-          var interpolate = d3.interpolate(this._current, d);
-          this._current = interpolate(0);
-          return function (t) {
-            var d2 = interpolate(t);
-            var pos = rootThis.outerArc.centroid(d2);
-            pos[0] = radius * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
-            return "translate(" + pos + ")";
-          };
-        })
-        .attr('font-weight', (d) => {
-          if(d.data.category === rootThis.activeCategory) {
-            return "bold"
-          }
-        })
-        .styleTween("text-anchor", function (d) {
-          this._current = this._current || d;
-          var interpolate = d3.interpolate(this._current, d);
-          this._current = interpolate(0);
-          return function (t) {
-            var d2 = interpolate(t);
-            return rootThis.midAngle(d2) < Math.PI ? "start" : "end";
-          };
-        });
-
-      text.exit()
-        .remove();
-
-      /* ------- SLICE TO TEXT POLYLINES -------*/
-
-      var polyline = this.pie.select(".lines").selectAll("polyline")
-        .data(this.makePie(this.data));
-
-      polyline.enter()
-        .append("polyline");
-
-      polyline.transition().duration(1000)
-        .attrTween("points", function (d,c,g) {
-          this._current = this._current || d;
-          var interpolate = d3.interpolate(this._current, d);
-          this._current = interpolate(0);
-          return function (t) {
-            var d2 = interpolate(t);
-            var pos = rootThis.outerArc.centroid(d2);
-            pos[0] = radius * 0.95 * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
+        enter
+          .append("polyline")
+          .attr("points", function (d,c,g) {
+            this._current = d;
+            var pos = rootThis.outerArc.centroid(d);
+            pos[0] = radius * 0.95 * (rootThis.midAngle(d) < Math.PI ? 1 : -1);
             let showText = !((d.data.value / sumall) < 0.0236);
             if(c !== 0) {
               showText = showText && !(((d.data.value + g[c-1].__data__.data.value) / sumall) < 0.1);
@@ -234,15 +251,39 @@ export default {
             if (!showText) {
               return []
             }
-            return [rootThis.arc.centroid(d2), rootThis.outerArc.centroid(d2), pos];
-          };
-        });
+            return [rootThis.arc.centroid(d), rootThis.outerArc.centroid(d), pos];
+          });
+      }, (update) => {
+        let sumall = 0
+        for (let source in this.data) {
+          sumall += this.data[source].value
+        }
 
-      polyline.exit()
-        .remove();
+        update.transition().duration(1000)
+          .attrTween("points", function (d,c,g) {
+            this._current = this._current || d;
+            var interpolate = d3.interpolate(this._current, d);
+            this._current = interpolate(0);
+            return function (t) {
+              var d2 = interpolate(t);
+              var pos = rootThis.outerArc.centroid(d2);
+              pos[0] = radius * 0.95 * (rootThis.midAngle(d2) < Math.PI ? 1 : -1);
+              let showText = !((d.data.value / sumall) < 0.0236);
+              if(c !== 0) {
+                showText = showText && !(((d.data.value + g[c-1].__data__.data.value) / sumall) < 0.1);
+              }
+              if (!showText) {
+                return []
+              }
+              return [rootThis.arc.centroid(d2), rootThis.outerArc.centroid(d2), pos];
+            };
+          });
+      }, (exit) => {
+        exit.remove();
+      })
       },
       setFilter(type, value) {
-        this.$emit('changeFilter',{type, value})
+        this.$emit('changeFilter', value)
       },
       updateScreenSize() {
         let rootThis = this;
@@ -262,8 +303,6 @@ export default {
     },
     mounted() {
       this.initChart();
-      this.drawChart();
-      // no idea why but works good only if called twice (same as in old version)
       this.drawChart();
     },
     watch: {

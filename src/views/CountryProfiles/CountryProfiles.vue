@@ -215,6 +215,7 @@
               <v-select
                 rounded
                 v-model="rankType"
+                @change="changeRankType"
                 :items="rankTypes"
                 item-text="id"
                 item-value="id"
@@ -555,6 +556,9 @@ export default {
         name:'Country Profiles',
         params:{country}
       })
+    },
+    changeRankType() {
+      this.setCompareCountries([]);
     },
     setCompareCountries(value) {
       this.$router.push({

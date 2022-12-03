@@ -70,7 +70,7 @@
             </div>
             <v-btn
                 class="ml-2 filter-sm-button"
-                :disabled="chartType !== 'bars' || years.length === 1"
+                :disabled="chartType !== 'series' || years.length === 1"
                 rounded
                 @click="toggleYearPlay"
                 fab

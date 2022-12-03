@@ -48,7 +48,7 @@ import * as d3 from 'd3';
 import PortfolioTooltip from './PortfolioSDGSTooltip'
 import tippy from 'tippy.js';
 import {hideAll} from 'tippy.js';
-
+import portfolio from '@/mixins/portfolio.mixin'
 
 export default {
   name: 'goals',
@@ -76,7 +76,7 @@ export default {
     }
   },
   props:['projects', 'year', 'goalsType'],
-  mixins:[format],
+  mixins:[format, portfolio],
   computed: {
     locale() {
       return this.$i18n.locale
@@ -105,24 +105,26 @@ export default {
       }, {})
     },
     barsData() {
+      let allYearBarData = (project, data) => {
+        return {
+          projects: data.projects + project.year.length,
+          budget: data.budget + this.getProjectFundning(project)
+        }
+      }
+      let singleYearData = (project, data) => {
+        if(project.budget[this.year]) {
+          return {
+            projects: data.projects + 1,
+            budget: data.budget + project.budget[this.year]
+          }
+        }
+        return data;
+      }
+      let computeData = this.year === 'all' ? allYearBarData : singleYearData;
       let sdgsData = this.goals.map((goal, index) => {
         return this.projects.reduce((data, project) => {
         if(project[goal.type].includes(index+1)) {
-            let projectBudget;
-            let projects = data.projects;
-            if(this.year === 'all'){
-              projectBudget = Object.values(project.budget).reduce((b, yb) => b+yb,0)
-              projects+=project.year.length
-            } else if(project.budget[this.year]) {
-              projectBudget = project.budget[this.year]
-              projects+=1
-            }
-            if(projectBudget !== 0) {
-              return {
-                projects,
-                budget: data.budget + projectBudget
-              }
-            }
+            return computeData(project, data);
           }
           return data
         },{
@@ -139,23 +141,25 @@ export default {
       return this.barsData.map(data => data.budget)
     },
     tooltipData() {
+      let getOneYearBudget = (project) => {
+        if(project.budget[this.year]) {
+          return project.budget[this.year]
+        }
+        return 0
+      }
+      let getBudgetData = this.year === 'all' ? this.getProjectFundning : getOneYearBudget
       let res = {}
       this.goals.map((goal,index) => {
         res[goal.name] = this.projects.filter((project) => {
-          return project.sdg && project.sdg.includes(index+1)
+          return project.sdg.includes(index+1)
         }).map(project => {
-          let budget;
-          if(this.year === 'all'){
-            budget = Object.values(project.budget).reduce((b, yb) => b+yb,0)
-          } else if(project.budget[this.year]) {
-            budget = project.budget[this.year]
-          }
+          let budget = getBudgetData(project);
           let country = this.$t('countryNames.'+sidsList.find((c => c.iso === project.country)).id);
           return {
             country,
             budget,
             title: project.title,
-            year:this.computeYear(project.year)
+            year:this.computeYearString(project.year)
           }
         });
       })
@@ -163,21 +167,6 @@ export default {
     }
   },
   methods: {
-    computeYear(yearsArr) {
-      return yearsArr.reduce((str, year, index) => {
-        if(index === 0) {
-          str+=year;
-          return str;
-        }
-        if(year-1 === yearsArr[index-1]) {
-          str = str.replace(` - ${year-1}`,'')
-          str+= ` - ${year}`
-        } else {
-          str+= `, ${year}`
-        }
-        return str;
-      },'')
-    },
     initBars() {
       this.svg = d3.select(`#tab${this.id} .svg-container`).append("svg");
       this.svg.attr('height', this.svgHeight)
@@ -202,9 +191,7 @@ export default {
       this.y2.domain([0, d3.max(this.budgetCount, function (d) { return d; })]);
     },
     drawBars() {
-
       let rootThis = this;
-
       this.x.domain(this.goals.map(goal => goal.name));
       this.x2.domain(this.goals.map(goal => goal.name));
       this.x.rangeRound([0, this.barsWidth]);
