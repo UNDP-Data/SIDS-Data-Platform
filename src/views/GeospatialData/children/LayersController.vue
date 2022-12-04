@@ -351,6 +351,7 @@ export default {
       });
     },
     hadleTabUpdate(e) {
+      console.log('update', e)
       this.activeDataset = e.layers.dataset
       this.activeLayer = e.layers.firstLayer
       this.activeYear = e.layers.activeYear
@@ -364,7 +365,7 @@ export default {
         this.$emit('modeUpdate', e.modes.bivariateModeEnabled)
       }
       if(this.dualModeEnabled !== e.modes.dualModeEnabled) {
-        this.$emit('dualModeUpdate', e.modes.bivariateModeEnabled)
+        this.$emit('dualModeUpdate', e.modes.dualModeEnabled)
       }
       this.$nextTick(() => {
         this.emitUpdate()

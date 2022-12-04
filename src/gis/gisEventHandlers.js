@@ -10,16 +10,7 @@ export function onDataClick(e, comparison) {
   if (comparison) {
     cls = this.options.comparisonLayerState;
   }
-
-  if (this.getSource("highlightS", comparison)) {
-    this.removeLayer("highlight", comparison);
-    this.removeSource("highlightS", comparison);
-  }
-
-  if (this.getSource("clickedone", comparison)) {
-    this.removeLayer("clickedone", comparison);
-    this.removeSource("clickedone", comparison);
-  }
+  this.clearHexHighlight()
 
   var currId = e.features[0].properties.fid;
 

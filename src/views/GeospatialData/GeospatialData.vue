@@ -48,6 +48,8 @@
       @update="updateMap"
       @updateDual="updateComparisonMap"
       @updateBivariate="updateBivariate"
+      @toggleBivariate="toggleBivar"
+      @toggleDual="toggleDual"
     />
     <map-toolbar
       class="toolbar"
@@ -121,6 +123,9 @@ export default {
   },
   methods: {
     toggleBivar(e) {
+      if(this.bivariateModeEnabled === e) {
+        return
+      }
       if(this.dualModeEnabled){
         this.toggleDual(!this.dualModeEnabled)
       }
@@ -136,6 +141,10 @@ export default {
       }
     },
     toggleDual(e) {
+      console.log(e)
+      if(this.dualModeEnabled === e) {
+        return
+      }
       if(this.bivariateModeEnabled){
         this.toggleBivar(!this.bivariateModeEnabled)
       }

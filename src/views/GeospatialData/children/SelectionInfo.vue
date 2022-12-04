@@ -13,13 +13,13 @@
         {{bivarClass}}
       </p>
       <h4  v-if="level1">{{$t('gis.toolbar.firstValue')}} ({{level1}}):</h4>
-      <p v-if="value1" class="mb-0">
-        {{value1}}
+      <p v-if="level1" class="mb-0">
+        {{value1 === false ? $t('root.noData') : value1}}
       </p>
 
-      <h4  v-if="level2">{{$t('gis.toolbar.firstValue')}} ({{level2}}):</h4>
-      <p v-if="value2" class="mb-0">
-        {{value2}}
+      <h4  v-if="level2">{{$t('gis.toolbar.secondValue')}} ({{level2}}):</h4>
+      <p v-if="level2" class="mb-0">
+        {{value2 === false ? $t('root.noData') : value2}}
       </p>
       <h4 v-if="mean || min || max">{{$t('gis.toolbar.regionalStatistics')}}:</h4>
       <p v-if="mean" class="mb-0">
@@ -87,12 +87,22 @@ export default {
       }
     },
     bivarUpdate(e) {
+      console.log(e)
       if(e !== null) {
         this.bivarClass = e.class;
         this.level1 = e.level1;
-        this.value1 = this.nFormatter(e.value1,2)
         this.level2 = e.level2;
-        this.value2 = this.nFormatter(e.value2,2)
+
+        if(isNaN(e.value1)) {
+          this.value1 = false
+        } else {
+          this.value1 = this.nFormatter(e.value1,2)
+        }
+        if(isNaN(e.value2)) {
+          this.value2 = false
+        } else {
+          this.value2 = this.nFormatter(e.value2,2)
+        }
       } else {
         this.bivarClass = null
         this.level1 = null

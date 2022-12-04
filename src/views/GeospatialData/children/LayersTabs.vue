@@ -58,7 +58,6 @@ export default {
       if(this.activeTab) {
         this.$emit('tabUpdate', this.activeTab)
       }
-      console.log(this.tabs)
     },
     addEmptyTab() {
       let key = Date.now();
@@ -86,7 +85,7 @@ export default {
       this.tab = key;
     },
     createTabLabel() {
-      return this.firstLayer && this.firstLayer.description;
+      return (this.firstLayer && this.firstLayer.description) || this.$t('gis.newTab');
     }
   },
   mounted() {
