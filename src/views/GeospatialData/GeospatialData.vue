@@ -141,7 +141,6 @@ export default {
       }
     },
     toggleDual(e) {
-      console.log(e)
       if(this.dualModeEnabled === e) {
         return
       }
@@ -249,8 +248,8 @@ export default {
 .layer-legend-small {
   position: absolute;
   z-index: 98;
-  left: 5px;
-  bottom: 5px;
+  left: 2em;
+  top: 4em;
   min-width: 200px;
 }
 .layer-legend-small.layer-legend-small_hidden {
