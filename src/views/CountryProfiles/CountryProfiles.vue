@@ -1,7 +1,7 @@
 <template>
   <div class="profiles-page">
     <div class="printout">
-      <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
+      <div :class="{'full-size': countryText && countryText.developmentContext}" class="print-page page-break">
         <printout-header>
           <template slot="text">
             <b>{{$t('countryNames.'+activeCountryId)}}</b> {{$t('countryProfile.header')}}
@@ -85,16 +85,16 @@
             <p class="text-center grey--text">{{$t('countryProfile.noCountryData')}}</p>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && countryText && countryText.developmentContext" justify="center" dense>
           <v-col cols="12">
-            <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
+            <h2 class="px-4 mb-0">{{countryText.developmentContext.title}}</h2>
             <v-row>
               <v-col class="printing-9" cols='12' md="9">
-                <div class="px-4" v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                <div class="px-4" v-html="countryText.developmentContext.content"></div>
               </v-col>
               <v-col class="printing-3 mb-0" cols='12' md="3">
                 <div class=" px-4 text-center mb-3 mb-print-1" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-                  <h3>{{stat.value}} {{stat.unit}}</h3>
+                  <h3>{{Math.round(stat.value * 100)/100}} {{stat.unit}}</h3>
                   <p class="mb-0">{{stat.title}}</p>
                 </div>
               </v-col>
@@ -104,10 +104,10 @@
         <v-row class="d-md-none d-none-print justify-center" v-if="!noData">
           <v-col cols="11">
             <v-expansion-panels flat accordion>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="countryText && countryText.developmentContext">
+                <v-expansion-panel-header>{{countryText.developmentContext.title}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  <div v-html="countryText.developmentContext.content"></div>
                   <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
                     <h3>{{stat.value}} {{stat.unit}}</h3>
                     <p class="mb-0">{{stat.title}}</p>
@@ -115,17 +115,17 @@
                 </v-expansion-panel-content>
               </v-expansion-panel>
               <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.successesInDevelopment.title}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="countryText && countryText.successesInDevelopment">
+                <v-expansion-panel-header>{{countryText.successesInDevelopment.title}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+                  <div v-html="countryText.successesInDevelopment.content"></div>
                 </v-expansion-panel-content>
               </v-expansion-panel>
               <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="countryText && countryText.challengesInDevelopment">
+                <v-expansion-panel-header>{{countryText.challengesInDevelopment.title}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+                  <div v-html="countryText.challengesInDevelopment.content"></div>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -269,10 +269,10 @@
         </v-row>
       </div>
       <div class="print-page page-break">
-        <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="!noData && activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="!noData && countryText && countryText.successesInDevelopment" justify="center" dense>
           <v-col cols="12">
-            <h2 class="mb-0 px-4">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
-            <div class="px-4" v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+            <h2 class="mb-0 px-4">{{countryText.successesInDevelopment.title}}</h2>
+            <div class="px-4" v-html="countryText.successesInDevelopment.content"></div>
           </v-col>
         </v-row>
         <v-row class="d-none d-md-flex d-print-flex no-page-break mb-4 mb-print-0" v-if="!noData">
@@ -287,7 +287,7 @@
               :pillarName="'MVI'"
               :ranks="graphRankData['MVI']"
               :values="graphValueData['MVI']"/>
-            <p :class="{'desc-mvi-one-page': !activeCountryProfile.CountryText}" class="desc-mvi desc-spiders mt-0 mb-0 text-center">
+            <p :class="{'desc-mvi-one-page': !countryText}" class="desc-mvi desc-spiders mt-0 mb-0 text-center">
               {{$t('countryProfile.infoBox.mviAnnotation')}}
             </p>
           </v-col>
@@ -296,13 +296,13 @@
               :countryId="activeCountryId"/>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && countryText && countryText.challengesInDevelopment" justify="center" dense>
           <v-col cols="12">
-            <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
-            <div class="px-4" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+            <h2 class="px-4 mb-0">{{countryText.challengesInDevelopment.title}}</h2>
+            <div class="px-4" v-html="countryText.challengesInDevelopment.content"></div>
           </v-col>
         </v-row>
-        <p :class="{'single-page-print-footer': !activeCountryProfile.CountryText}" class="print-footer d-none d-print-block">
+        <p :class="{'single-page-print-footer': !countryText}" class="print-footer d-none d-print-block">
           Live version and links to original data sources available at
           <a :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
         </p>
@@ -453,6 +453,18 @@ export default {
     }),
     radarAnnotation() {
       return this.$t('countryProfile.infoBox.radarAnnotation.'+this.rankType)
+    },
+    countryText(){
+      let langMap = {
+        'en': 'English',
+        'pt': 'Portuguese',
+        'fr': 'French',
+        'es': 'Spanish',
+      }
+      return this.activeCountryProfile[langMap[this.locale]]
+    },
+    locale() {
+      return this.$i18n.locale
     },
     noData() {
       let dataPoints = Object.keys(this.graphValueData).reduce((sum, pillarCode) => {
@@ -641,6 +653,7 @@ export default {
      width: 90%;
      left: 0;
      bottom: 0px;
+     bottom: 140px;
    }
    .single-page-print-footer {
      bottom: 100px;

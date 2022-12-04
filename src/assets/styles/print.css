@@ -59,12 +59,9 @@
   .printout {
     min-height: 100vh
   }
-  .printout-one-page {
-    max-height: 1300px;
-    overflow: hidden;
-  }
   .full-size{
     min-height: 1350px;
+    overflow: hidden;
   }
   .v-application .mb-print-1{
     margin-bottom: 4px !important;

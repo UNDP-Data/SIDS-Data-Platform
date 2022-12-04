@@ -8,7 +8,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="$t('countryProfile.infoBox.regionally')"
+                v-text="$t('countryProfile.infoBox.key-sids-region')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header"
@@ -21,7 +21,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="$t('countryProfile.infoBox.office')"
+                v-text="$t('countryProfile.infoBox.key-countryOffice')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header"
@@ -34,7 +34,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="$t('countryProfile.infoBox.memberState')"
+                v-text="$t('countryProfile.infoBox.key-un-member')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header"
@@ -63,9 +63,9 @@
             <template slot="button">
               <v-list-item>
                 <v-list-item-content class="small-padding">
-                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.population')"></v-list-item-title>
+                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.key-wdi2-SP.POP.TOTL')"></v-list-item-title>
                   <v-list-item-subtitle
-                    class="one-line_header">{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
+                    class="one-line_header">{{checkNoDataIndicator('key-wdi2-SP-POP-TOTL')}}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -74,7 +74,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="$t('countryProfile.infoBox.lang')"
+                v-text="$t('countryProfile.infoBox.key-language')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
@@ -102,7 +102,7 @@
             <template slot="button">
               <v-list-item>
                 <v-list-item-content class="small-padding">
-                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.area')"></v-list-item-title>
+                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.key-wdi-AG-SRF-TOTL-K2')"></v-list-item-title>
                   <v-list-item-subtitle
                     class="one-line_header">{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}}</v-list-item-subtitle>
                 </v-list-item-content>
@@ -113,7 +113,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title
                 class="one-line_header"
-                v-text="$t('countryProfile.infoBox.income')"
+                v-text="$t('countryProfile.infoBox.key-incomeClass')"
               ></v-list-item-title>
               <v-list-item-subtitle
                 class="one-line_header">{{
@@ -141,7 +141,7 @@
             <template slot="button">
               <v-list-item>
                 <v-list-item-content class="small-padding">
-                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.hdi')"></v-list-item-title>
+                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.key-hdr-hdi')"></v-list-item-title>
                   <v-list-item-subtitle
                     class="one-line_header">{{computeHDI(getIndicator("key-hdr-hdi").value)}}
                   </v-list-item-subtitle>
@@ -169,7 +169,7 @@
             <template slot="button">
               <v-list-item>
                 <v-list-item-content class="small-padding">
-                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.gini')"></v-list-item-title>
+                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.key-wdi2-SI-POV-GINI')"></v-list-item-title>
                   <v-list-item-subtitle
                     class="one-line_header">{{getIndicator("key-wdi2-SI.POV.GINI").value}}
                   </v-list-item-subtitle>
@@ -181,7 +181,7 @@
             <v-list-item-content class="small-padding">
               <v-list-item-title class="one-line_header">
                 <a :href="getIndicator('key-undpPage').value" target="_blank">
-                  {{ $t('countryProfile.infoBox.countryPage') }}
+                  {{ $t('countryProfile.infoBox.key-undpPage') }}
                 </a>
               </v-list-item-title>
             </v-list-item-content>

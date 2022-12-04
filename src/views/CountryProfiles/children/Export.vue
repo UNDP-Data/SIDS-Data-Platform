@@ -95,17 +95,18 @@
             let indicatorFull = this.profiles[this.idsList[0]][pillarName][indicator]
             let newIndi = {}
             if(pillarName === 'Finance') {
-              newIndi.axis = this.$t('finance.'+this.indicatorsMetadata[indicatorFull.axis].indicator.replaceAll('.', '-'))
+              newIndi.axis = '"' + this.$t('finance.'+this.indicatorsMetadata[indicatorFull.axis].indicator.replaceAll('.', '-')) + '"'
             } else {
-              newIndi.axis = this.$t('countryProfile.infoBox.'+this.indicatorsMetadata[indicatorFull.axis].indicator.replaceAll('.', '-'))
+              newIndi.axis = '"' + this.$t('countryProfile.infoBox.'+this.indicatorsMetadata[indicatorFull.axis].indicator.replaceAll('.', '-')) + '"'
             }
             newIndi.source = this.indicatorsMetadata[indicatorFull.axis] && this.indicatorsMetadata[indicatorFull.axis].source ?
-            this.indicatorsMetadata[indicatorFull.axis].source.replace(/,/g, '') :
-            '';
+            '"' + this.indicatorsMetadata[indicatorFull.axis].source.replace(/,/g, '') + '"' :
+            'No Data';
             this.idsList.map(countryId => {
               newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value.replace(/,/g, ' ')
               newIndi[countryId + ' Year'] = this.profiles[countryId][pillarName][indicator].year
             })
+            console.log(newIndi)
             countryExport.push(newIndi)
           }
         }
@@ -114,14 +115,15 @@
           for (let indicator in this.profiles[this.idsList[0]][pillarName]) {
             let indicatorFull = this.profiles[this.idsList[0]][pillarName][indicator]
             let newIndi = {}
-            newIndi.axis = this.$t('spiders.'+this.indicatorsMetadata[indicatorFull.axis].indicator.replaceAll('.', '-')).title
+            newIndi.axis = '"' + this.$t('spiders.'+this.indicatorsMetadata[indicatorFull.axis].indicator.replaceAll('.', '-')).indicator + '"'
             newIndi.source = this.indicatorsMetadata[indicatorFull.axis] && this.indicatorsMetadata[indicatorFull.axis].source ?
-            this.indicatorsMetadata[indicatorFull.axis].source.replace(/,/g, '') :
-            '';
+            '"' + this.indicatorsMetadata[indicatorFull.axis].source.replace(/,/g, '') + '"' :
+            'No Data';
             this.idsList.map(countryId => {
               newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value
               newIndi[countryId + ' Year'] = this.profiles[countryId][pillarName][indicator].year
             })
+            console.log(newIndi)
             countryExport.push(newIndi)
           }
         }
