@@ -318,18 +318,15 @@ this.sidsMapSelection
 
     .attr("y", function () {
       try {
-        console.log(rootThis.profileData[this.parentNode.id])
-        let text = rootThis.profileData[this.parentNode.id].name;
-        return -1 * 9.5 * countryListLongitude.indexOf(text) + 265;
+        return -8.6 * countryListLongitude.indexOf(this.parentNode.id) + 272;
       } catch {
         return 0;
       }
     })
     .attr("x", function () {
-      let text = rootThis.profileData[this.parentNode.id].name,
-      index = countryListLongitude.indexOf(text);
+      let index = countryListLongitude.indexOf(this.parentNode.id);
       if (index >= 0) {
-        return 9.5 * index + 345;
+        return 8.6 * index + 338;
       } else {
         //not the best way of making these hidden. should be improved
         return -1000;
@@ -402,7 +399,7 @@ export function initVizEngineTooltips() {
       if(rootThis.indexData || rootThis.indicatorData) {
         value = (typeof value === 'string' || typeof value === 'undefined') ?  rootThis.$t.call(rootThis.vue, 'root.noData') : nFormatter(value,2);
         let textContent = `${rootThis.$t.call(rootThis.vue, 'spiders.value')}: ${value}`;
-        if(!instance.reference.classList.contains('choroRectMvi')) {
+        if(rootThis.vizMode  !== 'index') {
           textContent+= `<br/> ${rootThis.$t.call(rootThis.vue, 'indicators.forms.recent')}: ${recentValue} ${recenYear}`;
         }
         content.innerHTML = textContent

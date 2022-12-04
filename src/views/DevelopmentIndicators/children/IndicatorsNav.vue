@@ -239,7 +239,7 @@
         </v-select>
         <v-btn
           @click="toggleYearPlay"
-          :disabled="chartType==='series' || years.length === 1"
+          :disabled="chartType==='series' || activeIndicatorYears.length === 1"
           icon
           >
           <v-icon v-if="playingYear">mdi-pause</v-icon>

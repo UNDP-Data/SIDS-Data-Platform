@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { indexColors } from './index-data'
 import {getBoundingBox, isNumeric, sort_object, regionColors} from './vizEngineHelperFunctions';
-import { regionCountries, countryListLongitude, sidsDict } from './vizEngineGlobals';
+import { regionCountries, countryListLongitude } from './vizEngineGlobals';
 
 
 
@@ -51,6 +51,7 @@ export function processVizElementAttributes() {
     for(let i=0;i<subindexList.length;i++){
       MRTa[i] = this.multiRectTransform(country, bBox, indicatorDataObj, this.indexData, this.indiSelections,this.indexWeights,i);
     }
+    console.log(MRTa, country)
     vizElementAttributes[country] = {
       VT: VTa,
       RT: RTa,
@@ -86,7 +87,7 @@ export function updateCountryAVGbars(dataObj) {
         dataObj[avgs[i]] = avg
         this.profileData[avgs[i]] = {
           id:avgs[i].toLowerCase()+'Average',
-          Region: avgs[i]
+          region: avgs[i]
         }
         let g = this.sidsMapSelection.select(`g#${avgs[i]}`);
         if(!g.empty()) {
@@ -101,36 +102,40 @@ export function updateCountryAVGbars(dataObj) {
           let g = this.sidsMapSelection
             .append("g")
             .attr('id', avgs[i])
-          g.append('rect')
-            .attr("x", 160)
-            .attr("y", 300)
-            .attr("width", 0)
-            .attr("height", 0)
-            .classed("choroRect", true)
-            .style("fill", function () {
-              return (
-                "#" +
-                regionColors(rootThis.profileData[avgs[i]].region, "Y").substring(1)
-              );
-            }) //
-          g.append('text')
-            .attr("font-size", 10)
-            .text(() => {
-              return rootThis.$t.call(rootThis.vue, 'countryNames.' + avgs[i].toLowerCase() + 'Average')
-            })
-            .attr("id", function () {
-              return avgs[i] + '-text';
-            })
-            .attr("x", function () {
-              return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
-            })
-            .attr("y", function () {
-              return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
-            })
-            .classed("choroText", true);
-          g.append('text')
-            .attr("font-size", 10)
-            .classed("countryLabel", true);
+            g.append('path')
+              .attr('id', avgs[i])
+            g.append('rect')
+              .attr("x", 160)
+              .attr("y", 300)
+              .attr("width", 0)
+              .attr("height", 0)
+              .classed("choroRect", true)
+              .style("fill", function () {
+                return (
+                  "#" +
+                  regionColors(rootThis.profileData[avgs[i]].region, "Y").substring(1)
+                );
+              }) //
+            g.append('text')
+              .attr("font-size", 10)
+              .attr('fill-opacity', 0)
+              .text(() => {
+                return rootThis.$t.call(rootThis.vue, 'countryNames.' + avgs[i].toLowerCase() + 'Average')
+              })
+              .attr("id", function () {
+                return avgs[i] + '-text';
+              })
+              .attr("x", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[4];
+              })
+              .attr("y", function () {
+                return getBoundingBox(d3.select(this.parentNode).select("path"))[2] - 11;
+              })
+              .classed("choroText", true);
+            g.append('text')
+              .attr("font-size", 10)
+              .classed("countryLabel", true);
+          }
         }
     }
     } else  if (this.vizMode !== 'index'){
@@ -163,7 +168,7 @@ export function updateCountryAVGMVIbars(dataObj) {
           avg = avg[1]/avg[0]
           dataObj[avgs[i]] = avg
           this.profileData[avgs[i]] = {
-            Region: avgs[i],
+            region: avgs[i],
             id:avgs[i].toLowerCase()+'Average',
           }
           Object.keys(this.indexData).map(indexName => {
@@ -367,28 +372,27 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
     let leftMargin = 60,
 
     margin = 2;
-
     let filtered = Object.fromEntries(
       Object.entries(indicatorDataObj).filter(([, v]) => typeof v == "number")
     );
 
     let countryOrder = countryListLongitude,
 
-    rank = countryOrder.indexOf(sidsDict[country]),
-
+    rank = countryOrder.indexOf(country),
     //        sortedData = sort_object(filtered);
 
     indicatorValues = Object.values(filtered),
 
     totalVals = countryOrder.length;
-
+    // console.log(rank, country)
     let columnBase = {
       y: totalHeight * 0.85,
       x: (650 / totalVals) * rank + leftMargin,
-      width: totalWidth / totalVals - margin,
+      width: 0,
       height: 0,
     };
 
+      console.log(country, val)
     if (typeof val != "number" || rank == -1) {
       output = columnBase;
     } else {
@@ -565,6 +569,7 @@ export function multiRectTransform(country, bBox, indicatorDataObj, indexDataObj
         maxx+=1;
       }
 // TODO: Ask Ben about min (now is 0)
+      console.log(country, val, x)
       if (maxx>0&&!isNaN(val)&&!isNaN(x)){
         normValue = (val - minn) / (maxx - minn);
         normX= (x-0)/maxx-minn
