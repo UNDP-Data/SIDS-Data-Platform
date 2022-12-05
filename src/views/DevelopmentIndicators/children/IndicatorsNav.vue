@@ -112,14 +112,14 @@
                 max-height="50"
                 :src="require(`@/assets/media/datasets/${item}.png`)"
               ></v-img>
-              <v-card-title class="mb-1 active-indicator_header">{{datasetMeta[item] ? datasetMeta[item]['Dataset Name'] : ''}}</v-card-title>
+              <v-card-title class="mb-1 active-indicator_header">{{datasetMeta[item] ? datasetMeta[item].datasetName : ''}}</v-card-title>
               <v-card-text>
                 <div class="mb-1">
-                  {{datasetMeta[item] ? datasetMeta[item]['# of indicators'] : ''}} indicators
-                  {{datasetMeta[item] ? datasetMeta[item]['SIDS Coverage'] : ''}} SIDS
+                  {{datasetMeta[item] ? datasetMeta[item].numIndicators : ''}} indicators
+                  {{datasetMeta[item] ? datasetMeta[item].numCountries : ''}} SIDS
 
                 </div>
-                <b>Organization:</b>{{datasetMeta[item] ? datasetMeta[item]['Organization'] : ''}}
+                <b>Organization:</b>{{datasetMeta[item] ? datasetMeta[item].organization : ''}}
               </v-card-text>
             </v-card>
           </v-tooltip>
