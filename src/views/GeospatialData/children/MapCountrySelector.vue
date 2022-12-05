@@ -92,8 +92,6 @@ export default {
       let sids = sidsList.find(c => c.iso === code);
       if(sids) {
         return this.$t('countryNames.'+sids.id)
-      } else {
-        console.log(code)
       }
     },
     computeFlagCode(code) {

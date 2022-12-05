@@ -65,7 +65,6 @@ export default {
           }
           return 0;
         });
-        console.log(datasetsList, datasetsData)
         commit("setDatasetsList", datasetsList);
         commit("setDatasetsMeta", datasetsData);
       }
@@ -76,7 +75,6 @@ export default {
           list[country.iso] = country
           return list
         },{})
-        console.log(profileData)
         commit("setProfileData", profileData);
       }
     },
@@ -104,8 +102,6 @@ export default {
                 state.indicatorsCategories[dataset.code][category][subCategory][indicator].map(code => {
                   if(meta[code]) {
                     meta[code].codesArray = state.indicatorsCategories[dataset.code][category][subCategory][indicator]
-                  } else {
-                  console.log(code)
                   }
                 })
               }

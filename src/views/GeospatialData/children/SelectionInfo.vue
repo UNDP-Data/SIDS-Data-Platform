@@ -87,7 +87,6 @@ export default {
       }
     },
     bivarUpdate(e) {
-      console.log(e)
       if(e !== null) {
         this.bivarClass = e.class;
         this.level1 = e.level1;

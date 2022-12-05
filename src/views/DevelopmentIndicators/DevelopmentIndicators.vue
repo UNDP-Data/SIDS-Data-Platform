@@ -216,7 +216,6 @@ import InfoButton from '@/components/InfoButton.vue'
 import sizeMixin from '@/mixins/size.mixin'
 import { mapState } from 'vuex'
 import store from '@/store'
-import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
 export default {
   name: 'DevelopmentIndicators',
@@ -225,7 +224,6 @@ export default {
   data: function() {
     return {
       dialog:false,
-      datasetMeta: datasetMeta,
       resizeTimeout:null,
       mlMode:false,
       mviCodes:[
@@ -312,7 +310,8 @@ export default {
       indicatorsMeta: state => state.indicators.indicatorsMeta,
       MLTargetSize: state => state.indicators.MLTargetSize,
       mlData: state => state.ml.mlData,
-      mlModel: state => state.ml.mlModel
+      mlModel: state => state.ml.mlModel,
+      datasetMeta: state => state.indicators.datasetsMeta
     }),
     sortingName() {
       if(this.sorting === 0) {

@@ -114,7 +114,6 @@ export default {
   ],
   methods: {
     updateLegend(e) {
-      console.log(e.activeLayer)
       if(e.noData && e.activeLayer === this.activeLayer) {
         this.hasData = false
       } else if(e.activeLayer === this.activeLayer) {

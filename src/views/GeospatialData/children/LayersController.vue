@@ -351,7 +351,6 @@ export default {
       });
     },
     hadleTabUpdate(e) {
-      console.log('update', e)
       this.activeDataset = e.layers.dataset
       this.activeLayer = e.layers.firstLayer
       this.activeYear = e.layers.activeYear

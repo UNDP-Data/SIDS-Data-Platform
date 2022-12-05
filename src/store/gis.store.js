@@ -14,7 +14,6 @@ export default {
     async loadDatasets({ state, commit }) {
       if(!state.datasets){
         const datasets = await service.loadGISDatasets();
-        console.log(datasets);
         commit("setDatasets", Object.values(datasets));
       }
     }

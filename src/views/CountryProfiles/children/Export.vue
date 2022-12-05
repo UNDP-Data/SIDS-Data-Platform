@@ -106,7 +106,6 @@
               newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value.replace(/,/g, ' ')
               newIndi[countryId + ' Year'] = this.profiles[countryId][pillarName][indicator].year
             })
-            console.log(newIndi)
             countryExport.push(newIndi)
           }
         }
@@ -123,7 +122,6 @@
               newIndi[countryId] = this.profiles[countryId][pillarName][indicator].value
               newIndi[countryId + ' Year'] = this.profiles[countryId][pillarName][indicator].year
             })
-            console.log(newIndi)
             countryExport.push(newIndi)
           }
         }

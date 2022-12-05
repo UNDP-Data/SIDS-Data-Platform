@@ -113,10 +113,8 @@ export default {
           if(isNaN(parseInt(axe.value))) {
             return maxAxesValue
           }
-          console.log(this.maxValue, maxAxesValue > axe.value ? maxAxesValue : axe.value)
           return maxAxesValue > axe.value ? maxAxesValue : axe.value;
         }, this.maxValue);
-        console.log(maxCountriesValue > currentCountryMax ? maxCountriesValue : currentCountryMax)
         return maxCountriesValue > currentCountryMax ? maxCountriesValue : currentCountryMax;
       }, this.maxValue);
     }
