@@ -437,8 +437,8 @@ export default {
         }
       },
       maxValues:{
-        globally: 200,
-        sidsCountires:50,
+        global: 200,
+        sids:50,
         caribbean:25,
         ais:10,
         pacific:16

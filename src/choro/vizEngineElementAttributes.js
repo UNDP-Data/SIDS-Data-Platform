@@ -391,7 +391,6 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
       height: 0,
     };
 
-      console.log(country, val)
     if (typeof val != "number" || rank == -1) {
       output = columnBase;
     } else {
@@ -568,7 +567,6 @@ export function multiRectTransform(country, bBox, indicatorDataObj, indexDataObj
         maxx+=1;
       }
 // TODO: Ask Ben about min (now is 0)
-      console.log(country, val, x)
       if (maxx>0&&!isNaN(val)&&!isNaN(x)){
         normValue = (val - minn) / (maxx - minn);
         normX= (x-0)/maxx-minn

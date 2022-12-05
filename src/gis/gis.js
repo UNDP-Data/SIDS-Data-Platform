@@ -408,16 +408,13 @@ export default class Map {
     let cls = !recolorComparison
       ? this.options.currentLayerState
       : this.options.comparisonLayerState;
-    console.log(recolorComparison, cls)
     if (!map.getLayer(cls.hexSize)) {
       return;
     }
     let self = this;
-    console.log('set callback', cls.hexSize, cls.dataLayer)
     let callback = function () {
       let isloaded = map.isSourceLoaded(cls.hexSize+cls.dataLayer)
       if(isloaded) {
-        console.log(cls.hexSize, recolorComparison, 'callback remove')
         self.renderFeatures.apply(self,[map, cls, recolorComparison])
         map.off('sourcedata', callback);
       }
