@@ -7,8 +7,7 @@
         </template>
       </printout-header>
       <p class="d-none d-print-block">
-        {{activeIndicatorsMeta}}
-        <!-- <b>{{$t('gis.controller.datasets')}}:</b>{{datasetMeta[activeIndicatorsMeta.dataset]['Dataset Name']}} -->
+        <b>{{$t('gis.controller.dataset')}}:</b>{{datasetMeta[activeIndicatorsMeta.dataset] && datasetMeta[activeIndicatorsMeta.dataset].datasetName}}
       </p>
       <p class="d-none d-print-block">
         <b>{{$t('spiders.definition')}}:</b>{{activeIndicatorsMeta.def}}
@@ -501,8 +500,11 @@ export default {
   }
   @media print {
     .print-root {
-      max-height: 4200px;
+      max-height: 4480px;
       overflow: hidden;
+    }
+    .regionTitle {
+      display: none !important;
     }
   }
 </style>

@@ -48,7 +48,7 @@ export default {
         for(let datasetCode in datasetsData) {
           let dataset = datasetsData[datasetCode];
           dataset.code = datasetCode;
-          datasetsList.push(dataset);
+          datasetsList.push(datasetCode);
         }
         datasetsList.sort(function (a, b) {
           if (a.priority < b.priority) {
@@ -57,14 +57,15 @@ export default {
           if (a.priority > b.priority) {
             return -1;
           }
-          if (a['Dataset Name'] > b['Dataset Name']) {
+          if (a.datasetName > b.datasetName) {
             return 1;
           }
-          if (a['Dataset Name'] < b['Dataset Name']) {
+          if (a.datasetName < b.datasetName) {
             return -1;
           }
           return 0;
         });
+        console.log(datasetsList, datasetsData)
         commit("setDatasetsList", datasetsList);
         commit("setDatasetsMeta", datasetsData);
       }

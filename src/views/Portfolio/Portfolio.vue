@@ -479,21 +479,23 @@ export default {
       })
       return list
     },
-    fundingCategoryText() {
-      return this.fundingCategoriesTypes.find(c => c.value === this.fundingCategory).text
-    },
-    regionFunding() {
-      let computeFunding = this.year === 'all' ? this.getProjectFundning :
+    computeFunding() {
+      return this.year === 'all' ? this.getProjectFundning :
       (project) => {
         if(project.budget[this.year]) {
           return project.budget[this.year]
         }
         return 0
       }
+    },
+    fundingCategoryText() {
+      return this.fundingCategoriesTypes.find(c => c.value === this.fundingCategory).text
+    },
+    regionFunding() {
       let funding = this.regions.map(region => {
         let value = this.filteredProjects.reduce((budget, project) => {
           if(project.region.toLowerCase() === region){
-            return budget + computeFunding(project)
+            return budget + this.computeFunding(project)
           }
           return budget
         },0)
@@ -506,17 +508,10 @@ export default {
       return funding
     },
     regionFundingMobile() {
-      let computeFunding = this.year === 'all' ? this.getProjectFundning :
-      (project) => {
-        if(project.budget[this.year]) {
-          return project.budget[this.year]
-        }
-        return 0
-      }
       let funding = this.regions.map(region => {
         let value = this.filteredProjectsByGoal.reduce((budget, project) => {
           if(project.region.toLowerCase() === region){
-            return budget + computeFunding(project)
+            return budget + this.computeFunding(project)
           }
           return budget
         },0)
@@ -529,17 +524,10 @@ export default {
       return funding
     },
     sourcesFunding() {
-      let computeFunding = this.year === 'all' ? this.getProjectFundning :
-      (project) => {
-        if(project.budget[this.year]) {
-          return project.budget[this.year]
-        }
-        return 0
-      }
       let labels = this.fundingCategoriesTypes.filter(c => c.value !== 'all').map(c => {
         let value = this.filteredProjects.reduce((budget, project) => {
           let projectBudget = 0
-          projectBudget += computeFunding(project)
+          projectBudget += this.computeFunding(project)
           let financing = project.donors.reduce((finance, donorId, index, donors )=> {
             let donor = this.fundingCategories[donorId];
             if (c.value == "Programme Countries") {
@@ -568,17 +556,10 @@ export default {
       return labels
     },
     sourcesFundingMobile() {
-      let computeFunding = this.year === 'all' ? this.getProjectFundning :
-      (project) => {
-        if(project.budget[this.year]) {
-          return project.budget[this.year]
-        }
-        return 0
-      }
       let labels = this.fundingCategoriesTypes.filter(c => c.value !== 'all').map(c => {
         let value = this.filteredProjectsByGoal.reduce((budget, project) => {
           let projectBudget = 0
-          projectBudget += computeFunding(project)
+          projectBudget += this.computeFunding(project)
           let financing = project.donors.reduce((finance, donorId, index, donors )=> {
             let donor = this.fundingCategories[donorId];
             if (c.value == "Programme Countries") {

@@ -584,6 +584,12 @@ export function updateTimeChart({ dataset, optionSelected }) {
     timeSeriesTooltip.style("visibility", "hidden");
   }
   function legend(g) {
+    if(timeData.length === 0) {
+      g.selectAll("line.link").remove()
+      g.selectAll("line.h").remove()
+      g.selectAll("text.legend").remove()
+      return
+    }
     const fontSize = 10;
     const legendData = legendLayout(timeData, fontSize);
     if(width >= 800) {

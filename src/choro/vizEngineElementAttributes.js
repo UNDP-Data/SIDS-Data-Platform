@@ -51,7 +51,6 @@ export function processVizElementAttributes() {
     for(let i=0;i<subindexList.length;i++){
       MRTa[i] = this.multiRectTransform(country, bBox, indicatorDataObj, this.indexData, this.indiSelections,this.indexWeights,i);
     }
-    console.log(MRTa, country)
     vizElementAttributes[country] = {
       VT: VTa,
       RT: RTa,

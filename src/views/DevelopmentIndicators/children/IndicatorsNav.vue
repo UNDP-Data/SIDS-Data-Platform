@@ -97,6 +97,7 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-img
+                    v-if="datasetsWithIcons.includes(item)"
                     contain
                     :max-height="dataset === item ? 40 :50 "
                     :src="require(`@/assets/media/datasets/${item}.png`)"
@@ -105,20 +106,20 @@
               </v-list-item>
             </template>
 
-            <v-card class="tooltip-card pt-2">
+            <v-card v-if="datasetsWithIcons.includes(item)" class="tooltip-card pt-2">
               <v-img
                 contain
                 max-height="50"
                 :src="require(`@/assets/media/datasets/${item}.png`)"
               ></v-img>
-              <v-card-title class="mb-1 active-indicator_header">{{datasetMeta[item.name] ? datasetMeta[item.name]['Dataset Name'] : ''}}</v-card-title>
+              <v-card-title class="mb-1 active-indicator_header">{{datasetMeta[item] ? datasetMeta[item]['Dataset Name'] : ''}}</v-card-title>
               <v-card-text>
                 <div class="mb-1">
-                  {{datasetMeta[item.name] ? datasetMeta[item.name]['# of indicators'] : ''}} indicators
-                  {{datasetMeta[item.name] ? datasetMeta[item.name]['SIDS Coverage'] : ''}} SIDS
+                  {{datasetMeta[item] ? datasetMeta[item]['# of indicators'] : ''}} indicators
+                  {{datasetMeta[item] ? datasetMeta[item]['SIDS Coverage'] : ''}} SIDS
 
                 </div>
-                <b>Organization:</b>{{datasetMeta[item.name] ? datasetMeta[item.name]['Organization'] : ''}}
+                <b>Organization:</b>{{datasetMeta[item] ? datasetMeta[item]['Organization'] : ''}}
               </v-card-text>
             </v-card>
           </v-tooltip>
@@ -270,7 +271,6 @@
 <script>
 /*global gtag*/
 import { mapState } from 'vuex';
-import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
 
 export default {
@@ -288,8 +288,7 @@ export default {
       activeCategory: 'allCategories',
       activeSubCategory: 'allSubcategories',
       activeIndicator:null,
-      datasetMeta: datasetMeta,
-      datasets: [
+      datasetsWithIcons: [
         'key',
         'hdr',
         'wdi',
@@ -315,6 +314,8 @@ export default {
     ...mapState({
       indicatorsCategories: state => state.indicators.indicatorsCategories,
       indicatorsMeta: state => state.indicators.indicatorsMeta,
+      datasetMeta: state => state.indicators.datasetsMeta,
+      datasets: state => state.indicators.datasetsList,
       data: state => state.indicators.activeIndicatorData,
       MLTargetSize: state => state.indicators.MLTargetSize
     }),
