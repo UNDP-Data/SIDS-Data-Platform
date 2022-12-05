@@ -318,7 +318,7 @@ this.sidsMapSelection
 
     .attr("y", function () {
       try {
-        return -8.6 * countryListLongitude.indexOf(this.parentNode.id) + 272;
+        return -9.6 * countryListLongitude.indexOf(this.parentNode.id) + 272;
       } catch {
         return 0;
       }
@@ -326,7 +326,7 @@ this.sidsMapSelection
     .attr("x", function () {
       let index = countryListLongitude.indexOf(this.parentNode.id);
       if (index >= 0) {
-        return 8.6 * index + 338;
+        return 9.6 * index + 338;
       } else {
         //not the best way of making these hidden. should be improved
         return -1000;

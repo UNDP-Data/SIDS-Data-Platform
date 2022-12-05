@@ -368,7 +368,7 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
 
     // }
   } else if (this.indiSelections["viz"] == "global") {
-    let leftMargin = 60,
+    let leftMargin = 50,
 
     margin = 2;
     let filtered = Object.fromEntries(
