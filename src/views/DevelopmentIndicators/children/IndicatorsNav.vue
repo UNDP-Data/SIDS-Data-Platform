@@ -85,6 +85,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
                 v-show="!dataset || dataset === item"
+                v-if="datasetsWithIcons.includes(item) || dataset === item"
                 class="list-scrollabe_item dataset-item"
                 :class="{'dataset-item-active':dataset === item}"
                 :key="item"
@@ -97,7 +98,6 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-img
-                    v-if="datasetsWithIcons.includes(item)"
                     contain
                     :max-height="dataset === item ? 40 :50 "
                     :src="require(`@/assets/media/datasets/${item}.png`)"
@@ -289,24 +289,29 @@ export default {
       activeSubCategory: 'allSubcategories',
       activeIndicator:null,
       datasetsWithIcons: [
-        'key',
+        'blasiak',
+        'epi',
+        'fao',
+        'gggr',
+        'ghi',
         'hdr',
-        'wdi',
+        'igrac',
         'ihme',
-        'ohi',
+        'irena 2',
+        'irena',
+        'itu',
+        'key',
         'mvi',
         'ndgain',
-        'epi',
+        'ohi',
+        'rfti',
+        'sdg',
         'ssi',
         'unctad',
         'unicef',
         'undesa',
-        'irena',
-        'igrac',
-        'itu',
-        'gggr',
-        'ghi',
-        'blasiak'
+        'wdi',
+        'who'
       ]
     }
   },
