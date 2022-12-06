@@ -158,10 +158,20 @@
                     </template>
                     <v-card flat>
                       <v-card-title class="coal-title">
-                        {{ $t('root.'+ activeGoalType +'.'+n.id + '.name') }}
+                        <template v-if="n.id==='all'">
+                          {{ $t('root.goals.'+ activeGoalType) }}
+                        </template>
+                        <template v-else>
+                          {{ $t('root.'+ activeGoalType +'.'+n.id + '.name') }}
+                        </template>
                       </v-card-title>
                       <v-card-text>
-                        {{ $t('root.'+ activeGoalType +'.'+n.id + '.content') }}
+                        <template v-if="n.id==='all'">
+
+                        </template>
+                        <template v-else>
+                          {{ $t('root.'+ activeGoalType +'.'+n.id + '.content') }}
+                        </template>
                       </v-card-text>
                     </v-card>
                   </v-tooltip>
@@ -258,9 +268,9 @@ export default {
         if (this.activeGoalType === "pillars") {
           hasGoal = dataset.pillars.includes(this.activePillar)
         } else if (this.activeGoalType === "sdgs") {
-          hasGoal = dataset.sdg.includes(this.activeGoal)
+          hasGoal = this.activeGoal === 1 || dataset.sdg.includes(this.activeGoal-1)
         } else if (this.activeGoalType === "samoa") {
-          hasGoal = dataset.samoa.includes(this.activeGoal)
+          hasGoal = this.activeGoal === 1 || dataset.samoa.includes(this.activeGoal-1)
         }
         if (hasGoal) {
           array.push(dataset);
@@ -278,7 +288,14 @@ export default {
       return filteredDatasets
     },
     activeGoals() {
-      return this.goals[this.activeGoalType];
+      return [{
+        value:0,
+        id:'all',
+        name: this.$t(`root.goals.${this.activeGoalType}`),
+        color: "#E3253C",
+        type:'this.activeGoalType',
+        title: this.$t(`root.goals.${this.activeGoalType}`),
+      }, ...this.goals[this.activeGoalType]]
     },
     firstDatasetName() {
       if(this.dualModeEnabled) {
@@ -307,9 +324,9 @@ export default {
     },
     getGoalImage(index) {
       if (this.activeGoalType === "sdgs") {
-        return require(`@/assets/media/goals-icons/sdgs/${index + 1}.png`);
+        return require(`@/assets/media/goals-icons/sdgs/${index}.png`);
       } else {
-        return require(`@/assets/media/goals-icons/samoa/${index + 1}.png`);
+        return require(`@/assets/media/goals-icons/samoa/${index}.png`);
       }
     },
     goalUpdateNext() {
@@ -424,6 +441,9 @@ export default {
   }
   .goal-type-list .v-list-item{
     min-height: 28px !important;
+  }
+  .sdg-menu {
+    background-color: rgba(221, 221, 221, 0.7) !important;
   }
   @media (max-width:959px) {
     .controller-block {
