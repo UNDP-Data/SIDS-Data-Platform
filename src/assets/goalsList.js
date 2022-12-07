@@ -421,7 +421,7 @@ export const goalTypes = [
 ]
 export const goalTypesGis = [
   {
-    name: "SIDS offer Pillars",
+    name: "SIDS Offer Pillars",
     value: "pillars",
     headerImg: require("@/assets/media/goals-icons/sidsOfferPillars.png"),
     description:

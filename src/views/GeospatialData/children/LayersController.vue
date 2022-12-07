@@ -51,6 +51,7 @@
         <v-col cols="6">
           <v-list
             color="transparent"
+            class="goal-type-list pb-1"
             v-if="activeGoalType === 'pillars'"
             dense
           >

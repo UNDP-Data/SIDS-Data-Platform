@@ -375,7 +375,7 @@ export default {
       });
       if(this.searchString !=='') {
         return indicatorsArray.filter(indicator => {
-          return indicator.Dataset !== 'key' && indicator.indicator.toLowerCase().includes(this.searchString.toLowerCase());
+          return indicator.Dataset !== 'key' && indicator.indicator.toLowerCase().includes(this.searchString.toLowerCase()) && indicator.codesArray[0] === indicator.indicatorCode;
         })
       }
       return indicatorsArray;
