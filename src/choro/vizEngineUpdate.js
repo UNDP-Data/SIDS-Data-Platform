@@ -1159,14 +1159,14 @@ export function updateRegionLables() {
             pacificX: 725,
             pacificY:
               40 * (regionRanks.findIndex(v => v === regionRank["pacific"]+'p')) +
-              60,
+              120,
             caribbeanX: 725,
             caribbeanY:
               40 * (regionRanks.findIndex(v => v === regionRank["caribbean"]+'c')) +
-              60,
+              120,
             aisX: 725,
             aisY:
-              40 * (regionRanks.findIndex(v => v === regionRank["ais"]+'a')) + 60,
+              40 * (regionRanks.findIndex(v => v === regionRank["ais"]+'a')) + 120,
           };
         } else {
           regionTitleVals = {
