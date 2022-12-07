@@ -100,7 +100,7 @@
                   <v-img
                     contain
                     :max-height="dataset === item ? 40 :50 "
-                    :src="require(`@/assets/media/datasets/${item}.png`)"
+                    :src="`${apiPath}/assets/indicator-icons/${item}.png`"
                   ></v-img>
                 </v-list-item-content>
               </v-list-item>
@@ -110,7 +110,7 @@
               <v-img
                 contain
                 max-height="50"
-                :src="require(`@/assets/media/datasets/${item}.png`)"
+                :src="`${apiPath}/assets/indicator-icons/${item}.png`"
               ></v-img>
               <v-card-title class="mb-1 active-indicator_header">{{datasetMeta[item] ? datasetMeta[item].datasetName : ''}}</v-card-title>
               <v-card-text>
@@ -288,6 +288,7 @@ export default {
       activeCategory: 'allCategories',
       activeSubCategory: 'allSubcategories',
       activeIndicator:null,
+      apiPath: process.env.VUE_APP_API_PATH,
       datasetsWithIcons: [
         'blasiak',
         'epi',
