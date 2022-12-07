@@ -179,22 +179,22 @@
         </v-col>
       </v-row>
     </div>
-    <div v-if="page!=='mvi' && !mlMode" class="printable-hidden print-page-wrap print-page-wrap-last">
+    <div v-if="page!=='mvi' && !mlMode" class="printable-hidden print-page-wrap">
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">AIS</h4>
           <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-ais'" region="ais" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
-      <v-row dense>
-        <v-col cols='12'>
+      <v-row class="mb-0" dense>
+        <v-col cols='12 mb-0'>
           <h4 class="text-center">Pacific</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="mb-0 choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
-      <p class="print-page-wrap_footer">
+      <p class="print-page-wrap_footer mb-0 pb-0">
         Live version and links to original data sources available at
-        <a class="d-block mt-0" :href="pageLink">{{pageLink}}</a>
+        <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
       </p>
     </div>
   </div>
@@ -499,8 +499,9 @@ export default {
   }
   @media print {
     .print-root {
-      max-height: 4480px;
+      max-height: 4470px;
       overflow: hidden;
+      margin: 0 !important;
     }
     .regionTitle {
       display: none !important;
