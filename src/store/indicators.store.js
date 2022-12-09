@@ -96,12 +96,12 @@ export default {
           }, {} );
 
         state.datasetsList.map((dataset) => {
-          for(let category in state.indicatorsCategories[dataset.code]) {
-            for(let subCategory in state.indicatorsCategories[dataset.code][category]) {
-              for(let indicator in state.indicatorsCategories[dataset.code][category][subCategory]) {
-                state.indicatorsCategories[dataset.code][category][subCategory][indicator].map(code => {
+          for(let category in state.indicatorsCategories[dataset]) {
+            for(let subCategory in state.indicatorsCategories[dataset][category]) {
+              for(let indicator in state.indicatorsCategories[dataset][category][subCategory]) {
+                state.indicatorsCategories[dataset][category][subCategory][indicator].map(code => {
                   if(meta[code]) {
-                    meta[code].codesArray = state.indicatorsCategories[dataset.code][category][subCategory][indicator]
+                    meta[code].codesArray = state.indicatorsCategories[dataset][category][subCategory][indicator]
                   }
                 })
               }
