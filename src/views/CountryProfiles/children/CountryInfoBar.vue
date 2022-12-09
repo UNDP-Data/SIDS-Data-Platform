@@ -63,9 +63,9 @@
             <template slot="button">
               <v-list-item>
                 <v-list-item-content class="small-padding">
-                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.key-wdi2-SP.POP.TOTL')"></v-list-item-title>
+                  <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.key-wdi2-SP-POP-TOTL')"></v-list-item-title>
                   <v-list-item-subtitle
-                    class="one-line_header">{{checkNoDataIndicator('key-wdi2-SP-POP-TOTL')}}</v-list-item-subtitle>
+                    class="one-line_header">{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </template>

@@ -463,7 +463,7 @@ export default {
         'fr': 'French',
         'es': 'Spanish',
       }
-      return this.activeCountryProfile[langMap[this.locale]]
+      return this.activeCountryProfile[langMap[this.locale]] ? this.activeCountryProfile[langMap[this.locale]] : this.activeCountryProfile[langMap.English]
     },
     locale() {
       return this.$i18n.locale
