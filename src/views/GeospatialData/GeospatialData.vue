@@ -123,7 +123,6 @@ export default {
   },
   methods: {
     toggleBivar(e) {
-      console.log('toggleBivar', e)
       if(this.bivariateModeEnabled === e) {
         return
       }
@@ -142,7 +141,6 @@ export default {
       }
     },
     toggleDual(e) {
-      console.log('toggleDual', e)
       if(this.dualModeEnabled === e) {
         return
       }
