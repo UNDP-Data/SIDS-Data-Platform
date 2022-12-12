@@ -696,11 +696,6 @@ export default class Map {
     );
 
     map2Instance.resize();
-    this.mapCompare = new mapboxgl.Compare(
-      map1Instance,
-      map2Instance,
-      containerId,
-    );
   }
   removeComparison() {
     let cls = this.options.comparisonLayerState;
