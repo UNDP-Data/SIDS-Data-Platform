@@ -63,8 +63,8 @@ export default class Map {
       this._addVectorSources(true)
       this.getBasemapLabels();
       this.createComparison(containerId, this.map, this.map2);
-      this.removeComparison();
       self.map.once('idle', () => {
+        this.removeComparison();
         self.emit('loadingEnd')
       })
     });
@@ -696,11 +696,6 @@ export default class Map {
     );
 
     map2Instance.resize();
-    this.mapCompare = new mapboxgl.Compare(
-      map1Instance,
-      map2Instance,
-      containerId,
-    );
   }
   removeComparison() {
     let cls = this.options.comparisonLayerState;
