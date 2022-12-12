@@ -60,7 +60,6 @@ export default {
     handleScroll () {
       if(window.scrollY > document.getElementById('headerElement').offsetHeight - 32) {
         window.removeEventListener('scroll', this.handleScroll);
-        window.scrollTo(0,0);
         this.scrolledToContent = true
       }
     }

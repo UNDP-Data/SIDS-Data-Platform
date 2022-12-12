@@ -46,7 +46,6 @@ export default {
   },
   watch: {
     bivarEnabled() {
-      console.log(this.modeOn, 'bivar')
       this.modeOn = this.bivarEnabled
     }
   }

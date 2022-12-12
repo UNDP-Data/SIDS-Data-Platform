@@ -17,6 +17,7 @@
           :header="$t(`spiders.${axis.code.replaceAll('.','-')}.indicator`)"
           :rank="axis.value"
           :year="axis.year"
+          :ismvi="pillarName == 'MVI'"
           :value="values[0].axes[index].value"
           :source="indicatorsMetadata[axis.code].source"
           :definition="$t(`spiders.${axis.code.replaceAll('.','-')}.def`)"

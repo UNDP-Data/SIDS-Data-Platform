@@ -150,34 +150,34 @@ export default {
   color: #fff;
   padding: 0 5px;
 }
-.vue-tabs-component.vue-tabs-chrome .tabs-content,
+.vue-tabs-chrome .tabs-content,
 .tab-add {
   height: 22px;
 }
 
-.vue-tabs-component.vue-tabs-chrome {
+.vue-tabs-chrome {
   font-size: smaller;
   padding-top: 0;
   background-color: transparent;
   position: relative;
 }
-.vue-tabs-component.vue-tabs-chrome .tabs-background {
+.vue-tabs-chrome .tabs-background {
   width: 0;
   height: 0;
 }
-.vue-tabs-component.vue-tabs-chrome .tabs-main {
+.vue-tabs-chrome .tabs-main {
   background-color: #babcc1;
   border-radius: 0;
   margin: 0 7px 0 0;
 }
-.vue-tabs-component.vue-tabs-chrome .tabs-label {
+.vue-tabs-chrome .tabs-label {
   text-overflow: ellipsis;
 }
-.vue-tabs-component.vue-tabs-chrome .tabs-main,
+.vue-tabs-chrome .tabs-main,
 .tab-add {
   background-color: #babcc1;
 }
-.vue-tabs-component.vue-tabs-chrome .active .tabs-main {
+.vue-tabs-chrome .active .tabs-main {
   background-color: #e4e1e1;
 }
 .chrome-tabs-slot-button {
@@ -185,10 +185,10 @@ export default {
   line-height: 20px;
   padding: 0 10px;
 }
-.vue-tabs-component.vue-tabs-chrome .tabs-footer,
-.vue-tabs-component.vue-tabs-chrome .tabs-divider,
-.vue-tabs-component.vue-tabs-chrome .tabs-background-before,
-.vue-tabs-component.vue-tabs-chrome .tabs-background-after {
+.vue-tabs-chrome .tabs-footer,
+.vue-tabs-chrome .tabs-divider,
+.vue-tabs-chrome .tabs-background-before,
+.vue-tabs-chrome .tabs-background-after {
   display: none;
 }
 .tab-add {
