@@ -63,8 +63,8 @@ export default class Map {
       this._addVectorSources(true)
       this.getBasemapLabels();
       this.createComparison(containerId, this.map, this.map2);
+      this.removeComparison();
       self.map.once('idle', () => {
-        this.removeComparison();
         self.emit('loadingEnd')
       })
     });
