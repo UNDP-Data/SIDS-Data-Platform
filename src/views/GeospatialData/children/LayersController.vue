@@ -371,10 +371,10 @@ export default {
     hadleTabUpdate(e) {
       this.activeDataset = e.layers.dataset
       this.activeLayer = e.layers.firstLayer
-      this.activeYear = e.layers.activeYear
-      this.secondYear = e.layers.secondYear
+      this.activeYear = e.layers.firstLayer && e.layers.firstLayer.activeYear
       this.secondDataset = e.layers.secondDataset
       this.secondLayer = e.layers.secondLayer
+      this.secondYear = e.layers.secondDataset && e.layers.secondLayer.activeYear
       this.activeGoalType = e.filters.goalType
       this.activeGoal = e.filters.goal
       this.activePillar = e.filters.pillar

@@ -567,7 +567,8 @@ export function createBivariate(
     });
 
     let callback2 = function (e) {
-      if(e.dataType === 'source' && e.sourceDataType !== 'visibility' && e.sourceDataType !== "metadata" && (e.sourceId === cls.hexSize+bvls.dataLayer || e.sourceId === cls.hexSize+cls.dataLayer) && e.isSourceLoaded) {
+      if(!map.getSource("bivariate") && e.dataType === 'source' && e.sourceDataType !== 'visibility' && e.sourceDataType !== "metadata" && (e.sourceId === cls.hexSize+bvls.dataLayer || e.sourceId === cls.hexSize+cls.dataLayer) && e.isSourceLoaded) {
+        map.off('sourcedata', callback2)
         map.addSource("bivariate", {
           type: "geojson",
           data: {
@@ -586,7 +587,6 @@ export function createBivariate(
           },
         });
         self.renderBivarFeatures.apply(self,[cls, bvls]);
-        map.off('sourcedata', callback2)
       }
     }
     map.on('sourcedata', callback2)

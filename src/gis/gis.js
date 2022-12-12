@@ -670,6 +670,7 @@ export default class Map {
   }
   removeBivariateLayer() {
     if (this.map.getLayer("bivariate")) {
+      this.map.removeLayer("bivar2");
       this.map.removeLayer("bivariate");
       this.map.removeSource("bivariate");
     }
