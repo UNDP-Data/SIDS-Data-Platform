@@ -61,7 +61,7 @@ async function loadSidsSVG () {
   return resp
 }
 async function loadMapLocations () {
-  const resp = await axios.get(`https://raw.githubusercontent.com/SIDS-Dashboard/SIDSDataPlatform/main/data/exports/mapLocations.json`)
+  const resp = await axios.get(`${API_URl}/indicators/mapLocations.json`)
   return resp.data
 }
 
