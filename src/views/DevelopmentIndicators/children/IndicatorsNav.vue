@@ -605,6 +605,7 @@ export default {
 }
 .inicator-item {
   display: flex;
+  min-height: 68px;
   flex-direction: column;
 }
 .inicator-item_header {
