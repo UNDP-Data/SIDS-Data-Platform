@@ -1,22 +1,16 @@
 import axios from 'axios';
 import * as d3 from 'd3';
-// import { datasetMeta } from '@/assets/datasets/datasetMeta'
-
-const API_URL = 'https://raw.githubusercontent.com/Ben-Keller/smallislands/main/data';
-const NEW_API_URl = 'https://raw.githubusercontent.com/SIDS-Dashboard/SIDSDataPlatform/main'
-const NEW_API_URl_2 = 'https://raw.githubusercontent.com/UNDP-Data/SIDS-data-platform-API/main/data'
+const API_URl = process.env.VUE_APP_API_PATH + '/data';
 const ML_API_URL = 'https://ml-aks-ingress.eastus.cloudapp.azure.com';
+
 export default {
-  loadAllKeyData,
   loadMLestimate,
   loadMLindicatorData,
-  loadMetaData,
   loadFundingCategories,
-  loadSIDSData,
+  loadProjectData,
   loadIndicatorsCategories,
   loadGISDatasets,
   loadIndicatorsMeta,
-  loadProfileData,
   loadSidsSVG,
   loadMapLocations,
   loadIndicatorData,
@@ -29,57 +23,37 @@ export default {
   loadMLPredictorSize,
   loadGISLayer,
   loadLang,
-  loadResourcesData
+  loadResourcesData,
+  loadShareText
 }
 
-
 async function loadCountryProfile(isoCode) {
-  const resp = await axios.get(`${NEW_API_URl_2}/profiles/${isoCode}.json`)
+  const resp = await axios.get(`${API_URl}/profiles/${isoCode}.json`)
   return resp.data;
 }
 async function loadProfileIndicarotsMetadata() {
-  const resp = await axios.get(`${NEW_API_URl_2}/profiles/countryProfileMetadata.json`)
+  const resp = await axios.get(`${API_URl}/profiles/countryProfileMetadata.json`)
   return resp.data;
-}
-
-async function loadAllKeyData () {
-  const resp = await axios.get(`${API_URL}/exports/allKeyData.json`)
-  return resp.data
 }
 
 async function loadDatasetsList(){
-  const resp = await axios.get(`${NEW_API_URl_2}/indicators/datasetMeta.json`);
+  const resp = await axios.get(`${API_URl}/indicators/datasetMeta.json`);
   return resp.data;
 }
-
-
-
-async function loadMetaData () {
-  const resp = await axios.get(`${API_URL}/exports/keyMetadata.json`)
+async function loadFundingCategories () {
+  const resp = await axios.get(`${API_URl}/portfolio/fundingCategories.json`);
   return resp.data
 }
-async function loadFundingCategories () {
-  const resp = await axios.get(`${NEW_API_URl_2}/portfolio/fundingCategories.json`);
-  const result = [];
-  for (let category in resp.data) {
-    result.push(Object.assign({},resp.data[category],{name:category}));
-  }
-  return result
-}
-async function loadSIDSData () {
-  const resp = await axios.get(`${NEW_API_URl_2}/portfolio/sidsPortfolioData.csv`)
-  return d3.csvParse(resp.data)
+async function loadProjectData () {
+  const resp = await axios.get(`${API_URl}/portfolio/sidsPortfolio.json`)
+  return resp.data
 }
 async function loadIndicatorsCategories () {
-  const resp = await axios.get(`${NEW_API_URl_2}/indicators/indicatorCategories.json`)
+  const resp = await axios.get(`${API_URl}/indicators/indicatorCategories.json`)
   return resp.data
 }
 async function loadIndicatorsMeta () {
-  const resp = await axios.get(`${NEW_API_URl_2}/indicators/indicatorMeta.json`)
-  return resp.data
-}
-async function loadProfileData () {
-  const resp = await axios.get(`${NEW_API_URl}/data/profileData.json`)
+  const resp = await axios.get(`${API_URl}/indicators/indicatorMeta.json`)
   return resp.data
 }
 async function loadSidsSVG () {
@@ -87,22 +61,22 @@ async function loadSidsSVG () {
   return resp
 }
 async function loadMapLocations () {
-  const resp = await axios.get(`${NEW_API_URl}/data/exports/mapLocations.json`)
+  const resp = await axios.get(`${API_URl}/indicators/mapLocations.json`)
   return resp.data
 }
 
 async function loadIndicatorData (apiCode) {
-  const resp = await axios.get(`${NEW_API_URl_2}${apiCode}.json`)
+  const resp = await axios.get(`${API_URl}${apiCode}.json`)
   return resp.data
 }
 
 async function loadResourcesData () {
-  const resp = await axios.get(`${NEW_API_URl_2}/cms/resources.json`)
+  const resp = await axios.get(`${API_URl}/cms/resources.json`)
   return resp.data
 }
 
 async function loadTextContent () {
-  const resp = await axios.get(`${NEW_API_URl_2}/cms/en.json`)
+  const resp = await axios.get(`${API_URl}/cms/app/en.json`)
   return resp.data
 }
 
@@ -118,18 +92,18 @@ async function loadML (data,source) {
 }
 
 async function loadGISDatasets () {
-  const resp = await axios.get(`${NEW_API_URl_2}/gis/gisDatasetMeta.json`)
+  const resp = await axios.get(`${API_URl}/gis/gisDatasetMeta.json`)
   return resp.data;
 }
 
 async function loadGISLayer (id) {
-  const resp = await axios.get(`${NEW_API_URl_2}/gis/layers/${id}.json`)
+  const resp = await axios.get(`${API_URl}/gis/layers/${id}.json`)
   return resp.data;
 }
 
 async function loadMLindicatorData ({model, indicator, dataset}) {
   try {
-    const resp = await axios.get(`${NEW_API_URl_2}/ml/model${model}/${dataset}/${indicator}.json`)
+    const resp = await axios.get(`${API_URl}/ml/model${model}/${dataset}/${indicator}.json`)
     return resp.data
   } catch {
     return null
@@ -158,6 +132,11 @@ async function loadMLPredictorSize () {
 }
 
 async function loadLang(lang) {
-  let resp = await axios.get(`${NEW_API_URl_2}/cms/${lang}.json`);
+  let resp = await axios.get(`${API_URl}/cms/app/${lang}.json`);
+  return resp.data
+}
+
+async function loadShareText() {
+  let resp = await axios.get(`${API_URl}/cms/shareText.json`);
   return resp.data
 }

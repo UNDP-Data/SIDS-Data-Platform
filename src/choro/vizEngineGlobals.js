@@ -8,21 +8,21 @@
 export const hues = ["b", "b", "b",]
 export const subindexWeights={"mvi":{"Economic":1,"Geographic":1,"Environmental":1,"Financial":1}}
 
-export const countryListLongitude = ["Belize", "Jamaica", "Cayman Islands", "Cuba", "The Bahamas", "Curaçao", "Aruba", "Haiti", "Dominican Republic",
-    "St. Kitts and Nevis", "Sint Maarten","Antigua and Barbuda", "Montserrat", "Dominica", "St. Lucia"
-    , "Barbados", "St. Vincent and the Grenadines", "Grenada", "Trinidad and Tobago", "Guyana", "Suriname", "", "",
-    "Cabo Verde", "Guinea-Bissau",
-    "São Tomé and Príncipe", "Comoros", "Bahrain", "Mauritius", "Seychelles", "Maldives", "Singapore", "", "",
-    "Timor Leste", "Palau", "Papua New Guinea", "Solomon Islands",
-    "Micronesia, Fed. Sts.", "Marshall Islands", "Vanuatu", "Nauru", "Kiribati", "Fiji", "Tuvalu", "Tonga", "Niue", "Samoa", "Cook Islands"]
+export const countryListLongitude = ["BLZ", "JAM", "CYM", "CUB", "CUW", "ABW", "HTI", "DOM",
+    "KNA", "SXM","ATG", "MSR", "DMA", "LCA"
+    , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR", "", "",
+    "CPV", "GNB",
+    "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP", "", "",
+    "TLS", "PLW", "PNG", "SLB",
+    "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "TON", "NIU", "WSM", "COK"]
 //
 export const regionCountries = {
-    "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP", "AIS"],
+    "ais": ["CPV", "GNB", "STP", "COM", "BHR", "MUS", "SYC", "MDV", "SGP", "ais"],
     "pacific": ["TLS", "PLW", "PNG", "SLB","TON",
-        "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "NIU", "WSM", "TKL", "COK", "Pacific"],
+        "FSM", "MHL", "VUT", "NRU", "KIR", "FJI", "TUV", "NIU", "WSM", "TKL", "COK", "pacific"],
     "caribbean": ["BLZ", "JAM", "CYM", "CUB", "BMU", "BHS", "ABW", "CUW", "TCA", "HTI", "DOM",
         "KNA", "VGB", "AIA", "SXM", "ATG", "MSR", "DMA", "LCA"
-        , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR", "Caribbean"]
+        , "BRB", "VCT", "GRD", "TTO", "GUY", "SUR", "caribbean"]
 }
 //
 export const totalIndexRectangles =4;
@@ -36,7 +36,7 @@ export const sidsDict = {"ATG":"Antigua and Barbuda", "ABW":"Aruba","BHS":"The B
 "KNA":"St. Kitts and Nevis","VCT": "St. Vincent and the Grenadines","LCA":"St. Lucia",
 "SUR":"Suriname","TLS": "Timor Leste","TTO":"Trinidad and Tobago", "TON": "Tonga",
 "TUV":"Tuvalu","TCA":"Turks and Caicos Islands","VUT": "Vanuatu","AIA":"Anguilla",
-"COK":"Cook Islands","MSR":"Montserrat","TKL":"Tokelau","NIU": "Niue", 'AIS': 'AIS Average', 'Caribbean': 'Caribbean Average', 'Pacific': 'Pacific Average'}
+"COK":"Cook Islands","MSR":"Montserrat","TKL":"Tokelau","NIU": "Niue", 'ais': 'AIS Average', 'caribbean': 'Caribbean Average', 'pacific': 'Pacific Average'}
 
 export const regionsDict = {
   caribbean: 'Caribbean',

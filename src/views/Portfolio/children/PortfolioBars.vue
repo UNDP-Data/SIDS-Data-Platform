@@ -41,15 +41,14 @@
 </template>
 <script>
 
-import sidsdata from '@/mixins/SIDSData.mixin'
 import format from '@/mixins/format.mixin'
-import { mapState } from 'vuex';
 import { goals } from '@/assets/goalsList'
+import sidsList from '@/assets/sidsList'
 import * as d3 from 'd3';
 import PortfolioTooltip from './PortfolioSDGSTooltip'
 import tippy from 'tippy.js';
 import {hideAll} from 'tippy.js';
-
+import portfolio from '@/mixins/portfolio.mixin'
 
 export default {
   name: 'goals',
@@ -76,12 +75,9 @@ export default {
       bars: null
     }
   },
-  props:['year', 'fundingCategory', 'fundingSource', 'goalsType'],
-  mixins:[sidsdata, format],
+  props:['projects', 'year', 'goalsType'],
+  mixins:[format, portfolio],
   computed: {
-    ...mapState({
-      portfolioData: state => state.sids.portfolioData,
-    }),
     locale() {
       return this.$i18n.locale
     },
@@ -109,36 +105,26 @@ export default {
       }, {})
     },
     barsData() {
-      if(this.goalsType === 'samoa') {
-        let barsData = goals.samoa.map(() => {
-          return {
-            budget: 0,
-            projects: 0
-          }
-        });
-        this.portfolioData.map(project => {
-          let projectSdgs = project.sdg.split(",");
-          projectSdgs.map((projectSdg) => {
-            const sdgIndex = goals.sdgs.findIndex((sdg) => sdg.name === projectSdg);
-            if(sdgIndex !== -1) {
-              let priorities = this.sdgToSamoa[sdgIndex+1];
-              priorities.map((priority) => {
-                let budget = project.budget / projectSdgs.length / priorities.length;
-                barsData[priority-1].budget = barsData[priority-1].budget + budget;
-                barsData[priority-1].projects = barsData[priority-1].projects + 1;
-              })
-            }
-          })
-        })
-        return barsData
+      let allYearBarData = (project, data) => {
+        return {
+          projects: data.projects + project.year.length,
+          budget: data.budget + this.getProjectFundning(project)
+        }
       }
-      let sdgsData = this.goals.map(goal => {
-        return this.portfolioData.reduce((data, project) => {
-          if(project[goal.type].includes(goal.name)) {
-            return {
-              projects: data.projects + 1,
-              budget: data.budget + parseInt(project.budget)
-            }
+      let singleYearData = (project, data) => {
+        if(project.budget[this.year]) {
+          return {
+            projects: data.projects + 1,
+            budget: data.budget + project.budget[this.year]
+          }
+        }
+        return data;
+      }
+      let computeData = this.year === 'all' ? allYearBarData : singleYearData;
+      let sdgsData = this.goals.map((goal, index) => {
+        return this.projects.reduce((data, project) => {
+        if(project[goal.type].includes(index+1)) {
+            return computeData(project, data);
           }
           return data
         },{
@@ -155,10 +141,26 @@ export default {
       return this.barsData.map(data => data.budget)
     },
     tooltipData() {
+      let getOneYearBudget = (project) => {
+        if(project.budget[this.year]) {
+          return project.budget[this.year]
+        }
+        return 0
+      }
+      let getBudgetData = this.year === 'all' ? this.getProjectFundning : getOneYearBudget
       let res = {}
-      this.goals.map(goal => {
-        res[goal.name] = this.portfolioData.filter((project) => {
-          return project.sdg && project.sdg.includes(goal.name)
+      this.goals.map((goal,index) => {
+        res[goal.name] = this.projects.filter((project) => {
+          return project.sdg.includes(index+1)
+        }).map(project => {
+          let budget = getBudgetData(project);
+          let country = this.$t('countryNames.'+sidsList.find((c => c.iso === project.country)).id);
+          return {
+            country,
+            budget,
+            title: project.title,
+            year:this.computeYearString(project.year)
+          }
         });
       })
       return res
@@ -189,9 +191,7 @@ export default {
       this.y2.domain([0, d3.max(this.budgetCount, function (d) { return d; })]);
     },
     drawBars() {
-
       let rootThis = this;
-
       this.x.domain(this.goals.map(goal => goal.name));
       this.x2.domain(this.goals.map(goal => goal.name));
       this.x.rangeRound([0, this.barsWidth]);

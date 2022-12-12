@@ -2,28 +2,28 @@
   <v-card v-if="value || mean || min || max" class="selection-info description-block background-grey">
     <v-card-text class="pa-2">
       <h4 v-if="name">{{name}}</h4>
-      <h4 v-if="value && !bivarClass">Value:</h4>
+      <h4 v-if="value && !bivarClass">{{$t('gis.toolbar.value')}}:</h4>
       <p  v-if="value && !bivarClass" class="mb-0">
         {{value}}
         <span v-html="activeLayer.Unit"></span>
       </p>
 
-      <h4  v-if="bivarClass">Class:</h4>
+      <h4  v-if="bivarClass">{{$t('gis.toolbar.class')}}:</h4>
       <p class="mb-0">
         {{bivarClass}}
       </p>
-      <h4  v-if="level1">First value ({{level1}}):</h4>
-      <p v-if="value1" class="mb-0">
-        {{value1}}
+      <h4  v-if="level1">{{$t('gis.toolbar.firstValue')}} ({{level1}}):</h4>
+      <p v-if="level1" class="mb-0">
+        {{value1 === false ? $t('root.noData') : value1}}
       </p>
 
-      <h4  v-if="level2">First value ({{level2}}):</h4>
-      <p v-if="value2" class="mb-0">
-        {{value2}}
+      <h4  v-if="level2">{{$t('gis.toolbar.secondValue')}} ({{level2}}):</h4>
+      <p v-if="level2" class="mb-0">
+        {{value2 === false ? $t('root.noData') : value2}}
       </p>
-      <h4 v-if="mean || min || max">Regional statistics:</h4>
+      <h4 v-if="mean || min || max">{{$t('gis.toolbar.regionalStatistics')}}:</h4>
       <p v-if="mean" class="mb-0">
-        Mean {{mean}}
+        {{$t('gis.toolbar.mean')}} {{mean}}
         <span v-html="activeLayer.Unit"></span>
       </p>
       <p v-if="max" class="mb-0">
@@ -90,9 +90,18 @@ export default {
       if(e !== null) {
         this.bivarClass = e.class;
         this.level1 = e.level1;
-        this.value1 = this.nFormatter(e.value1,2)
         this.level2 = e.level2;
-        this.value2 = this.nFormatter(e.value2,2)
+
+        if(isNaN(e.value1)) {
+          this.value1 = false
+        } else {
+          this.value1 = this.nFormatter(e.value1,2)
+        }
+        if(isNaN(e.value2)) {
+          this.value2 = false
+        } else {
+          this.value2 = this.nFormatter(e.value2,2)
+        }
       } else {
         this.bivarClass = null
         this.level1 = null

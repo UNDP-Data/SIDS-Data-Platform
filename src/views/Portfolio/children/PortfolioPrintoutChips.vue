@@ -5,13 +5,13 @@
         <span class="portfolio-print-filters-list_name">
           {{$t('root.forms.region')}}:
         </span>
-        {{$t('regions.'+ region)}}
+        {{region}}
       </p>
       <p class="portfolio-print-filters-list mb-0">
         <span class="portfolio-print-filters-list_name">
           {{$t('root.forms.years')}}:
         </span>
-        {{year}}
+        {{this.year === 'all' ? this.$t('portfolio.yearsAll') : this.year}}
       </p>
       <p class="portfolio-print-filters-list mb-0">
         <span class="portfolio-print-filters-list_name">
@@ -23,7 +23,7 @@
         <span class="portfolio-print-filters-list_name">
           {{$t('portfolio.fundingSources')}}:
         </span>
-        {{fundingSource === 'All' ? $t('portfolio.' + fundingSource) : fundingSource}}
+        {{fundingSource === 'all' ? $t('portfolio.fundingTypes.all') : fundingCategories[fundingSource].donor}}
       </p>
     </v-col>
     <v-col cols="6" class="portfolio-print-chips">
@@ -53,7 +53,7 @@
           <portfolio-indicator-box
             class="portfolio-printout-chip"
             :value="projectsFundning"
-            :title="$t('portfolio.chips.fundingSource')"
+            :title="$t('portfolio.chips.funding')"
           />
         </v-col>
       </v-row>
@@ -64,21 +64,22 @@
 <script>
 import PortfolioIndicatorBox from './PortfolioIndicatorBox'
 import format from '@/mixins/format.mixin'
-import { goals } from '@/assets/goalsList'
-
+import { mapState } from 'vuex';
 export default {
   name: 'PortfolioPrintoutChips',
   mixins:[format],
-  props:['year', 'fundingCategory', 'fundingSource', 'region', 'goalType', 'goal', 'projects'],
+  props:['year', 'fundingCategory', 'fundingSource', 'region', 'projects'],
   components:{
     PortfolioIndicatorBox
   },
   data() {
     return {
-      sdgToSamoa: { 1: [1], 2: [6], 3: [11], 4: [12, 13], 5: [13], 6: [7], 7: [3], 8: [1], 9: [1, 8], 10: [12, 13], 11: [1, 4, 8, 10], 12: [9, 10], 13: [2, 4], 14: [5, 10, 14], 15: [10, 15], 16: [1, 13], 17: [16] },
     }
   },
   computed:{
+    ...mapState({
+      fundingCategories: state => state.sids.fundingCategories,
+    }),
     projectsNumber() {
       switch (this.region) {
         case 'Caribbean':
@@ -107,46 +108,23 @@ export default {
       let distinctProjects = [];
       this.projects.map(project => {
         if (!distinctProjects.includes(project.title)) {
-          if(this.checkGoalValidity(project)) {
-            distinctProjects.push(project.title)
-          }
+          distinctProjects.push(project.title)
         }
       })
       return distinctProjects.length
     },
     projectsFundning() {
       let funding = 0;
-      this.projects.map(project => {
-        if(this.checkGoalValidity(project)) {
-          funding = funding + parseInt(project.budget);
-        }
-      })
-      return this.nFormatter(funding)
-    }
-  },
-  methods: {
-    checkGoalValidity(project) {
-      if(this.goalType === 'sdgs') {
-        if(this.goal === 'all') {
-          return project.sdg !== ''
-        }
-        return project.sdg.includes(this.goal)
-      } else if (this.goalType === 'signature-solutions') {
-        if(this.goal === 'all') {
-          return project.solution !== ''
-        }
-        return project.solution.includes(this.goal)
+      if(this.year === 'all') {
+        this.projects.map(project => {
+          funding += project.year.reduce((budget, year) => {return budget + project.budget[year]},0);
+        })
       } else {
-        if(this.goal === 'all') {
-          return project.sdg !== ''
-        }
-        let samoaNumber = goals.samoa.findIndex(goal => goal.name === this.goal) + 1,
-        sdgNumbers = this.sdgToSamoa[samoaNumber]
-
-        return sdgNumbers.some(number => {
-          return project.sdg.includes(goals.sdgs[number].name)
+        this.projects.map(project => {
+          funding += project.budget[this.year];
         })
       }
+      return this.nFormatter(funding)
     }
   }
 }

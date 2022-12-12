@@ -85,6 +85,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
                 v-show="!dataset || dataset === item"
+                v-if="datasetsWithIcons.includes(item) || dataset === item"
                 class="list-scrollabe_item dataset-item"
                 :class="{'dataset-item-active':dataset === item}"
                 :key="item"
@@ -99,26 +100,26 @@
                   <v-img
                     contain
                     :max-height="dataset === item ? 40 :50 "
-                    :src="require(`@/assets/media/datasets/${item}.png`)"
+                    :src="`${apiPath}/assets/indicator-icons/${item}.png`"
                   ></v-img>
                 </v-list-item-content>
               </v-list-item>
             </template>
 
-            <v-card class="tooltip-card pt-2">
+            <v-card v-if="datasetsWithIcons.includes(item)" class="tooltip-card pt-2">
               <v-img
                 contain
                 max-height="50"
-                :src="require(`@/assets/media/datasets/${item}.png`)"
+                :src="`${apiPath}/assets/indicator-icons/${item}.png`"
               ></v-img>
-              <v-card-title class="mb-1 active-indicator_header">{{datasetMeta[item.name] ? datasetMeta[item.name]['Dataset Name'] : ''}}</v-card-title>
+              <v-card-title class="mb-1 active-indicator_header">{{datasetMeta[item] ? datasetMeta[item].datasetName : ''}}</v-card-title>
               <v-card-text>
                 <div class="mb-1">
-                  {{datasetMeta[item.name] ? datasetMeta[item.name]['# of indicators'] : ''}} indicators
-                  {{datasetMeta[item.name] ? datasetMeta[item.name]['SIDS Coverage'] : ''}} SIDS
+                  {{datasetMeta[item] ? datasetMeta[item].numIndicators : ''}} indicators
+                  {{datasetMeta[item] ? datasetMeta[item].numCountries : ''}} SIDS
 
                 </div>
-                <b>Organization:</b>{{datasetMeta[item.name] ? datasetMeta[item.name]['Organization'] : ''}}
+                <b>Organization:</b>{{datasetMeta[item] ? datasetMeta[item].organization : ''}}
               </v-card-text>
             </v-card>
           </v-tooltip>
@@ -239,6 +240,7 @@
         </v-select>
         <v-btn
           @click="toggleYearPlay"
+          :disabled="chartType==='series' || activeIndicatorYears.length === 1"
           icon
           >
           <v-icon v-if="playingYear">mdi-pause</v-icon>
@@ -269,7 +271,6 @@
 <script>
 /*global gtag*/
 import { mapState } from 'vuex';
-import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
 
 export default {
@@ -287,26 +288,31 @@ export default {
       activeCategory: 'allCategories',
       activeSubCategory: 'allSubcategories',
       activeIndicator:null,
-      datasetMeta: datasetMeta,
-      datasets: [
-        'key',
+      apiPath: process.env.VUE_APP_API_PATH,
+      datasetsWithIcons: [
+        'blasiak',
+        'epi',
+        'fao',
+        'gggr',
+        'ghi',
         'hdr',
-        'wdi',
+        'igrac',
         'ihme',
-        'ohi',
+        'irena 2',
+        'irena',
+        'itu',
+        'key',
         'mvi',
         'ndgain',
-        'epi',
+        'ohi',
+        'rfti',
+        'sdg',
         'ssi',
         'unctad',
         'unicef',
         'undesa',
-        'irena',
-        'igrac',
-        'itu',
-        'gggr',
-        'ghi',
-        'blasiak'
+        'wdi',
+        'who'
       ]
     }
   },
@@ -314,6 +320,8 @@ export default {
     ...mapState({
       indicatorsCategories: state => state.indicators.indicatorsCategories,
       indicatorsMeta: state => state.indicators.indicatorsMeta,
+      datasetMeta: state => state.indicators.datasetsMeta,
+      datasets: state => state.indicators.datasetsList,
       data: state => state.indicators.activeIndicatorData,
       MLTargetSize: state => state.indicators.MLTargetSize
     }),
@@ -368,7 +376,7 @@ export default {
       });
       if(this.searchString !=='') {
         return indicatorsArray.filter(indicator => {
-          return indicator.Dataset !== 'key' && indicator.indicator.toLowerCase().includes(this.searchString.toLowerCase());
+          return indicator.Dataset !== 'key' && indicator.indicator.toLowerCase().includes(this.searchString.toLowerCase()) && indicator.codesArray[0] === indicator.indicatorCode;
         })
       }
       return indicatorsArray;
@@ -597,6 +605,7 @@ export default {
 }
 .inicator-item {
   display: flex;
+  min-height: 68px;
   flex-direction: column;
 }
 .inicator-item_header {

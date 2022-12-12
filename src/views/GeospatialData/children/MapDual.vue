@@ -19,7 +19,7 @@
       </v-btn>
     </template>
     <span>
-      <b>Comparison</b> - Enable a draggable slider to visually compare datasets
+      <b>{{$t('gis.toolbar.comparison[0]')}}</b> {{$t('gis.toolbar.comparison[1]')}}
     </span>
   </v-tooltip>
   </div>

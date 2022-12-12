@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { indexColors } from './index-data'
 import {getBoundingBox, isNumeric, sort_object, regionColors} from './vizEngineHelperFunctions';
-import { regionCountries, countryListLongitude, sidsDict } from './vizEngineGlobals';
+import { regionCountries, countryListLongitude } from './vizEngineGlobals';
 
 
 
@@ -70,12 +70,12 @@ export function processVizElementAttributes() {
 export function updateCountryAVGbars(dataObj) {
 
   let rootThis = this;
-  let avgs = ['AIS', 'Caribbean', 'Pacific']
+  let avgs = ['ais', 'caribbean', 'pacific']
 
   if(this.indiSelections["viz"] === 'bars' && this.vizMode !== 'index') {
     for (let i = 0; i < avgs.length; i++) {
       let avg = Object.keys(dataObj).reduce((avg, country) => {
-        if(this.profileData[country].Region === avgs[i] && dataObj[country] !== 'No Data') {
+        if(rootThis.profileData[country].region === avgs[i] && dataObj[country] !== 'No Data') {
           avg[0] += 1;
           avg[1] += dataObj[country]
         }
@@ -86,7 +86,7 @@ export function updateCountryAVGbars(dataObj) {
         dataObj[avgs[i]] = avg
         this.profileData[avgs[i]] = {
           id:avgs[i].toLowerCase()+'Average',
-          Region: avgs[i]
+          region: avgs[i]
         }
         let g = this.sidsMapSelection.select(`g#${avgs[i]}`);
         if(!g.empty()) {
@@ -112,7 +112,7 @@ export function updateCountryAVGbars(dataObj) {
               .style("fill", function () {
                 return (
                   "#" +
-                  regionColors(rootThis.profileData[avgs[i]].Region, "Y").substring(1)
+                  regionColors(rootThis.profileData[avgs[i]].region, "Y").substring(1)
                 );
               }) //
             g.append('text')
@@ -152,12 +152,12 @@ export function updateCountryAVGbars(dataObj) {
 export function updateCountryAVGMVIbars(dataObj) {
 
     // let rootThis = this;
-    let avgs = ['AIS', 'Caribbean', 'Pacific']
-
+    let avgs = ['ais', 'caribbean', 'pacific']
+    let rootThis = this;
     if(this.indiSelections["viz"] === 'bars' && this.vizMode === 'index') {
       for (let i = 0; i < avgs.length; i++) {
         let avg = Object.keys(dataObj).reduce((avg, country) => {
-          if(this.profileData[country].Region === avgs[i] && dataObj[country] !== 'No Data') {
+          if(this.profileData[country].region === avgs[i] && dataObj[country] !== 'No Data') {
             avg[0] += 1;
             avg[1] += dataObj[country]
           }
@@ -167,13 +167,13 @@ export function updateCountryAVGMVIbars(dataObj) {
           avg = avg[1]/avg[0]
           dataObj[avgs[i]] = avg
           this.profileData[avgs[i]] = {
-            Region: avgs[i],
+            region: avgs[i],
             id:avgs[i].toLowerCase()+'Average',
           }
           Object.keys(this.indexData).map(indexName => {
             let indexDataObject = this.indexData[indexName].data.recentValue
             let avg = Object.keys(indexDataObject).reduce((avg, country) => {
-              if(this.profileData[country].Region === avgs[i] && indexDataObject[country] !== 'No Data') {
+              if(this.profileData[country].region === avgs[i] && indexDataObject[country] !== 'No Data') {
                 avg[0] += 1;
                 avg[1] += indexDataObject[country]
               }
@@ -233,7 +233,9 @@ export function updateCountryAVGMVIbars(dataObj) {
               g.append('text')
                 .attr("font-size", 10)
                 .attr('fill-opacity', 0)
-                .text(avgs[i] + ' Average')
+                .text(() => {
+                  return rootThis.$t.call(rootThis.vue, 'countryNames.' + avgs[i].toLowerCase() + 'Average')
+                })
                 .attr("id", function () {
                   return avgs[i] + '-text';
                 })
@@ -366,28 +368,26 @@ export function rectTransform(country, bBox, indicatorDataObj, indiSelections) {
 
     // }
   } else if (this.indiSelections["viz"] == "global") {
-    let leftMargin = 60,
+    let leftMargin = 50,
 
     margin = 2;
-
     let filtered = Object.fromEntries(
       Object.entries(indicatorDataObj).filter(([, v]) => typeof v == "number")
     );
 
     let countryOrder = countryListLongitude,
 
-    rank = countryOrder.indexOf(sidsDict[country]),
-
+    rank = countryOrder.indexOf(country),
     //        sortedData = sort_object(filtered);
 
     indicatorValues = Object.values(filtered),
 
     totalVals = countryOrder.length;
-
+    // console.log(rank, country)
     let columnBase = {
       y: totalHeight * 0.85,
       x: (650 / totalVals) * rank + leftMargin,
-      width: totalWidth / totalVals - margin,
+      width: 0,
       height: 0,
     };
 

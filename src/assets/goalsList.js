@@ -1,24 +1,25 @@
 export const goals = {
   samoa:[
     {
+      value:1,
       id:'eGrowth',
       name: "Sustainable, inclusive and equitable economic growth",
       color: "#A21942",
       type: 'samoa',
       title: "Goal 1 - Sustained and sustainable, inclusive and equitable economic growth with decent work for all",
       content: "To support SIDS to achieve sustained, inclusive and equitable growth with full and productive employment, social protection and the creation of decent work for all.",
-
     },
     {
+      value:2,
       id:'clChange',
       name: "Climate Change",
       color: "#3F7E44",
       type:'samoa',
       title: "Goal 2 - Climate Change",
       content: "To help SIDS with climate adaptation, including persistent drought and extreme weather events, sea-level rise, coastal erosion and ocean acidification.",
-
     },
     {
+      value:3,
       id:'susEnegy',
       name: "Sustainable Energy",
       color: "#FCC30B",
@@ -28,6 +29,7 @@ export const goals = {
 
     },
     {
+      value:4,
       id:'disaster',
       name: "Disaster Risk Reduction",
       color: "#19486A",
@@ -37,6 +39,7 @@ export const goals = {
 
     },
     {
+      value:5,
       id:'oceans',
       name: "Oceans and Seas",
       color: "#0A97D9",
@@ -45,6 +48,7 @@ export const goals = {
       content: "To support healthy, productive and resilient oceans and coasts are critical for, inter alia, poverty eradication, access to sufficient, safe and nutritious food, livelihoods, economic development, essential ecosystem services, and identity and culture in SIDS.",
     },
     {
+      value:6,
       id:'food',
       name: "Food Security and Nutrition",
       color: "#DDA63A",
@@ -54,6 +58,7 @@ export const goals = {
 
     },
     {
+      value:7,
       id:'water',
       name: "Water and Sanitation",
       color: "#26BDE2",
@@ -63,6 +68,7 @@ export const goals = {
 
     },
     {
+      value:8,
       id:'transport',
       name: "Sustainable Transportation",
       color: "#fd6920",
@@ -72,6 +78,7 @@ export const goals = {
 
     },
     {
+      value:9,
       id:'production',
       name: "Sustainable Consumption and Production",
       color: "#c08c2b",
@@ -81,6 +88,7 @@ export const goals = {
 
     },
     {
+      value:10,
       id:'waste',
       name: "Chemical and Waste management",
       color: "#FD9D24",
@@ -90,6 +98,7 @@ export const goals = {
 
     },
     {
+      value:11,
       id:'health',
       name: "Health and NCDs",
       color: "#4C9F38",
@@ -99,6 +108,7 @@ export const goals = {
 
     },
     {
+      value:12,
       id:'gender',
       name: "Gender Equality",
       color:"#FF3A21",
@@ -108,6 +118,7 @@ export const goals = {
 
     },
     {
+      value:13,
       id:'socialDevelopment',
       name: "Social Development",
       color: "#DD1367",
@@ -117,6 +128,7 @@ export const goals = {
 
     },
     {
+      value:14,
       id:'biodiversity',
       name: "Biodiversity",
       color:"#0A97D9",
@@ -126,6 +138,7 @@ export const goals = {
 
     },
     {
+      value:15,
       id:'invasiveSpecies',
       name: "Invasive species",
       color: "#00689D",
@@ -135,6 +148,7 @@ export const goals = {
 
     },
     {
+      value:16,
       id:'meansOfImplementation',
       name: "Means of Implementation",
       color: "#00A99D",
@@ -146,6 +160,7 @@ export const goals = {
   ],
   sdgs:[
     {
+      value:1,
       id:'poverty',
       name: "No poverty",
       color: "#E5243B",
@@ -154,6 +169,7 @@ export const goals = {
       content: "To end poverty in all its forms, everywhere, through a powerful commitment to leave no one behind and to reach those fathest behind first.",
     },
     {
+      value:2,
       id:'hunger',
       name: "Zero hunger",
       color: "#DDA63A",
@@ -162,6 +178,7 @@ export const goals = {
       content: "To end hunger, achieve food security and improve nutrition and promote sustainable agriculture.",
     },
     {
+      value:3,
       id:'health',
       name: "Good health and well-being",
       color: "#4C9F38",
@@ -170,6 +187,7 @@ export const goals = {
       content: "To ensure healthy lives and promote well-being for all at all ages.",
     },
     {
+      value:4,
       id:'education',
       name: "Quality education",
       color: "#C5192D",
@@ -178,6 +196,7 @@ export const goals = {
       content: "To ensure inclusive and equitable quality education and promote lifelong learning opportunities for all.",
     },
     {
+      value:5,
       id:'gender',
       name: "Gender equality",
       color: "#FF3A21",
@@ -187,6 +206,7 @@ export const goals = {
 
     },
     {
+      value:6,
       id:'water',
       name: "Clean water and sanitation",
       color: "#26BDE2",
@@ -196,6 +216,7 @@ export const goals = {
 
     },
     {
+      value:7,
       id:'energy',
       name: "Affordable and clean energy",
       color: "#FCC30B",
@@ -205,6 +226,7 @@ export const goals = {
 
     },
     {
+      value:8,
       id:'growth',
       name: "Decent work and economic growth",
       color: "#A21942",
@@ -214,6 +236,7 @@ export const goals = {
 
     },
     {
+      value:9,
       id:'industry',
       name: "Industry, innovation and infrastructure",
       color: "#FD6925",
@@ -223,6 +246,7 @@ export const goals = {
 
     },
     {
+      value:10,
       id:'inequality',
       name: "Reduced inequalities",
       color: "#DD1367",
@@ -231,6 +255,7 @@ export const goals = {
       content: "To reduce income inequality within and among countries.",
     },
     {
+      value:11,
       id:'cities',
       name: "Sustainable cities and communities",
       color: "#FD9D24",
@@ -240,6 +265,7 @@ export const goals = {
 
     },
     {
+      value:12,
       id:'consumption',
       name: "Responsible consumption and production",
       color: "#BF8B2E",
@@ -249,6 +275,7 @@ export const goals = {
 
     },
     {
+      value:13,
       id:'climate',
       name: "Climate action",
       color: "#3F7E44",
@@ -258,6 +285,7 @@ export const goals = {
 
     },
     {
+      value:14,
       id:'marineLife',
       name: "Life below water",
       color: "#0A97D9",
@@ -267,6 +295,7 @@ export const goals = {
 
     },
     {
+      value:15,
       id:'landLife',
       name: "Life on Land",
       color: "#56C02B",
@@ -276,6 +305,7 @@ export const goals = {
 
     },
     {
+      value:16,
       id:'peace',
       name: "Peace, justice, and strong institutions",
       color: "#00689D",
@@ -285,6 +315,7 @@ export const goals = {
 
     },
     {
+      value:17,
       id:'partnerships',
       name: "Partnerships for the goals",
       color: "#19486A",
@@ -295,6 +326,7 @@ export const goals = {
   ],
   'signature-solutions':[
     {
+      value:1,
       id:'poverty',
       name: "Keeping people out of poverty",
       color: "#E3253C",
@@ -302,6 +334,7 @@ export const goals = {
       title: "Keeping people out of poverty",
     },
     {
+      value:2,
       id:'governance',
       name: "Strengthen effective, inclusive and accountable governance",
       color: "#0076B0",
@@ -309,6 +342,7 @@ export const goals = {
       title: "Strengthen effective, inclusive and accountable governance",
     },
     {
+      value:3,
       id:'prevention',
       name: "Enhance national prevention and recovery capacities for resilient societies",
       color: "#F26A2C",
@@ -316,6 +350,7 @@ export const goals = {
       title: "Enhance national prevention and recovery capacities for resilient societies",
     },
     {
+      value:4,
       id:'solutions',
       name: "Promote nature-based solutions for a sustainable planet",
       color: "#417F45",
@@ -323,6 +358,7 @@ export const goals = {
       title: "Promote nature-based solutions for a sustainable planet",
     },
     {
+      value:5,
       id:'energy',
       name: "Close the energy gap",
       color: "#FAB715",
@@ -330,6 +366,7 @@ export const goals = {
       title: "Close the energy gap",
     },
     {
+      value:6,
       id:'equality',
       name: "Strenghten gender equality and the empowerment of women and girls",
       color: "#EF412C",
@@ -384,7 +421,7 @@ export const goalTypes = [
 ]
 export const goalTypesGis = [
   {
-    name: "SIDS offer Pillars",
+    name: "SIDS Offer Pillars",
     value: "pillars",
     headerImg: require("@/assets/media/goals-icons/sidsOfferPillars.png"),
     description:

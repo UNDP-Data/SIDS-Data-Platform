@@ -19,11 +19,13 @@
     </v-row>
     <root-footer class="d-none d-md-flex d-none-print" />
     <indicators-ml-popup/>
+    <root-social/>
   </v-container>
 </template>
 <script>
 import RootHeader from "@/components/RootHeader.vue";
 import RootFooter from "@/components/RootFooter.vue";
+import RootSocial from "@/components/RootSocial.vue";
 import RootLoader from "@/components/RootLoader.vue";
 import indicatorsMlPopup from "@/views/DevelopmentIndicators/children/indicatorsMlPopup.vue";
 import NavMenu from "@/components/NavMenu.vue";
@@ -38,6 +40,7 @@ export default {
     RootHeader,
     RootFooter,
     RootLoader,
+    RootSocial,
     NavMenu,
     indicatorsMlPopup,
     NavMenuMobile,

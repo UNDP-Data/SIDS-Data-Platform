@@ -13,8 +13,8 @@ const routes = [
     props: (to) => ({
       region: to.query.region || 'allSids',
       year: to.query.year || 'all',
-      fundingCategory: decodeURIComponent(to.query.fundingCategory || 'All') ,
-      fundingSource: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
+      fundingCategory: decodeURIComponent(to.query.fundingCategory || 'all') ,
+      fundingSource: decodeURIComponent(to.query.fundingSource || 'all'),
       goalsType: to.params.goalsType || 'sdgs'
     }),
     meta:{
@@ -30,15 +30,8 @@ const routes = [
     component: () => import(/* webpackChunkName: "portfolio" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
-      await store.dispatch('sids/getAllKeyData');
-      await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
-      await store.dispatch('sids/generatePortfolioData', {
-        region: to.query.region || 'allSids',
-        year: to.query.year || 'all',
-        category: decodeURIComponent(to.query.fundingCategory || 'All') ,
-        source: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
-      });
+      await store.dispatch('sids/setProjectData');
       setTimeout(() => {
         store.commit('loader/setLoading', false);
       }, 500)
@@ -56,7 +49,7 @@ const routes = [
       indicator = to.params.indicator || 'region',
       year = to.params.year || 'recentValue';
       if(document.body.clientWidth - 40 < 800 && indicator === 'region') {
-        indicator = 'hdr-137506'
+        indicator = 'hdr-hdi'
       }
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'

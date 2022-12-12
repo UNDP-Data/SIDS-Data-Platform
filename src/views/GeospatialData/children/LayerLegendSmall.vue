@@ -1,12 +1,12 @@
 <template>
-  <v-card class="background-grey histogram_frame mr-4 ml-4 mr-md-0 ml-md-0">
+  <v-card class="background-grey mr-4 ml-4 mr-md-0 ml-md-0">
     <div
       v-if="activeLayer"
-      class="pic app-body population-per-km col-flex"
+      class="w-100 col-flex"
     >
       <div v-if="hasData" class="d-flex d-md-block">
         <div  class="d-flex justify-center legend-title mr-4 ml-4 align-center">
-          <span v-html="activeLayer.units"></span>
+          <span v-html="activeLayer.Units"></span>
         </div>
         <div
           class="d-flex justify-space-evenly legend main-legend pb-1 pb-md-0"
@@ -16,27 +16,16 @@
             <div class="legend-item_point" :style="'background-color:'+item.color"></div>
           </div>
         </div>
-        <canvas
-          class="d-none d-md-block"
-          :id="'histogram'+ hexIndex"
-          width="320"
-          height="115"
-        ></canvas>
       </div>
       <v-card-text class="pt-2 pb-2" v-else>
-        {{$t('gis.legend.noData')}}
+        No Data for this Region
       </v-card-text>
     </div>
-    <v-card-text class="pt-2 pb-2" v-else>
-      {{$t('gis.legend.selectDataset')}}
-    </v-card-text>
   </v-card>
 </template>
 
 <script>
 import format from "@/mixins/format.mixin";
-import Chart from "chart.js";
-import chroma from "chroma-js";
 
 export default {
   name: 'LayerDescription',
@@ -122,13 +111,11 @@ export default {
   props:[
     'activeLayer',
     'map',
-    'hexIndex'
   ],
   methods: {
     updateLegend(e) {
       if(e.noData && e.activeLayer === this.activeLayer) {
         this.hasData = false
-        this.chart = null
       } else if(e.activeLayer === this.activeLayer) {
         this.legendPoints = e.breaks.map((item, index) => {
           return {
@@ -137,119 +124,7 @@ export default {
           }
         })
         this.hasData = true;
-        this.$nextTick(() => {
-          if(this.chart) {
-            this.updateHistogramm(e);
-          } else {
-            this.initHistogramm(e);
-          }
-        })
       }
-    },
-    initHistogramm(e) {
-      let canvas = document.getElementById("histogram"+ this.hexIndex),
-      data = this.computeData(e.selectedData, e.colorRamp, e.breaks, e.precision);
-      this.chartOptions.scales.yAxes[0].ticks.max = data.maxY;
-      this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObj) {
-        chartObj.ticks = [];
-        var ticksScale = data.maxY;
-        while (ticksScale > data.minY && ticksScale >= 1) {
-          chartObj.ticks.push(ticksScale);
-          ticksScale /= 10;
-        }
-      }
-      this.chart = Chart.Bar(canvas, {
-        data: data.data,
-        options: this.chartOptions,
-      })
-    },
-    updateHistogramm(e) {
-      let data = this.computeData(e.selectedData, e.colorRamp, e.breaks, e.precision);
-      this.chartOptions.scales.yAxes[0].ticks.max = data.maxY;
-      this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObj) {
-        chartObj.ticks = [];
-        var ticksScale = data.maxY;
-        while (ticksScale > data.minY && ticksScale >= 1) {
-          chartObj.ticks.push(ticksScale);
-          ticksScale /= 10;
-        }
-      }
-      this.chart.data = data.data
-      this.chart.update(0);
-    },
-    computeData(
-      selectedData, colors, breaks, precision
-    ) {
-      let newBreaksAndColorRamp = this.computeBreaksAndColorRamp(
-        selectedData,
-        colors,
-        breaks
-      );
-
-      let colorRampNew = newBreaksAndColorRamp.colorRamp;
-      let breaks_histogram = newBreaksAndColorRamp.histogramBreaks;
-      let breaks_precision = [];
-      for (let i = 0; i < breaks_histogram.length; i++) {
-        breaks_precision.push(this.nFormatter(breaks_histogram[i], precision));
-      }
-
-      var histogram_data = Array(200).fill(0);
-      for (let i = 0; i < selectedData.length; i++) {
-        for (let j = 0; j < 200 - 1; j++) {
-          if (
-            selectedData[i] >= breaks_histogram[j] &&
-            selectedData[i] < breaks_histogram[j + 1]
-          ) {
-            histogram_data[j] += 1;
-          }
-        }
-        if (selectedData[i] >= breaks_histogram[200 - 1]) {
-          histogram_data[200 - 1] += 1;
-        }
-      }
-
-      var data = {
-        labels: breaks_precision.slice(0, -1),
-        datasets: [
-          {
-            data: histogram_data,
-            backgroundColor: colorRampNew,
-          },
-        ],
-      };
-
-      var maxY = Math.pow(10, Math.ceil(Math.log10(Math.max(...histogram_data))));
-      var minY = Math.pow(10, Math.ceil(Math.log10(Math.min(...histogram_data))));
-
-      return {
-        data,
-        maxY,
-        minY
-      }
-    },
-    computeBreaksAndColorRamp( data, colors, currentBreaks ) {
-      let numBreaks = 4,
-      histogram_breaks = chroma.limits(data, 'e', 200),
-      break_index = 0,
-      break_counters = Array(numBreaks).fill(0);
-      for (let i = 0; i < 200; i++) {
-        if (histogram_breaks[i] > currentBreaks[break_index + 1]) {
-          break_index++;
-        }
-        break_counters[break_index]++;
-      }
-      let colorRampNew = [];
-      for (let i = 0; i < numBreaks; i++) {
-        let colorRampPart = chroma
-          .scale([colors[i], colors[i + 1]])
-          .mode("lch")
-          .colors(break_counters[i]);
-        colorRampNew = colorRampNew.concat(colorRampPart);
-      }
-      return {
-        colorRamp: colorRampNew,
-        histogramBreaks: histogram_breaks,
-      };
     },
   },
   mounted() {
@@ -279,6 +154,10 @@ export default {
 }
 .justify-space-evenly {
   justify-content: space-evenly;
+}
+.w-100 {
+  width: 100%;
+  padding: 4px;
 }
 .legend-item_point {
   width: 17px;

@@ -170,4 +170,8 @@ export default {
    .about-page .v-expansion-panel::after {
      border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
    }
+
+  .about-page .v-expansion-panel-header {
+    font-weight: 600;
+  }
 </style>
