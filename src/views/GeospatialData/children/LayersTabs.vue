@@ -99,12 +99,6 @@ export default {
       this.$set(this.activeTab, 'label', this.createTabLabel())
       this.activeTab.layers.firstLayer = this.firstLayer
     },
-    activeYear(){
-      this.activeTab.layers.activeYear = this.activeYear
-    },
-    secondYear(){
-      this.activeTab.layers.secondYear = this.secondYear
-    },
     secondDataset(){
       this.activeTab.layers.secondDataset = this.secondDataset
     },
