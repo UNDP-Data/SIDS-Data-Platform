@@ -85,11 +85,6 @@ export function addOcean(activeDataset, activeLayer, comparison = false) {
     if (map.getLayer(constants.userLayers[layer])) {
       map.removeLayer(constants.userLayers[layer]);
     }
-    if(this.options.mode3d) {
-      if (map.getLayer(constants.userLayers[layer]+'-3d')) {
-        map.removeLayer(constants.userLayers[layer]+'-3d');
-      }
-    }
   }
 
   let layerOptions = {

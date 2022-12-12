@@ -181,8 +181,8 @@ export default {
       this.chartOptions.scales.yAxes[0].ticks.min = e.minY;
       this.chartOptions.scales.xAxes[0].ticks.max = e.maxX;
       this.chartOptions.scales.xAxes[0].ticks.min = e.minX;
-      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.Unit;
-      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.Unit;
+      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.units;
+      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.units;
       this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
         chartObjY.ticks.push(e.Y_breaks[3]);
@@ -208,8 +208,8 @@ export default {
       this.chartOptions.scales.yAxes[0].ticks.min = e.minY;
       this.chartOptions.scales.xAxes[0].ticks.max = e.maxX;
       this.chartOptions.scales.xAxes[0].ticks.min = e.minX;
-      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.Unit;
-      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.Unit;
+      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.units;
+      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.units;
       this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
         chartObjY.ticks.push(e.Y_breaks[3]);

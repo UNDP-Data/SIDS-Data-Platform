@@ -10,7 +10,6 @@ import MapboxCompare from "mapbox-gl-compare";
 import "mapbox-gl-compare/dist/mapbox-gl-compare.css";
 import booleanIntersects from "@turf/boolean-intersects";
 import bbox from "@turf/bbox";
-
 import { updateData, on, emit, addOcean, zoomToCountry, changeHexagonSize, add3D, off, changeColor, changeOpacity, changeBasemap, toggleLabels, startRegionAnalisys, toggleBivariateComponents, createBivariate, toggleMapboxGLCompare } from './gisPublicFunctions'
 import { onDataClick, onAdminClick, onBivariateClick } from './gisEventHandlers'
 
@@ -117,7 +116,6 @@ export default class Map {
     });
   }
 
-
   _addDataVectorSource(comparison = false, layerId, resolution) {
     let map = !comparison ? this.map : this.map2;
     if (!map.getSource(resolution + layerId)) {
@@ -177,9 +175,7 @@ export default class Map {
       if (!layerId.includes("fl")) {
 
         map.removeLayer("ocean");
-        if(map.getLayer("ocean-3d")){
-          map.removeLayer("ocean-3d");
-        }
+
         cls.hexSize = "hex5";
 
         let lastSymbol;
@@ -213,11 +209,6 @@ export default class Map {
       for (var layer in constants.userLayers) {
         if (map.getLayer(constants.userLayers[layer])) {
           map.removeLayer(constants.userLayers[layer]);
-        }
-        if(this.options.mode3d) {
-          if (map.getLayer(constants.userLayers[layer]+'-3d')) {
-            map.removeLayer(constants.userLayers[layer]+'-3d');
-          }
         }
       }
       let lastSymbol;
@@ -703,7 +694,6 @@ export default class Map {
     this.removeLayer(cls.hexSize+'-3d', true)
     this._removeDataVectorSource(true, cls.dataLayer, cls.hexSize)
     this.mapCompare.remove();
-    this.removeLayer(this.options.comparisonLayerState.hexSize, this.map2);
     document.getElementById("map2").classList.add("d-none");
   }
   renderFeatures(map, cls, comparison) {
