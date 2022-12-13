@@ -268,7 +268,7 @@
       </v-row>
       <p v-if="!countryText" class="print-page-wrap_footer d-none d-print-block  mb-0 pb-0">
         Live version and links to original data sources available at
-        <a class="d-block mt-0 mb-0 pb-0" :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
+        <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
       </p>
     </div>
     <div :class="{'print-page-wrap' : countryText}">
@@ -307,7 +307,7 @@
         </v-row>
         <p :v-if="countryText" class=" mb-0 pb-0 print-page-wrap_footer d-none d-print-block">
           Live version and links to original data sources available at
-          <a class="d-block mt-0 mb-0 pb-0" :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
+          <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
         </p>
       </div>
   </div>
@@ -453,6 +453,9 @@ export default {
       profiles: state => state.profiles.profiles,
       indicatorsMetadata: state => state.profiles.indicatorsMetadata
     }),
+    pageLink() {
+      return window.location.toString()
+    },
     radarAnnotation() {
       return this.$t('countryProfile.infoBox.radarAnnotation.'+this.rankType)
     },

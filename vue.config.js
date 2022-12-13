@@ -22,7 +22,7 @@ module.exports = {
 function getPublicPath() {
   switch (process.env.NODE_ENV) {
     case 'production':
-        return '/sids/'
+        return '/sids/app/'
     case 'staging':
       return '/SIDSDataPlatform/'
     default:
