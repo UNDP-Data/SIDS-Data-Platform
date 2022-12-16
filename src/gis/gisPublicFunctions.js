@@ -41,6 +41,7 @@ export function updateData(
       id: cls.hexSize,
       type: "fill",
       source: cls.hexSize+cls.dataLayer,
+      filter: [">=", "mean", 0],
       "source-layer": cls.hexSize+'_'+cls.dataLayer,
       layout: {
         visibility: "visible",
@@ -443,7 +444,6 @@ export function toggleLabels(label) {
   this.options.labelsDisabled = label;
   if (label == true) {
     this.options.basemapLabels.forEach((x) => {
-      //console.log(x);
       map.addLayer(x);
       if (x.type === "line") {
         if (map.getLayer(this.options.currentLayerState.hexSize)) {
@@ -555,6 +555,7 @@ export function createBivariate(
     map.addLayer({
       id: 'bivar2',
       type: "fill",
+      filter: [">", "mean", 0],
       source: cls.hexSize+bvls.dataLayer,
       "source-layer": cls.hexSize+'_'+bvls.dataLayer,
       layout: {
@@ -582,6 +583,7 @@ export function createBivariate(
           id: "bivariate",
           source: "bivariate",
           type: "fill",
+          filter: [">=", "mean", 0],
           paint: {
             "fill-opacity": self.options.opacity,
           },
