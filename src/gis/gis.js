@@ -700,13 +700,12 @@ export default class Map {
   renderFeatures(map, cls, comparison) {
     var features = map.queryRenderedFeatures({
       layers: [cls.hexSize],
-    });
+    }).filter(d => d.properties.mean >= 0);
     let self = this;
     if (features && features.length && features.some(f => typeof f.properties.mean !== 'undefined')) {
       let uniFeatures;
       uniFeatures = self.getUniqueFeatures(features, "fid");
       let selectedData = uniFeatures.map((x) => x.properties.mean);
-      console.log(features, uniFeatures, selectedData)
       let breaks = chroma.limits(selectedData, "q", 4);
       let breaks_new = [];
       self.options.precision = 1;
@@ -809,10 +808,10 @@ export default class Map {
     map = this.map;
     let features = map.querySourceFeatures(cls.hexSize+cls.dataLayer, {
       sourceLayer: [cls.hexSize+'_'+cls.dataLayer]
-    });
+    }).filter(d => d.properties.mean >= 0);
     let features2 = map.querySourceFeatures(cls.hexSize+bvls.dataLayer, {
       sourceLayer: [cls.hexSize+'_'+bvls.dataLayer]
-    });
+    }).filter(d => d.properties.mean >= 0);
 
 
     if (features && features.length != 0 && features.some(f => typeof f.properties.mean !== 'undefined') && features2 && features2.length != 0 && features2.some(f => typeof f.properties.mean !== 'undefined')) {
