@@ -5,7 +5,9 @@
 </template>
 
 <script>
-import Chart from "chart.js";
+import { Chart, PieController, ArcElement, PointElement, LinearScale, Title } from "chart.js";
+Chart.register(PieController, ArcElement, PointElement, LinearScale, Title);
+
 
 export default {
   name: 'IndicatorsPieChart',

@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import Chart from "chart.js";
+import { Chart, BarController, BarElement, PointElement, CategoryScale, LinearScale, Title } from "chart.js";
+Chart.register(BarController, BarElement, PointElement, CategoryScale, LinearScale, Title);
 import { mapState } from 'vuex';
 
 export default {

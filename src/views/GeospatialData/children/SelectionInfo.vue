@@ -2,8 +2,8 @@
   <v-card v-if="value || mean || min || max" class="selection-info description-block background-grey">
     <v-card-text class="pa-2">
       <h4 v-if="name">{{name}}</h4>
-      <h4 v-if="value && !bivarClass">{{$t('gis.toolbar.value')}}:</h4>
-      <p  v-if="value && !bivarClass" class="mb-0">
+      <h4 v-if="value !== null && !bivarClass">{{$t('gis.toolbar.value')}}:</h4>
+      <p  v-if="value !== null && !bivarClass" class="mb-0">
         {{value}}
         <span v-html="activeLayer.Unit"></span>
       </p>
@@ -64,7 +64,7 @@ export default {
   ],
   methods: {
     updateValue(e) {
-      if(e.value) {
+      if(e.value || e.value === 0) {
         this.value = this.nFormatter(e.value,2)
       } else {
         this.value = null
