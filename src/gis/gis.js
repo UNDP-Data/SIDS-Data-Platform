@@ -706,6 +706,7 @@ export default class Map {
       let uniFeatures;
       uniFeatures = self.getUniqueFeatures(features, "fid");
       let selectedData = uniFeatures.map((x) => x.properties.mean);
+      console.log(features, uniFeatures, selectedData)
       let breaks = chroma.limits(selectedData, "q", 4);
       let breaks_new = [];
       self.options.precision = 1;

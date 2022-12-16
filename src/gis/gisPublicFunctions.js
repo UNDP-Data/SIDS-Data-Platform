@@ -41,6 +41,7 @@ export function updateData(
       id: cls.hexSize,
       type: "fill",
       source: cls.hexSize+cls.dataLayer,
+      filter: [">", "mean", 0],
       "source-layer": cls.hexSize+'_'+cls.dataLayer,
       layout: {
         visibility: "visible",
