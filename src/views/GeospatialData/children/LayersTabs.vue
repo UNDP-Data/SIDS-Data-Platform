@@ -85,7 +85,7 @@ export default {
       this.tab = key;
     },
     createTabLabel() {
-      return (this.firstLayer && this.firstLayer.description) || this.$t('gis.newTab');
+      return (this.firstLayer && this.firstLayer.title) || this.$t('gis.newTab');
     }
   },
   mounted() {
