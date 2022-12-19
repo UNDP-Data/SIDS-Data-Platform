@@ -67,6 +67,11 @@ export default {
       xAxisLinear: false,
       yAxisLinear: false,
       chartOptions: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
         animation: {
             duration: 0
         },
@@ -101,10 +106,6 @@ export default {
                 if (valueX === 0.1) return "0.1";
                 if (valueX > 10)
                   return nFormatter(valueX, 1);
-                if(valueX < 0) {
-                  console.log('-'+nFormatter(Math.abs(valueX), 2))
-                  return '-'+nFormatter(Math.abs(valueX), 2);
-                }
                 return nFormatter(valueX, 2);
               },
             },
@@ -139,10 +140,6 @@ export default {
                 if (valueY === 0.1) return "0.1";
                 if (valueY > 10)
                   return nFormatter(valueY, 1);
-                if(valueY < 0) {
-                  console.log('-'+nFormatter(Math.abs(valueY), 2))
-                  return '-'+nFormatter(Math.abs(valueY), 2);
-                }
                 return nFormatter(valueY, 2);
               },
             },
@@ -191,15 +188,25 @@ export default {
         })
       }
     },
+    generateText(string, maxLength) {
+      let res = [['']];
+      string.split(" ").map(text => {
+        if(res[res.length-1][0].length + text.length + 1 < maxLength) {
+          res[res.length-1][0] = `${res[res.length-1]} ${text}`
+        } else {
+          res.push([text])
+        }
+      })
+      return res
+    },
     initHistogramm(e) {
       let canvas = document.getElementById("bivar_histogram");
       this.chartOptions.scales.y.max = e.maxY;
       this.chartOptions.scales.y.min = e.minY;
-      console.log(this.chartOptions)
       this.chartOptions.scales.x.max = e.maxX;
       this.chartOptions.scales.x.min = e.minX;
-      this.chartOptions.scales.y.title.text = [[this.secondLayer.title], [this.secondLayer.units]];
-      this.chartOptions.scales.x.title.text = [[this.activeLayer.title], [this.activeLayer.units]];
+      this.chartOptions.scales.y.title.text = this.generateText(`${this.secondLayer.title} ${this.secondLayer.units}`, 27);
+      this.chartOptions.scales.x.title.text = this.generateText(`${this.activeLayer.title} ${this.activeLayer.units}`, 40);
       this.chartOptions.scales.y.afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
         chartObjY.ticks.push({
@@ -218,7 +225,6 @@ export default {
           value: e.Y_breaks[0],
           major: true
         });
-        console.log(chartObjY.ticks)
       }
       this.chartOptions.scales.x.afterBuildTicks = function (chartObjX) {
         chartObjX.ticks = [];
@@ -248,11 +254,10 @@ export default {
     updateHistogramm(e) {
       this.chartOptions.scales.y.max = e.maxY;
       this.chartOptions.scales.y.min = e.minY
-      console.log(this.chartOptions)
       this.chartOptions.scales.x.max = e.maxX;
       this.chartOptions.scales.x.min = e.minX;
-      this.chartOptions.scales.y.title.text = [[this.secondLayer.title], [this.secondLayer.units]];
-      this.chartOptions.scales.x.title.text = [[this.activeLayer.title], [this.activeLayer.units]];
+      this.chartOptions.scales.y.title.text = this.generateText(`${this.secondLayer.title} ${this.secondLayer.units}`, 27);
+      this.chartOptions.scales.x.title.text = this.generateText(`${this.activeLayer.title} ${this.activeLayer.units}`, 40);
       this.chartOptions.scales.y.afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
         chartObjY.ticks.push({
@@ -293,7 +298,6 @@ export default {
       }
       this.chart.options = this.chartOptions;
       this.chart.data.datasets = e.data;
-      console.log(this.chartOptions)
       this.chart.update(0);
     },
   },

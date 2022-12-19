@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import { Chart, BarController, BarElement, PointElement, CategoryScale, LinearScale, Title } from "chart.js";
-Chart.register(BarController, BarElement, PointElement, CategoryScale, LinearScale, Title);
+import { Chart, BarController, BarElement, Legend, PointElement, CategoryScale, LinearScale, Title, Tooltip } from "chart.js";
+Chart.register(BarController, BarElement, Legend, PointElement, CategoryScale, LinearScale, Title, Tooltip);
 import { mapState } from 'vuex';
 
 export default {
@@ -16,9 +16,11 @@ export default {
       colors:['#00AED9', '#3EB049', '#FDB713', '#FDB713', '#ed4530', '#0b306b', '#863785', '#378386', '#863737', '#86377f', '#f16a29'],
       chartConfig: {
         maintainAspectRatio: false,
-        legend: {
-          position: "bottom",
-          align: "start"
+        plugins: {
+          legend: {
+            position: "bottom",
+            align: "start"
+          }
         },
         tooltips: {
           callbacks: {

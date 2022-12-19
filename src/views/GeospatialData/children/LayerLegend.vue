@@ -48,6 +48,11 @@ export default {
       chart:null,
       hasData:true,
       chartOptions: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
         responsive: true,
         tooltips: {
           enabled: false,
@@ -145,18 +150,6 @@ export default {
       let canvas = document.getElementById("histogram"+ this.hexIndex),
       data = this.computeData(e.selectedData, e.colorRamp, e.breaks, e.precision);
       this.chartOptions.scales.y.max = data.maxY;
-      // this.chartOptions.scales.y.afterTickToLabelConversion = function (chartObj) {
-      //   chartObj.ticks = [];
-      //   var ticksScale = data.maxY;
-      //   while (ticksScale > data.minY && ticksScale >= 1) {
-      //     chartObj.ticks.push({
-      //       value:ticksScale,
-      //       label: ticksScale.toString(),
-      //       major:true
-      //     });
-      //     ticksScale /= 10;
-      //   }
-      // }
       this.chart = new Chart(canvas, {
         type:'bar',
         data: data.data,
@@ -166,18 +159,6 @@ export default {
     updateHistogramm(e) {
       let data = this.computeData(e.selectedData, e.colorRamp, e.breaks, e.precision);
       this.chartOptions.scales.y.max = data.maxY;
-      // this.chartOptions.scales.y.afterTickToLabelConversion = function (chartObj) {
-      //   chartObj.ticks = [];
-      //   var ticksScale = data.maxY;
-      //   while (ticksScale > data.minY && ticksScale >= 1) {
-      //     chartObj.ticks.push({
-      //       value:ticksScale,
-      //       label: ticksScale.toString(),
-      //       major:true
-      //     });
-      //     ticksScale /= 10;
-      //   }
-      // }
       this.chart.data = data.data
       this.chart.update(0);
     },
