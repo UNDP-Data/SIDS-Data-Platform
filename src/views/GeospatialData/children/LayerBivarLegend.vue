@@ -52,8 +52,10 @@
 
 <script>
 import format from "@/mixins/format.mixin";
-import Chart from "chart.js";
+import { Chart, ScatterController, PointElement,CategoryScale, LinearScale, LogarithmicScale, Title } from "chart.js";
 import size from '@/mixins/size.mixin';
+
+Chart.register(ScatterController, PointElement,CategoryScale, LinearScale, LogarithmicScale, Title);
 
 export default {
   name: 'LayerBivarLegend',
@@ -65,72 +67,83 @@ export default {
       xAxisLinear: false,
       yAxisLinear: false,
       chartOptions: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
         animation: {
             duration: 0
         },
         scales: {
-          xAxes: [
-            {
+          x: {
+            // beginAtZero:true,
+            display: true,
+            type: "logarithmic",
+            autoSkip: false,
+            title: {
               display: true,
-              type: "logarithmic",
-              scaleLabel: {
-                display: true,
+            },
+            ticks: {
+              maxRotation: 45,
+              minRotation: 45,
+              major: {
+                enabled: true
               },
-              ticks: {
-                maxRotation: 45,
-                minRotation: 45,
-
-                callback: function (
-                  valueX
-                ) {
-                  if (valueX === 100000000) return "100M";
-                  if (valueX === 10000000) return "10M";
-                  if (valueX === 1000000) return "1M";
-                  if (valueX === 100000) return "100K";
-                  if (valueX === 10000) return "10K";
-                  if (valueX === 1000) return "1K";
-                  if (valueX === 100) return "100";
-                  if (valueX === 10) return "10";
-                  if (valueX === 1) return "1";
-                  if (valueX === 0.1) return "0.1";
-                  if (valueX > 10)
-                    return nFormatter(valueX, 1);
-                  else return nFormatter(valueX, 2);
-                },
+              callback: function (
+                valueX
+              ) {
+                // console.log(valueX)
+                if (valueX === 100000000) return "100M";
+                if (valueX === 10000000) return "10M";
+                if (valueX === 1000000) return "1M";
+                if (valueX === 100000) return "100K";
+                if (valueX === 10000) return "10K";
+                if (valueX === 1000) return "1K";
+                if (valueX === 100) return "100";
+                if (valueX === 10) return "10";
+                if (valueX === 1) return "1";
+                if (valueX === 0.1) return "0.1";
+                if (valueX > 10)
+                  return nFormatter(valueX, 1);
+                return nFormatter(valueX, 2);
               },
             },
-          ],
-          yAxes: [
-            {
+          },
+          y: {
+            display: true,
+            beginAtZero:true,
+            autoSkip: false,
+            type: "logarithmic",
+            title: {
               display: true,
-              type: "logarithmic",
-              scaleLabel: {
-                display: true,
+            },
+            ticks: {
+              major: {
+                enabled: true
               },
-              ticks: {
-                maxRotation: 45,
-                minRotation: 45,
+              maxRotation: 45,
+              minRotation: 45,
 
-                callback: function (
-                  valueY
-                ) {
-                  if (valueY === 100000000) return "100M";
-                  if (valueY === 10000000) return "10M";
-                  if (valueY === 1000000) return "1M";
-                  if (valueY === 100000) return "100K";
-                  if (valueY === 10000) return "10K";
-                  if (valueY === 1000) return "1K";
-                  if (valueY === 100) return "100";
-                  if (valueY === 10) return "10";
-                  if (valueY === 1) return "1";
-                  if (valueY === 0.1) return "0.1";
-                  if (valueY > 10)
-                    return nFormatter(valueY, 1);
-                  else return nFormatter(valueY, 2);
-                },
+              callback: function (
+                valueY
+              ) {
+                if (valueY === 100000000) return "100M";
+                if (valueY === 10000000) return "10M";
+                if (valueY === 1000000) return "1M";
+                if (valueY === 100000) return "100K";
+                if (valueY === 10000) return "10K";
+                if (valueY === 1000) return "1K";
+                if (valueY === 100) return "100";
+                if (valueY === 10) return "10";
+                if (valueY === 1) return "1";
+                if (valueY === 0.1) return "0.1";
+                if (valueY > 10)
+                  return nFormatter(valueY, 1);
+                return nFormatter(valueY, 2);
               },
             },
-          ],
+          },
         },
         legend: {
           position: "top",
@@ -155,8 +168,8 @@ export default {
   },
   methods:{
     updateAxisType() {
-      this.chartOptions.scales.yAxes[0].type = this.yAxisType;
-      this.chartOptions.scales.xAxes[0].type = this.xAxisType;
+      this.chartOptions.scales.y.type = this.yAxisType;
+      this.chartOptions.scales.x.type = this.xAxisType;
       this.chart.options = this.chartOptions;
       this.chart.update(0);
     },
@@ -175,27 +188,62 @@ export default {
         })
       }
     },
+    generateText(string, maxLength) {
+      let res = [['']];
+      string.split(" ").map(text => {
+        if(res[res.length-1][0].length + text.length + 1 < maxLength) {
+          res[res.length-1][0] = `${res[res.length-1]} ${text}`
+        } else {
+          res.push([text])
+        }
+      })
+      return res
+    },
     initHistogramm(e) {
       let canvas = document.getElementById("bivar_histogram");
-      this.chartOptions.scales.yAxes[0].ticks.max = e.maxY;
-      this.chartOptions.scales.yAxes[0].ticks.min = e.minY;
-      this.chartOptions.scales.xAxes[0].ticks.max = e.maxX;
-      this.chartOptions.scales.xAxes[0].ticks.min = e.minX;
-      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.units;
-      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.units;
-      this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObjY) {
+      this.chartOptions.scales.y.max = e.maxY;
+      this.chartOptions.scales.y.min = e.minY;
+      this.chartOptions.scales.x.max = e.maxX;
+      this.chartOptions.scales.x.min = e.minX;
+      this.chartOptions.scales.y.title.text = this.generateText(`${this.secondLayer.title} ${this.secondLayer.units}`, 27);
+      this.chartOptions.scales.x.title.text = this.generateText(`${this.activeLayer.title} ${this.activeLayer.units}`, 40);
+      this.chartOptions.scales.y.afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
-        chartObjY.ticks.push(e.Y_breaks[3]);
-        chartObjY.ticks.push(e.Y_breaks[2]);
-        chartObjY.ticks.push(e.Y_breaks[1]);
-        chartObjY.ticks.push(e.Y_breaks[0]);
+        chartObjY.ticks.push({
+          value: e.Y_breaks[3],
+          major: true
+        });
+        chartObjY.ticks.push({
+          value: e.Y_breaks[2],
+          major: true
+        });
+        chartObjY.ticks.push({
+          value: e.Y_breaks[1],
+          major: true
+        });
+        chartObjY.ticks.push({
+          value: e.Y_breaks[0],
+          major: true
+        });
       }
-      this.chartOptions.scales.xAxes[0].afterBuildTicks = function (chartObjX) {
+      this.chartOptions.scales.x.afterBuildTicks = function (chartObjX) {
         chartObjX.ticks = [];
-        chartObjX.ticks.push(e.X_breaks[3]);
-        chartObjX.ticks.push(e.X_breaks[2]);
-        chartObjX.ticks.push(e.X_breaks[1]);
-        chartObjX.ticks.push(e.X_breaks[0]);
+        chartObjX.ticks.push({
+          value: e.X_breaks[3],
+          major: true
+        });
+        chartObjX.ticks.push({
+          value: e.X_breaks[2],
+          major: true
+        });
+        chartObjX.ticks.push({
+          value: e.X_breaks[1],
+          major: true
+        });
+        chartObjX.ticks.push({
+          value: e.X_breaks[0],
+          major: true
+        });
       }
       this.chart = new Chart(canvas, {
         type: "scatter",
@@ -204,25 +252,49 @@ export default {
       });
     },
     updateHistogramm(e) {
-      this.chartOptions.scales.yAxes[0].ticks.max = e.maxY;
-      this.chartOptions.scales.yAxes[0].ticks.min = e.minY;
-      this.chartOptions.scales.xAxes[0].ticks.max = e.maxX;
-      this.chartOptions.scales.xAxes[0].ticks.min = e.minX;
-      this.chartOptions.scales.yAxes[0].scaleLabel.labelString = this.secondLayer.units;
-      this.chartOptions.scales.xAxes[0].scaleLabel.labelString = this.activeLayer.units;
-      this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObjY) {
+      this.chartOptions.scales.y.max = e.maxY;
+      this.chartOptions.scales.y.min = e.minY
+      this.chartOptions.scales.x.max = e.maxX;
+      this.chartOptions.scales.x.min = e.minX;
+      this.chartOptions.scales.y.title.text = this.generateText(`${this.secondLayer.title} ${this.secondLayer.units}`, 27);
+      this.chartOptions.scales.x.title.text = this.generateText(`${this.activeLayer.title} ${this.activeLayer.units}`, 40);
+      this.chartOptions.scales.y.afterBuildTicks = function (chartObjY) {
         chartObjY.ticks = [];
-        chartObjY.ticks.push(e.Y_breaks[3]);
-        chartObjY.ticks.push(e.Y_breaks[2]);
-        chartObjY.ticks.push(e.Y_breaks[1]);
-        chartObjY.ticks.push(e.Y_breaks[0]);
+        chartObjY.ticks.push({
+          value: e.Y_breaks[3],
+          major: true
+        });
+        chartObjY.ticks.push({
+          value: e.Y_breaks[2],
+          major: true
+        });
+        chartObjY.ticks.push({
+          value: e.Y_breaks[1],
+          major: true
+        });
+        chartObjY.ticks.push({
+          value: e.Y_breaks[0],
+          major: true
+        });
       }
-      this.chartOptions.scales.xAxes[0].afterBuildTicks = function (chartObjX) {
+      this.chartOptions.scales.x.afterBuildTicks = function (chartObjX) {
         chartObjX.ticks = [];
-        chartObjX.ticks.push(e.X_breaks[3]);
-        chartObjX.ticks.push(e.X_breaks[2]);
-        chartObjX.ticks.push(e.X_breaks[1]);
-        chartObjX.ticks.push(e.X_breaks[0]);
+        chartObjX.ticks.push({
+          value: e.X_breaks[3],
+          major: true
+        });
+        chartObjX.ticks.push({
+          value: e.X_breaks[2],
+          major: true
+        });
+        chartObjX.ticks.push({
+          value: e.X_breaks[1],
+          major: true
+        });
+        chartObjX.ticks.push({
+          value: e.X_breaks[0],
+          major: true
+        });
       }
       this.chart.options = this.chartOptions;
       this.chart.data.datasets = e.data;

@@ -5,7 +5,9 @@
 </template>
 
 <script>
-import Chart from "chart.js";
+import { Chart, PieController, ArcElement,Legend, PointElement, LinearScale, Title, Tooltip } from "chart.js";
+Chart.register(PieController, ArcElement,Legend, PointElement, LinearScale, Title, Tooltip);
+
 
 export default {
   name: 'IndicatorsPieChart',
@@ -15,9 +17,11 @@ export default {
       colors:['#00AED9', '#3EB049', '#FDB713', '#FDB713', '#ed4530', '#0b306b'],
       chart:null,
       chartConfig: {
-        legend: {
-          position: "top",
-          align: "start"
+        plugins: {
+          legend: {
+            position: "top",
+            align: "start"
+          }
         },
         tooltips: {
           callbacks: {

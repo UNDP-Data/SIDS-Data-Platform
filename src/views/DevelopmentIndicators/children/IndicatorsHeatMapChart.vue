@@ -3,9 +3,11 @@
 </template>
 
 <script>
-import Chart from "chart.js";
+import { Chart, LineController, LineElement, PointElement, LinearScale, Title } from "chart.js";
+import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
+Chart.register(MatrixController, MatrixElement, LineElement, PointElement, LinearScale, Title);
+
 // eslint-disable-next-line
-import chartMatrix from "chartjs-chart-matrix";
 import { mapState } from 'vuex';
 
 export default {
