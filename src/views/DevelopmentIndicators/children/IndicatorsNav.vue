@@ -288,35 +288,7 @@ export default {
       activeCategory: 'allCategories',
       activeSubCategory: 'allSubcategories',
       activeIndicator:null,
-      apiPath: process.env.VUE_APP_API_PATH,
-      datasetsWithIcons: [
-        'blasiak',
-        'epi',
-        'fao',
-        'gggr',
-        'ghi',
-        'hdr',
-        'igrac',
-        'ihme',
-        'irena 2',
-        'irena',
-        'itu',
-        'key',
-        'mvi',
-        'ndgain',
-        'ohi',
-        'oecd',
-        'paris',
-        'pci',
-        'rfti',
-        'sdg',
-        'ssi',
-        'unctad',
-        'unicef',
-        'undesa',
-        'wdi',
-        'who'
-      ]
+      apiPath: process.env.VUE_APP_API_PATH
     }
   },
   computed: {
