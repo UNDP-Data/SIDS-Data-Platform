@@ -85,7 +85,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
                 v-show="!dataset || dataset === item"
-                v-if="datasetsWithIcons.includes(item) || dataset === item"
+                v-if="dataset === item"
                 class="list-scrollabe_item dataset-item"
                 :class="{'dataset-item-active':dataset === item}"
                 :key="item"
@@ -106,7 +106,7 @@
               </v-list-item>
             </template>
 
-            <v-card v-if="datasetsWithIcons.includes(item)" class="tooltip-card pt-2">
+            <v-card class="tooltip-card pt-2">
               <v-img
                 contain
                 max-height="50"
