@@ -14,7 +14,7 @@ export default {
     async loadResourcesData({ state, commit }) {
       if(!state.resource){
         const resources = await service.loadResourcesData();
-        commit("setResources", resources);
+        commit("setResources", resources.additionalResources);
       }
     }
   }
