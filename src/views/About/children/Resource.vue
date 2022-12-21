@@ -1,7 +1,7 @@
 <template>
   <div class="about-resource mb-4">
     <a class="resource-link mb-2" target="_blank" :href="resource.links[0].link">
-      <h4>{{resource.name}}</h4>
+      <h4>{{$t('resources.'+resource.id + '.name')}}</h4>
       <v-img
         aspect-ratio="0.70430107526"
         :src="resource.image"
