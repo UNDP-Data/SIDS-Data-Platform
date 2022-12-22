@@ -17,7 +17,6 @@ export default {
   loadCountryProfile,
   loadProfileIndicarotsMetadata,
   loadDatasetsList,
-  loadTextContent,
   loadML,
   loadMLTargetSize,
   loadMLPredictorSize,
@@ -75,12 +74,6 @@ async function loadResourcesData () {
   return resp.data
 }
 
-async function loadTextContent () {
-  const resp = await axios.get(`${API_URl}/cms/app/en.json`)
-  return resp.data
-}
-
-
 async function loadML (data,source) {
   const resp = await axios.post(`${ML_API_URL}/twolvlImp/predict`, data, {
     cancelToken: source.token,
@@ -132,7 +125,7 @@ async function loadMLPredictorSize () {
 }
 
 async function loadLang(lang) {
-  let resp = await axios.get(`${API_URl}/cms/app/${lang}.json`);
+  let resp = await axios.get(`${API_URl}/cms/${lang}.json`);
   return resp.data
 }
 
