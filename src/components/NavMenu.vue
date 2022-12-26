@@ -5,10 +5,10 @@
       class="d-flex sticky-menu-container flex-column"
       :class="{ 'border-wrapper-fixed': offset }"
     >
-      <router-link to="/portfolio" class="nav-logo-block pa-4 mt-0">
+      <a href="https://data.undp.org/sids/" class="nav-logo-block pa-4 mt-0">
         <img class="nav-logo-block_image" src="@/assets/media/RFSIDS-dark.png" alt="">
         <h3 class="block-subheader nav-logo-block_text">Data Platform</h3>
-      </router-link>
+      </a>
       <v-list
         class="main-menu-desktop main-menu mt-10"
         dense>
