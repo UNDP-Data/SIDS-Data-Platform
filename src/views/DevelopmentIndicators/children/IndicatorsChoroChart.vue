@@ -5,7 +5,9 @@
       ({{activeIndicatorsMeta.units}})
     </h4>
     <div class="choro_legend_container" :id="chartId+'_legend_container'">
-      <img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15">
+      <div class="regionLegend_container">
+        <img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15">
+      </div>
     </div>
     <div class="spiderbox" style="height:0;margin:0;">
       <div class="indexSpider radarChart" style="text-align:center;height:0"></div>
@@ -635,5 +637,7 @@ export default {
   margin-top: 25px;
 }
 /*# sourceMappingURL=vizEngine.css.map */
-
+.regionLegend_container {
+  width: 100%;
+}
 </style>

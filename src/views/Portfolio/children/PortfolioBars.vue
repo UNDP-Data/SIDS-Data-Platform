@@ -1,5 +1,5 @@
 <template>
-  <v-row :id="'tab'+id" justify="center">
+  <v-row :id="'tab'+id" class="flex-column" justify="center">
     <v-row class="mb-0 svg-row" justify="center">
       <div class="svg-container">
       </div>
