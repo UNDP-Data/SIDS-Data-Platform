@@ -23,7 +23,7 @@ function getPublicPath() {
     case 'production':
         return '/sids/'
     case 'staging':
-      return '/SIDSDataPlatform/'
+      return '/SIDS-Data-Platform/'
     default:
       return '/'
   }
