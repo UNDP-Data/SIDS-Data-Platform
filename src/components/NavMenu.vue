@@ -28,9 +28,6 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item>
-              <language-selector/>
-            </v-list-item>
           </div>
       </v-list>
     </div>
@@ -38,7 +35,6 @@
 </template>
 
 <script>
-import LanguageSelector from '@/components/LanguageSelector'
 import sizeMixin from '@/mixins/size.mixin';
 
 export default {
@@ -49,9 +45,6 @@ export default {
       type: Boolean,
       default: true
     }
-  },
-  components:{
-    LanguageSelector
   },
   data(){
     return {
@@ -98,7 +91,6 @@ export default {
 <style scoped>
 .main-menu {
   text-transform: uppercase;
-  text-align: right;
 }
 .main-menu-desktop {
   background: transparent !important;
@@ -142,15 +134,14 @@ export default {
   height: 100vh !important;
 }
 .menu-item{
-  height: 50px;
-  padding-right: 24px;
+  border-bottom: 1px solid #D4D6D8;
+  padding: 8px 20px;
+  margin-left: 24px;
+  font-weight: 500;
 }
 .menu-item .menu-item_text {
   font-size: 14px !important;
   letter-spacing: 1px;
-  color: rgba(0,0,0,.54);
-  font-weight: 500;
-  white-space: normal;
 }
 .menu-item.v-list-item--active::before {
   opacity: 0;
@@ -161,15 +152,13 @@ export default {
 .menu-item.v-list-item--active:hover::before {
   opacity: 0.12;
 }
-.menu-item.v-list-item--active {
-  padding-right: 21px;
-  border-right: 3px solid #ED462F;
+.menu-item.v-list-item--active .menu-item_text{
+  font-weight: 700;
+  color: #D12800;
 }
 .border-wrapper {
   padding-bottom: 10px;
   padding-top: 10px;
-  border-right: 1px solid rgba(10, 11, 49, 0.2) !important;
-  /* transition: top 300ms linear */
 }
 .border-wrapper-fixed {
   position: fixed;

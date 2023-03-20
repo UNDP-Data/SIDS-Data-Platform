@@ -8,10 +8,10 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         color="normal"
-        :small="isDesktop"
+        class="not-rounded"
+        :large="isDesktop"
         :block="isDesktop"
         :outlined="isDesktop"
-        rounded
         :icon="!isDesktop"
         v-bind="attrs"
         v-on="on"
@@ -78,6 +78,7 @@ export default {
   position: relative;
   padding-bottom: 40px !important;
   background: #fff;
+  height: 46px;
 }
 .info-title::before {
   content: '';
@@ -91,5 +92,13 @@ export default {
 .info-title {
   position: sticky;
   top: 0;
+}
+.v-btn.not-rounded{
+  border-radius: 0 !important;
+  font-weight: 700;
+  font-size: 16px !important;
+  color: #000;
+  border: 2px solid #000;
+  letter-spacing: 0.03em !important;
 }
 </style>

@@ -80,7 +80,7 @@ html {
 
 #app {
   padding: 0;
-  background-color: #f4f5f8;
+  background-color: #fafafa;
 }
 #content {
   min-height: calc(100vh - 100px);
@@ -113,5 +113,4 @@ body,
 svg {
   overflow: visible !important;
 }
-@media (max-width:)
 </style>

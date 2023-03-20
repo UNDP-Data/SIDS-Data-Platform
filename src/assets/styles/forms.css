@@ -27,7 +27,7 @@
 }
 .v-input--checkbox .v-input__slot {
   min-height: 36px !important;
-  padding: 0 8px 0 8px !important;
+  padding: 0 8px 0 0px !important;
   transition: none !important;
 }
 .v-text-field input {
@@ -52,7 +52,6 @@
   left: 50% !important;
   transform: translateX(-50%) !important;
 }
-
 .select-floating {
   border-radius: 18px !important;
   box-shadow: none;

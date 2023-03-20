@@ -13,11 +13,10 @@
       </a>
     </div>
     <main role="main" class="header-text">
-        <h1 class="header-text_header header-text_header-big">{{ $t("root.header.header[0]") }}</h1>
+        <h1 class="header-text_header header-text_header-big mt-16">{{ $t("root.header.header[0]") }}</h1>
         <h2 class="header-text_header header-text_header-small">{{$t("root.header.header[1]")}}</h2>
         <h1 class="header-text_header header-text_header-big">{{$t("root.header.header[2]")}} </h1>
-        <hr class="d-none d-md-block d-lg-block d-xl-block header-text_divider">
-        <p class="d-none d-md-block d-lg-block d-xl-block header-text_description">{{$t("root.header.description")}}</p>
+        <p class="d-none d-md-block d-lg-block d-xl-block header-text_description mt-3 px-12">{{$t("root.header.description")}}</p>
     </main>
     <a class="header_button-down d-none d-md-block" href="#content">
       <img alt="Arrow Down Icon" src="@/assets/media/icons/arrow-down.png">
@@ -72,9 +71,14 @@ export default {
   z-index: 2;
   text-align: center;
   color: white;
-  filter: drop-shadow(1px 1px 0px black);
   margin-bottom: auto;
   margin-top: auto;
+}
+.header-text h1, .header-text h2{
+  text-transform: uppercase;
+}
+.header-text h2{
+  font-size: 16px;
 }
 .header-text_header {
   font-weight: 650;
@@ -98,18 +102,10 @@ export default {
   animation: fadein 3s;
 }
 
-.header-text_divider {
-  width:70%;
-  margin: auto;
-  border-style:solid;
-  border-width:1px;
-  opacity:1;
-  margin-bottom:20px;
-}
-
 .header-text_description {
-  font-size: 20px;
   font-weight: 400;
+  font-size: 25px;
+  line-height: 137.5%;
   -webkit-animation: fadein 3s;
   -moz-animation: fadein 3s;
   -ms-animation: fadein 3s;

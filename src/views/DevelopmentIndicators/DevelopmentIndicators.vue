@@ -435,7 +435,7 @@ export default {
 </script>
 <style media="screen">
   .nav-tabs-row {
-    margin-top: -10px !important;;
+    margin-top: -10px !important;
   }
   .mvi-tabs {
     margin-bottom: auto;

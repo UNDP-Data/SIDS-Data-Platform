@@ -5,7 +5,7 @@
         <v-tabs
           :value="activePreset"
           grow
-          class="mb-2 mvi-nav-tabs tabs tabs-small"
+          class="mb-4 mvi-nav-tabs tabs tabs-small"
         >
           <v-tab :value="0" @change="setPreset('MVI')">
             <info-hover-tooltip :bottom="true" contentName="mviSelectTooltip">
@@ -37,24 +37,27 @@
         class="pt-0 pb-0"
         flat
       >
-      <v-subheader :style="'background-color:'+indicatorCatery.color" class="block-subheader">{{$t('indicators.mvi.'+indicatorCatery.category)}}</v-subheader>
+      <v-subheader :style="'background-color:'+indicatorCatery.color" class="block-subheader pl-4">{{$t('indicators.mvi.'+indicatorCatery.category)}}</v-subheader>
       <v-list-item
       class="mvi-indi-list_item"
         dense
         v-for="indicator in indicatorCatery.indicators"
         :key="indicator.name"
       >
-        <v-list-item-action>
-          <v-checkbox
-            :input-value="mviCodes"
-            :value="indicator.code"
-            @change="updateValue"
-            :ripple="false"
-          ></v-checkbox>
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>{{$t('indicators.mvi.'+indicator.code.replaceAll('.','-'))}}</v-list-item-title>
-        </v-list-item-content>
+        <div class="list-item-container">
+          <v-list-item-action>
+            <v-checkbox
+              class="undp-checkbox"
+              :input-value="mviCodes"
+              :value="indicator.code"
+              @change="updateValue"
+              :ripple="false"
+            ></v-checkbox>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{$t('indicators.mvi.'+indicator.code.replaceAll('.','-'))}}</v-list-item-title>
+          </v-list-item-content>
+        </div>
       </v-list-item>
     </v-list>
     </v-card>
@@ -116,5 +119,27 @@ export default {
 }
 .mvi-indi-list_item {
   min-height: 38px !important;
+  padding: 0 14px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  color: #000000;
 }
+.mvi-indicators-nav .list-item-container{
+  border-bottom: 1px solid #D4D6D8;
+  display: flex;
+  padding: 10px 0;
+  width: 100%;
+}
+.mvi-indicators-nav .v-subheader{
+  height: 50px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px !important;
+  text-transform: uppercase; 
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #000000;
+}
+
 </style>
