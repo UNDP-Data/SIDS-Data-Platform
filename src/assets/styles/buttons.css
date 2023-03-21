@@ -47,6 +47,9 @@
   width: 34px !important;
   padding: 0 !important;
 }
+.v-btn.v-size--default{
+  font-size: 1rem !important;
+}
 
 .v-btn--icon.v-size--default {
   height: 36px !important;
@@ -107,4 +110,11 @@
 }
 .theme--light.v-tabs > .v-tabs-bar {
   background-color: transparent !important;
+}
+/* dropdown */
+.v-text-field .v-input__slot{
+  border-radius: 0;
+  height: 50px;
+  border: 2px solid #000000;
+  padding: 16px;
 }

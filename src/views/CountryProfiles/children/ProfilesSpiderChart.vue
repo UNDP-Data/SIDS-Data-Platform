@@ -5,8 +5,7 @@
           <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${headerIcon}`"/>
         </template>
         <template v-if="postfix!== 'mobile'" v-slot:button>
-          <h4 class="block-subheader text-center"
-            :style="{color: graphOptions.textColor}">
+          <h4 class="block-subheader text-center">
             {{graphOptions.header}}
           </h4>
         </template>
@@ -550,5 +549,14 @@ export default {
     display: flex;
     align-items: center;
     flex-direction: column;
+  }
+  .graph-container .block-subheader{
+    font-weight: 700;
+    font-size: 16px !important;
+    line-height: 112.5%;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #000000;
+    padding-bottom: 16px;
   }
 </style>

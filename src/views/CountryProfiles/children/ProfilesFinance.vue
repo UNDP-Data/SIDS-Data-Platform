@@ -1,8 +1,8 @@
 <template>
-  <div class="">
+  <div class="finance-block">
       <v-subheader class="finance-header block-subheader">Finance</v-subheader>
-      <v-card flat class="overflow background-grey">
-          <v-list dense class="indicators-list background-grey"
+      <v-card flat class="overflow">
+          <v-list dense class="indicators-list"
           >
             <v-list-item v-for="(indicator) in financeData" :key="indicator.axis">
               <v-list-item-content class="one-line">
@@ -15,7 +15,6 @@
           </v-list>
       </v-card>
   </div>
-
 </template>
 
 <script>
@@ -53,18 +52,36 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.indicators-list .one-line {
-  padding: 4px 0;
+.finance-block .theme--light.v-sheet{
+  background-color: transparent;
+}
+.indicators-list .v-list-item__content{
+  border-bottom: 1px solid #D4D6D8;
+  padding: 10px 0;
 }
 .indicators-list .v-list-item {
   min-height: 25px;
 }
 .finance-header {
-  color: #0018a0;
-  justify-content: center;
-  align-items: flex-start;
+    font-weight: 700;
+    font-size: 16px !important;
+    line-height: 112.5%;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #000000;
+    padding-bottom: 16px;
 }
 .one-line_subheader{
   flex-basis: auto;
+  font-weight: 700;
+  font-size: 16px !important;
+  line-height: 137.5%;
+  color: #000000;
+}
+.one-line_header{
+  font-weight: 400;
+  font-size: 16px !important;
+  line-height: 137.5%;
+  color: #000000;
 }
 </style>

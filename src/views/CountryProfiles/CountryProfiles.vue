@@ -7,68 +7,63 @@
             <b>{{$t('countryNames.'+activeCountryId)}}</b> {{$t('countryProfile.header')}}
           </template>
         </printout-header>
-        <v-row class="mt-0 d-none-print profile-header-row" justify="center" :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
-          <v-col class="d-none d-md-block" cols="12" md="4" offset-lg="2" lg="3">
-            <h2 class="page-header mr-3 country-profile-header text-md-right">{{$t('countryProfile.header')}}</h2>
-          </v-col>
-          <v-col cols="7" sm="6" md="4" lg="3" class="offset-sm-1 offset-md-0 select-column">
-            <v-select
-              rounded
-              class="country-select"
-              :value="activeCountryId"
-              @change="selectCountry"
-              :items="sidsListFilteredNoAverage"
-              hide-selected
-              menu-props='{auto:false}'
-              item-text="name"
-              item-value="id"
-              outlined
-              hide-details
-            >
-
-              <template slot="selection" slot-scope="data">
-                <div class="mobile-pillar-selector">
-                  <i
-                    class="flag-icon select_icon"
-                    :class="'flag-icon-' + flagCodes[data.item.id]"
-                  ></i>
-                  {{$t('countryNames.'+data.item.id)}}
-                </div>
-              </template>
-              <template  slot="item" slot-scope="data">
-                <div>
-                  <i
-                    class="flag-icon select_icon"
-                    :class="'flag-icon-' + flagCodes[data.item.id]"
-                  ></i>
-                  {{$t('countryNames.'+data.item.id)}}
-                </div>
-              </template>
-            </v-select>
-          </v-col>
-          <v-col class="d-none-print ml-auto d-none d-md-block" md="2">
-            <div class="select">
+        <v-row class="mt-7 d-none-print profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
+          <v-col lg="auto" sm="9" class="d-flex">
+            <v-col class="d-none d-md-block" cols="12" md="4" lg="auto">
+              <h2 class="page-header mr-3 country-profile-header">{{$t('countryProfile.header')}}</h2>
+            </v-col>
+            <v-col md="4" lg="auto" class="select-column">
               <v-select
-                rounded
-                dense
-                v-model="region"
-                :items="regions"
+                class="country-select"
+                :value="activeCountryId"
+                @change="selectCountry"
+                :items="sidsListFilteredNoAverage"
+                hide-selected
+                menu-props='{auto:false}'
+                item-text="name"
+                item-value="id"
                 outlined
+                hide-details
               >
                 <template slot="selection" slot-scope="data">
-                    {{$t('regions.'+data.item)}}
+                  <div class="mobile-pillar-selector">
+                    {{$t('countryNames.'+data.item.id)}}
+                  </div>
                 </template>
                 <template  slot="item" slot-scope="data">
-                    {{$t('regions.'+data.item)}}
+                  <div>
+                    {{$t('countryNames.'+data.item.id)}}
+                  </div>
                 </template>
               </v-select>
-            </div>
+            </v-col>
+            <v-col class="d-none-print d-none d-md-block" md="4" lg="auto">
+              <div class="select">
+                <v-select
+                  class="region-select"
+                  v-model="region"
+                  :items="regions"
+                  outlined
+                >
+                  <template slot="selection" slot-scope="data">
+                      {{$t('regions.'+data.item)}}
+                  </template>
+                  <template  slot="item" slot-scope="data">
+                      {{$t('regions.'+data.item)}}
+                  </template>
+                </v-select>
+              </div>
+            </v-col>
           </v-col>
-          <v-col class="d-none-print d-flex flex-md-column align-md-end align-center justify-start" cols="2" sm="3" md='1' lg='2'>
-            <div class="d-none d-md-block mr-2 mr-md-0">
-              <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
-            </div>
-            <export :idsList="selectedCountriesIds"/>
+          <v-col lg="auto" sm="3">
+              <v-col class="d-none-print d-flex justify-end" lg='auto'>
+              <div class="d-none d-md-block mr-2 mr-md-0">
+                <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
+              </div>
+              <div class="ml-3">
+                <export :idsList="selectedCountriesIds"/>
+              </div>
+            </v-col>
           </v-col>
         </v-row>
         <v-row class="mt-xs-0 mt-sm-0 mb-2 mb-print-0" justify="center" dense>
@@ -130,7 +125,6 @@
           <v-col cols="9">
             <v-select
               class="country-select"
-              rounded
               hide-details
               v-model="tab"
               item-value="name"
@@ -208,7 +202,6 @@
           <v-col cols="6" md="3" lg="2">
             <div class="select">
               <v-select
-                rounded
                 v-model="rankType"
                 :items="rankTypes"
                 @change="changeRankSelector"
@@ -257,7 +250,7 @@
               :values="graphValueData[pillar.name]"/>
           </v-col>
           <v-col class="charts-description mt-0 mb-0" cols="12">
-            <p class="mt-0 mb-0 text-center desc-spiders">{{$t('countryProfile.infoBox.radarAnnotation')}}</p>
+            <p class="mt-0 mb-0 text-center desc-spiders">{{radarAnnotation}}</p>
           </v-col>
         </v-row>
       </div>
@@ -269,7 +262,7 @@
           </v-col>
         </v-row>
         <v-row class="d-none d-md-flex d-print-flex no-page-break mb-4 mb-print-0">
-          <v-col class="mvi-wrapper d-flex flex-column" cols="7">
+          <v-col class="mvi-wrapper" cols="5">
             <profiles-spider-chart
               class="no-page-break"
               postfix="print"
@@ -284,7 +277,7 @@
               {{$t('countryProfile.infoBox.mviAnnotation')}}
             </p>
           </v-col>
-          <v-col cols="5">
+          <v-col cols="7">
             <profiles-finance
               :countryId="activeCountryId"/>
           </v-col>
@@ -442,6 +435,9 @@ export default {
       profiles: state => state.profiles.profiles,
       indicatorsMetadata: state => state.profiles.indicatorsMetadata
     }),
+    radarAnnotation() {
+      return this.$t('countryProfile.infoBox.radarAnnotation.'+this.rankType)
+    },
     sidsListFiltered() {
       if(this.region === 'allSids') {
         return this.sidsList
@@ -572,11 +568,15 @@ export default {
 }
 </script>
 <style media="screen">
-  .country-select {
-    font-size: 18px !important;
-    font-weight: bold;
+  .country-select, .region-select {
+    width: 260px;
+    font-weight: 700;
+    font-size: 16px !important;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #000000 !important;
   }
-  .country-select .v-input__append-inner{
+  .country-select .v-input__append-inner, .region-select .v-input__append-inner{
     margin-top: 12px !important;
   }
   .select_icon {

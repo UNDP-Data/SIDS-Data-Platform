@@ -2,12 +2,9 @@
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-        color="primary"
-        rounded
+        class="export-button"
         :icon="isTablet"
         :fab="!isDesktop && !isTablet"
-        :small="isDesktop"
-        class="mt-md-2 mb-md-2"
         :outlined="isTablet"
         v-bind="attrs"
         v-on="on"
@@ -147,5 +144,11 @@
     font-weight: 400;
     font-size: 26px;
     margin-top: -7px !important;
+  }
+  .export-button{
+    background: #006EB5 !important;
+    color: #FFF !important;
+    border-radius: 0 !important;
+    font-size: 16 !important;
   }
 </style>

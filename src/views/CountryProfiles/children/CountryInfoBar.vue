@@ -1,122 +1,120 @@
 <template>
-  <v-card flat class="overflow background-grey">
-    <v-row dense>
-      <v-col class="printing-4" cols="7" md="4">
-        <v-subheader class="d-none d-md-block info-bar_header block-header">{{$t('countryNames.'+id)}}</v-subheader>
-        <v-list dense class="indicators-list background-grey">
-          <v-list-item v-if="checkIndicator('key-1')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title
-                class="one-line_header"
-                v-text="$t('countryProfile.infoBox.regionally')"
-              ></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header"
-              >{{
-                getIndicator("key-1").value
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-2')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title
-                class="one-line_header"
-                v-text="$t('countryProfile.infoBox.office')"
-              ></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header"
-              >{{
-                getIndicator("key-2").value
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-3')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title
-                class="one-line_header"
-                v-text="$t('countryProfile.infoBox.memberState')"
-              ></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header"
-              >{{
-                getIndicator("key-3").value
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-wdi2-SP.POP.TOTL')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.population')"></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header">{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-7')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title
-                class="one-line_header"
-                v-text="$t('countryProfile.infoBox.lang')"
-              ></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header">{{
-                getIndicator("key-7").value
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title class="one-line_header" v-text="$t('countryProfile.infoBox.area')"></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header">{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}} <span v-if="checkNoData('key-wdi-AG.SRF.TOTL.K2')">km<sup>2</sup></span></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-10')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title
-                class="one-line_header"
-                v-text="$t('countryProfile.infoBox.income')"
-              ></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header">{{
-                computeIncome(getIndicator("key-10").value)
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-hdr-137506')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title
-                class="one-line_header"
-                v-text="$t('countryProfile.infoBox.hdi')"
-              ></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header">{{
-                computeHDI(getIndicator("key-hdr-137506").value)
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-wdi2-SI.POV.GINI')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title
-                class="one-line_header"
-                v-text="$t('countryProfile.infoBox.gini')"
-              ></v-list-item-title>
-              <v-list-item-subtitle
-                class="one-line_header">{{
-                getIndicator("key-wdi2-SI.POV.GINI").value
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="checkIndicator('key-13')">
-            <v-list-item-content class="small-padding">
-              <v-list-item-title class="one-line_header">
-                <a :href="getIndicator('key-13').value" target="_blank">
-                  {{ $t('countryProfile.infoBox.countryPage') }}
-                </a>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+  <v-card flat class="overflow country-profile">
+    <v-row>
+      <v-col>
+        <v-subheader class="d-none d-md-block info-bar_header">{{$t('countryNames.'+id)}}</v-subheader>
       </v-col>
-      <v-col class="p-0 d-flex align-center printing-4" md="4" cols="5">
+    </v-row>
+    <v-row>
+      <v-col class="printing-4" cols="7" md="6">
+        <v-row>
+          <v-col md="6">
+            <v-list-item  v-if="checkIndicator('key-1')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title               
+                  v-text="$t('countryProfile.infoBox.regionally')"
+                ></v-list-item-title>
+                <v-list-item-subtitle>{{
+                  getIndicator("key-1").value
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item  v-if="checkIndicator('key-2')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title             
+                  v-text="$t('countryProfile.infoBox.office')"
+                ></v-list-item-title>
+                <v-list-item-subtitle>{{
+                  getIndicator("key-2").value
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item  v-if="checkIndicator('key-3')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title 
+                  v-text="$t('countryProfile.infoBox.memberState')"
+                ></v-list-item-title>
+                <v-list-item-subtitle>{{
+                  getIndicator("key-3").value
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="checkIndicator('key-wdi2-SP.POP.TOTL')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title v-text="$t('countryProfile.infoBox.population')"></v-list-item-title>
+                <v-list-item-subtitle
+                 >{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="checkIndicator('key-7')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title              
+                  v-text="$t('countryProfile.infoBox.lang')"
+                ></v-list-item-title>
+                <v-list-item-subtitle
+                 >{{
+                  getIndicator("key-7").value
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-col>
+          <v-col md="6">
+            <v-list-item v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title v-text="$t('countryProfile.infoBox.area')"></v-list-item-title>
+                <v-list-item-subtitle
+                 >{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}} <span v-if="checkNoData('key-wdi-AG.SRF.TOTL.K2')">km<sup>2</sup></span></v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="checkIndicator('key-10')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title
+                 
+                  v-text="$t('countryProfile.infoBox.income')"
+                ></v-list-item-title>
+                <v-list-item-subtitle
+                 >{{
+                  computeIncome(getIndicator("key-10").value)
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="checkIndicator('key-hdr-137506')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title
+                 
+                  v-text="$t('countryProfile.infoBox.hdi')"
+                ></v-list-item-title>
+                <v-list-item-subtitle
+                 >{{
+                  computeHDI(getIndicator("key-hdr-137506").value)
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="checkIndicator('key-wdi2-SI.POV.GINI')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title
+                 
+                  v-text="$t('countryProfile.infoBox.gini')"
+                ></v-list-item-title>
+                <v-list-item-subtitle
+                 >{{
+                  getIndicator("key-wdi2-SI.POV.GINI").value
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="checkIndicator('key-13')">
+              <v-list-item-content class="small-padding">
+                <v-list-item-title>
+                  <a :href="getIndicator('key-13').value" target="_blank">
+                    {{ $t('countryProfile.infoBox.countryPage') }}
+                  </a>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col class="p-0 d-flex align-center printing-4 grey-background" md="2" cols="5">
         <v-img
           eager
           class="bg-printable"
@@ -200,18 +198,21 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.indicators-list .one-line {
+/* .indicators-list .one-line {
   flex-wrap: nowrap;
   padding: 4px 0;
 }
 .indicators-list .v-list-item {
   min-height: 25px;
-}
+}*/
 .overflow {
   overflow: hidden;
 }
 .info-bar_header {
-  padding-top: 10px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 55px;
+  border-bottom: 2px solid #000000;
 }
 .info-bar_map {
   max-height: 230px;
@@ -220,5 +221,36 @@ export default {
 }
 .small-padding {
   padding: 4px 0 !important;
+}
+.country-profile .v-subheader{
+  height: auto;
+}
+.theme--light.v-subheader {
+  color: rgba(0, 0, 0, 1) !important;
+}
+.country-profile.theme--light.v-card{
+  background-color: transparent;
+}       
+.country-profile .v-list-item .v-list-item__title{
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 112.5%;
+  letter-spacing: 0.03em;
+  text-transform: uppercase !important;
+  color: #000000;
+}
+.country-profile .v-list-item .v-list-item__subtitle{
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 137.5%;
+  color: #232E3D;
+  margin-bottom: 24px;
+}
+.country-profile .v-list-item__title, .country-profile .v-list-item__subtitle{
+  text-overflow: clip;
+  white-space: normal;
+}
+.grey-background{
+  background-color: #EDEFF0;
 }
 </style>

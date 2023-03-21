@@ -1,8 +1,9 @@
 .page-header {
-  font-size: 32px !important;
-  color: #082753 !important;
-  font-weight: bold;
-  text-align: center;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 35px;
+  line-height: 114.2%;
+  color: #000000 !important;  
 }
 .block-header{
   color: #000 !important;
