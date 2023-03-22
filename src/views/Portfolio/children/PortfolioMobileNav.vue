@@ -1,5 +1,5 @@
 <template>
-  <div class="indicators-mobile-nav">
+  <div class="indicators-mobile-nav mt-10">
     <v-row class="justify-center">
       <v-col cols="11">
         <v-row class="justify-center">

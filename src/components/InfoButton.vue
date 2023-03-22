@@ -23,8 +23,9 @@
           v-bind="attrs"
           v-on="on"
           :large="true"
+          color="#000000"
         >
-          mdi-information-outline
+          mdi-information-symbol
         </v-icon>
       </v-btn>
     </template>
@@ -92,13 +93,5 @@ export default {
 .info-title {
   position: sticky;
   top: 0;
-}
-.v-btn.not-rounded{
-  border-radius: 0 !important;
-  font-weight: 700;
-  font-size: 16px !important;
-  color: #000;
-  border: 2px solid #000;
-  letter-spacing: 0.03em !important;
 }
 </style>

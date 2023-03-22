@@ -2,12 +2,9 @@
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-        class="float-right"
-        color="primary"
-        rounded
+        class="export-button"
         :icon="!isDesktop"
-        :small="isDesktop"
-        dark
+        :large="isDesktop"
         :disabled="indiCode === 'region' || indiCode === 'mvi-index'"
         :outlined="!isDesktop"
         :block="isDesktop"

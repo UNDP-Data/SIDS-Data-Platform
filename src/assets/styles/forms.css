@@ -15,7 +15,6 @@
 }
 .v-select fieldset , .text-field .v-text-field fieldset{
   border: none !important;
-  background: #FFFFFF;
 }
 .v-select .v-icon:before {
   color: #082753 !important

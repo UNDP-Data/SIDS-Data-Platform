@@ -26,10 +26,6 @@
         </v-chip>
       </template>
       <template slot="item" slot-scope="data">
-      <i
-        class="flag-icon select_icon"
-        :class="'flag-icon-' + flagCodes[data.item.id]"
-      ></i>
       {{ $t('countryNames.'+data.item.id)}}
       </template>
     </v-select>

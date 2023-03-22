@@ -145,10 +145,5 @@
     font-size: 26px;
     margin-top: -7px !important;
   }
-  .export-button{
-    background: #006EB5 !important;
-    color: #FFF !important;
-    border-radius: 0 !important;
-    font-size: 16 !important;
-  }
+
 </style>

@@ -2,11 +2,8 @@
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-        color="primary"
-        rounded
+        color="export-button"
         :icon="!isDesktop"
-        :small="isDesktop"
-        dark
         :outlined="!isDesktop"
         :block="isDesktop"
         v-bind="attrs"

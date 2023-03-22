@@ -56,8 +56,8 @@ export default {
   background-color: transparent;
 }
 .indicators-list .v-list-item__content{
-  border-bottom: 1px solid #D4D6D8;
-  padding: 10px 0;
+  border-bottom: 1.5px solid #D4D6D8;
+  padding: 12px 0;
 }
 .indicators-list .v-list-item {
   min-height: 25px;
@@ -69,14 +69,15 @@ export default {
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: #000000;
-    padding-bottom: 16px;
+    padding-bottom: 10px;
+    height: auto;
 }
 .one-line_subheader{
   flex-basis: auto;
-  font-weight: 700;
+  font-weight: 700 !important;
   font-size: 16px !important;
   line-height: 137.5%;
-  color: #000000;
+  color: #000000 !important;
 }
 .one-line_header{
   font-weight: 400;

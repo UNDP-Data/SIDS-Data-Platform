@@ -89,15 +89,15 @@
 
           >
             <template v-slot:header>
-              <v-row class="map-header d-none d-lg-flex">
-                <v-col class="offset-lg-1 offset-lg-2 offset-md-1 offset-sm-2 offset-2 pb-0" cols="8" sm="8" md='10' lg='8' xl="10">
+              <v-row class="map-header d-none d-lg-flex justify-space-between">
+                <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
                   <h2 class="page-header mt-md-2 mb-0">{{$t('portfolio.header')}}</h2>
                 </v-col>
-                <v-col class="" cols="2" sm="1" md='1' lg='2' xl="1">
-                  <div class="mt-2 float-md-right mb-2">
+                <v-col class="d-flex justify-end" cols="2" sm="1" md='3' xl="2">
+                  <div class="">
                     <info-button :contentName="'aboutThis-portfolio'"/>
                   </div>
-                  <div class="float-md-right">
+                  <div class="pl-3">
                     <portfolio-export
                       :region="region"
                       :year="year"
@@ -117,9 +117,9 @@
         <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
       </v-row>
       <v-row class="d-none d-print-block d-md-flex mt-md-0 mt-lg-2 flex-lg-nowrap" justify="center">
-        <v-col class="d-none d-print-none d-lg-block margin-wrap-right"></v-col>
-        <v-col class="d-none d-print-block d-md-block pt-md-0 pb-md-0 pt-lg-4 pb-lg-4 tabs-column">
-          <v-row class="d-none d-print-none d-lg-flex" justify="center">
+        <!--v-col class="d-none d-print-none d-lg-block margin-wrap-right"></v-col-->
+        <v-col class="d-none d-print-block d-md-block pt-md-0 pb-md-0 pt-lg-4 pb-lg-4 pr-md-6 tabs-column">
+          <v-row class="d-none d-print-none d-lg-flex mt-5 mb-8" justify="center">
             <v-col cols="12">
                 <v-tabs
                   class="tabs portfolio-slider"
@@ -195,7 +195,7 @@
               </div>
             </v-col>
             <v-col cols='5'  md="5" lg="12">
-              <v-divider class="mt-2 d-none d-lg-block mb-2"></v-divider>
+              <v-divider class="mt-2 d-none d-lg-block mb-4"></v-divider>
               <div class="select">
                 <label class="input-label">{{$t('portfolio.fundingCategories')}}</label>
                 <v-select
@@ -241,7 +241,7 @@
                 </v-select>
               </div>
             </v-col>
-            <v-col cols='5'  md="5" lg="12">
+            <v-col cols='5' md="5" lg="12" class="mt-3">
               <div class="select">
                 <label class="input-label">{{$t('portfolio.fundingSources')}}</label>
                 <v-autocomplete
@@ -690,12 +690,11 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
-  .margin-wrap-right {
-    max-width: 200px;
-    min-width: 170px;
+  /*.margin-wrap-right {
+    max-width: 180px;
+    min-width: 100px;
     margin-right: auto;
-  }
-
+  }*/
   .map-header {
     position: relative;
     z-index: 5;
@@ -746,13 +745,31 @@ export default {
     left: 50% !important;
     transform: translateX(-50%);
   }
-  .portfolio-tab {
+  .portfolio-tab{
     max-width: 217px !important;
     width: 217px !important;
+    height: 42px !important;
+    font-size: 14px !important;
+    line-height: 14px !important;
+    padding: 10px 15px !important;
+    text-transform: none !important;
+    font-style: normal;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    color: #000000;
+    letter-spacing: 0.03em !important;
   }
-
+  .portfolio-tab.v-tab--active{
+    background: #B5D5F5 !important;
+    height: 42px !important;
+    border-radius: 4px !important;
+  }
   .portfolio-tab-long {
     max-width: 340px !important;
     width: 340px !important;
   }
+  .v-tabs-slider-wrapper{
+    visibility: hidden;
+  }
+
 </style>

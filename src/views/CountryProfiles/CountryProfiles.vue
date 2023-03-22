@@ -8,11 +8,11 @@
           </template>
         </printout-header>
         <v-row class="mt-7 d-none-print profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
-          <v-col lg="auto" sm="9" class="d-flex">
-            <v-col class="d-none d-md-block" cols="12" md="4" lg="auto">
+          <v-col lg="9" sm="11" class="d-flex">
+            <v-col class="d-none d-md-block" cols="12" md="4">
               <h2 class="page-header mr-3 country-profile-header">{{$t('countryProfile.header')}}</h2>
             </v-col>
-            <v-col md="4" lg="auto" class="select-column">
+            <v-col md="3" class="select-column">
               <v-select
                 class="country-select"
                 :value="activeCountryId"
@@ -37,7 +37,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col class="d-none-print d-none d-md-block" md="4" lg="auto">
+            <v-col class="d-none-print d-none d-md-block" md="3">
               <div class="select">
                 <v-select
                   class="region-select"
@@ -55,7 +55,7 @@
               </div>
             </v-col>
           </v-col>
-          <v-col lg="auto" sm="3">
+          <v-col lg="3" sm="1">
               <v-col class="d-none-print d-flex justify-end" lg='auto'>
               <div class="d-none d-md-block mr-2 mr-md-0">
                 <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
@@ -75,7 +75,7 @@
             />
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex mt-10" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
           <v-col cols="12">
             <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
             <v-row>
@@ -186,8 +186,8 @@
             </div>
           </v-col>
         </v-row>
-        <v-row class="d-none-print" justify="center">
-          <v-col cols="11" md="6">
+        <v-row class="d-none-print mt-16 mb-10" justify="center">
+          <v-col cols="11" md="7" class="pl-7">
             <country-multiselect
               :placeholder="$t('countryProfile.infoBox.overlayCountries')"
               :countryActiveIdsList="compareIdsList"
@@ -196,10 +196,10 @@
               @countryChange="setCompareCountries"
             />
           </v-col>
-          <v-col cols="3" class="d-flex align-center" md="1">
-            <p class="mt-auto mb-auto">{{$t('countryProfile.infoBox.among')}}</p>
+          <v-col cols="3" md="1" class="mt-3"  style="text-transform: uppercase; text-align: center;">
+            {{$t('countryProfile.infoBox.among')}}
           </v-col>
-          <v-col cols="6" md="3" lg="2">
+          <v-col cols="6" md="3" lg="3">
             <div class="select">
               <v-select
                 v-model="rankType"
@@ -220,7 +220,7 @@
               </v-select>
             </div>
           </v-col>
-          <v-col cols="2" class="d-flex align-center justify-end">
+          <v-col cols="2" md="1" class="d-flex align-center justify-end">
             <info-hover-tooltip
               :large="true"
               contentClass="tooltip-center"
@@ -249,8 +249,8 @@
               :ranks="graphRankData[pillar.name]"
               :values="graphValueData[pillar.name]"/>
           </v-col>
-          <v-col class="charts-description mt-0 mb-0" cols="12">
-            <p class="mt-0 mb-0 text-center desc-spiders">{{radarAnnotation}}</p>
+          <v-col class="charts-description mt-8 px-7" cols="12">
+            <p class="desc-spiders">{{radarAnnotation}}</p>
           </v-col>
         </v-row>
       </div>
@@ -273,7 +273,7 @@
               :pillarName="'MVI'"
               :ranks="graphRankData['MVI']"
               :values="graphValueData['MVI']"/>
-            <p :class="{'desc-mvi-one-page': !activeCountryProfile.CountryText}" class="desc-mvi desc-spiders mt-0 mb-0 text-center">
+            <p :class="{'desc-mvi-one-page': !activeCountryProfile.CountryText}" class="desc-mvi desc-spiders mt-8 px-7">
               {{$t('countryProfile.infoBox.mviAnnotation')}}
             </p>
           </v-col>
@@ -569,7 +569,7 @@ export default {
 </script>
 <style media="screen">
   .country-select, .region-select {
-    width: 260px;
+    max-width: 260px;
     font-weight: 700;
     font-size: 16px !important;
     letter-spacing: 0.03em;
@@ -614,10 +614,10 @@ export default {
    }
  }
  .desc-spiders {
-   width: 80%;
-   text-align: center;
-   margin: 0 auto 0 !important;
-   font-size:12px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 137.5%;
+  color: rgba(0, 0, 0, 0.4);
  }
  .mvi-wrapper {
    position: relative;

@@ -12,6 +12,14 @@
   width: 38px !important;
   padding: 0 19px !important
 }
+.v-btn.not-rounded{
+  border-radius: 0 !important;
+  font-weight: 700;
+  font-size: 16px !important;
+  color: #000;
+  border: 2px solid #000;
+  letter-spacing: 0.03em !important;
+}
 .v-btn--fab {
   width: 50px !important;
   padding: 0 25px !important;
@@ -49,6 +57,31 @@
 }
 .v-btn.v-size--default{
   font-size: 1rem !important;
+}
+.v-btn.red-arrow{
+  font-weight: 700;
+  font-size: 16px !important;
+  line-height: 112.5%;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase;
+  background-color: transparent !important;
+  padding-left: 0 !important;
+}
+.v-btn.red-arrow:hover{
+  background: #fafafa !important;
+}
+.v-btn.red-arrow:after{
+  transition: .2s ease;
+  background: url(https://design.undp.org/icons/chevron-right.svg) no-repeat left center;
+  color: var(--dark-red);
+  height: 20px;
+  margin-left: 0.75rem;
+  content: "";
+  width: 13px;
+}
+.v-btn.red-arrow:hover:after{
+  background: url(https://design.undp.org/icons/chevron-right.svg) no-repeat left center;
+  transform: translate(70%, 0);
 }
 
 .v-btn--icon.v-size--default {
@@ -112,9 +145,35 @@
   background-color: transparent !important;
 }
 /* dropdown */
-.v-text-field .v-input__slot{
+.v-text-field.v-select .v-input__slot{
   border-radius: 0;
   height: 50px;
   border: 2px solid #000000;
   padding: 16px;
+  text-transform: uppercase;
+  font-size: 16px;
+  background-color: #fafafa !important;
+}
+.v-icon.mdi-menu-down.theme--light{
+  display: none;
+}
+
+.v-select__selections:after {
+  transform: translateY(-50%);
+  transition: all 200ms ease-in-out;
+  background: url(https://design.undp.org/static/media/chevron-down.16c97a3f.svg) no-repeat center center;
+  content: "";
+  float: right;
+  height: 13px;
+  position: absolute;
+  pointer-events: none;
+  right: 5px;
+  top: 50%;
+  width: 20px;
+}
+.export-button{
+  background: #006EB5 !important;
+  color: #FFF !important;
+  border-radius: 0 !important;
+  font-size: 16 !important;
 }

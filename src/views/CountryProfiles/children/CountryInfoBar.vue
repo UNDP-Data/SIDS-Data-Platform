@@ -3,10 +3,11 @@
     <v-row>
       <v-col>
         <v-subheader class="d-none d-md-block info-bar_header">{{$t('countryNames.'+id)}}</v-subheader>
+        <hr style="margin-left:16px">
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="printing-4" cols="7" md="6">
+      <v-col class="printing-4 mt-4" cols="7" md="6">
         <v-row>
           <v-col md="6">
             <v-list-item  v-if="checkIndicator('key-1')">
@@ -103,18 +104,20 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item v-if="checkIndicator('key-13')">
-              <v-list-item-content class="small-padding">
-                <v-list-item-title>
-                  <a :href="getIndicator('key-13').value" target="_blank">
-                    {{ $t('countryProfile.infoBox.countryPage') }}
-                  </a>
-                </v-list-item-title>
-              </v-list-item-content>
+              <v-btn
+                variant="plain"
+                class="red-arrow"
+                depressed
+                :href="getIndicator('key-13').value"
+                target="_blank"
+              >
+                {{$t('countryProfile.infoBox.countryPage')}}
+              </v-btn>
             </v-list-item>
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="p-0 d-flex align-center printing-4 grey-background" md="2" cols="5">
+      <v-col class="p-0 mt-3 d-flex align-center printing-4 grey-background" md="3" cols="5">
         <v-img
           eager
           class="bg-printable"
@@ -123,7 +126,7 @@
           height="250"
         />
       </v-col>
-      <v-col class="p-0 align-center d-none d-block-print d-md-block printing-4" cols="4">
+      <v-col class="p-0 align-center d-none d-block-print d-md-block printing-4" md="3" cols="4">
         <v-img
           eager
           class="bg-printable"
@@ -198,13 +201,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-/* .indicators-list .one-line {
-  flex-wrap: nowrap;
-  padding: 4px 0;
-}
-.indicators-list .v-list-item {
-  min-height: 25px;
-}*/
 .overflow {
   overflow: hidden;
 }
@@ -212,8 +208,12 @@ export default {
   font-style: normal;
   font-weight: 700;
   font-size: 55px;
-  border-bottom: 2px solid #000000;
+  padding-bottom: 18px;
 }
+hr{
+  border: 1px solid #000000;
+}
+
 .info-bar_map {
   max-height: 230px;
   max-width: 94%;

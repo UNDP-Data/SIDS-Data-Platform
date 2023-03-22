@@ -45,3 +45,130 @@
 .tooltip-white.v-tooltip__content {
   color: #000 !important;
 }
+/* undp typography */
+hr.undp-style {
+  height: 1px;
+  background-color: var(--black);
+  border: none;
+}
+
+hr.undp-style.light {
+  height: 1px;
+  background-color: var(--gray-400);
+  border: none;
+}
+
+p.undp-typography {
+  margin-top: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+p.undp-typography.large-font{
+  font-size: 1.25rem !important;
+}
+
+@media (min-width: 48em) {
+  .undp-container, p.undp-typography {
+      font-size: 1.25rem;
+  }
+}
+
+caption.undp-typography, h1.undp-typography, h2.undp-typography, h3.undp-typography, h4.undp-typography, h5.undp-typography, h6.undp-typography {
+  margin: 0 0 0.75rem;
+  padding: 0;
+}
+@media(min-width:48em) {
+  caption.undp-typography, h1.undp-typography, h2.undp-typography, h3.undp-typography, h4.undp-typography, h5.undp-typography, h6.undp-typography.undp-typography.undp-typography.undp-typography.undp-typography {
+    margin-bottom: 1rem;
+  }
+}
+
+h1.undp-typography {
+  font-size: 2.938rem;
+  font-weight: 700;
+  letter-spacing: .06rem;
+  line-height: 1.08;
+  text-transform: uppercase;
+}
+
+h2.undp-typography {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+h3.undp-typography {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+h4.undp-typography {
+  font-size: 1.563rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+h5.undp-typography {
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+@media(min-width:64em) {
+  h2.undp-typography {
+    font-size: 3.438rem;
+  }
+  h1.undp-typography {
+    font-size: 6.25rem;
+  }
+}
+
+@media(min-width:48em) {
+  h5.undp-typography {
+    font-size: 1.563rem;
+  }
+  h4.undp-typography {
+    font-size: 2.188rem;
+  }
+  h3.undp-typography {
+    font-size: 2.188rem;
+  }
+  h2.undp-typography {
+    font-size: 2.813rem;
+  }
+  h1.undp-typography {
+    font-size: 5.125rem;
+  }
+  blockquote.undp-typography {
+    font-size: 2.188rem;
+    line-height: 1.15;
+  }
+  cite.undp-typography {
+    font-size: 1.5rem;
+  }
+  code.undp-typography {
+    font-size: 1.25rem;
+  }
+}
+
+h6.undp-typography {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+a.undp-style {
+  background-image: linear-gradient(var(--dark-red), var(--dark-red)), linear-gradient(var(--dark-red), var(--dark-red));
+  background-position: 100% 100%, -30px 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 2px, 0 1px;
+  text-decoration: none;
+  color: var(--black);
+}
+
+a.undp-style:hover {
+  animation: lineLoop-animation-for-links 2s linear infinite;
+  color: var(--black);
+}

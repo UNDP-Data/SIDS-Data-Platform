@@ -50,7 +50,7 @@
 
         <v-col md='12' lg='9'>
           <v-row class="d-none d-md-flex d-print-none nav-filter-row" >
-            <v-col cols='8' sm="10" lg="8" offset="2" class="offset-sm-1 offset-lg-2">
+            <v-col cols='8' sm="10" lg="7" offset="2" class="offset-sm-1 offset-lg-2">
               <h2 v-if="page!=='mvi'" class="page-header">
                 {{$t('indicators.headerIndicators')}}
               </h2>
@@ -58,15 +58,17 @@
                 {{$t('indicators.headerMVI')}}
               </h2>
             </v-col>
-            <v-col cols='2' sm="1" lg="2">
-              <div class="float-right mt-0 mb-2">
+            <v-col class="d-flex justify-end" cols='2' sm="1" md='3' xl="2">
+              <div class="mt-0 mb-2">
                 <info-button :contentName="page!=='mvi' ? 'aboutThis-indicators' : 'aboutThis-mvi'"/>
               </div>
-              <indicators-export
+              <div class="pl-3">
+                <indicators-export
                 :data="activeIndicatorData"
                 :meta="activeIndicatorsMeta"
                 :indiCode="indicator"
               />
+              </div>
             </v-col>
           </v-row>
           <indicators-autocomplete
@@ -160,7 +162,7 @@
               <indicators-choro-chart class="d-print-none" v-if='!noData' :chartId="'choro'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
               <h4 class="text-center" v-else>No data for selected indicator</h4>
               <indicators-m-l v-if="mlMode && mlAvaliable && page!=='mvi'" :indicator="indicator" @close="mlMode=false" :year="year"/>
-              <v-btn v-else-if="mlAvaliable && page!=='mvi'" rounded small class="float-right d-print-none" color="primary" @click="toggleMlMode()">AI Mode</v-btn>
+              <v-btn v-else-if="mlAvaliable && page!=='mvi'" small class="float-right export-button d-print-none" @click="toggleMlMode()">AI Mode</v-btn>
             </v-col>
           </v-row>
         </v-col>
