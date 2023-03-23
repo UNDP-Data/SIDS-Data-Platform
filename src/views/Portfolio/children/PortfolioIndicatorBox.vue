@@ -1,10 +1,14 @@
 <template>
-  <v-card
+  <!-- v-card
     class="ma-2"
   >
     <v-card-title class="custom-chip_header">{{value}}</v-card-title>
     <v-card-text class="custom-chip_text">{{title}}</v-card-text>
-  </v-card>
+  </v-card-->
+  <div class="stat-card small">
+      <h3>{{value}}</h3>
+      <p>{{title}}</p>
+    </div>
 </template>
 
 <script>

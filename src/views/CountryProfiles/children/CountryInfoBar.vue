@@ -3,11 +3,11 @@
     <v-row>
       <v-col>
         <v-subheader class="d-none d-md-block info-bar_header">{{$t('countryNames.'+id)}}</v-subheader>
-        <hr style="margin-left:16px">
+        <hr style="margin-left:16px" class="d-none d-md-block">
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="printing-4 mt-4" cols="7" md="6">
+      <v-col class="printing-4 mt-4" cols="12" md="6">
         <v-row>
           <v-col md="6">
             <v-list-item  v-if="checkIndicator('key-1')">
@@ -117,7 +117,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="p-0 mt-3 d-flex align-center printing-4 grey-background" md="3" cols="5">
+      <v-col class="py-6 mt-3 d-flex align-center printing-4 grey-background" md="3" cols="12">
         <v-img
           eager
           class="bg-printable"

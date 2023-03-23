@@ -4,7 +4,7 @@
       <div class="language-selector-container">
         <language-selector-mobile/>
       </div>
-      <h1 class="mobile-header mr-2 ml-0">{{header}}</h1>
+      <h1 class="mr-2 ml-0">{{header}}</h1>
       <info-button class="ml-a" v-if="infoContent" :contentName="infoContent"/>
       <div v-else class="spacer-block">
 

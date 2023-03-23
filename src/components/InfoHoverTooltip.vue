@@ -28,7 +28,6 @@
           v-bind="attrs"
           :disabled="disabled"
           v-on="on"
-          :large="small"
           color="#006EB5"
         >
           mdi-information-outline

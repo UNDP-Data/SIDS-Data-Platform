@@ -1,7 +1,7 @@
 <template>
   <div class="map d-flex">
     <slot name="header" />
-    <v-row class="justify-md-end chips-block justify-center" >
+    <!-- v-row class="justify-md-end chips-block justify-center" >
       <v-col class="chips-container pl-0 justify-md-end justify-center">
         <portfolio-indicator-box
           class="portfolio-chip"
@@ -20,6 +20,26 @@
         />
         <portfolio-indicator-box
           class="portfolio-chip"
+          :value="projectsFundning"
+          :title="$t('portfolio.chips.funding')"
+        />
+      </v-col>
+    </v-row -->
+    <v-row>
+      <v-col class="stat-card-container chips-container">
+        <portfolio-indicator-box
+          :value="projectsNumber"
+          :title="$t('portfolio.chips.sidsWithProjects')"
+        />
+        <portfolio-indicator-box
+          :value="memberStates"
+          :title="$t('portfolio.chips.unMembsers')"
+        />
+        <portfolio-indicator-box
+          :value="UNDPprojectsNumber"
+          :title="$t('portfolio.chips.projects')"
+        />
+        <portfolio-indicator-box
           :value="projectsFundning"
           :title="$t('portfolio.chips.funding')"
         />
@@ -603,10 +623,8 @@ export default {
 }
 .chips-container {
   position: relative;
+  top: 600px;
   z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  flex: 1 1 auto;
   padding-top: 0;
   padding-bottom: 0;
 }

@@ -17,7 +17,7 @@
   border: none !important;
 }
 .v-select .v-icon:before {
-  color: #082753 !important
+  color: #000 !important
 }
 .v-input__slot {
   min-height: 36px !important;
@@ -36,7 +36,7 @@
   margin-top: 6px !important;
 }
 .v-select__selections {
-  color: #082753 !important
+  color: #000 !important
 }
 .v-select.v-select--is-multi.v-input--is-dirty .v-input__slot {
   padding: 0 8px 0 1px !important;

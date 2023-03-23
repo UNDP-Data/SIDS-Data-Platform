@@ -89,7 +89,7 @@
 
           >
             <template v-slot:header>
-              <v-row class="map-header d-none d-lg-flex justify-space-between">
+              <v-row class="map-header mt-7 d-none d-lg-flex justify-space-between">
                 <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
                   <h2 class="page-header mt-md-2 mb-0">{{$t('portfolio.header')}}</h2>
                 </v-col>

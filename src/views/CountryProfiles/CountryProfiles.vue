@@ -8,11 +8,11 @@
           </template>
         </printout-header>
         <v-row class="mt-7 d-none-print profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
-          <v-col lg="9" sm="11" class="d-flex">
+          <v-col cols="9" lg="9" sm="11" class="d-flex">
             <v-col class="d-none d-md-block" cols="12" md="4">
               <h2 class="page-header mr-3 country-profile-header">{{$t('countryProfile.header')}}</h2>
             </v-col>
-            <v-col md="3" class="select-column">
+            <v-col cols="12" md="3" class="select-column">
               <v-select
                 class="country-select"
                 :value="activeCountryId"
@@ -37,7 +37,7 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col class="d-none-print d-none d-md-block" md="3">
+            <v-col md="3" class="d-none-print d-none d-md-block" >
               <div class="select">
                 <v-select
                   class="region-select"
@@ -55,7 +55,7 @@
               </div>
             </v-col>
           </v-col>
-          <v-col lg="3" sm="1">
+          <v-col cols="3" lg="3" sm="1">
               <v-col class="d-none-print d-flex justify-end" lg='auto'>
               <div class="d-none d-md-block mr-2 mr-md-0">
                 <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
@@ -77,18 +77,21 @@
         </v-row>
         <v-row class="d-none d-md-flex d-print-flex mt-10" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
           <v-col cols="12">
-            <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
+            <h2 class="px-4 mb-0 undp-typography mb-4">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
             <v-row>
-              <v-col class="printing-9" cols='12' md="9">
-                <div class="px-4" v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
-              </v-col>
-              <v-col class="printing-3 mb-0" cols='12' md="3">
-                <div class=" px-4 text-center mb-3 mb-print-1" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-                  <h3>{{stat.value}} {{stat.unit}}</h3>
-                  <p class="mb-0">{{stat.title}}</p>
-                </div>
+              <v-col class="printing-9" cols='12'>
+                <div class="pl-4 undp-typography" v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
               </v-col>
             </v-row>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="printing-3 mb-0 stat-card-container pl-7" cols='12'>
+            <div class="mb-print-1 stat-card" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+                <h2>{{stat.value.replaceAll(',',' ')}}</h2>
+                <h4>{{stat.unit.replace('%','percent')}}</h4>
+                <p>{{stat.title}}</p>
+            </div>
           </v-col>
         </v-row>
         <v-row class="d-md-none d-none-print justify-center">
@@ -99,7 +102,7 @@
                 <v-expansion-panel-content>
                   <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
                   <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-                    <h3>{{stat.value}} {{stat.unit}}</h3>
+                    <h3 class="undp-typography">{{stat.value}} {{stat.unit}}</h3>
                     <p class="mb-0">{{stat.title}}</p>
                   </div>
                 </v-expansion-panel-content>
@@ -257,8 +260,8 @@
       <div class="print-page page-break">
         <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
           <v-col cols="12">
-            <h2 class="mb-0 px-4">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
-            <div class="px-4" v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+            <h2 class="mb-4 px-4 undp-typography">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
+            <div class="px-4 undp-typography" v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
           </v-col>
         </v-row>
         <v-row class="d-none d-md-flex d-print-flex no-page-break mb-4 mb-print-0">
@@ -284,8 +287,8 @@
         </v-row>
         <v-row class="d-none d-md-flex d-print-flex" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
           <v-col cols="12">
-            <h2 class="px-4 mb-0">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
-            <div class="px-4" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+            <h2 class="px-4 mb-2 undp-typography">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
+            <div class="px-4 undp-typography" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
           </v-col>
         </v-row>
         <p :class="{'single-page-print-footer': !activeCountryProfile.CountryText}" class="print-footer d-none d-print-block">
