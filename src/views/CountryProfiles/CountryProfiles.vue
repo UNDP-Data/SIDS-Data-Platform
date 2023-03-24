@@ -10,7 +10,7 @@
         <v-row class="mt-7 d-none-print profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
           <v-col cols="9" lg="9" sm="11" class="d-flex">
             <v-col class="d-none d-md-block" cols="12" md="4">
-              <h2 class="page-header mr-3 country-profile-header">{{$t('countryProfile.header')}}</h2>
+              <h2 class="mr-3 country-profile-header">{{$t('countryProfile.header')}}</h2>
             </v-col>
             <v-col cols="12" md="3" class="select-column">
               <v-select
@@ -571,6 +571,11 @@ export default {
 }
 </script>
 <style media="screen">
+  .country-profile-header{
+    font-weight: 600;
+    font-size: 35px;
+    line-height: 114.2%;
+  }
   .country-select, .region-select {
     max-width: 260px;
     font-weight: 700;

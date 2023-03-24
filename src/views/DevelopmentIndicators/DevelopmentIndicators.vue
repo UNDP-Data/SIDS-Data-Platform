@@ -30,112 +30,110 @@
           </v-col>
       </v-row>
     </div>
-      <v-row dense>
-        <v-col  class="d-none d-print-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
-          <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
-        </v-col>
-        <v-col  class="d-none d-print-none d-lg-block pt-14" v-else cols='3'>
-          <mvi-indicators-nav :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
-        </v-col>
-        <v-dialog
-          v-model="dialog"
-          width="400"
-          :fullscreen = "isMobile"
-          content-class="dialog-box"
-          transition="dialog-right-transition"
-        >
-          <indicators-nav :chartType="chartType" @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
-          <mvi-indicators-nav v-else @close="dialog = !dialog" :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
-        </v-dialog>
-
-        <v-col md='12' lg='9'>
-          <v-row class="d-none d-md-flex d-print-none nav-filter-row" >
-            <v-col cols='8' sm="10" lg="7" offset="2" class="offset-sm-1 offset-lg-2">
-              <h2 v-if="page!=='mvi'" class="page-header">
-                {{$t('indicators.headerIndicators')}}
-              </h2>
-              <h2 v-else class="page-header text-left">
-                {{$t('indicators.headerMVI')}}
-              </h2>
-            </v-col>
-            <v-col class="d-flex justify-end" cols='2' sm="1" md='3' xl="2">
-              <div class="mt-0 mb-2">
-                <info-button :contentName="page!=='mvi' ? 'aboutThis-indicators' : 'aboutThis-mvi'"/>
-              </div>
-              <div class="pl-3">
-                <indicators-export
-                :data="activeIndicatorData"
-                :meta="activeIndicatorsMeta"
-                :indiCode="indicator"
-              />
-              </div>
-            </v-col>
-          </v-row>
-          <indicators-autocomplete
-            v-if="page !== 'mvi'"
-            class="d-flex d-lg-none d-print-none"
-            @toggleDialog="dialog = !dialog"
-            @indicatorChange="indicatorUpdate"
-            :activeIndicatorCode="indicator"/>
-          <indicators-mobile-nav
-            v-if="page !== 'mvi'"
-            class="d-block mb-md-4 d-print-none d-lg-none"
-            @chartTypeChange="transitionTo"
-            @yearChange="yearUpdate"
-            @sortingChange="sortingUpdate"
-            @indicatorChange="indicatorUpdate"
-            @regionChange="regionUpdate"
-            :activeIndicatorCode="indicator"
-            :year="year"
-            :sortingType="sortingName"
-            :chartType="chartType"
-            :chartTypes="tabs"
-            :region="region"
-            :regions="regions"
-          />
-          <mvi-mobile-nav
-            class="mt-5 d-flex d-print-none d-lg-none"
-            v-if="page === 'mvi'"
-            :sortingType="sortingName"
-            :chartType="chartType"
-            :chartTypes="tabs"
-            :region="region"
-            :regions="regions"
-            @chartTypeChange="transitionTo"
-            @sortingChange="sortingUpdate"
-            @regionChange="regionUpdate"
-            @toggleDialog="dialog = !dialog"
-            :mviCodes="mviCodes"
-            @MviIndicatorsChange="MVIindicatorUpdate"
-          />
-          <v-row dense class="d-none d-print-none d-lg-flex nav-tabs-row justify-center">
-            <v-col class="d-flex">
-              <div class="ma-auto">
-                <v-tabs
-                  v-if="!isMobile && (indicator!=='region' || page==='mvi')"
-                  :value="activeTab"
-                  :grow="isMobile"
-                  :class="{
-                    'indicators-tabs' : page!=='mvi',
-                    'mvi-tabs' : page==='mvi'
-                  }"
-                  class="tabs tabs-small"
-                >
-                  <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{$t('indicators.tabs.'+ tab.chartType)}}</v-tab>
-                </v-tabs>
-              </div>
-            </v-col>
-          </v-row>
-          <v-row class="nav-filter-row d-print-none d-none d-lg-flex" dense justify="end">
+    <v-row class="mt-7 d-none d-md-flex d-print-none nav-filter-row" >
+      <v-col cols='9' sm="10" lg="9" xl="10">
+        <h2 v-if="page!=='mvi'" class="undp-typography">
+          {{$t('indicators.headerIndicators')}}
+        </h2>
+        <h2 v-else class="undp-typography">
+          {{$t('indicators.headerMVI')}}
+        </h2>
+      </v-col>
+      <v-col class="d-flex justify-end" cols='3' sm="2" lg="3" xl="2">
+        <div class="mt-0 mb-2">
+          <info-button :contentName="page!=='mvi' ? 'aboutThis-indicators' : 'aboutThis-mvi'"/>
+        </div>
+        <div class="pl-3">
+          <indicators-export
+          :data="activeIndicatorData"
+          :meta="activeIndicatorsMeta"
+          :indiCode="indicator"
+        />
+        </div>
+      </v-col>
+    </v-row>
+    <v-row dense>
+      <v-col  class="d-none d-print-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
+        <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
+      </v-col>
+      <v-col class="d-none d-print-none d-lg-block mt-7" v-else cols='3'>
+        <mvi-indicators-nav :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
+      </v-col>
+      <v-dialog
+        v-model="dialog"
+        width="400"
+        :fullscreen = "isMobile"
+        content-class="dialog-box"
+        transition="dialog-right-transition"
+      >
+        <indicators-nav :chartType="chartType" @close="dialog = !dialog" v-if="page==='devIdictors'" :activeIndicatorCode="indicator" :year="year" @indicatorChange="indicatorUpdate" @yearChange="yearUpdate"/>
+        <mvi-indicators-nav v-else @close="dialog = !dialog" :mviCodes="mviCodes" @MviIndicatorsChange="MVIindicatorUpdate"/>
+      </v-dialog>
+      <v-col md='12' lg='9'>
+        <indicators-autocomplete
+          v-if="page !== 'mvi'"
+          class="d-flex d-lg-none d-print-none"
+          @toggleDialog="dialog = !dialog"
+          @indicatorChange="indicatorUpdate"
+          :activeIndicatorCode="indicator"/>
+        <indicators-mobile-nav
+          v-if="page !== 'mvi'"
+          class="d-block mb-md-4 d-print-none d-lg-none"
+          @chartTypeChange="transitionTo"
+          @yearChange="yearUpdate"
+          @sortingChange="sortingUpdate"
+          @indicatorChange="indicatorUpdate"
+          @regionChange="regionUpdate"
+          :activeIndicatorCode="indicator"
+          :year="year"
+          :sortingType="sortingName"
+          :chartType="chartType"
+          :chartTypes="tabs"
+          :region="region"
+          :regions="regions"
+        />
+        <mvi-mobile-nav
+          class="mt-5 d-flex d-print-none d-lg-none"
+          v-if="page === 'mvi'"
+          :sortingType="sortingName"
+          :chartType="chartType"
+          :chartTypes="tabs"
+          :region="region"
+          :regions="regions"
+          @chartTypeChange="transitionTo"
+          @sortingChange="sortingUpdate"
+          @regionChange="regionUpdate"
+          @toggleDialog="dialog = !dialog"
+          :mviCodes="mviCodes"
+          @MviIndicatorsChange="MVIindicatorUpdate"
+        />
+        <v-row class="d-none d-print-none d-lg-flex nav-tabs-row mt-4">
+          <v-col class="d-flex" col="9" lg="9">
+            <div class="ma-auto">
+              <v-tabs
+                v-if="!isMobile && (indicator!=='region' || page==='mvi')"
+                :value="activeTab"
+                :grow="isMobile"
+                :class="{
+                  'indicators-tabs' : page!=='mvi',
+                  'mvi-tabs' : page==='mvi'
+                }"
+                class="tabs tabs-small"
+              >
+                <v-tab v-for="(tab, index) in tabs" :value="index" :key="index" @change="transitionTo(tab.chartType)">{{$t('indicators.tabs.'+ tab.chartType)}}</v-tab>
+              </v-tabs>
+            </div>
+          </v-col>
+          <v-col class="nav-filter-row d-print-none d-none d-lg-flex" dense justify="end" col="3" lg="3">
             <div v-if="(chartType === 'bars' || chartType === 'spider')" class="sorting-row">
-                <v-tabs
-                  :grow="false"
-                  v-model="sorting"
-                  class="tabs tabs-small tabs-slider sorting sorting-tabs"
-                >
-                  <v-tab key="rank" value="rank">{{$t('indicators.filters.rank')}}</v-tab>
-                  <v-tab key="region" value="region">{{$t('indicators.filters.region')}}</v-tab>
-                </v-tabs>
+              <v-tabs
+                :grow="false"
+                v-model="sorting"
+                class="tabs tabs-small tabs-slider sorting sorting-tabs"
+              >
+                <v-tab key="rank" value="rank">{{$t('indicators.filters.rank')}}</v-tab>
+                <v-tab key="region" value="region">{{$t('indicators.filters.region')}}</v-tab>
+              </v-tabs>
             </div>
             <div v-if="chartType === 'series'" class="sorting-row">
               <div class="select sorting sorting-select">
@@ -156,17 +154,21 @@
                 </v-select>
               </div>
             </div>
-          </v-row>
-          <v-row dense :class="{'d-print-none' : !mlMode}">
-            <v-col cols='12'>
-              <indicators-choro-chart class="d-print-none" v-if='!noData' :chartId="'choro'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
-              <h4 class="text-center" v-else>No data for selected indicator</h4>
-              <indicators-m-l v-if="mlMode && mlAvaliable && page!=='mvi'" :indicator="indicator" @close="mlMode=false" :year="year"/>
-              <v-btn v-else-if="mlAvaliable && page!=='mvi'" small class="float-right export-button d-print-none" @click="toggleMlMode()">AI Mode</v-btn>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+          </v-col>
+        </v-row>
+        <!-- v-row class="nav-filter-row d-print-none d-none d-lg-flex" dense justify="end">
+
+        </v-row -->
+        <v-row dense :class="{'d-print-none' : !mlMode}">
+          <v-col cols='12'>
+            <indicators-choro-chart class="d-print-none" v-if='!noData' :chartId="'choro'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
+            <h4 class="text-center" v-else>No data for selected indicator</h4>
+            <indicators-m-l v-if="mlMode && mlAvaliable && page!=='mvi'" :indicator="indicator" @close="mlMode=false" :year="year"/>
+            <v-btn v-else-if="mlAvaliable && page!=='mvi'" small class="float-right export-button d-print-none" @click="toggleMlMode()">AI Mode</v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
     <div v-if="page!=='mvi' && !mlMode" class="printable-hidden print-page-wrap">
       <v-row dense>
         <v-col cols='12'>
@@ -445,7 +447,7 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
-  .sorting-row{
+  /*.sorting-row{
     position: relative;
     width: 100%;
   }
@@ -459,7 +461,7 @@ export default {
   }
   .sorting-select {
     top: 25px;
-  }
+  }*/
   .nav-tabs-row {
     min-height: 38px;
   }

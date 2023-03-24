@@ -11,10 +11,11 @@
   font-weight: 600 !important;
 }
 .block-subheader{
-  color: #082753;
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  text-transform: capitalize;
+  color: #000;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 /*@media all and (max-width:959px) {
   .page-header {
@@ -133,18 +134,18 @@ hr.undp-style.light {
   border: none;
 }
 
-.undp-typography p{
+.undp-typography p, p.undp-typography{
   margin-top: 0;
   font-size: 1rem;
   line-height: 1.4;
 }
 
-.undp-typography.large-font p{
+.undp-typography.large-font p, p.undp-typography.large-font{
   font-size: 1.25rem !important;
 }
 
 @media (min-width: 48em) {
-  .undp-container, .undp-typography p{
+  .undp-container, .undp-typography p, p.undp-typography{
       font-size: 1.25rem;
   }
 }
@@ -270,14 +271,14 @@ a.undp-style:hover {
 .chips-container .stat-card{
   flex-basis: 20rem;
 }
-@media (max-width: 48em) {
+@media (max-width: 48rem) {
   .stats-card {
     padding: 1.5rem;
   }
 }
 
 
-@media (min-width: 48em) {
+@media (min-width: 48rem) {
   .undp-container, p.undp-style {
     font-size: 1.25rem;
   }

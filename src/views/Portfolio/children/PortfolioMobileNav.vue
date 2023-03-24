@@ -5,7 +5,7 @@
         <v-row class="justify-center">
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">{{$t('root.forms.region')}}</label>
+              <p class="input-label">{{$t('root.forms.region')}}</p>
               <v-select
                 rounded
                 dense
@@ -28,7 +28,7 @@
           </v-col>
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">{{$t('portfolio.year')}}</label>
+              <p class="input-label">{{$t('portfolio.year')}}</p>
               <v-select
                 rounded
                 dense
@@ -53,7 +53,7 @@
         <v-row class="justify-center">
           <v-col cols="6" class="position-relative">
             <div class="select">
-              <label class="input-label">{{$t('portfolio.fundingCategories')}}</label>
+              <p class="input-label">{{$t('portfolio.fundingCategories')}}</p>
               <v-select
                 rounded
                 dense
@@ -75,7 +75,7 @@
           </v-col>
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">{{$t('portfolio.fundingSources')}}</label>
+              <p class="input-label">{{$t('portfolio.fundingSources')}}</p>
               <v-select
                 rounded
                 dense
@@ -100,7 +100,7 @@
         <v-row class="justify-center">
           <v-col cols="6" class="position-relative">
             <div class="select">
-              <label class="input-label">{{$t('portfolio.goalType')}}</label>
+              <p class="input-label">{{$t('portfolio.goalType')}}</p>
               <v-select
                 rounded
                 dense
@@ -124,7 +124,7 @@
           </v-col>
           <v-col cols="6">
             <div class="select">
-              <label class="input-label">{{$t('portfolio.goal')}}</label>
+              <p class="input-label">{{$t('portfolio.goal')}}</p>
               <v-select
                 rounded
                 dense
