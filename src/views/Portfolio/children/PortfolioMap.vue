@@ -1,30 +1,6 @@
 <template>
   <div class="map d-flex">
     <slot name="header" />
-    <!-- v-row class="justify-md-end chips-block justify-center" >
-      <v-col class="chips-container pl-0 justify-md-end justify-center">
-        <portfolio-indicator-box
-          class="portfolio-chip"
-          :value="projectsNumber"
-          :title="$t('portfolio.chips.sidsWithProjects')"
-        />
-        <portfolio-indicator-box
-          class="portfolio-chip"
-          :value="memberStates"
-          :title="$t('portfolio.chips.unMembsers')"
-        />
-        <portfolio-indicator-box
-          class="portfolio-chip"
-          :value="UNDPprojectsNumber"
-          :title="$t('portfolio.chips.projects')"
-        />
-        <portfolio-indicator-box
-          class="portfolio-chip"
-          :value="projectsFundning"
-          :title="$t('portfolio.chips.funding')"
-        />
-      </v-col>
-    </v-row -->
     <v-row>
       <v-col class="stat-card-container chips-container">
         <portfolio-indicator-box
@@ -582,7 +558,6 @@ export default {
   flex-grow: 0;
 }
 
-
 @media all and (min-width:960px) {
   .map {
     min-height: 350px;
@@ -614,19 +589,18 @@ export default {
     height: auto;
     max-height: 720px;
   }
-}
-@media all and (max-width:600px) {
-  .portfolio-chip {
-    min-width: 30%;
-    margin: 5px 5% !important
+  .chips-container{
+    flex-wrap: wrap;
   }
 }
+
 .chips-container {
   position: relative;
-  top: 600px;
+  top: 20px;
   z-index: 2;
   padding-top: 0;
   padding-bottom: 0;
+  flex-wrap: nowrap;
 }
 .chips-block{
   margin-left: auto;
@@ -636,11 +610,10 @@ export default {
   cursor: pointer;
 }
 #map-container svg {
-  margin-top: -30px;
+  margin-top: -10px;
   width: 100%;
   height: 100%;
 }
-
 .zoomed .points,.zoomed .country_label, .zoomed .parish-line, .zoomed .map-title {
   display: none;
 }

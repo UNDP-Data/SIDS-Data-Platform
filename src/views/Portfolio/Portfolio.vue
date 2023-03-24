@@ -91,7 +91,7 @@
             <template v-slot:header>
               <v-row class="map-header mt-7 d-none d-lg-flex justify-space-between">
                 <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
-                  <h2 class="page-header mt-md-2 mb-0">{{$t('portfolio.header')}}</h2>
+                  <h2 class="page-header mt-md-2 mb-0 undp-typography">{{$t('portfolio.header')}}</h2>
                 </v-col>
                 <v-col class="d-flex justify-end" cols="2" sm="1" md='3' xl="2">
                   <div class="">
@@ -118,7 +118,7 @@
       </v-row>
       <v-row class="d-none d-print-block d-md-flex mt-md-0 mt-lg-2 flex-lg-nowrap" justify="center">
         <!--v-col class="d-none d-print-none d-lg-block margin-wrap-right"></v-col-->
-        <v-col class="d-none d-print-block d-md-block pt-md-0 pb-md-0 pt-lg-4 pb-lg-4 pr-md-6 tabs-column">
+        <v-col class="d-none d-print-block d-md-block pt-md-0 pb-md-0 pt-lg-4 pb-lg-4 pr-md-6 tabs-column" lg="9">
           <v-row class="d-none d-print-none d-lg-flex mt-5 mb-8" justify="center">
             <v-col cols="12">
                 <v-tabs
@@ -142,7 +142,7 @@
                 chartName="region"
                 :colorScheme="regionColors"
               ></portfolio-pie-chart>
-              <h3 class="d-none d-print-block chart-caption text-center">
+              <h3 class="d-none d-print-block chart-caption text-center undp-typography">
                 <b>Funding by regions</b>
               </h3>
             </v-col>
@@ -165,17 +165,17 @@
                 :activeCategory="fundingCategory"
                 :colorScheme="sourcesColor"
               ></portfolio-pie-chart>
-              <h3 class="d-none d-print-block chart-caption text-center">
+              <h3 class="d-none d-print-block chart-caption text-center undp-typography">
                 <b>Funding by category</b>
               </h3>
             </v-col>
           </v-row>
         </v-col>
-        <v-col class="selects-col d-print-none d-none d-lg-block margin-wrap-right">
+        <v-col class="selects-col d-print-none d-none d-lg-block margin-wrap-right" lg="3">
           <v-row dense justify="center">
             <v-col cols='5' md="5" lg="12">
               <div class="select">
-              <label class="input-label">{{$t('portfolio.year')}}</label>
+              <p class="input-label">{{$t('portfolio.year')}}</p>
               <v-select
                 rounded
                 dense
@@ -197,7 +197,7 @@
             <v-col cols='5'  md="5" lg="12">
               <v-divider class="mt-2 d-none d-lg-block mb-4"></v-divider>
               <div class="select">
-                <label class="input-label">{{$t('portfolio.fundingCategories')}}</label>
+                <p class="input-label">{{$t('portfolio.fundingCategories')}}</p>
                 <v-select
                   rounded
                   hide-details
@@ -220,7 +220,7 @@
           <v-row dense justify="center">
             <v-col class="d-block d-lg-none"  cols='5'  md="5" lg="12">
               <div class="select">
-                <label class="input-label">{{$t('root.forms.region')}}</label>
+                <p class="input-label">{{$t('root.forms.region')}}</p>
                 <v-select
                   rounded
                   hide-details
@@ -243,7 +243,7 @@
             </v-col>
             <v-col cols='5' md="5" lg="12" class="mt-3">
               <div class="select">
-                <label class="input-label">{{$t('portfolio.fundingSources')}}</label>
+                <p class="input-label">{{$t('portfolio.fundingSources')}}</p>
                 <v-autocomplete
                   rounded
                   hide-details
@@ -273,7 +273,7 @@
       <v-row class="d-none d-print-block">
 
         <v-col class="chart-caption-goals" cols="12">
-          <h3>
+          <h3 class="undp-typography">
             {{$t(`root.goals.${goalsType}`)}}
           </h3>
         </v-col>
@@ -302,12 +302,12 @@
       <portfolio-projects class="d-lg-none d-print-none" :goalType="goalsType" :goal="goal"/>
     </div>
     <div class="d-none d-print-block">
-      <h2 class="text-center">
+      <h2 class="text-center undp-typography">
         Selected projects
       </h2>
       <div :key="goal.id" class="mb-4" v-for="goal in goals[goalsType]">
         <template v-if="getTopFiveProjeccts(goal).length" >
-          <h3  class="prinout-goal-header mb-4" :style="{background: goal.color}">
+          <h3  class="prinout-goal-header mb-4 undp-typography" :style="{background: goal.color}">
             {{goal.title}}
           </h3>
           <v-row class="printout-project-row" :key="idex" v-for="(project, idex) in getTopFiveProjeccts(goal)">

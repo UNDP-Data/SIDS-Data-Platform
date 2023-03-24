@@ -2,28 +2,28 @@
   <v-row class="justify-center">
     <v-col cols="11">
       <v-row dense class="justify-center">
-        <v-col cols="6" sm="3" class="d-flex justify-end justify-sm-center">
+        <v-col cols="6" class="d-flex justify-end justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="projectsNumber"
             :title="$t('portfolio.chips.sidsWithProjects')"
           />
         </v-col>
-        <v-col cols="6" sm="3" class="d-flex justify-start justify-sm-center">
+        <v-col cols="6" class="d-flex justify-start justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="memberStates"
             :title="$t('portfolio.chips.unMembsers')"
           />
         </v-col>
-        <v-col cols="6" sm="3" class="d-flex justify-end justify-sm-center">
+        <v-col cols="6" class="d-flex justify-end justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="UNDPprojectsNumber"
             :title="$t('portfolio.chips.projects')"
           />
         </v-col>
-        <v-col cols="6" sm="3" class="d-flex justify-start justify-sm-center">
+        <v-col cols="6" class="d-flex justify-start justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
             :value="projectsFundning"

@@ -95,7 +95,7 @@ export default {
 }
 .project-item_header {
   text-align: left;
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 500 !important;
   width: 100%;
 }
@@ -105,6 +105,6 @@ export default {
   text-overflow: ellipsis;
   width: 100%;
   display: block;
-  font-size: 14px;
+  font-size: 1rem;
 }
 </style>
