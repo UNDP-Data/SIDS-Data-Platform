@@ -1,12 +1,29 @@
 <template>
-  <div class="mb-4">
-    <a class="resource-link mb-2" target="_blank" :href="resource.links[0].link">
-      <h4>{{resource.name}}</h4>
+  <div class="mb-6 about-resource">
+    <div class="resource-image">
       <v-img
-        aspect-ratio="0.70430107526"
-        :src="resource.image"
+      aspect-ratio="0.70430107526"
+      :src="resource.image"
       ></v-img>
-    </a>
+    </div>
+    <div>
+      <div class="resource-bottom">
+        <v-card-actions class="pt-0 pl-0">
+          <v-hover v-slot="{ hover }">
+            <v-btn
+              plain
+              class="red-arrow pl-0"
+              depressed
+              target="_blank"
+              :style="{ 'background-color': hover ? '#FAFAFA' : '#FAFAFA', 'font-size':'16px' }"
+              :href="resource.links[0].link"
+            >
+            OPEN
+            </v-btn>
+          </v-hover>
+        </v-card-actions>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -23,9 +40,28 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.resource-link {
-  text-decoration: none;
-  color: inherit;
-  text-align: center;
+.about-resource{
+  background-image: url("../../../assets/media/resource-bg.png");
+  background-repeat: no-repeat;
+  background-position: left top;
+  width: 336px;
+}
+.resource-title{
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 137.5%;
+  color: #000000;
+}
+.resource-image{
+  height: 405px;
+  width: 336px;
+  padding: 35px 48px 36px;
+}
+.resource-bottom{
+  padding: 24px 24px 10px 24px;
+  background-color: #f7f7f7;
+}
+.resource-bottom a {
+  border-bottom:0;
 }
 </style>
