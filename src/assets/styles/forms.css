@@ -41,7 +41,9 @@
 .v-select.v-select--is-multi.v-input--is-dirty .v-input__slot {
   padding: 0 8px 0 1px !important;
 }
-
+.v-text-field > .v-input__control > .v-input__slot::after{
+  border:#000 !important;
+}
 .tooltip-content {
   background: none !important;
 

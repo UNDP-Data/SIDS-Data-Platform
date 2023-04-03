@@ -166,7 +166,7 @@ export default {
   height: 0;
 }
 .vue-tabs-chrome .tabs-main {
-  background-color: #babcc1;
+  background-color: #D4D6D8;
   border-radius: 0;
   margin: 0 7px 0 0;
 }
@@ -175,10 +175,10 @@ export default {
 }
 .vue-tabs-chrome .tabs-main,
 .tab-add {
-  background-color: #babcc1;
+  background-color: #D4D6D8;
 }
 .vue-tabs-chrome .active .tabs-main {
-  background-color: #e4e1e1;
+  background-color: #EDEFF0;
 }
 .chrome-tabs-slot-button {
   height: 20px;

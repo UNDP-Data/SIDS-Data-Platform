@@ -1,6 +1,6 @@
 <template>
   <div class="loader-root">
-    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+    <div class="lds-ellipsis undp-loader"></div>
   </div>
 </template>
 
@@ -32,13 +32,13 @@ export default {
 .lds-ellipsis div {
   position: absolute;
   top: 33px;
-  width: 13px;
+  /* width: 13px;
   height: 13px;
   border-radius: 50%;
   background: rgb(9, 105, 250);
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);*/
 }
-.lds-ellipsis div:nth-child(1) {
+/*.lds-ellipsis div:nth-child(1) {
   left: 8px;
   animation: lds-ellipsis1 0.6s infinite;
 }
@@ -76,6 +76,34 @@ export default {
   }
   100% {
     transform: translate(24px, 0);
+  }
+}
+*/
+@keyframes loader-animation-undp {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.undp-loader {
+  animation: loader-animation-undp 2s linear infinite;
+  border-radius: 50%;
+  border: 8px solid var(--blue-600);
+  border-top: 8px solid var(--gray-300);
+  height: 40px;
+  width: 40px;
+}
+
+@media (min-width: 48em) {
+  .undp-loader {
+    border: 14px solid var(--blue-600);
+    border-top: 14px solid var(--gray-300);
+    height: 96px;
+    width: 96px;
   }
 }
 </style>

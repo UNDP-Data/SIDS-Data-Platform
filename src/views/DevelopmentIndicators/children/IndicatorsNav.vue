@@ -10,7 +10,7 @@
     </v-btn>
     <v-card flat>
       <v-text-field v-if="!dataset"
-        class="search-input ml-2 mr-2"
+        class="search-input mx-4 py-4"
         dense
         v-model="searchString"
         @focus="showFullList"
@@ -127,7 +127,7 @@
     </v-list>
     <v-select
       v-if="dataset && indicatorCategories"
-      class="ml-2 mr-2"
+      class="mx-4 my-6"
       dense
       v-model="activeCategory"
       hide-details
@@ -143,7 +143,7 @@
     </v-select>
     <v-select
       v-if="dataset && indicatorSubCategories && indicatorSubCategories.length > 1"
-      class="ml-2 mr-2"
+      class="mx-4"
       dense
       hide-details
       v-model="activeSubCategory"
@@ -157,7 +157,7 @@
       </template>
     </v-select>
     <v-text-field v-if="dataset"
-        class="search-input ml-2 mr-2 mb-2"
+        class="search-input mx-4 mb-4"
         v-model="deepSearch"
         hide-details
         dense
@@ -219,6 +219,7 @@
   <v-card flat class="mt-2 active-indicator-info" v-if="activeIndicator && !isSmallScreen">
     <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
     <v-card-text class="pt-2">
+      <p class="input-label">Year</p>
       <div class="mb-1 d-flex">
         <v-select class='dimensions-select'
           :items="activeIndicatorYears"
@@ -227,7 +228,6 @@
           item-value="id"
           :disabled="playingYear"
           @change="emitYearChange"
-          label="Year"
           dense
         >
           <template slot="selection" slot-scope="data">
@@ -238,6 +238,7 @@
           </template>
         </v-select>
         <v-btn
+          class="mt-2"
           @click="toggleYearPlay"
           icon
           >
@@ -261,7 +262,7 @@
       {{activeIndicator.def}}
       <v-divider class="mb-1 mt-1"></v-divider>
       <b>{{$t('root.source')}}:</b>{{activeIndicator.source}} <br/>
-      <a :href="activeIndicator.link" target="_blank">{{$t('root.link')}}</a>
+      <a :href="activeIndicator.link" target="_blank" class="undp-style">{{$t('root.link')}}</a>
     </v-card-text>
   </v-card>
   </div>

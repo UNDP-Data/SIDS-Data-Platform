@@ -117,7 +117,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="py-6 mt-3 d-flex align-center printing-4 grey-background" md="3" cols="12">
+      <v-col class="mt-3 d-flex align-center printing-4 grey-background" md="3" cols="12">
         <v-img
           eager
           class="bg-printable"
@@ -126,7 +126,7 @@
           height="250"
         />
       </v-col>
-      <v-col class="p-0 align-center d-none d-block-print d-md-block printing-4" md="3" cols="4">
+      <v-col class="mt-0 pl-5 align-center d-none d-block-print d-md-block printing-4" md="3" cols="4">
         <v-img
           eager
           class="bg-printable"

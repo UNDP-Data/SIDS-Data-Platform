@@ -1,5 +1,5 @@
 <template>
-  <v-card class="background-grey histogram_frame mr-4 ml-4 mr-md-0 ml-md-0">
+  <v-card class="histogram_frame mr-4 ml-4 mr-md-0 ml-md-0">
     <div
       v-if="activeLayer"
       class="pic app-body population-per-km col-flex"
@@ -265,6 +265,8 @@ export default {
 .histogram_frame {
   height: 200px;
   border-radius: 0 !important;
+  background-color: #EDEFF0 !important;
+  padding-top: 10px;
 }
 .legend-title {
   font-size: 11px;
@@ -290,9 +292,7 @@ export default {
   z-index: 4;
 }
 @media (max-width:959px) {
-  /* .background-grey {
-    background-color: transparent !important;
-  } */
+
   .histogram_frame {
     height: auto;
     border-radius: 22px !important;

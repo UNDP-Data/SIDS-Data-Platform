@@ -2,9 +2,9 @@
   <div class="mb-2">
     <v-row dense>
       <v-col>
+        <p class="input-label mt-3">{{ this.datasetLabel }}</p>
         <v-autocomplete
-          rounded
-          class="map-input"
+          class="map-input mb-3"
           dense
           hide-details
           :disabled='disabled'
@@ -14,7 +14,6 @@
           item-text="name"
           item-value="name"
           return-object
-          :label="datasetLabel"
           outlined
         ></v-autocomplete>
       </v-col>

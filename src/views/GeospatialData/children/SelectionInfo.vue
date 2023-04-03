@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="value || mean || min || max" class="selection-info description-block background-grey">
+  <v-card v-if="value || mean || min || max" class="selection-info description-block">
     <v-card-text class="pa-2">
       <h4 v-if="name">{{name}}</h4>
       <h4 v-if="value && !bivarClass">Value:</h4>
@@ -125,5 +125,7 @@ export default {
 }
 .description-block {
   border-radius: 0 !important;
+  background-color: #EDEFF0 !important;
+  padding-bottom: 10px;
 }
 </style>

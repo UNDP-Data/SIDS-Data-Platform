@@ -7,7 +7,7 @@
             <b>{{$t('countryNames.'+activeCountryId)}}</b> {{$t('countryProfile.header')}}
           </template>
         </printout-header>
-        <v-row class="mt-7 d-none-print profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
+        <v-row class="mt-4 d-none-print profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
           <v-col cols="9" lg="9" sm="11" class="d-flex">
             <v-col class="d-none d-md-block" cols="12" md="4">
               <h2 class="mr-3 country-profile-header">{{$t('countryProfile.header')}}</h2>
@@ -87,7 +87,7 @@
         </v-row>
         <v-row>
           <v-col class="printing-3 mb-0 stat-card-container pl-7" cols='12'>
-            <div class="mb-print-1 stat-card" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+            <div class="mb-print-1 stat-card" v-for="stat in activeCountryProfile.KeyStats.filter(d => d.title !== '').slice(0, 6)" :key="stat.title">
                 <h2>{{stat.value.replaceAll(',',' ')}}</h2>
                 <h4>{{stat.unit.replace('%','percent')}}</h4>
                 <p>{{stat.title}}</p>
@@ -101,7 +101,7 @@
                 <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
-                  <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+                  <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.filter(d => d.title !== '').slice(0, 6)" :key="stat.title">
                     <h3 class="undp-typography">{{stat.value}} {{stat.unit}}</h3>
                     <p class="mb-0">{{stat.title}}</p>
                   </div>

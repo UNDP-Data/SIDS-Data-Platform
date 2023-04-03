@@ -404,7 +404,8 @@ export default {
   }
   .controller-block {
     border-radius: 0 !important;
-    background-color: rgba(221, 221, 221, 0.7) !important;
+    background-color: #D4D6D8 !important;
+    opacity:.9;
   }
   .goal-type-list .v-list-item{
     min-height: 28px !important;

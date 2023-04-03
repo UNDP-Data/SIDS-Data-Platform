@@ -533,7 +533,7 @@ export default {
 }
 #map-container {
   position: absolute;
-  top: -1em;
+  top: 3em;
   left: 0;
   width: 100%;
   overflow: hidden;
@@ -560,8 +560,8 @@ export default {
 
 @media all and (min-width:960px) {
   .map {
-    min-height: 350px;
-    max-height: calc(100vh - 460px);
+    min-height: 360px;
+    max-height: calc(100vh - 420px);
     margin: 0 -2em;
     width: calc(100% + 4em);
     padding: 0 2em;

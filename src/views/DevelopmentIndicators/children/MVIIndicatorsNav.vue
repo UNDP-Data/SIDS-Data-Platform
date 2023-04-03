@@ -5,7 +5,7 @@
         <v-tabs
           :value="activePreset"
           grow
-          class="mb-4 mvi-nav-tabs tabs tabs-small"
+          class="mb-6 mvi-nav-tabs tabs tabs-small"
         >
           <v-tab :value="0" @change="setPreset('MVI')">
             <info-hover-tooltip :bottom="true" contentName="mviSelectTooltip">
@@ -47,7 +47,7 @@
         <div class="list-item-container">
           <v-list-item-action>
             <v-checkbox
-              class="undp-checkbox"
+              color="#D12800"
               :input-value="mviCodes"
               :value="indicator.code"
               @change="updateValue"

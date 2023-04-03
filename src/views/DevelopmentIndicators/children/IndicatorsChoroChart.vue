@@ -1,6 +1,6 @@
 <template>
-  <div class="choro">
-    <h4 class="choro-title d-print-none text-center" v-if="page!=='global'">
+  <div class="choro mt-10">
+    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi')">
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
@@ -137,6 +137,7 @@ export default {
       this.choro && this.page === this.choro.page && this.choro.updateSeriesCountryList(res)
     },
     async initChart() {
+      console.log('page', this.page)
       let sidsXML = await service.loadSidsSVG();
       let mapLocations = await service.loadMapLocations();
       this.compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)

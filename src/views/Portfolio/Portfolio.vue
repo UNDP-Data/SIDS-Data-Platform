@@ -86,10 +86,9 @@
             :region="region"
             @updateRegion="updateRegion"
             :projects="portfolioData"
-
           >
             <template v-slot:header>
-              <v-row class="map-header mt-7 d-none d-lg-flex justify-space-between">
+              <v-row class="map-header mt-4 d-none d-lg-flex justify-space-between">
                 <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
                   <h2 class="page-header mt-md-2 mb-0 undp-typography">{{$t('portfolio.header')}}</h2>
                 </v-col>
@@ -113,7 +112,7 @@
           </portfolio-map>
         </v-col>
       </v-row>
-      <v-row class="bars-row d-none d-lg-block mb-3 mt-negative">
+      <v-row class="bars-row d-none d-lg-block mb-3 mt-4 mt-negative">
         <portfolio-bars :year='year' :fundingCategory='fundingCategory' :fundingSource='fundingSource' :region='region' :goalsType='goalsType'></portfolio-bars>
       </v-row>
       <v-row class="d-none d-print-block d-md-flex mt-md-0 mt-lg-2 flex-lg-nowrap" justify="center">
