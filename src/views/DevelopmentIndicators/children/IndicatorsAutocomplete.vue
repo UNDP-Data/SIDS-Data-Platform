@@ -51,12 +51,13 @@
       <div class="ml-2 mt-5">
         <v-btn
             class="filter-sm-button"
-            rounded
             @click="emitToggleDialog"
             fab
-            color="primary"
+            color="#D12800"
+            outlined
           >
-          <v-icon>mdi-filter</v-icon>
+          <v-icon>mdi-filter
+          </v-icon>
         </v-btn>
       </div>
     </v-col>

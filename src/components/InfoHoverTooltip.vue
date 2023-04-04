@@ -28,9 +28,9 @@
           v-bind="attrs"
           :disabled="disabled"
           v-on="on"
-          color="#006EB5"
+          color="#D12800"
         >
-          mdi-information-outline
+          mdi-information
         </v-icon>
       </template>
       <div v-if="hasContentSlot">
@@ -75,5 +75,7 @@ export default {
 </script>
 
 <style scoped>
-
+.mdi-information{
+  font-size: 32px;
+}
 </style>

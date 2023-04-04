@@ -99,7 +99,7 @@
   font-style: italic !important;
 }
 
-.small-font {
+.small-font, .small-font p {
   font-size: 0.875rem !important;
 }
 
@@ -133,7 +133,6 @@ hr.undp-style.light {
   font-size: 1rem;
   line-height: 1.4;
 }
-
 .undp-typography.large-font p, p.undp-typography.large-font{
   font-size: 1.25rem !important;
 }
@@ -229,7 +228,7 @@ h6.undp-typography {
   text-transform: uppercase;
 }
 
-a.undp-style {
+a.undp-style, .undp-style a{
   background-image: linear-gradient(var(--dark-red), var(--dark-red)), linear-gradient(var(--dark-red), var(--dark-red));
   background-position: 100% 100%, -30px 100%;
   background-repeat: no-repeat;
@@ -238,7 +237,7 @@ a.undp-style {
   color: var(--black) !important;
 }
 
-a.undp-style:hover {
+a.undp-style:hover, .undp-style a:hover {
   animation: lineLoop-animation-for-links 2s linear infinite;
   color: var(--black);
 }

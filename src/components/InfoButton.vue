@@ -11,7 +11,7 @@
         class="not-rounded"
         :large="isDesktop"
         :block="isDesktop"
-        :outlined="isDesktop"
+        :outlined="!isDesktop"
         :icon="!isDesktop"
         v-bind="attrs"
         v-on="on"
@@ -41,7 +41,7 @@
             <v-icon >mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text class="info-content" v-html="textContent[contentName].content">
+        <v-card-text class="info-content undp-typography small-font undp-style" v-html="textContent[contentName].content">
         </v-card-text>
       </v-card>
     </template>
@@ -84,7 +84,7 @@ export default {
 .info-title::before {
   content: '';
   position: absolute;
-  bottom: 20px;
+  bottom: 0px;
   left: 20px;
   right: 20px;
   height: 4px;
@@ -93,5 +93,6 @@ export default {
 .info-title {
   position: sticky;
   top: 0;
+  margin-bottom: 20px;
 }
 </style>

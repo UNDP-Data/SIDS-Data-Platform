@@ -23,6 +23,7 @@
                   >
                     <v-list-item-action class="ma-0">
                       <v-checkbox
+                        color="#D12800"
                         :input-value="mviCodes"
                         :value="indicator.code"
                         @change="emitMviIndicatorsChange"
@@ -45,8 +46,7 @@
                 <div class="select">
                   <label class="input-label">Chart type</label>
                   <v-select
-                    rounded
-                    dense
+                    class="mt-1"
                     hide-details
                     item-value="chartType"
                     :value="chartType"
@@ -67,8 +67,7 @@
                 <div v-if="chartType === 'bars' || chartType === 'spider'" class="select">
                   <label class="input-label">Sorting</label>
                   <v-select
-                    rounded
-                    dense
+                    class="mt-1"
                     hide-details
                     item-value="value"
                     item-text="text"
@@ -88,8 +87,7 @@
                 <div v-else class="select">
                   <label class="input-label">Region</label>
                   <v-select
-                    rounded
-                    dense
+                    class="mt-1"
                     hide-details
                     item-value="value"
                     item-text="text"
@@ -109,13 +107,14 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col class="d-flex align-end justify-end" cols="2">
+          <v-col class="d-flex align-center mt-6 justify-end" cols="2">
             <v-btn
                 class="filter-sm-button"
                 rounded
+                outlined
                 @click="emitToggleDialog"
                 fab
-                color="primary"
+                color="#D12800"
               >
               <v-icon>mdi-filter</v-icon>
             </v-btn>

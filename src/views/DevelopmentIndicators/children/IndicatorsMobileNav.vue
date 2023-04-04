@@ -69,12 +69,13 @@
               </v-select>
             </div>
             <v-btn
-                class="ml-2 filter-sm-button"
+                class="ml-2 mb-1 filter-sm-button"
                 :disabled="chartType !== 'bars' || years.length === 1"
                 rounded
+                outlined
                 @click="toggleYearPlay"
                 fab
-                color="primary"
+                color="#D12800"
               >
               <v-icon v-if="!playingYear">mdi-play</v-icon>
               <v-icon v-else>mdi-pause</v-icon>

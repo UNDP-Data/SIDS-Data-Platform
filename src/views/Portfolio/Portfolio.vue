@@ -80,6 +80,26 @@
           ></portfolio-pie-chart>
         </v-col>
       </v-row>
+      <v-row class="map-header mt-4 d-none d-lg-flex justify-space-between">
+        <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
+          <h2 class="page-header mt-md-2 mb-0 undp-typography">{{$t('portfolio.header')}}</h2>
+        </v-col>
+        <v-col class="d-flex justify-end" cols="2" sm="1" md='3' xl="2">
+          <div class="">
+            <info-button :contentName="'aboutThis-portfolio'"/>
+          </div>
+          <div class="pl-3">
+            <portfolio-export
+              :region="region"
+              :year="year"
+              :funding="fundingCategory"
+              :projects="portfolioData"
+              :data="portfolioSources"
+              :categories="fundingCategoriesTypes"
+            />
+          </div>
+        </v-col>
+      </v-row>
       <v-row class="d-none d-md-flex mt-0 d-print-none">
         <v-col cols="12">
           <portfolio-map
@@ -87,7 +107,7 @@
             @updateRegion="updateRegion"
             :projects="portfolioData"
           >
-            <template v-slot:header>
+            <!--template v-slot:header>
               <v-row class="map-header mt-4 d-none d-lg-flex justify-space-between">
                 <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
                   <h2 class="page-header mt-md-2 mb-0 undp-typography">{{$t('portfolio.header')}}</h2>
@@ -108,7 +128,7 @@
                   </div>
                 </v-col>
               </v-row>
-            </template>
+            </template -->
           </portfolio-map>
         </v-col>
       </v-row>
