@@ -5,12 +5,12 @@
       ({{activeIndicatorsMeta.units}})
     </h4>
     <div class="choro_legend_container" :id="chartId+'_legend_container'">
-      <img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15">
+      <div class="col-12 choroEntryContainer"><img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15"></div> 
     </div>
     <div class="spiderbox" style="height:0;margin:0;">
       <div class="indexSpider radarChart" style="text-align:center;height:0"></div>
     </div>
-    <div class="choro_map_container" :id="chartId+'_map_container'">
+    <div class="choro_map_container pt-5" :id="chartId+'_map_container'">
 
     </div>
     <div class="timeSeriesContainer" :id="chartId + 'timeSeriesContainer'">
@@ -617,6 +617,7 @@ export default {
 .timeSeriesContainer {
   width: 900px;
   display:none;
+  margin: auto;
 }
 .choro-printabe-series .timeSeriesContainer {
   width: 100%;
@@ -631,6 +632,11 @@ export default {
 .choro-title{
   position: relative;
   z-index: 2;
+}
+
+/* workaround to hide misplaced choroLegendEntry */
+.choroEntryContainer .choroLegendEntry{
+  display: none;
 }
 /*# sourceMappingURL=vizEngine.css.map */
 

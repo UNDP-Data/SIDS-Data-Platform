@@ -63,8 +63,8 @@
               <div class="mb-1">{{item.units}}</div>
               {{item.def}}
               <v-divider class="mb-1 mt-1"></v-divider>
-              <b>{{$t('root.source')}}::</b>{{item.source}} <br/>
-              <a :href="item.link" target="_blank">{{$t('root.link')}}:</a>
+              <b>{{$t('root.source')}}::</b> {{item.source}} <br/>
+              <a :href="item.link" class="undp-style" target="_blank">{{$t('root.link')}}:</a>
             </v-card-text>
           </v-card>
         </v-menu>
@@ -118,7 +118,7 @@
                   {{datasetMeta[item.name] ? datasetMeta[item.name]['SIDS Coverage'] : ''}} SIDS
 
                 </div>
-                <b>Organization:</b>{{datasetMeta[item.name] ? datasetMeta[item.name]['Organization'] : ''}}
+                <b>Organization:</b> {{datasetMeta[item.name] ? datasetMeta[item.name]['Organization'] : ''}}
               </v-card-text>
             </v-card>
           </v-tooltip>
@@ -208,8 +208,8 @@
               <v-card-text>
                 <div class="mb-1">{{item.dim}}</div>
                 <v-divider class="mb-1 mt-1"></v-divider>
-                <b>Source:</b>{{item.source}} <br/>
-                <a :href="item.link" target="_blank">Link</a>
+                <b>Source:</b> {{item.source}} <br/>
+                <a :href="item.link" class="undp-style" target="_blank">Link</a>
               </v-card-text>
             </v-card>
           </v-menu>
@@ -261,7 +261,7 @@
       </div>
       {{activeIndicator.def}}
       <v-divider class="mb-1 mt-1"></v-divider>
-      <b>{{$t('root.source')}}:</b>{{activeIndicator.source}} <br/>
+      <b>{{$t('root.source')}}:</b> {{activeIndicator.source}} <br/>
       <a :href="activeIndicator.link" target="_blank" class="undp-style">{{$t('root.link')}}</a>
     </v-card-text>
   </v-card>

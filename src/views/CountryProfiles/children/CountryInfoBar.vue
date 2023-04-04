@@ -7,9 +7,9 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="printing-4 mt-4" cols="12" md="6">
+      <v-col class="printing-6 mt-4" cols="12" md="6">
         <v-row>
-          <v-col md="6">
+          <v-col sm="6" md="12" lg="6">
             <v-list-item  v-if="checkIndicator('key-1')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title               
@@ -59,7 +59,7 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col md="6">
+          <v-col sm="6" md="12" lg="6">
             <v-list-item v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title v-text="$t('countryProfile.infoBox.area')"></v-list-item-title>
@@ -117,23 +117,27 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="mt-3 d-flex align-center printing-4 grey-background" md="3" cols="12">
-        <v-img
-          eager
-          class="bg-printable"
-          contain
-          :src="require(`@/assets/media/profiles-maps/${id}.png`)"
-          height="250"
-        />
-      </v-col>
-      <v-col class="mt-0 pl-5 align-center d-none d-block-print d-md-block printing-4" md="3" cols="4">
-        <v-img
-          eager
-          class="bg-printable"
-          cover
-          :src="require(`@/assets/media/country-photos/${id}.jpg`)"
-          height="100%"
-        ></v-img>
+      <v-col class="printing-6 mt-4" cols="12" md="6">
+        <v-row>
+          <v-col sm="12" lg="6" class="mt-0 d-flex align-center printing-12 ">
+            <v-img
+              eager
+              class="bg-printable grey-background"
+              contain
+              :src="require(`@/assets/media/profiles-maps/${id}.png`)"
+              height="400"
+            /> 
+          </v-col>
+          <v-col sm="12" lg="6" class="mt-0 align-center d-none d-block-print d-md-block printing-12">
+            <v-img
+              eager
+              class="bg-printable"
+              cover
+              :src="require(`@/assets/media/country-photos/${id}.jpg`)"
+              height="400"
+            ></v-img>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-card>

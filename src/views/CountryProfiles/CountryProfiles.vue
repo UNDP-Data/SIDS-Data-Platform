@@ -67,7 +67,7 @@
           </v-col>
         </v-row>
         <v-row class="mt-xs-0 mt-sm-0 mb-2 mb-print-0" justify="center" dense>
-          <v-col class="pt-xs-0 pt-sm-0" cols="12">
+          <v-col class="pt-xs-0 pt-sm-0 printing-12" cols="12">
             <country-info-bar
               :profile="activeCountryProfile.Profile"
               :id="activeCountryId"

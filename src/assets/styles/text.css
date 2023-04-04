@@ -11,11 +11,6 @@
   text-transform: uppercase;
   padding-left: .3em;
 }
-/*@media all and (max-width:959px) {
-  .page-header {
-    font-size: 24px !important;
-  }
-}*/
 .text-center {
   text-align: center;
 }
@@ -270,7 +265,6 @@ a.undp-style:hover, .undp-style a:hover {
     padding: 1.5rem;
   }
 }
-
 
 @media (min-width: 48rem) {
   .undp-container, p.undp-style {

@@ -1,12 +1,12 @@
 <template>
-  <v-row class="mb-3 d-none d-print-flex">
+  <v-row class="mb-3 mt-10 d-none d-print-flex">
     <v-col cols="3">
       <img
         class="printout-logo"
         src="@/assets/media/RFSIDS-dark.png"
       >
     </v-col>
-    <v-col cols="6">
+    <v-col cols="9">
       <v-row dense>
         <v-col>
           <h2 class="printout-header text-center">
