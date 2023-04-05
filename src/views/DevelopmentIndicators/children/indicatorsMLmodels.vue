@@ -1,9 +1,9 @@
 <template>
   <v-card flat>
     <v-card-title class="justify-center d-print-none">
-      <div class="flex-spacer mr-auto">
+      <!--div class="flex-spacer mr-auto">
 
-      </div>
+      </div-->
       <h3 class=" ml-auto page-header text-center">
         AI Mode
       </h3>
@@ -16,8 +16,8 @@
       </v-btn>
     </v-card-title>
 
-    <v-card-subtitle class="d-print-none">
-      Select one of five pretrained models to add the predicted results to the interface and analyze correlation between indicators by visualizing the importance of othe indicators used in predictions.
+    <v-card-subtitle class="d-print-none mt-2">
+      <p class="undp-typography small-font">Select one of five pretrained models to add the predicted results to the interface and analyze correlation between indicators by visualizing the importance of othe indicators used in predictions.</p>
     </v-card-subtitle>
     <v-card-text>
       <h2 v-if="activePanel !== undefined" class="d-none page-header text-left d-print-block">
@@ -43,7 +43,7 @@
               <v-col cols="3" class="ml-panel-button-params ml-panel-button_content d-flex align-center pt-0 pb-0">
                 {{model.params}}
               </v-col>
-              <v-col cols="4" class="ml-panel-button_advantage ml-panel-button_content d-flex align-center pt-0 pb-0">
+              <v-col cols="4" class="ml-panel-button_advantage ml-panel-button_content d-flex align-center pt-0 pb-0 pr-12">
                 {{model.adv}}
               </v-col>
 
@@ -231,8 +231,6 @@ export default {
 </script>
 
 <style>
-.ml-panel {
-}
 .ml-panel .icon-container{
   height: 64px;
   display: flex;
@@ -255,13 +253,13 @@ export default {
 }
 
 .ml-panel-button-params {
-  font-size: 10px;
+  font-size: 0.7rem;
 }
 .ml-panel-button_content {
   height: 64px;
 }
 .ml-panel-button_advantage {
-  font-size: 10px;
+  font-size: 0.7rem;
 }
 .models-bar-chart {
   height:400px;

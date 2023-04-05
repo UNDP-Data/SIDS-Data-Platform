@@ -85,7 +85,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
                 v-show="!dataset || dataset === item"
-                class="list-scrollabe_item dataset-item"
+                class="list-scrollabe_item dataset-item pt-4"
                 :class="{'dataset-item-active':dataset === item}"
                 :key="item"
                 v-bind="attrs"
@@ -585,7 +585,7 @@ export default {
   height: 66px;
 }
 .list-scrollabe_item.dataset-item-active {
-  height: 56px;
+  height: 70px;
 }
 .inicator-item {
   display: flex;

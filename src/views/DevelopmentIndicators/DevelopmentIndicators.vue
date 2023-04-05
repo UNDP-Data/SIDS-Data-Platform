@@ -53,7 +53,7 @@
       </v-col>
     </v-row>
     <v-row dense>
-      <v-col  class="d-none d-print-none d-lg-block" v-if="page==='devIdictors'" cols='3'>
+      <v-col  class="d-none d-print-none d-lg-block mt-7" v-if="page==='devIdictors'" cols='3'>
         <indicators-nav :chartType="chartType" :activeIndicatorCode="indicator" @indicatorChange="indicatorUpdate" :year="year" @yearChange="yearUpdate"/>
       </v-col>
       <v-col class="d-none d-print-none d-lg-block mt-7" v-else cols='3'>

@@ -1,5 +1,5 @@
 <template>
-  <div class="choro mt-10">
+  <div class="choro mt-2">
     <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi')">
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
@@ -633,7 +633,10 @@ export default {
   position: relative;
   z-index: 2;
 }
-
+h4.choro-title{
+  font-weight: 300;
+  font-size: 1.1rem;
+}
 /* workaround to hide misplaced choroLegendEntry */
 .choroEntryContainer .choroLegendEntry{
   display: none;

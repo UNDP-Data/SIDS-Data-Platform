@@ -347,3 +347,7 @@ a.undp-style:hover, .undp-style a:hover {
   margin-top: 0;
   margin-bottom: 1rem;
 }
+/* -- headers -- */
+.mobile-header h1{
+  font-size: 1.1rem;
+}

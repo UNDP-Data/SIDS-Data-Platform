@@ -40,7 +40,7 @@
           </v-expansion-panels>
         </v-row>
         <v-row class="justify-center">
-          <v-col cols="10">
+          <v-col cols="10 mt-5">
             <v-row class="justify-center">
               <v-col cols="6">
                 <div class="select">
@@ -107,7 +107,7 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col class="d-flex align-center mt-6 justify-end" cols="2">
+          <v-col class="d-flex align-center mt-12 justify-end" cols="2">
             <v-btn
                 class="filter-sm-button"
                 rounded
