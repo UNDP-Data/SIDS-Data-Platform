@@ -48,7 +48,7 @@ export default {
   top: 0;
   z-index: 999999;
   background-color: #f4f5f8;
-  max-height: 64px;
+  max-height: 70px;
 }
 .mobile-header {
   text-align: center;

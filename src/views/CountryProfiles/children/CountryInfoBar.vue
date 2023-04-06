@@ -69,8 +69,7 @@
             </v-list-item>
             <v-list-item v-if="checkIndicator('key-10')">
               <v-list-item-content class="small-padding">
-                <v-list-item-title
-                 
+                <v-list-item-title               
                   v-text="$t('countryProfile.infoBox.income')"
                 ></v-list-item-title>
                 <v-list-item-subtitle
@@ -82,7 +81,6 @@
             <v-list-item v-if="checkIndicator('key-hdr-137506')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title
-                 
                   v-text="$t('countryProfile.infoBox.hdi')"
                 ></v-list-item-title>
                 <v-list-item-subtitle
@@ -93,8 +91,7 @@
             </v-list-item>
             <v-list-item v-if="checkIndicator('key-wdi2-SI.POV.GINI')">
               <v-list-item-content class="small-padding">
-                <v-list-item-title
-                 
+                <v-list-item-title                
                   v-text="$t('countryProfile.infoBox.gini')"
                 ></v-list-item-title>
                 <v-list-item-subtitle
@@ -120,13 +117,15 @@
       <v-col class="printing-6 mt-4" cols="12" md="6">
         <v-row>
           <v-col sm="12" lg="6" class="mt-0 d-flex align-center printing-12 ">
-            <v-img
+            <div class="pa-6 grey-background" style="width: 100%;">
+              <v-img
               eager
-              class="bg-printable grey-background"
+              class="bg-printable"
               contain
               :src="require(`@/assets/media/profiles-maps/${id}.png`)"
-              height="400"
+              height="352"
             /> 
+            </div>
           </v-col>
           <v-col sm="12" lg="6" class="mt-0 align-center d-none d-block-print d-md-block printing-12">
             <v-img

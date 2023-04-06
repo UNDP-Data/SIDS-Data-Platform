@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="pt-3">
     <p :style="{display: noData ? 'block' : 'none'}">
       No data for selected filters
     </p>

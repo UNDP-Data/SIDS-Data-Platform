@@ -246,6 +246,7 @@
           <v-icon v-else>mdi-play</v-icon>
         </v-btn>
       </div>
+      <p v-if="activeIndicatorDimensions.length > 1" class="input-label">{{$t('indicators.forms.dimension')}}</p>
       <div class="mb-1 d-flex">
         <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
           :items="activeIndicatorDimensions"
@@ -255,7 +256,6 @@
           item-value="code"
           :disabled="playingYear"
           @change="emitindicatorChange"
-          :label="$t('indicators.forms.dimension')"
           dense
         ></v-select>
       </div>

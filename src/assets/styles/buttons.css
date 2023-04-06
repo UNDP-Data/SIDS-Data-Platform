@@ -6,9 +6,10 @@
   padding: 0 20px !important;
   box-shadow: none !important;
   height: 50px !important;
+  background-color: #FFFFFF !important;
 }
 .v-btn::before{
-  background-color: #FAFAFA;
+  background-color: #FFFFFF !important;
 }
 .v-btn.dense {
   height: 38px !important;
@@ -153,12 +154,13 @@
 /* dropdown */
 .v-text-field.v-select .v-input__slot{
   border-radius: 0;
-  height: 50px;
+  min-height: 50px !important;
+  height: auto;
   border: 2px solid #000000;
   padding: 16px;
   text-transform: uppercase;
   font-size: 16px;
-  background-color: #fafafa !important;
+  background-color: #fff !important;
 }
 .v-icon.mdi-menu-down.theme--light{
   display: none;
@@ -232,11 +234,11 @@
 }
 
 .undp-button.button-secondary {
-  background-color: #006EB5;
+  background-color: #006EB5 !important;
 }
 
 .undp-button.button-secondary:hover {
-  background-color: #3288CE;
+  background-color: #3288CE !important;
 }
 
 .undp-button.button-secondary.button-arrow:after {
@@ -249,7 +251,7 @@
 }
 
 .v-btn.undp-button.button-secondary.button-arrow::before {
-  background-color: #006EB5;
+  background-color: #006EB5 !important;
 }
 
 .undp-button.button-secondary.button-arrow:hover:after {

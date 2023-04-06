@@ -6,8 +6,8 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col md="7" xs="12" sm="12">
-        <v-expansion-panels class="mb-4" flat accordion>
+      <v-col md="7" xs="12" sm="12" class="pa-10 pa-sm-10 pa-md-4">
+        <v-expansion-panels class="mb-4 " flat accordion>
           <v-expansion-panel>
             <v-expansion-panel-header>{{$t('about.whatSids')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -107,17 +107,14 @@
               <h2  class="subscribe-block_header">
                 {{$t('about.fBulletin')}}
               </h2>
-              <v-hover v-slot="{ hover }">
                 <v-btn
                   variant="plain"
                   depressed
                   class="undp-button button-secondary button-arrow ml-6"
                   target="_blank"
-                  :style="{ 'background-color': hover ? '#006EB5' : '#006EB5', 'font-size':'16px', 'padding': '24px' }"
                   href="https://undp.us4.list-manage.com/subscribe?u=cf50bc7216b0c4b063618fbac&id=c2c8d779ea"
                 >{{$t('root.buttons.subscribe')}}
                 </v-btn>
-              </v-hover>
             </div>
           </v-card-text>
         </v-card>
@@ -132,12 +129,12 @@
         </template>
       </v-col>
 
-      <v-col :key="index+'11'" class="d-none d-sm-block d-md-none" md="3" v-for="(resource, index) in resources">
+      <v-col :key="index+'11'" class="d-none d-sm-block d-md-none pa-10 pa-sm-10 pa-md-0" md="3" v-for="(resource, index) in resources">
         <template >
           <resource :resource="resource" />
         </template>
       </v-col>
-      <v-col cols="12" :key="index+'22'" class="d-block d-sm-none" v-for="(resource, index) in resources">
+      <v-col cols="12" :key="index+'22'" class="d-block d-sm-none pa-10 pa-sm-10 pa-md-0" v-for="(resource, index) in resources">
         <template >
           <resource :resource="resource" />
         </template>
