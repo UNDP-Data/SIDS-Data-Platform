@@ -85,6 +85,7 @@ export default {
 }
 
 .opacity-control-container {
+  overflow: hidden;
   width: 220px;
   height: 36px;
   border-radius: 18px;

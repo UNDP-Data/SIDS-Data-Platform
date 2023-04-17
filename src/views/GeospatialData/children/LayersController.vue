@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column">
-    <v-card class="mb-1  controller-block">
-      <v-row>
+    <v-card class="mb-0 mb-md-1  controller-block">
+      <v-row class="d-none d-md-flex">
         <v-col cols="6">
           <v-list class="bt-0 pb-0" color="transparent" dense>
             <v-list-item-group class="goal-type-list" v-model="activeGoalType" mandatory>
@@ -27,11 +27,11 @@
                     @change="resetGoalModel"
                   >
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.name"></v-list-item-title>
+                      <v-list-item-title v-text="$t('root.goals.'+item.value)"></v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </template>
-                <v-card class="tooltip-card">
+                <v-card flat class="tooltip-card">
                   <v-card-title>
                     <v-img
                       class="tooltip-card_img"
@@ -41,7 +41,7 @@
                     ></v-img>
                   </v-card-title>
                   <v-card-text class="tooltip-card_text">
-                    {{ item.description }}
+                    {{$t('portfolio.export.'+item.value)}}
                   </v-card-text>
                 </v-card>
               </v-tooltip>
@@ -51,6 +51,7 @@
         <v-col cols="6">
           <v-list
             color="transparent"
+            class="goal-type-list pb-1"
             v-if="activeGoalType === 'pillars'"
             dense
           >
@@ -84,11 +85,11 @@
                       ></v-img>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.name"></v-list-item-title>
+                      <v-list-item-title v-text="$t('root.pillars.'+item.id + '.name')"></v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </template>
-                <v-card>
+                <v-card flat>
                   <v-card-title>
                     <v-img
                       class="pillar-tooltip_img"
@@ -96,9 +97,9 @@
                       max-width="60"
                       :src="item.icon"
                     ></v-img>
-                    {{ item.name }}
+                    {{ $t('root.pillars.'+item.id + '.name') }}
                   </v-card-title>
-                  <v-card-text>{{ item.description }}</v-card-text>
+                  <v-card-text>{{ $t('root.pillars.'+item.id + '.content') }}</v-card-text>
                 </v-card>
               </v-tooltip>
             </v-list-item-group>
@@ -120,7 +121,7 @@
                 open-on-hover
                 bottom
                 :nudge-left="256"
-                :nudge-bottom="118"
+                :nudge-bottom="98"
                 content-class="sdg-menu"
               >
                 <template v-slot:activator="{ on }">
@@ -156,12 +157,22 @@
                         width="80"
                       />
                     </template>
-                    <v-card>
+                    <v-card flat>
                       <v-card-title class="coal-title">
-                        {{ n.name }}
+                        <template v-if="n.id==='all'">
+                          {{ $t('root.goals.'+ activeGoalType) }}
+                        </template>
+                        <template v-else>
+                          {{ $t('root.'+ activeGoalType +'.'+n.id + '.name') }}
+                        </template>
                       </v-card-title>
                       <v-card-text>
-                        {{ n.content }}
+                        <template v-if="n.id==='all'">
+
+                        </template>
+                        <template v-else>
+                          {{ $t('root.'+ activeGoalType +'.'+n.id + '.content') }}
+                        </template>
                       </v-card-text>
                     </v-card>
                   </v-tooltip>
@@ -172,34 +183,41 @@
         </v-col>
       </v-row>
       <layer-selector
-        class="mb-4 ml-4 mr-4"
+        class="mb-0 mb-md-4 ml-4 mr-4"
         :dataset="activeDataset"
+        :year="activeYear"
         :datasets="filteredDatasets"
         :datasetLabel="firstDatasetName"
         :layer="activeLayer"
         :layerLabel="firstLayerName"
         @datasetChange="firstDatasetChange"
         @layerChange="firstLayerChange"
+        @yearChange="firstYearChange"
       />
 
       <layer-selector
-        class="mb-4 ml-4 mr-4"
+        class="mb-0 mb-md-4 ml-4 mr-4"
         :disabled="!activeLayer"
         v-if="bivariateModeEnabled || dualModeEnabled"
         :dataset="secondDataset"
+        :year="secondYear"
         :datasets="filteredDatasets"
-        :datasetLabel="dualModeEnabled ? 'Right Dataset' : 'Second Dataset'"
+        :datasetLabel="dualModeEnabled ? $t('gis.controller.rightDataset') : $t('gis.controller.secondDataset')"
         :layer="secondLayer"
-        :layerLabel="dualModeEnabled ? 'Right Layer' : 'Second Layer'"
+        :layerLabel="dualModeEnabled ? $t('gis.controller.rightLayer') : $t('gis.controller.secondLayer')"
         @datasetChange="secondDatasetChange"
         @layerChange="secondLayerChange"
+        @yearChange="secondYearChange"
       />
     </v-card>
     <layers-tabs
+      class="d-none d-md-flex"
       :dataset="activeDataset"
       :firstLayer="activeLayer"
       :secondDataset="secondDataset"
       :secondLayer="secondLayer"
+      :activeYear="activeYear"
+      :secondYear="secondYear"
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       :pillar="activeGoal"
@@ -211,16 +229,15 @@
 </template>
 
 <script>
-import datasets from "@/gis/static/layers";
-// import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 import { goalTypesGis, goals } from '@/assets/goalsList'
 import LayerSelector from './LayerSelector'
 import LayersTabs from './LayersTabs'
+
 export default {
   name: 'LayersController',
   data() {
     return {
-      datasets:datasets,
       activeGoalType: "sdgs",
       goalTypes: goalTypesGis,
       goals,
@@ -230,6 +247,8 @@ export default {
       activeLayer:null,
       secondDataset:null,
       secondLayer:null,
+      activeYear: null,
+      secondYear: null
     }
   },
   props:[
@@ -241,24 +260,21 @@ export default {
     LayersTabs
   },
   computed:{
+    ...mapState({
+      datasets: state => state.gis.datasets
+    }),
     filteredDatasets() {
       let filteredDatasets = this.datasets.reduce((array, dataset) => {
-        let filtered = Object.assign({}, dataset);
+        let hasGoal = false;
         if (this.activeGoalType === "pillars") {
-          filtered.layers = filtered.layers.filter((layer) =>
-            layer.pillars.includes(this.activePillar)
-          );
+          hasGoal = dataset.pillars.includes(this.activePillar)
         } else if (this.activeGoalType === "sdgs") {
-          filtered.layers = filtered.layers.filter((layer) =>
-            layer.SDG.includes(this.activeGoal)
-          );
+          hasGoal = this.activeGoal === 1 || dataset.sdg.includes(this.activeGoal-1)
         } else if (this.activeGoalType === "samoa") {
-          filtered.layers = filtered.layers.filter((layer) =>
-            layer.samoa_pathway.includes(this.activeGoal)
-          );
+          hasGoal = this.activeGoal === 1 || dataset.samoa.includes(this.activeGoal-1)
         }
-        if (filtered.layers.length > 0) {
-          array.push(filtered);
+        if (hasGoal) {
+          array.push(dataset);
         }
         return array;
       }, []);
@@ -273,25 +289,32 @@ export default {
       return filteredDatasets
     },
     activeGoals() {
-      return this.goals[this.activeGoalType];
+      return [{
+        value:0,
+        id:'all',
+        name: this.$t(`root.goals.${this.activeGoalType}`),
+        color: "#E3253C",
+        type:'this.activeGoalType',
+        title: this.$t(`root.goals.${this.activeGoalType}`),
+      }, ...this.goals[this.activeGoalType]]
     },
     firstDatasetName() {
       if(this.dualModeEnabled) {
-        return 'Left Dataset'
+        return this.$t('gis.controller.leftDataset')
       }
       if(this.bivariateModeEnabled) {
-        return 'First Dataset'
+        return this.$t('gis.controller.firstDataset')
       }
-      return 'Dataset'
+      return this.$t('gis.controller.dataset')
     },
     firstLayerName() {
       if(this.dualModeEnabled) {
-        return 'Left Layer'
+        return this.$t('gis.controller.leftLayer')
       }
       if(this.bivariateModeEnabled) {
-        return 'First Layer'
+        return this.$t('gis.controller.firstLayer')
       }
-      return 'Layer'
+      return this.$t('gis.controller.layer')
     }
   },
   methods:{
@@ -302,9 +325,9 @@ export default {
     },
     getGoalImage(index) {
       if (this.activeGoalType === "sdgs") {
-        return require(`@/assets/media/goals-icons/sdgs/${index + 1}.png`);
+        return require(`@/assets/media/goals-icons/sdgs/${index}.png`);
       } else {
-        return require(`@/assets/media/goals-icons/samoa/${index + 1}.png`);
+        return require(`@/assets/media/goals-icons/samoa/${index}.png`);
       }
     },
     goalUpdateNext() {
@@ -315,27 +338,27 @@ export default {
     },
     selectGoal(goalNumber) {
       this.activeGoal = goalNumber;
-      this.$refs.slider.scrollOffset = 120 * (goalNumber - 1);
+      this.$refs.slider.scrollOffset = 100 * (goalNumber - 1);
     },
     firstDatasetChange(dataset) {
       this.activeDataset = dataset;
-      if(dataset.type==='single' || dataset.type==='temporal') {
-        this.firstLayerChange(dataset.layers[0])
-      }
     },
     firstLayerChange(layer) {
       this.activeLayer = layer;
       this.emitUpdate()
     },
+    firstYearChange(year) {
+      this.activeYear = year;
+    },
     secondDatasetChange(dataset) {
       this.secondDataset = dataset;
-      if(dataset.type==='single' || dataset.type==='temporal') {
-        this.secondLayerChange(dataset.layers[0])
-      }
     },
     secondLayerChange(layer) {
       this.secondLayer = layer;
       this.emitUpdate()
+    },
+    secondYearChange(year) {
+      this.secondYear = year;
     },
     emitUpdate() {
       return this.$emit('layersChange', {
@@ -348,8 +371,10 @@ export default {
     hadleTabUpdate(e) {
       this.activeDataset = e.layers.dataset
       this.activeLayer = e.layers.firstLayer
+      this.activeYear = e.layers.firstLayer && e.layers.firstLayer.activeYear
       this.secondDataset = e.layers.secondDataset
       this.secondLayer = e.layers.secondLayer
+      this.secondYear = e.layers.secondDataset && e.layers.secondLayer.activeYear
       this.activeGoalType = e.filters.goalType
       this.activeGoal = e.filters.goal
       this.activePillar = e.filters.pillar
@@ -357,7 +382,7 @@ export default {
         this.$emit('modeUpdate', e.modes.bivariateModeEnabled)
       }
       if(this.dualModeEnabled !== e.modes.dualModeEnabled) {
-        this.$emit('dualModeUpdate', e.modes.bivariateModeEnabled)
+        this.$emit('dualModeUpdate', e.modes.dualModeEnabled)
       }
       this.$nextTick(() => {
         this.emitUpdate()
@@ -366,7 +391,6 @@ export default {
   }
 }
 </script>
-
 
 <style>
   .goals-slider {
@@ -409,5 +433,13 @@ export default {
   }
   .goal-type-list .v-list-item{
     min-height: 28px !important;
+  }
+  .sdg-menu {
+    background-color: rgba(221, 221, 221, 0.7) !important;
+  }
+  @media (max-width:959px) {
+    .controller-block {
+      background-color: transparent !important;
+    }
   }
 </style>

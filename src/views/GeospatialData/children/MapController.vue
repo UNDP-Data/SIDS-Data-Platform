@@ -4,7 +4,8 @@
       :dualModeEnabled="dualModeEnabled"
       :bivariateModeEnabled="bivariateModeEnabled"
       @layersChange="emitUpdate"
-      @modeUpdate="toggleBivarUpdate"
+      @modeUpdate="emitBivariateToggle"
+      @dualModeUpdate="emitDualToggle"
     />
     <layer-description
       class="d-none d-md-block"
@@ -57,9 +58,6 @@ export default {
     LayerBivarLegend
   },
   methods:{
-    toggleBivarUpdate(e) {
-      this.$emit('updateBivarState', e)
-    },
     emitUpdate(e) {
       if(this.activeLayer !== e.layer) {
         this.activeLayer = e.layer
@@ -81,6 +79,12 @@ export default {
       if (this.bivariateModeEnabled) {
         return this.emitBivariateUpdate(e);
       }
+    },
+    emitBivariateToggle(e) {
+      this.$emit("toggleBivariate", e);
+    },
+    emitDualToggle(e) {
+      this.$emit("toggleDual", e);
     },
     emitBivariateUpdate(e) {
       this.$emit("updateBivariate", e);

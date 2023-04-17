@@ -25,6 +25,7 @@
 
 <script>
 import VueTabsChrome from "vue-tabs-chrome";
+
 export default {
   name: 'LayersTabs',
   data() {
@@ -79,19 +80,12 @@ export default {
           bivariateModeEnabled: this.bivariateModeEnabled
         }
       };
+
       this.$refs.tab.addTab(newTab);
       this.tab = key;
     },
     createTabLabel() {
-      let labelString = "New Tab";
-      if (this.dataset && this.dataset.type === "single") {
-        labelString = this.dataset.name;
-      } else if (this.dataset && this.dataset.type === "temporal") {
-        labelString = `${this.firstLayer.Temporal}:${this.dataset.name}`;
-      } else if (this.dataset && this.dataset.type === "layers" && this.firstLayer) {
-        labelString = this.firstLayer.Description;
-      }
-      return labelString;
+      return (this.firstLayer && this.firstLayer.title) || this.$t('gis.newTab');
     }
   },
   mounted() {
@@ -150,18 +144,18 @@ export default {
   color: #fff;
   padding: 0 5px;
 }
-.vue-tabs-chrome .tabs-content,
+.tab-system-box .vue-tabs-chrome .tabs-content,
 .tab-add {
   height: 22px;
 }
 
-.vue-tabs-chrome {
+.tab-system-box .vue-tabs-chrome {
   font-size: smaller;
   padding-top: 0;
   background-color: transparent;
   position: relative;
 }
-.vue-tabs-chrome .tabs-background {
+.tab-system-box .vue-tabs-chrome .tabs-background {
   width: 0;
   height: 0;
 }
@@ -170,10 +164,10 @@ export default {
   border-radius: 0;
   margin: 0 7px 0 0;
 }
-.vue-tabs-chrome .tabs-label {
+.tab-system-box .vue-tabs-chrome .tabs-label {
   text-overflow: ellipsis;
 }
-.vue-tabs-chrome .tabs-main,
+.tab-system-box .vue-tabs-chrome .tabs-main,
 .tab-add {
   background-color: #D4D6D8;
 }
@@ -185,10 +179,10 @@ export default {
   line-height: 20px;
   padding: 0 10px;
 }
-.vue-tabs-chrome .tabs-footer,
-.vue-tabs-chrome .tabs-divider,
-.vue-tabs-chrome .tabs-background-before,
-.vue-tabs-chrome .tabs-background-after {
+.tab-system-box .vue-tabs-chrome .tabs-footer,
+.tab-system-box .vue-tabs-chrome .tabs-divider,
+.tab-system-box .vue-tabs-chrome .tabs-background-before,
+.tab-system-box .vue-tabs-chrome .tabs-background-after {
   display: none;
 }
 .tab-add {

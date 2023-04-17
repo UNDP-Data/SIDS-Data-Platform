@@ -6,7 +6,7 @@
     >
       <div v-if="hasData" class="d-flex d-md-block">
         <div  class="d-flex justify-center legend-title mr-4 ml-4 align-center">
-          <span v-html="activeLayer.Units"></span>
+          <span v-html="activeLayer.units"></span>
         </div>
         <div
           class="d-flex justify-space-evenly legend main-legend pb-1 pb-md-0"
@@ -24,18 +24,20 @@
         ></canvas>
       </div>
       <v-card-text class="pt-2 pb-2" v-else>
-        No Data for this Region
+        {{$t('gis.legend.noData')}}
       </v-card-text>
     </div>
     <v-card-text class="pt-2 pb-2" v-else>
-      Select a Dataset and Layer to view data on the map.
+      {{$t('gis.legend.selectDataset')}}
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import format from "@/mixins/format.mixin";
-import Chart from "chart.js";
+import { Chart, BarController, BarElement, PointElement,CategoryScale, LinearScale, LogarithmicScale, Title } from "chart.js";
+
+Chart.register(BarController, BarElement, PointElement,CategoryScale, LinearScale, LogarithmicScale, Title);
 import chroma from "chroma-js";
 
 export default {
@@ -46,6 +48,11 @@ export default {
       chart:null,
       hasData:true,
       chartOptions: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
         responsive: true,
         tooltips: {
           enabled: false,
@@ -70,50 +77,43 @@ export default {
           ],
         },
         scales: {
-          borderWidth: 0,
-          yAxes: [
-            {
+          y: {
+            display: true,
+            type: "logarithmic",
+            title: {
               display: true,
-              type: "logarithmic",
-              scaleLabel: {
-                display: true,
-                labelString: 'Frequency'
-              },
-              ticks: {
-                maxTicksLimit: 4,
-                max: 0,
-                callback: function (
-                  value
-                ) {
-                  if (value === 100000000) return "100M";
-                  if (value === 10000000) return "10M";
-                  if (value === 1000000) return "1M";
-                  if (value === 100000) return "100K";
-                  if (value === 10000) return "10K";
-                  if (value === 1000) return "1K";
-                  if (value === 100) return "100";
-                  if (value === 10) return "10";
-                  if (value === 1) return "1";
-                  return null;
-                },
-              }
+              text: 'Frequency'
             },
-          ],
-          xAxes: [
-            {
-              barPercentage: 1.0,
-              categoryPercentage: 1.0,
-              gridLines: {
-                display: true,
+            ticks: {
+              maxTicksLimit: 4,
+              callback: function (
+                value
+              ) {
+                if (value === 100000000) return "100M";
+                if (value === 10000000) return "10M";
+                if (value === 1000000) return "1M";
+                if (value === 100000) return "100K";
+                if (value === 10000) return "10K";
+                if (value === 1000) return "1K";
+                if (value === 100) return "100";
+                if (value === 10) return "10";
+                if (value === 1) return "1";
+                return null;
               },
-              scaleLabel: {
-                display: false,
-              },
-              ticks: {
-                maxTicksLimit: 10,
-              },
+            }
+          },
+          x: {
+            grid: {
+              offset:false,
+              display: true,
             },
-          ],
+            title: {
+              display: false,
+            },
+            ticks: {
+              maxTicksLimit: 10
+            },
+          },
         },
       }
     }
@@ -149,31 +149,16 @@ export default {
     initHistogramm(e) {
       let canvas = document.getElementById("histogram"+ this.hexIndex),
       data = this.computeData(e.selectedData, e.colorRamp, e.breaks, e.precision);
-      this.chartOptions.scales.yAxes[0].ticks.max = data.maxY;
-      this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObj) {
-        chartObj.ticks = [];
-        var ticksScale = data.maxY;
-        while (ticksScale > data.minY && ticksScale >= 1) {
-          chartObj.ticks.push(ticksScale);
-          ticksScale /= 10;
-        }
-      }
-      this.chart = Chart.Bar(canvas, {
+      this.chartOptions.scales.y.max = data.maxY;
+      this.chart = new Chart(canvas, {
+        type:'bar',
         data: data.data,
         options: this.chartOptions,
       })
     },
     updateHistogramm(e) {
       let data = this.computeData(e.selectedData, e.colorRamp, e.breaks, e.precision);
-      this.chartOptions.scales.yAxes[0].ticks.max = data.maxY;
-      this.chartOptions.scales.yAxes[0].afterBuildTicks = function (chartObj) {
-        chartObj.ticks = [];
-        var ticksScale = data.maxY;
-        while (ticksScale > data.minY && ticksScale >= 1) {
-          chartObj.ticks.push(ticksScale);
-          ticksScale /= 10;
-        }
-      }
+      this.chartOptions.scales.y.max = data.maxY;
       this.chart.data = data.data
       this.chart.update(0);
     },
@@ -212,6 +197,8 @@ export default {
         labels: breaks_precision.slice(0, -1),
         datasets: [
           {
+            barPercentage: 1.0,
+            categoryPercentage: 1.0,
             data: histogram_data,
             backgroundColor: colorRampNew,
           },
@@ -220,7 +207,6 @@ export default {
 
       var maxY = Math.pow(10, Math.ceil(Math.log10(Math.max(...histogram_data))));
       var minY = Math.pow(10, Math.ceil(Math.log10(Math.min(...histogram_data))));
-
       return {
         data,
         maxY,
@@ -264,6 +250,7 @@ export default {
 <style>
 .histogram_frame {
   height: 200px;
+  padding: 0 10px;
   border-radius: 0 !important;
   background-color: #EDEFF0 !important;
   padding-top: 10px;
@@ -295,6 +282,7 @@ export default {
 
   .histogram_frame {
     height: auto;
+    padding: 0;
     border-radius: 22px !important;
   }
   .main-legend {

@@ -58,7 +58,8 @@ export default {
         csvString += yearDataArr.toString() + '\r\n';
       })
 
-      var exportedFilenmae = this.meta.indicator ? this.meta.indicator+'.csv' : 'export.csv';
+      let filename = window.location.pathname.substring(1).replaceAll('/', '_');
+      var exportedFilenmae = filename + '.csv';
       var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
       if (navigator.msSaveBlob) { // IE 10+
           navigator.msSaveBlob(blob, exportedFilenmae);

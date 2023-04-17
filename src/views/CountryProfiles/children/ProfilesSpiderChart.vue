@@ -15,6 +15,8 @@
           :code="axis.code"
           :header="$t(`spiders.${axis.code.replaceAll('.','-')}.indicator`)"
           :rank="axis.value"
+          :year="axis.year"
+          :ismvi="pillarName == 'MVI'"
           :value="values[0].axes[index].value"
           :source="indicatorsMetadata[axis.code].source"
           :definition="$t(`spiders.${axis.code.replaceAll('.','-')}.def`)"
@@ -90,7 +92,6 @@ export default {
       color: d3.scaleOrdinal(d3.schemeCategory10),  //Color function,
       format: '.2%',
       unit: '',
-      legend: false,
       spin: 0,
       textFormat: 1
     }
@@ -264,6 +265,9 @@ export default {
           .call(wrap, this.fullGraphOptions.wrapWidth)
           .style("pointer-events","auto")
           .attr("id", (d, i) => `${rootThis.pillarName}axis${i}${this.postfix}`)
+          .on('click', (d)=>{
+            rootThis.$router.push(`/development-indicators/${d}`)
+          })
           this.ranks[0].axes.map((axis, i) => {
             tippy(`#${rootThis.pillarName}axis${i}${this.postfix}`, {
               content() {
@@ -292,13 +296,13 @@ export default {
             let rank = rootThis.ranks[0].axes.filter(obj => { return obj.code === d })[0].value;
             let displayValue = ''
             if(rootThis.pillarName === 'MVI') {
-              if(isNaN(rank)) {
-                displayValue = rank
+              if(isNaN(value)) {
+                displayValue = value
               } else {
-                displayValue = rootThis.nFormatter(rank,2);
+                displayValue = rootThis.nFormatter(value,2);
               }
             } else if (isNaN(value)) {
-              displayValue = `${value}, ${rootThis.rankFormat(rank.toString())}`
+              displayValue = `${value}, ${rootThis.rankFormat(value.toString())}`
             } else {
               displayValue = `${rootThis.nFormatter(value,2)}${rootThis.fullGraphOptions.unit}, ${rootThis.rankFormat(rank.toString())}`;
             }
@@ -486,44 +490,6 @@ export default {
                 tooltip.transition()
                   .style('display', 'none').text('');
               });
-
-              d3.select("#spiderLegend").select("svg").remove();
-
-              //Initiate the radar chart SVG
-              let svgLegend = d3.select("#spiderLegend").append("svg")
-                .attr("width", "100%")
-                .attr("height", 40)
-
-              if (this.fullGraphOptions.legend !== false && typeof this.fullGraphOptions.legend === "object") {
-                let legendZone = svgLegend;//.append('g');
-                let names = this.ranks.map(el => el.name);
-                let legend = legendZone.append("g")
-                  //.attr("class", "legend")
-                  .attr("height", 40)
-                  .attr("width", "100%")
-                  .attr('transform', `translate(${this.fullGraphOptions.legend.translateX},${this.fullGraphOptions.legend.translateY})`)
-                  .style("background-color", "red");
-                // Create rectangles markers
-                legend.selectAll('rect')
-                  .data(names)
-                  .enter()
-                  .append("rect")
-                  .attr("x", 20)
-                  .attr("y", 5)
-                  .attr("width", 10)
-                  .attr("height", 10)
-                  .style("fill", (d, i) => this.fullGraphOptions.color(i));
-                // Create labels
-                legend.selectAll('text')
-                  .data(names)
-                  .enter()
-                  .append("text")
-                  .attr("x", this.fullGraphOptions.w - 52)
-                  .attr("y", (d, i) => i * 20 + 9)
-                  .attr("font-size", "9px")
-                  .attr("fill", "#737373")
-                  .text(d => this.allKeyData[d]["Profile"].Country);
-              }
               return svg;
     },
   },

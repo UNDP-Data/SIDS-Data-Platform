@@ -6,7 +6,7 @@
     fluid
   >
     <nav-header-mobile class="d-block d-print-none d-md-none"/>
-    <root-header v-if="!scrolledToContent" id="headerElement" class="d-none-print" />
+    <!-- <root-header v-if="!scrolledToContent" id="headerElement" class="d-none-print" /> -->
     <nav-menu-mobile class="d-print-none d-md-none"/>
     <v-row no-gutters id="content">
       <root-loader v-if="loading"/>
@@ -19,11 +19,13 @@
     </v-row>
     <root-footer class="d-none d-md-flex d-none-print" />
     <indicators-ml-popup/>
+    <root-social/>
   </v-container>
 </template>
 <script>
-import RootHeader from "@/components/RootHeader.vue";
+// import RootHeader from "@/components/RootHeader.vue";
 import RootFooter from "@/components/RootFooter.vue";
+import RootSocial from "@/components/RootSocial.vue";
 import RootLoader from "@/components/RootLoader.vue";
 import indicatorsMlPopup from "@/views/DevelopmentIndicators/children/indicatorsMlPopup.vue";
 import NavMenu from "@/components/NavMenu.vue";
@@ -35,18 +37,17 @@ import { mapState } from 'vuex';
 export default {
   name: "Root",
   components: {
-    RootHeader,
+    // RootHeader,
     RootFooter,
     RootLoader,
+    RootSocial,
     NavMenu,
     indicatorsMlPopup,
     NavMenuMobile,
     NavHeaderMobile
   },
   data() {
-    return {
-      scrolledToContent: false
-    }
+    return {}
   },
   computed: {
     ...mapState({
@@ -54,16 +55,16 @@ export default {
     })
   },
   methods: {
-    handleScroll () {
-      if(window.scrollY > document.getElementById('headerElement').offsetHeight - 32) {
-        window.removeEventListener('scroll', this.handleScroll);
-        this.scrolledToContent = true
-      }
-    }
+    // handleScroll () {
+    //   if(window.scrollY > document.getElementById('headerElement').offsetHeight - 32) {
+    //     window.removeEventListener('scroll', this.handleScroll);
+    //     this.scrolledToContent = true
+    //   }
+    // }
   },
-  created () {
-    window.addEventListener('scroll', this.handleScroll);
-  },
+  // created () {
+  //   window.addEventListener('scroll', this.handleScroll);
+  // },
 };
 </script>
 <style>

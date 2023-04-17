@@ -13,12 +13,13 @@ const routes = [
     props: (to) => ({
       region: to.query.region || 'allSids',
       year: to.query.year || 'all',
-      fundingCategory: decodeURIComponent(to.query.fundingCategory || 'All') ,
-      fundingSource: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
+      fundingCategory: decodeURIComponent(to.query.fundingCategory || 'all') ,
+      fundingSource: decodeURIComponent(to.query.fundingSource || 'all'),
       goalsType: to.params.goalsType || 'sdgs'
     }),
     meta:{
       header:'portfolio.header',
+      description:'A digital tool for analyzing the UNDP SIDS Offer Portfolio across the SDGs, SAMOA Pathway priorities, and six UNDP Signature Solutions.',
       infoContent:'aboutThis-portfolio',
       linkText:'portfolio',
       icon:'portfolio'
@@ -26,18 +27,11 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Portfolio/Portfolio.vue'),
+    component: () => import(/* webpackChunkName: "portfolio" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
-      await store.dispatch('sids/getAllKeyData');
-      await store.dispatch('sids/setSIDSData');
       await store.dispatch('sids/setFundingCategories');
-      await store.dispatch('sids/generatePortfolioData', {
-        region: to.query.region || 'allSids',
-        year: to.query.year || 'all',
-        category: decodeURIComponent(to.query.fundingCategory || 'All') ,
-        source: decodeURIComponent(to.query.fundingSource || 'All Funding Sources'),
-      });
+      await store.dispatch('sids/setProjectData');
       setTimeout(() => {
         store.commit('loader/setLoading', false);
       }, 500)
@@ -48,14 +42,14 @@ const routes = [
     path: '/development-indicators/:indicator?/:year?/:chartType?',
     link: '/development-indicators',
     name: 'Development Indicators',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "indicators" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
       let chartType = to.params.chartType || 'choro',
       indicator = to.params.indicator || 'region',
       year = to.params.year || 'recentValue';
       if(document.body.clientWidth - 40 < 800 && indicator === 'region') {
-        indicator = 'hdr-137506'
+        indicator = 'hdr-hdi'
       }
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'
@@ -86,6 +80,7 @@ const routes = [
     },
     meta:{
       header:'indicators.headerIndicators',
+      description:'A database of over 4000 development indicators for SIDS, compiled from 22 sources and featured alongside visualization and analytic tools.',
       infoContent:'aboutThis-indicators',
       icon:'indicators',
       linkText:'indicators'
@@ -103,7 +98,7 @@ const routes = [
     path: '/vulnerability/:indicator?/:chartType?',
     link: '/vulnerability',
     name: 'Vulnerability',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
+    component: () => import(/* webpackChunkName: "indicators" */ '../views/DevelopmentIndicators/DevelopmentIndicators.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
       let chartType = to.params.chartType || 'spider'
@@ -131,6 +126,7 @@ const routes = [
     meta:{
       header:'indicators.headerMVI',
       infoContent:'aboutThis-mvi',
+      description:'A customizable Multidimensional Vulnerability Index (MVI) for SIDS to analyze environmental, geographic, economic, and financial vulnerability.',
       icon:'MVI',
       linkText:'mvi'
     },
@@ -147,7 +143,7 @@ const routes = [
     path: '/country-profiles/:country?',
     link: '/country-profiles',
     name: 'Country Profiles',
-    component: () => import(/* webpackChunkName: "about" */ '../views/CountryProfiles/CountryProfiles.vue'),
+    component: () => import(/* webpackChunkName: "profiles" */ '../views/CountryProfiles/CountryProfiles.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
       await store.dispatch('profiles/getIndicatorsMetadata');
@@ -164,6 +160,7 @@ const routes = [
     },
     meta:{
       header:'countryProfile.header',
+      description:'Country profiles for Small Island Developing States with data across the pillars of the UNDP’s SIDS Offer, financial statistics, and vulnerability index.',
       infoContent:'aboutThis-profiles',
       icon:'profiles',
       linkText:'profiles'
@@ -179,6 +176,7 @@ const routes = [
     name: 'Geospatial Data',
     meta:{
       header:'gis.header',
+      description:'A SIDS GIS portal and database compiled from more than 80 datasets and research studies with coverage of Small Island Developing States.',
       icon:'GIS',
       linkText:'gis'
     },
@@ -189,7 +187,7 @@ const routes = [
       }, 500)
       next();
     },
-    component: () => import(/* webpackChunkName: "about" */ '../views/GeospatialData/GeospatialData.vue')
+    component: () => import(/* webpackChunkName: "gis" */ '../views/GeospatialData/GeospatialData.vue')
   },
   {
     path: '/about',
@@ -197,6 +195,7 @@ const routes = [
     name: 'About',
     meta:{
       header:'about.header',
+      description:'A digital instrument for supporting SIDS in following up on the SAMOA Pathway and building data-driven policy and development frameworks.',
       icon:'about',
       linkText:'about'
     },
@@ -208,7 +207,7 @@ const routes = [
       }, 500)
       next();
     },
-    component: () => import(/* webpackChunkName: "about" */ '../views//About/About.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/About/About.vue')
   },
   {
     path: '*',
@@ -227,7 +226,8 @@ const router = new VueRouter({
 
 router.beforeEach(async (toRoute, fromRoute, next) => {
   let pagetitle = toRoute && toRoute.name ? toRoute.name : 'Home';
-  window.document.title = `${pagetitle} - UNDP SIDS Data Platform`
+  window.document.title = `${pagetitle} - UNDP SIDS Data Platform`;
+  document.querySelector('[data-description]').innerHTML = toRoute.meta.description
   next();
 })
 export { router, routes }

@@ -137,15 +137,89 @@
               outlined
             >
 
-              <template class="v-select__selection--comma" slot="selection" slot-scope="data">
-                <span class="mobile-pillar-selector" :style="getStyleByName(data.item.name)">
-                  {{ data.item.tabName }}
-                </span>
+            <template class="v-select__selection--comma" slot="selection" slot-scope="data">
+              <span class="mobile-pillar-selector" :style="getStyleByName(data.item.name)">
+                {{ data.item.tabName }}
+              </span>
+            </template>
+            <template slot="item" slot-scope="data">
+              <span :style="getStyleByName(data.item.name)">
+                {{ data.item.tabName }}
+              </span>
+            </template>
+          </v-select>
+        </v-col>
+        <v-col cols="2" class="d-flex align-center justify-end">
+          <info-hover-tooltip :large="true" v-if="graphOptions[tab]" :contentName="getTabPillar(tab).tooltipName">
+            <template v-if="getTabPillar(tab).icon" v-slot:icon>
+              <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${getTabPillar(tab).icon}`"/>
+            </template>
+          </info-hover-tooltip>
+        </v-col>
+        <v-col class="pt-0" cols="11">
+          <div v-for="(pillar, index) in pillars" :key="pillar.name">
+            <div v-if="tab === pillar.name">
+              <template v-if="index < 3">
+                <profiles-spider-chart
+                  :graphOptions="graphOptions[pillar.name]"
+                  :pillarName="pillar.name"
+                  postfix="mobile"
+                  :tooltipContentName="pillar.tooltipName"
+                  :maxValue="maxValuePillars"
+                  :headerIcon="pillar.icon"
+                  :ranks="graphRankData[pillar.name]"
+                  :values="graphValueData[pillar.name]"/>
               </template>
-              <template slot="item" slot-scope="data">
-                <span :style="getStyleByName(data.item.name)">
-                  {{ data.item.tabName }}
-                </span>
+              <template v-else-if="index === 3">
+                <profiles-spider-chart
+                  :graphOptions="graphOptions[pillar.name]"
+                  :pillarName="pillar.name"
+                  postfix="mobile"
+                  :headerIcon="pillar.icon"
+                  :tooltipContentName="pillar.tooltipName"
+                  :maxValue="80"
+                  :ranks="graphRankData[pillar.name]"
+                  :values="graphValueData[pillar.name]"/>
+              </template>
+              <template v-else>
+                <profiles-finance
+                    :countryId="activeCountryId"/>
+              </template>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row class="d-none-print" justify="center"  v-if="!noData">
+        <v-col cols="11" md="6">
+          <country-multiselect
+            :placeholder="$t('countryProfile.infoBox.overlayCountries')"
+            :countryActiveIdsList="compareIdsList"
+            :countriesToCompare="sidsListMultiselectFiltered"
+            :colorScheme="colorScheme"
+            @countryChange="setCompareCountries"
+          />
+        </v-col>
+        <v-col cols="3" class="d-flex align-center" md="1">
+          <p class="mt-auto mb-auto">{{$t('countryProfile.infoBox.among')}}</p>
+        </v-col>
+        <v-col cols="6" md="3" lg="2">
+          <div class="select">
+            <v-select
+              rounded
+              v-model="rankType"
+              @change="changeRankType"
+              :items="rankTypes"
+              item-text="id"
+              item-value="id"
+              outlined
+              dense
+              hide-details
+            >
+              <template slot="selection" slot-scope="data">
+                  {{$t('countryProfile.infoBox.'+data.item.id)}}
+              </template>
+              <template  slot="item" slot-scope="data">
+                  {{$t('countryProfile.infoBox.'+data.item.id)}}
               </template>
             </v-select>
           </v-col>
@@ -285,22 +359,23 @@
               :countryId="activeCountryId"/>
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && countryText && countryText.challengesInDevelopment" justify="center" dense>
           <v-col cols="12">
             <h2 class="px-4 mb-2 undp-typography">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
             <div class="px-4 undp-typography" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
           </v-col>
         </v-row>
-        <p :class="{'single-page-print-footer': !activeCountryProfile.CountryText}" class="print-footer d-none d-print-block">
+        <p :v-if="countryText" class=" mb-0 pb-0 print-page-wrap_footer d-none d-print-block">
           Live version and links to original data sources available at
-          <a :href="`https://data.undp.org/sids/${activeCountryId}`">https://data.undp.org/sids/{{activeCountryId}}</a>
+          <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
         </p>
       </div>
-    </div>
   </div>
 </template>
 
 <script>
+/*global gtag*/
+
 import flagCodes from '@/assets/flagCodes.js'
 
 import PrintoutHeader from '@/components/PrintoutHeader.vue'
@@ -424,8 +499,8 @@ export default {
         }
       },
       maxValues:{
-        globally: 200,
-        sidsCountires:50,
+        global: 200,
+        sids:50,
         caribbean:25,
         ais:10,
         pacific:16
@@ -438,8 +513,44 @@ export default {
       profiles: state => state.profiles.profiles,
       indicatorsMetadata: state => state.profiles.indicatorsMetadata
     }),
+    pageLink() {
+      return window.location.toString()
+    },
     radarAnnotation() {
       return this.$t('countryProfile.infoBox.radarAnnotation.'+this.rankType)
+    },
+    countryText(){
+      let langMap = {
+        'en': 'English',
+        'pt': 'Portuguese',
+        'fr': 'French',
+        'es': 'Spanish',
+      }
+      return this.activeCountryProfile[langMap[this.locale]] ? this.activeCountryProfile[langMap[this.locale]] : this.activeCountryProfile[langMap.English]
+    },
+    locale() {
+      return this.$i18n.locale
+    },
+    noData() {
+      let dataPoints = Object.keys(this.graphValueData).reduce((sum, pillarCode) => {
+        let pillarSum = this.graphValueData[pillarCode][0].axes.reduce((pillarSum, indi) => {
+          if(indi.value !== 'No Data') {
+            return pillarSum + 1;
+          }
+          return pillarSum
+        },0)
+        return sum + pillarSum
+      },0)
+      return dataPoints < 4
+    },
+    sidsListMultiselectFiltered() {
+      if(this.rankType === 'region') {
+        return this.sidsList.filter(country => {
+          return country.region === this.activeCountryProfile.sidsData.region
+        });
+      } else {
+        return this.sidsList
+      }
     },
     sidsListFiltered() {
       if(this.region === 'allSids') {
@@ -458,10 +569,10 @@ export default {
       })
     },
     maxValuePillars(){
-      if(this.rankType !== 'regionally') {
+      if(this.rankType !== 'region') {
         return this.maxValues[this.rankType]
       }
-      return this.maxValues[this.activeCountryProfile.Profile[0].value]
+      return this.maxValues[this.activeCountryProfile.Profile[0].value.toLowerCase()]
     },
     graphValueData() {
       let result = {};
@@ -491,7 +602,8 @@ export default {
             return {
               axis: this.indicatorsMetadata[axis.axis].indicator,
               value: axis[rank] || axis.value,
-              code: axis.axis
+              code: axis.axis,
+              year: axis.year
             }
           })
           return {
@@ -513,17 +625,17 @@ export default {
     },
   },
   methods:{
-    changeRankSelector(e) {
-      if(e === 'region') {
-        this.region = this.activeCountryProfile.Profile[0].value
-      }
-    },
     selectCountry(country) {
+      gtag('event', 'country_select_profiles', {
+        country
+      });
       this.$router.push({
         name:'Country Profiles',
-        params:{country},
-        query: this.$route.query
+        params:{country}
       })
+    },
+    changeRankType() {
+      this.setCompareCountries([]);
     },
     setCompareCountries(value) {
       this.$router.push({
@@ -531,6 +643,9 @@ export default {
           compare: value.toString()
         }
       })
+      gtag('event', 'country_compare_list', {
+        compare: value.toString()
+      });
     },
     removeCountry(countryId) {
       this.setCompareCountries(this.compareIdsList.filter(compareCountryId => compareCountryId !== countryId))
@@ -604,21 +719,9 @@ export default {
    }
  }
  @media print {
-   .mvi-print-desc {
-     margin-top: -50px !important;
-   }
-   .print-footer {
-     position: fixed;
-     width: 90%;
-     left: 0;
-     bottom: 0px;
-   }
-   .single-page-print-footer {
-     bottom: 30px;
-   }
-   .desc-mvi-one-page {
-     position: absolute;
-     bottom: 190px;
+   .profiles-page {
+     max-height: 2980px;
+     overflow: hidden;
    }
  }
  .desc-spiders {
@@ -629,9 +732,6 @@ export default {
  }
  .mvi-wrapper {
    position: relative;
- }
- .page-single-page {
-   max-height: 1340px;
  }
 .mobile-pillar-selector {
   margin: 6px 0;

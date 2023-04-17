@@ -70,7 +70,7 @@
             </div>
             <v-btn
                 class="ml-2 mb-1 filter-sm-button"
-                :disabled="chartType !== 'bars' || years.length === 1"
+                :disabled="chartType !== 'series' || years.length === 1"
                 rounded
                 outlined
                 @click="toggleYearPlay"
@@ -133,6 +133,7 @@
 </template>
 <script>
 
+/*global gtag*/
 import { mapState } from 'vuex';
 
 export default {
@@ -217,6 +218,9 @@ export default {
       this.$emit('indicatorChange', dimension)
     },
     emitYearChange(year){
+      gtag('event', 'indi_year', {
+        year
+      });
       this.$emit('yearChange', year)
     },
     emitSortingChange(sorting){

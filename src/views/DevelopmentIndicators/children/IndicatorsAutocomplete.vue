@@ -64,6 +64,7 @@
   </v-row>
 </template>
 <script>
+/*global gtag*/
 import { mapState } from 'vuex';
 import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
 
@@ -110,6 +111,9 @@ export default {
       return itemText.toLowerCase().includes(queryText.toLowerCase())
     },
     emitIndicatorChange(indicator) {
+      gtag('event', 'indi_select', {
+        indicator
+      });
       this.$emit('indicatorChange', indicator)
     },
     emitToggleDialog(){

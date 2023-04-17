@@ -7,7 +7,7 @@
         </template>
       </printout-header>
       <p class="d-none d-print-block">
-        <b>{{$t('gis.controller.datasets')}}:</b>{{datasetMeta[activeIndicatorsMeta.dataset]['Dataset Name']}}
+        <b>{{$t('gis.controller.dataset')}}:</b>{{datasetMeta[activeIndicatorsMeta.dataset] && datasetMeta[activeIndicatorsMeta.dataset].datasetName}}
       </p>
       <p class="d-none d-print-block">
         <b>{{$t('spiders.definition')}}:</b>{{activeIndicatorsMeta.def}}
@@ -23,9 +23,9 @@
             {{$t('indicators.export.valuesLast')}}
           </p>
           <p class="text-center">
-            <span class="choro-print-legend choro-print-legend_caribean">{{$t('countryNames.caribbean')}}</span>
-            <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">{{$t('countryNames.ais')}}</span>
-            <span class="choro-print-legend choro-print-legend_pacific">{{$t('countryNames.pacific')}}</span>
+            <span class="choro-print-legend choro-print-legend_caribean">{{$t('regions.caribbean')}}</span>
+            <span class="choro-print-legend pr-8 pl-8 choro-print-legend_ais">{{$t('regions.ais')}}</span>
+            <span class="choro-print-legend choro-print-legend_pacific">{{$t('regions.pacific')}}</span>
           </p>
           </v-col>
       </v-row>
@@ -183,22 +183,22 @@
         </v-col>
       </v-row>
     </div>
-    <div v-if="page!=='mvi' && !mlMode" class="printable-hidden print-page-wrap print-page-wrap-last">
+    <div v-if="page!=='mvi' && !mlMode" class="printable-hidden print-page-wrap">
       <v-row dense>
         <v-col cols='12'>
           <h4 class="text-center">AIS</h4>
           <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-ais'" region="ais" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
-      <v-row dense>
-        <v-col cols='12'>
+      <v-row class="mb-0" dense>
+        <v-col cols='12 mb-0'>
           <h4 class="text-center">Pacific</h4>
-          <indicators-choro-chart class="choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
+          <indicators-choro-chart class="mb-0 choro-printabe-series choro-printabe-region-avgs" v-if='!noData' :chartId="'choro-print-reg-pac'" region="pacific" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="'series'" :width="800" :indicatorCode="indicator"/>
         </v-col>
       </v-row>
-      <p class="print-page-wrap_footer">
+      <p class="print-page-wrap_footer mb-0 pb-0">
         Live version and links to original data sources available at
-        <a class="d-block mt-0" :href="pageLink">{{pageLink}}</a>
+        <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
       </p>
     </div>
   </div>
@@ -220,7 +220,6 @@ import InfoButton from '@/components/InfoButton.vue'
 import sizeMixin from '@/mixins/size.mixin'
 import { mapState } from 'vuex'
 import store from '@/store'
-import { datasetMeta } from '@/assets/datasets/datasetMeta';
 
 export default {
   name: 'DevelopmentIndicators',
@@ -229,7 +228,6 @@ export default {
   data: function() {
     return {
       dialog:false,
-      datasetMeta: datasetMeta,
       resizeTimeout:null,
       mlMode:false,
       mviCodes:[
@@ -316,7 +314,8 @@ export default {
       indicatorsMeta: state => state.indicators.indicatorsMeta,
       MLTargetSize: state => state.indicators.MLTargetSize,
       mlData: state => state.ml.mlData,
-      mlModel: state => state.ml.mlModel
+      mlModel: state => state.ml.mlModel,
+      datasetMeta: state => state.indicators.datasetsMeta
     }),
     sortingName() {
       if(this.sorting === 0) {
@@ -346,7 +345,7 @@ export default {
       return this.tabs.findIndex(menuItem => menuItem.chartType === this.chartType)
     },
     activeIndicatorsMeta() {
-      return this.indicatorsMeta[this.indicator] || this.indicatorsMeta['hdr-137506']
+      return this.indicatorsMeta[this.indicator] || this.indicatorsMeta['hdr-hdi']
     },
     mlAvaliable() {
       return this.indicator && this.indicator.match(/.*key|mvi|ndgain|wdi.*/gm);
@@ -504,8 +503,12 @@ export default {
   }
   @media print {
     .print-root {
-      max-height: 4200px;
+      max-height: 4470px;
       overflow: hidden;
+      margin: 0 !important;
+    }
+    .regionTitle {
+      display: none !important;
     }
   }
 </style>

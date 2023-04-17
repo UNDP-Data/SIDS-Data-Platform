@@ -1,21 +1,20 @@
 <template>
   <v-card class="mb-1 description-block">
     <v-card-subtitle class=" pt-4 pb-0 block-header" v-if="activeLayer">
-      <h6 class="undp-typography">{{ activeLayer.Description }}
-          {{ activeDataset.type === "temporal" ? activeLayer.Temporal : "" }}
-      </h6>
+      <h6 class="undp-typography">{{ activeLayer.title }}</h6>
     </v-card-subtitle>
     <v-card-subtitle class="block-header" v-else>
-      SIDS Geospatial Platform
+      {{$t('gis.toolbar.pageName')}}
     </v-card-subtitle>
     <v-card-text class="pb-2" v-if="activeLayer">
-      {{ activeLayer.Desc_long }}<br />
-      <b>Reference</b> {{ activeLayer.Source_Name }} <br />
-      <a :href="activeLayer.Source_Link" target="_blank" class="undp-style pt-2">
-        Source
+      {{ activeLayer.description }}<br />
+      <b>{{$t('gis.toolbar.dataReference')}}</b> {{ activeLayer.citation }} <br />
+      <a :href="activeLayer.link" target="_blank" class="undp-style pt-2">
+        {{$t('root.source')}}
       </a>
     </v-card-text>
     <v-card-text class="pb-2" v-else>
+      {{$t('gis.toolbar.defaultMessage')}}
       This map visualizes data for the SIDS at different resolutions. Select a
       dataset above or a country to view spatial data about that region.
     </v-card-text>

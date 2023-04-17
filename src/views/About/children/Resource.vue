@@ -64,4 +64,14 @@ export default {
 .resource-bottom a {
   border-bottom:0;
 }
+.about-resource .v-image {
+  overflow: hidden;
+}
+.about-resource .v-image .v-image__image {
+  transition: all 200ms;
+  transform: scale(1.00);
+}
+.about-resource .v-image:hover  .v-image__image{
+  transform: scale(1.05);
+}
 </style>

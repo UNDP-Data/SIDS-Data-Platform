@@ -21,7 +21,6 @@
             <v-btn
               class="toolbar-button"
               color="gray"
-              :disabled="disabled"
               @click="open = !open"
               dark
               v-bind="attrs"
@@ -32,41 +31,41 @@
                :class="{
                  'button-resolution-icon-boundary-1': activeResolution === 'admin1',
                  'button-resolution-icon-boundary-2': activeResolution === 'admin2',
-                 'button-resolution-icon-hex-1': activeResolution === 'hex1',
-                 'button-resolution-icon-hex-5': activeResolution === 'hex5',
-                 'button-resolution-icon-hex-10': activeResolution === 'hex10'
+                 'button-resolution-icon-hex-1': activeResolution === 'hex-1km',
+                 'button-resolution-icon-hex-5': activeResolution === 'hex-5km',
+                 'button-resolution-icon-hex-10': activeResolution === 'hex-10km'
                }"></i>
             </v-btn>
           </template>
           <span>
-            <b>Resolution</b> - Choose different level of aggregation of the data layer.
+            <b>{{$t('gis.toolbar.resolution[0]')}}</b> {{$t('gis.toolbar.resolution[1]')}}
           </span>
         </v-tooltip>
       </template>
       <v-card class="background-grey">
         <v-card-text class="">
           <div class="mb-2">
-          <h4>Hexbins</h4>
+          <h4>{{$t('gis.toolbar.hexbins')}}</h4>
           <v-btn-toggle
             :value="activeHexResolution"
           >
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex1')"
+              @click="handleResolutionChange('hex-1km')"
             >
               1 km
               <i class="button-resolution-icon button-resolution-icon-hex-1"></i>
             </v-btn>
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex5')"
+              @click="handleResolutionChange('hex-5km')"
             >
               5 km
               <i class="button-resolution-icon button-resolution-icon-hex-5"></i>
             </v-btn>
             <v-btn
               class="button-resolution-controller"
-              @click="handleResolutionChange('hex10')"
+              @click="handleResolutionChange('hex-10km')"
             >
               10 km
               <i class="button-resolution-icon button-resolution-icon-hex-10"></i>
@@ -74,7 +73,7 @@
           </v-btn-toggle>
         </div>
         <div class="">
-          <h4>Administrative regions</h4>
+          <h4>{{$t('gis.toolbar.administrativeRegions')}}</h4>
           <v-btn-toggle class="d-flex"
             :value="activeAdminResolution"
           >
@@ -82,14 +81,14 @@
               class="button-adm button-resolution-controller"
               @click="handleResolutionChange('admin1')"
             >
-              Level 1
+              {{$t('gis.toolbar.level1')}}
               <i class="button-resolution-icon button-resolution-icon-boundary-1 "></i>
             </v-btn>
             <v-btn
               class="button-adm button-resolution-controller"
               @click="handleResolutionChange('admin2')"
             >
-              Level 2
+              {{$t('gis.toolbar.level2')}}
               <i class="button-resolution-icon button-resolution-icon-boundary-2"></i>
             </v-btn>
           </v-btn-toggle>
@@ -106,12 +105,12 @@ export default {
   data() {
     return {
       open:false,
-      activeResolution:'hex5'
+      activeResolution:'hex-5km'
     }
   },
   computed:{
     activeHexResolution() {
-      let index = ['hex1','hex5','hex10'].indexOf(this.activeResolution)
+      let index = ['hex-1km','hex-5km','hex-10km'].indexOf(this.activeResolution)
       if(index === -1) {
         return null
       }
@@ -126,8 +125,7 @@ export default {
     }
   },
   props:[
-    'map',
-    'disabled'
+    'map'
   ],
   methods: {
     handleResolutionChange(resolution) {

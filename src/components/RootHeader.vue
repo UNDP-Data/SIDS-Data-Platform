@@ -5,7 +5,7 @@
     <source v-if="!isTesting" src="@/assets/media/videos/header-xl.mp4" type="video/mp4">
   </video>
     <div class="d-none d-md-block d-lg-block d-xl-block header-bar">
-      <a href="https://data.undp.org/" target="_blank">
+      <a href="https://data.undp.org/sids/" target="_blank">
         <img
           class="header-bar_logo"
           src="@/assets/media/logo.png"
@@ -140,7 +140,8 @@ export default {
 .header-bar_logo-mobile {
   position: relative;
   z-index: 5;
-  width: 70%;
+  width: 200px;
+  max-width: 70%;
   margin: 0.5em auto auto;
 }
 </style>

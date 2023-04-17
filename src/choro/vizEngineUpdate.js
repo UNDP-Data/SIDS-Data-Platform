@@ -32,7 +32,7 @@ export function updateVizEngine(indicatorCode) {
   }
 
   if (this.indicatorCode == "region") {
-    this.indicatorCode = "hdr-137506";///temp so has something to attach to data
+    this.indicatorCode = "hdr-hdi";///temp so has something to attach to data
   }
   if (Object.keys(indexCodes).includes(this.indicatorCode)) {
     this.vizMode = "index";
@@ -403,7 +403,6 @@ export function countriesWithNoData() {
 // //
 //
 export function updateVizBlocks(){
-  console.log(this.indiSelections["viz"])
   if (this.indiSelections["viz"] == "spider") {
     d3.selectAll(".indexSpider").style("display", "block");
   } else {
@@ -499,8 +498,8 @@ export function updateCountrySvgColors(quantize) {
             if (this.indicatorCode == "Region") {
               return (
                 regionColors(
-                  rootThis.profileData[this.id].Region,
-                  rootThis.profileData[this.id]["Member State (Y/N)"]
+                  rootThis.profileData[this.id].region,
+                  rootThis.profileData[this.id].unMeber
                 ) + " shadow countrySvg"
               );
             } else {
@@ -514,7 +513,7 @@ export function updateCountrySvgColors(quantize) {
               rootThis.indicatorCode == "Region"
             ) {
               return (
-                regionColors(rootThis.profileData[this.id].Region, "Y") +" shadow countrySvg"
+                regionColors(rootThis.profileData[this.id].region, "Y") +" shadow countrySvg"
               );
             } else {
               return quantize(value) + " shadow countrySvg";
@@ -534,7 +533,7 @@ export function updateCountrySvgColors(quantize) {
 
           if (rootThis.indicatorCode == "Region") {
             return (
-              regionColors(rootThis.profileData[this.id].Region, "Y") +
+              regionColors(rootThis.profileData[this.id].region, "Y") +
               " shadow countrySvg"
             );
           } else {
@@ -554,7 +553,7 @@ export function updateCountrySvgColors(quantize) {
       .attr("class", function () {
         try {
           return (
-            regionColors(rootThis.profileData[this.id].Region, "Y") +
+            regionColors(rootThis.profileData[this.id].region, "Y") +
             " shadow countrySvg"
           );
         } catch(e) {
@@ -631,7 +630,7 @@ export function updateCountryTitles(
 
         if (
           rootThis.indicatorCode == "Region" &&
-          rootThis.indiSelections["viz"] == "choro"
+          rootThis.indiSelections["viz"] === "choro"
         ) {
           d3.select(this).attr('fill-opacity', 1);
         } else {
@@ -964,16 +963,12 @@ export function updateBarAxis() {
     this.indiSelections["viz"] == "series"
   ) {
     x.range([0, 0]);
-    // setTimeout(function () {
       barAxis.attr("visibility", "hidden");
-    // }, 1100);
   } else if (this.indiSelections["viz"] == "bars"||this.indiSelections["viz"] == "Multi-indicator") {
     barAxis.attr("visibility", "visible");
   }
 
   barAxis
-    // .transition()
-    // .duration(1200)
     .attr("transform", `translate(${margin.left}, 25)`)
     .call(xAxis);
 }
@@ -981,7 +976,7 @@ export function updateBarAxis() {
 export function updateYAxis() {
   let indicatorDataYear = this.indicatorData["data"][this.indiSelections["year"]],
 
-  yAxisContainer = this.sidsMapSelection.select(".multiYAxis");
+  yAxisContainer = d3.select(this.mapContainerSelector).select(".multiYAxis");
   const yScale = d3.scaleLinear();
   var yAxis = d3.axisLeft(yScale);
   yAxis.tickFormat(d3.format(".2s"));
@@ -1164,14 +1159,14 @@ export function updateRegionLables() {
             pacificX: 725,
             pacificY:
               40 * (regionRanks.findIndex(v => v === regionRank["pacific"]+'p')) +
-              60,
+              120,
             caribbeanX: 725,
             caribbeanY:
               40 * (regionRanks.findIndex(v => v === regionRank["caribbean"]+'c')) +
-              60,
+              120,
             aisX: 725,
             aisY:
-              40 * (regionRanks.findIndex(v => v === regionRank["ais"]+'a')) + 60,
+              40 * (regionRanks.findIndex(v => v === regionRank["ais"]+'a')) + 120,
           };
         } else {
           regionTitleVals = {

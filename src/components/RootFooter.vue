@@ -7,7 +7,6 @@
 
 <script>
 import LanguageSelector from '@/components/LanguageSelector'
-
 export default {
   name: 'rootFooter',
   props: {
@@ -47,5 +46,8 @@ export default {
     float: right;
     max-width: 260px;
   }
+}
+.footer-spacer {
+  min-width: 260px;
 }
 </style>

@@ -125,6 +125,7 @@
   </div>
 </template>
 <script>
+/*global gtag*/
 import { mviIndicators, mviPreset, eviPreset } from '@/assets/goalsList';
 
 export default {
@@ -158,6 +159,9 @@ export default {
       this.$emit('toggleDialog')
     },
     emitMviIndicatorsChange(value) {
+      gtag('event', 'mvi_filter', {
+        mvi_set: value
+      });
       return this.$emit('MviIndicatorsChange', value)
     },
   },

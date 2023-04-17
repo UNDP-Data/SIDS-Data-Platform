@@ -70,7 +70,7 @@ export default {
       return this.$i18n.locale
     },
     activeIndicatorsMeta() {
-      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-137506']
+      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-hdi']
     },
     chartData() {
       if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {
@@ -642,5 +642,7 @@ h4.choro-title{
   display: none;
 }
 /*# sourceMappingURL=vizEngine.css.map */
-
+.regionLegend_container {
+  width: 100%;
+}
 </style>

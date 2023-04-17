@@ -150,7 +150,7 @@ export default {
   name: 'Portfolio',
   data() {
     return {
-
+      expansion:0
     }
   },
   components:{

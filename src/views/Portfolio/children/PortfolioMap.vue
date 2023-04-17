@@ -12,7 +12,8 @@
           :title="$t('portfolio.chips.unMembsers')"
         />
         <portfolio-indicator-box
-          :value="UNDPprojectsNumber"
+          class="portfolio-chip"
+          :value="projects.length"
           :title="$t('portfolio.chips.projects')"
         />
         <portfolio-indicator-box
@@ -50,7 +51,11 @@ export default {
     region: {
       default:'allSids',
       type:String
-    }
+    },
+    year: {
+      default:'all',
+      type:String
+    },
   },
   components:{
     PortfolioIndicatorBox
@@ -142,19 +147,14 @@ export default {
           return 38
       }
     },
-    UNDPprojectsNumber() {
-      let distinctProjects = [];
-      this.projects.map(project => {
-          if (!distinctProjects.includes(project.title)) {
-            distinctProjects.push(project.title)
-          }
-      })
-      return distinctProjects.length
-    },
     projectsFundning() {
       let funding = 0;
       this.projects.map(project => {
-        funding = funding + parseInt(project.budget);
+        if(this.year === 'all') {
+          funding = funding + Object.values(project.budget).reduce((b, yb) => b + yb, 0);
+        } else {
+          funding = funding + project.budget[this.year]
+        }
       })
       return this.nFormatter(funding)
     }
@@ -182,6 +182,7 @@ export default {
         .data(pointDataFiltered);
       this.path = d3.geoPath().projection(projection);
       this.zoom = d3.zoom().on("zoom", () => {
+        if(isNaN(d3.event.transform.k)) return
         this.g.style("stroke-width", 1 / d3.event.transform.k + "px");
         this.g.attr("transform", d3.event.transform);
         pointsg.style("stroke-width", 1 / d3.event.transform.k + "px");
@@ -211,7 +212,7 @@ export default {
           if(this.classList.contains("clickable")) {
             d3.event.stopPropagation()
             if(rootThis.region === d.properties.iso3) {
-              rootThis.$emit('updateRegion', 'All');
+              rootThis.$emit('updateRegion', 'allSids');
             } else {
               rootThis.$emit('updateRegion', d.properties.iso3);
             }
@@ -450,7 +451,6 @@ export default {
           x = (bounds[0][0] + bounds[1][0]) / 2,
           y = (bounds[0][1] + bounds[1][1]) / 2,
           scale = Math.max(1, Math.min(35, 0.9 / Math.max(dx / (this.width-250), dy / (this.height-250))));
-          console.log(scale)
           let translate = [this.width / 2 - scale * x, this.height / 2 - scale * y];
         this.map.transition()
           .duration(1350)
@@ -465,6 +465,17 @@ export default {
         .attr("dy", center[1])
         .attr("font-size", 30 / scale + 'px')
 
+    },
+    updateScreenSize() {
+      this.map.selectAll("*").remove();
+      this.initMap();
+      if(this.region !== 'allSids') {
+        if(['ais', 'caribbean', 'pacific'].includes(this.region)) {
+          this.selectRegion(this.region)
+        } else {
+          this.selectCountry(this.region)
+        }
+      }
     },
     selectRegion(name) {
       let transforms = this.regionTransforms[name];
@@ -515,7 +526,13 @@ export default {
         this.selectCountry(this.region)
       }
     }
-  }
+  },
+  created() {
+    window.addEventListener("resize", this.updateScreenSize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.updateScreenSize);
+  },
 }
 </script>
 

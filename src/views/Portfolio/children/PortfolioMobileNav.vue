@@ -41,10 +41,10 @@
                 outlined
               >
                 <template slot="selection" slot-scope="data">
-                  <span class="select-text-element">{{data.item.text ? $t('portfolio.' + data.item.text) : data.item.value}}</span>
+                  <span class="select-text-element">{{data.item === 'all' ? $t('portfolio.yearsAll') : data.item}}</span>
                 </template>
                 <template  slot="item" slot-scope="data">
-                  {{data.item.text ? $t('portfolio.' + data.item.text) : data.item.value}}
+                  {{data.item === 'yearsAll' ? $t('portfolio.yearsAll') : data.item}}
                 </template>
               </v-select>
             </div>
@@ -81,17 +81,17 @@
                 dense
                 hide-details
                 item-text="name"
-                item-value="name"
+                item-value="id"
                 :value="fundingSource"
                 :items="fundingSources"
                 @change="emitSourceChange"
                 outlined
               >
                 <template slot="selection" slot-scope="data">
-                  <span class="select-text-element">{{data.item.text ? $t('portfolio.' + data.item.text) : data.item.name}}</span>
+                  <span class="select-text-element">{{data.item.id === 'all' ? $t('portfolio.' + data.item.text) : data.item.text}}</span>
                 </template>
                 <template  slot="item" slot-scope="data">
-                  {{data.item.text ? $t('portfolio.' + data.item.text) : data.item.name}}
+                  {{data.item.id === 'all' ? $t('portfolio.' + data.item.text) : data.item.text}}
                 </template>
               </v-select>
             </div>
@@ -199,5 +199,9 @@ export default {
   position: absolute !important;
   right: -0.5em;
   bottom: 1em;
+}
+.select-flex {
+  max-width: 100%;
+  width: 100%;
 }
 </style>

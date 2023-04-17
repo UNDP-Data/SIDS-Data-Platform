@@ -145,10 +145,14 @@
 <script>
 import format from "@/mixins/format.mixin";
 import { mapState } from "vuex";
+import InfoHoverTooltip from '@/components/InfoHoverTooltip.vue'
 
 export default {
   name: "CountryInfoBar",
   props: ["profile", "id", "name"],
+  components:{
+    InfoHoverTooltip
+  },
   mixins: [format],
   computed: {
     ...mapState({
@@ -183,10 +187,11 @@ export default {
       return `${hdiNum}, ${hdiClass}`;
     },
     getIndicator(code) {
-      return this.profile.find((indicators) => indicators.axis === code);
+      return this.profile.find((indicators) => indicators.axis === code)
     },
     checkIndicator(code) {
-      return this.getIndicator(code) && this.getIndicator(code).value;
+      let indi = this.profile.find((indicators) => indicators.axis === code)
+      return indi && indi.value;
     },
     checkNoData(code) {
       return this.getIndicator(code).value === 'No Data' ?

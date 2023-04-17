@@ -19,7 +19,7 @@
         <v-col cols="6" class="d-flex justify-end justify-sm-center">
           <portfolio-indicator-box
             class="portfolio-chip"
-            :value="UNDPprojectsNumber"
+            :value="projects.length"
             :title="$t('portfolio.chips.projects')"
           />
         </v-col>
@@ -77,22 +77,13 @@ export default {
           return 38
       }
     },
-    UNDPprojectsNumber() {
-      let distinctProjects = [];
-      this.projects.map(project => {
-        if (!distinctProjects.includes(project.title)) {
-          if(this.checkGoalValidity(project)) {
-            distinctProjects.push(project.title)
-          }
-        }
-      })
-      return distinctProjects.length
-    },
     projectsFundning() {
       let funding = 0;
       this.projects.map(project => {
-        if(this.checkGoalValidity(project)) {
-          funding = funding + parseInt(project.budget);
+        if(this.year === 'all') {
+          funding = funding + Object.values(project.budget).reduce((b, yb) => b + yb, 0);
+        } else {
+          funding = funding + project.budget[this.year]
         }
       })
       return this.nFormatter(funding)
