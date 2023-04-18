@@ -94,8 +94,8 @@
               :region="region"
               :year="year"
               :funding="fundingCategory"
-              :projects="portfolioData"
-              :data="portfolioSources"
+              :projects="filteredProjects"
+              :data="fundingSourcesList"
               :categories="fundingCategoriesTypes"
             />
           </div>
@@ -105,32 +105,10 @@
         <v-col cols="12">
           <portfolio-map
             :region="region"
-            @updateRegion="updateRegion"
-            :projects="portfolioData"
-          >
-            <!--template v-slot:header>
-              <v-row class="map-header mt-4 d-none d-lg-flex justify-space-between">
-                <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
-                  <h2 class="page-header mt-md-2 mb-0 undp-typography">{{$t('portfolio.header')}}</h2>
-                </v-col>
-                <v-col class="d-flex justify-end" cols="2" sm="1" md='3' xl="2">
-                  <div class="">
-                    <info-button :contentName="'aboutThis-portfolio'"/>
-                  </div>
-                  <div class="pl-3">
-                    <portfolio-export
-                      :region="region"
-                      :year="year"
-                      :funding="fundingCategory"
-                      :projects="filteredProjects"
-                      :data="fundingSourcesList"
-                      :categories="fundingCategoriesTypes"
-                    />
-                  </div>
-                </v-col>
-              </v-row>
-            </template -->
-          </portfolio-map>
+            :year="year"
+            @updateRegion="setRegion"
+            :projects="filteredProjects"
+          />
         </v-col>
       </v-row>
       <v-row v-if="$vuetify.breakpoint.lg || $vuetify.breakpoint.xl" class="bars-row d-none d-lg-block mb-3 mt-negative">

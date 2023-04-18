@@ -107,7 +107,7 @@
           :mviCodes="mviCodes"
           @MviIndicatorsChange="MVIindicatorUpdate"
         />
-        <v-row class="d-none d-print-none d-lg-flex nav-tabs-row mt-4">
+        <v-row class="d-none d-print-none d-lg-flex nav-tabs-row mt-4 mb-lg-7">
           <v-col class="d-flex" col="9" lg="9">
             <div class="ma-auto">
               <v-tabs

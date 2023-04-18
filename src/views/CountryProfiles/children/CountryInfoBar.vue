@@ -10,105 +10,182 @@
       <v-col class="printing-6 mt-4" cols="12" md="6">
         <v-row>
           <v-col sm="6" md="12" lg="6">
-            <v-list-item  v-if="checkIndicator('key-1')">
+            <v-list-item v-if="checkIndicator('key-sids-region')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title               
-                  v-text="$t('countryProfile.infoBox.regionally')"
+                  v-text="$t('countryProfile.infoBox.key-sids-region')"
                 ></v-list-item-title>
                 <v-list-item-subtitle>{{
-                  getIndicator("key-1").value
+                  getIndicator('key-sids-region').value
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item  v-if="checkIndicator('key-2')">
+            <v-list-item  v-if="checkIndicator('key-countryOffice')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title             
-                  v-text="$t('countryProfile.infoBox.office')"
+                  v-text="$t('countryProfile.infoBox.key-countryOffice')"
                 ></v-list-item-title>
                 <v-list-item-subtitle>{{
-                  getIndicator("key-2").value
+                  getIndicator('key-countryOffice').value
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
             <v-list-item  v-if="checkIndicator('key-3')">
               <v-list-item-content class="small-padding">
-                <v-list-item-title 
-                  v-text="$t('countryProfile.infoBox.memberState')"
+                <v-list-item-title v-text="$t('countryProfile.infoBox.key-un-member')"
                 ></v-list-item-title>
                 <v-list-item-subtitle>{{
-                  getIndicator("key-3").value
+                  getIndicator("key-un-member").value
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item v-if="checkIndicator('key-wdi2-SP.POP.TOTL')">
-              <v-list-item-content class="small-padding">
-                <v-list-item-title v-text="$t('countryProfile.infoBox.population')"></v-list-item-title>
-                <v-list-item-subtitle
-                 >{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item v-if="checkIndicator('key-7')">
+            <info-hover-tooltip v-if="checkIndicator('key-wdi2-SP.POP.TOTL')" :large="false">
+              <template slot="content">
+              <v-card flat>
+                <v-card-text class="active-indicator-info">
+                  {{indicatorsMetadata['key-wdi2-SP.POP.TOTL'].longDefinition}}
+                  <v-divider class="mb-1 mt-1"></v-divider>
+                  <b>{{$t('portfolio.year')}}:</b>
+                    <template v-if="getIndicator('key-wdi2-SP.POP.TOTL').year && getIndicator('key-wdi2-SP.POP.TOTL').year!=='No Year'">
+                      ({{getIndicator('key-wdi2-SP.POP.TOTL').year}})
+                    </template> <template v-else>
+                      {{$t('root.noData')}}
+                    </template> <br/>
+                  <b>{{$t('root.source')}}:</b> {{indicatorsMetadata['key-wdi2-SP.POP.TOTL'].source}} <br/>
+                  <a v-if="indicatorsMetadata['key-wdi2-SP.POP.TOTL'].sourceLink !== 'No Data'" :href="indicatorsMetadata['key-wdi2-SP.POP.TOTL'].sourceLink" target="_blank" class="undp-style">Link</a>
+                </v-card-text>
+              </v-card>
+            </template>
+            <template slot="button">
+              <v-list-item v-if="checkIndicator('key-wdi2-SP.POP.TOTL')">
+                <v-list-item-content class="small-padding">
+                  <v-list-item-title v-text="$t('countryProfile.infoBox.key-wdi2-SP-POP-TOTL')"></v-list-item-title>
+                  <v-list-item-subtitle
+                  >{{checkNoDataIndicator('key-wdi2-SP.POP.TOTL')}}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+            </info-hover-tooltip>
+            <v-list-item v-if="checkIndicator('key-language')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title              
-                  v-text="$t('countryProfile.infoBox.lang')"
+                  v-text="$t('countryProfile.infoBox.key-language')"
                 ></v-list-item-title>
                 <v-list-item-subtitle
-                 >{{
-                  getIndicator("key-7").value
-                }}</v-list-item-subtitle>
+                 >{{ getIndicator("key-language").value }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-col>
           <v-col sm="6" md="12" lg="6">
-            <v-list-item v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')">
-              <v-list-item-content class="small-padding">
-                <v-list-item-title v-text="$t('countryProfile.infoBox.area')"></v-list-item-title>
-                <v-list-item-subtitle
-                 >{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}} <span v-if="checkNoData('key-wdi-AG.SRF.TOTL.K2')">km<sup>2</sup></span></v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item v-if="checkIndicator('key-10')">
+            <info-hover-tooltip v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')" :large="false">
+            <template slot="content">
+              <v-card flat>
+                <v-card-text class="active-indicator-info">
+                  {{indicatorsMetadata['key-wdi-AG.SRF.TOTL.K2'].longDefinition}}
+                  <v-divider class="mb-1 mt-1"></v-divider>
+                  <b>{{$t('portfolio.year')}}:</b>
+                    <template v-if="getIndicator('key-wdi-AG.SRF.TOTL.K2').year && getIndicator('key-wdi-AG.SRF.TOTL.K2').year!=='No Year'">
+                      ({{getIndicator('key-wdi-AG.SRF.TOTL.K2').year}})
+                    </template> <template v-else>
+                      {{$t('root.noData')}}
+                    </template> <br/>
+                  <b>{{$t('root.source')}}:</b> {{indicatorsMetadata['key-wdi-AG.SRF.TOTL.K2'].source}} <br/>
+                  <a v-if="indicatorsMetadata['key-wdi-AG.SRF.TOTL.K2'].sourceLink !== 'No Data'" :href="indicatorsMetadata['key-wdi-AG.SRF.TOTL.K2'].sourceLink" target="_blank" class="undp-style">Link</a>
+                </v-card-text>
+              </v-card>
+            </template>
+            <template slot="button">
+              <v-list-item v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')">
+                <v-list-item-content class="small-padding">
+                  <v-list-item-title v-text="$t('countryProfile.infoBox.key-wdi-AG-SRF-TOTL-K2')"></v-list-item-title>
+                  <v-list-item-subtitle
+                  >{{checkNoDataIndicator('key-wdi-AG.SRF.TOTL.K2')}} <span v-if="checkNoData('key-wdi-AG.SRF.TOTL.K2')">km<sup>2</sup></span></v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </info-hover-tooltip>
+            <v-list-item v-if="checkIndicator('key-incomeClass')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title               
-                  v-text="$t('countryProfile.infoBox.income')"
+                  v-text="$t('countryProfile.infoBox.key-incomeClass')"
                 ></v-list-item-title>
                 <v-list-item-subtitle
                  >{{
-                  computeIncome(getIndicator("key-10").value)
+                  computeIncome(getIndicator("key-incomeClass").value)
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item v-if="checkIndicator('key-hdr-137506')">
-              <v-list-item-content class="small-padding">
-                <v-list-item-title
-                  v-text="$t('countryProfile.infoBox.hdi')"
-                ></v-list-item-title>
-                <v-list-item-subtitle
-                 >{{
-                  computeHDI(getIndicator("key-hdr-137506").value)
-                }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item v-if="checkIndicator('key-wdi2-SI.POV.GINI')">
-              <v-list-item-content class="small-padding">
-                <v-list-item-title                
-                  v-text="$t('countryProfile.infoBox.gini')"
-                ></v-list-item-title>
-                <v-list-item-subtitle
-                 >{{
-                  getIndicator("key-wdi2-SI.POV.GINI").value
-                }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item v-if="checkIndicator('key-13')">
+            <info-hover-tooltip v-if="checkIndicator('key-hdr-hdi')" :large="false">
+              <template slot="content">
+                <v-card flat>
+                  <v-card-text class="active-indicator-info">
+                    {{indicatorsMetadata['key-hdr-hdi'].longDefinition}}
+                    <v-divider class="mb-1 mt-1"></v-divider>
+                    <b>{{$t('portfolio.year')}}:</b>
+                      <template v-if="getIndicator('key-hdr-hdi').year && getIndicator('key-hdr-hdi').year!=='No Year'">
+                        ({{getIndicator('key-hdr-hdi').year}})
+                      </template> <template v-else>
+                        {{$t('root.noData')}}
+                      </template> <br/>
+                    <b>{{$t('root.source')}}:</b> {{indicatorsMetadata['key-hdr-hdi'].source}} <br/>
+                    <a v-if="indicatorsMetadata['key-hdr-hdi'].sourceLink !== 'No Data'" :href="indicatorsMetadata['key-hdr-hdi'].sourceLink" target="_blank" class="undp-style">Link</a>
+                  </v-card-text>
+                </v-card>
+              </template>
+              <template slot="button">
+                <v-list-item v-if="checkIndicator('key-hdr-hdi')">
+                  <v-list-item-content class="small-padding">
+                    <v-list-item-title
+                      v-text="$t('countryProfile.infoBox.key-hdr-hdi')"
+                    ></v-list-item-title>
+                    <v-list-item-subtitle
+                    >{{
+                      computeHDI(getIndicator("key-hdr-hdi").value)
+                    }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+            </info-hover-tooltip>
+            <info-hover-tooltip v-if="checkIndicator('key-wdi2-SI.POV.GINI')" :large="false">
+              <template slot="content">
+                <v-card flat>
+                  <v-card-text class="active-indicator-info">
+                    {{indicatorsMetadata['key-wdi2-SI.POV.GINI'].longDefinition}}
+                    <v-divider class="mb-1 mt-1"></v-divider>
+                    <b>{{$t('portfolio.year')}}:</b>
+                      <template v-if="getIndicator('key-wdi2-SI.POV.GINI').year && getIndicator('key-wdi2-SI.POV.GINI').year!=='No Year'">
+                        ({{getIndicator('key-wdi2-SI.POV.GINI').year}})
+                      </template> <template v-else>
+                        {{$t('root.noData')}}
+                      </template> <br/>
+                    <b>{{$t('root.source')}}:</b> {{indicatorsMetadata['key-wdi2-SI.POV.GINI'].source}} <br/>
+                    <a v-if="indicatorsMetadata['key-wdi2-SI.POV.GINI'].sourceLink !== 'No Data'" :href="indicatorsMetadata['key-wdi2-SI.POV.GINI'].sourceLink" target="_blank" class="undp-style">Link</a>
+                  </v-card-text>
+                </v-card>
+              </template>
+              <template slot="button">
+                <v-list-item v-if="checkIndicator('key-wdi2-SI.POV.GINI')">
+                  <v-list-item-content class="small-padding">
+                    <v-list-item-title                
+                      v-text="$t('countryProfile.infoBox.key-wdi2-SI-POV-GINI')"
+                    ></v-list-item-title>
+                    <v-list-item-subtitle
+                    >{{
+                      getIndicator("key-wdi2-SI.POV.GINI").value
+                    }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+            </info-hover-tooltip>
+            <v-list-item v-if="checkIndicator('key-undpPage')">
               <v-btn
                 variant="plain"
                 class="red-arrow"
                 depressed
-                :href="getIndicator('key-13').value"
+                :href="getIndicator('key-undpPage').value"
                 target="_blank"
               >
-                {{$t('countryProfile.infoBox.countryPage')}}
+                {{$t('countryProfile.infoBox.key-undpPage')}}
               </v-btn>
             </v-list-item>
           </v-col>

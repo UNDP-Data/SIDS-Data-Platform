@@ -182,7 +182,7 @@ export default {
   }
   .about-page .v-expansion-panel-header {
     font-weight: 400;
-    font-size: 25px !important;
+    font-size: 1.3em !important;
     line-height: 114.2%;
     color: #000000;
     padding: 20px 40px 25px 0;

@@ -1,7 +1,7 @@
 <template>
   <div class="profiles-page">
     <div class="printout">
-      <div :class="{'full-size': activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext}" class="print-page page-break">
+      <div :class="{'full-size': countryText && countryText.developmentContext}" class="print-page page-break">
         <printout-header>
           <template slot="text">
             <b>{{$t('countryNames.'+activeCountryId)}}</b> {{$t('countryProfile.header')}}
@@ -75,12 +75,12 @@
             />
           </v-col>
         </v-row>
-        <v-row class="d-none d-md-flex d-print-flex mt-10" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex mt-10" v-if="countryText && countryText.developmentContext" justify="center" dense>
           <v-col cols="12">
-            <h2 class="px-4 mb-0 undp-typography mb-4">{{activeCountryProfile.CountryText.developmentContext.title}}</h2>
+            <h2 class="px-4 mb-0 undp-typography mb-4">{{countryText.developmentContext.title}}</h2>
             <v-row>
               <v-col class="printing-9" cols='12'>
-                <div class="pl-4 undp-typography" v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                <div class="pl-4 undp-typography" v-html="countryText.developmentContext.content"></div>
               </v-col>
             </v-row>
           </v-col>
@@ -88,7 +88,8 @@
         <v-row>
           <v-col class="printing-3 mb-0 stat-card-container pl-7" cols='12'>
             <div class="mb-print-1 stat-card" v-for="stat in activeCountryProfile.KeyStats.filter(d => d.title !== '').slice(0, 6)" :key="stat.title">
-                <h2>{{stat.value.replaceAll(',',' ')}}</h2>
+                <!-- h2>{{stat.value.replaceAll(',',' ')}}</h2 -->
+                <h2>{{stat.value.isInteger?stat.value:stat.value.toFixed(1)}}</h2>
                 <h4>{{stat.unit.replace('%','percent')}}</h4>
                 <p>{{stat.title}}</p>
             </div>
@@ -97,10 +98,10 @@
         <v-row class="d-md-none d-none-print justify-center">
           <v-col cols="11">
             <v-expansion-panels flat accordion>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.developmentContext">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.developmentContext.title}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="countryText && countryText.developmentContext">
+                <v-expansion-panel-header>{{countryText.developmentContext.title}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.developmentContext.content"></div>
+                  <div v-html="countryText.developmentContext.content"></div>
                   <div class="text-center mb-3" v-for="stat in activeCountryProfile.KeyStats.filter(d => d.title !== '').slice(0, 6)" :key="stat.title">
                     <h3 class="undp-typography">{{stat.value}} {{stat.unit}}</h3>
                     <p class="mb-0">{{stat.title}}</p>
@@ -108,17 +109,17 @@
                 </v-expansion-panel-content>
               </v-expansion-panel>
               <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.successesInDevelopment.title}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="countryText && countryText.successesInDevelopment">
+                <v-expansion-panel-header>{{countryText.successesInDevelopment.title}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+                  <div v-html="countryText.successesInDevelopment.content"></div>
                 </v-expansion-panel-content>
               </v-expansion-panel>
               <v-divider/>
-              <v-expansion-panel v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.challengesInDevelopment">
-                <v-expansion-panel-header>{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</v-expansion-panel-header>
+              <v-expansion-panel v-if="countryText && countryText.challengesInDevelopment">
+                <v-expansion-panel-header>{{countryText.challengesInDevelopment.title}}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <div v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+                  <div v-html="countryText.challengesInDevelopment.content"></div>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -189,86 +190,12 @@
           </div>
         </v-col>
       </v-row>
-      <v-row class="d-none-print" justify="center"  v-if="!noData">
-        <v-col cols="11" md="6">
-          <country-multiselect
-            :placeholder="$t('countryProfile.infoBox.overlayCountries')"
-            :countryActiveIdsList="compareIdsList"
-            :countriesToCompare="sidsListMultiselectFiltered"
-            :colorScheme="colorScheme"
-            @countryChange="setCompareCountries"
-          />
-        </v-col>
-        <v-col cols="3" class="d-flex align-center" md="1">
-          <p class="mt-auto mb-auto">{{$t('countryProfile.infoBox.among')}}</p>
-        </v-col>
-        <v-col cols="6" md="3" lg="2">
-          <div class="select">
-            <v-select
-              rounded
-              v-model="rankType"
-              @change="changeRankType"
-              :items="rankTypes"
-              item-text="id"
-              item-value="id"
-              outlined
-              dense
-              hide-details
-            >
-              <template slot="selection" slot-scope="data">
-                  {{$t('countryProfile.infoBox.'+data.item.id)}}
-              </template>
-              <template  slot="item" slot-scope="data">
-                  {{$t('countryProfile.infoBox.'+data.item.id)}}
-              </template>
-            </v-select>
-          </v-col>
-          <v-col cols="2" class="d-flex align-center justify-end">
-            <info-hover-tooltip :large="true" v-if="graphOptions[tab]" :contentName="getTabPillar(tab).tooltipName">
-              <template v-if="getTabPillar(tab).icon" v-slot:icon>
-                <v-img class="pr-4" max-height="40" max-width="70" contain :src="`${getTabPillar(tab).icon}`"/>
-              </template>
-            </info-hover-tooltip>
-          </v-col>
-          <v-col class="pt-0" cols="11">
-            <div v-for="(pillar, index) in pillars" :key="pillar.name">
-              <div v-if="tab === pillar.name">
-                <template v-if="index < 3">
-                  <profiles-spider-chart
-                    :graphOptions="graphOptions[pillar.name]"
-                    :pillarName="pillar.name"
-                    postfix="mobile"
-                    :tooltipContentName="pillar.tooltipName"
-                    :maxValue="maxValuePillars"
-                    :headerIcon="pillar.icon"
-                    :ranks="graphRankData[pillar.name]"
-                    :values="graphValueData[pillar.name]"/>
-                </template>
-                <template v-else-if="index === 3">
-                  <profiles-spider-chart
-                    :graphOptions="graphOptions[pillar.name]"
-                    :pillarName="pillar.name"
-                    postfix="mobile"
-                    :headerIcon="pillar.icon"
-                    :tooltipContentName="pillar.tooltipName"
-                    :maxValue="80"
-                    :ranks="graphRankData[pillar.name]"
-                    :values="graphValueData[pillar.name]"/>
-                </template>
-                <template v-else>
-                  <profiles-finance
-                      :countryId="activeCountryId"/>
-                </template>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
         <v-row class="d-none-print mt-16 mb-10" justify="center">
           <v-col cols="11" md="7" class="pl-7">
             <country-multiselect
               :placeholder="$t('countryProfile.infoBox.overlayCountries')"
               :countryActiveIdsList="compareIdsList"
-              :countriesToCompare="sidsListFiltered"
+              :countriesToCompare="sidsListMultiselectFiltered"
               :colorScheme="colorScheme"
               @countryChange="setCompareCountries"
             />
@@ -281,7 +208,7 @@
               <v-select
                 v-model="rankType"
                 :items="rankTypes"
-                @change="changeRankSelector"
+                @change="changeRankType"
                 item-text="id"
                 item-value="id"
                 outlined
@@ -332,10 +259,10 @@
         </v-row>
       </div>
       <div class="print-page page-break">
-        <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="activeCountryProfile.CountryText && activeCountryProfile.CountryText.successesInDevelopment" justify="center" dense>
+        <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="countryText && countryText.successesInDevelopment" justify="center" dense>
           <v-col cols="12">
-            <h2 class="mb-4 px-4 undp-typography">{{activeCountryProfile.CountryText.successesInDevelopment.title}}</h2>
-            <div class="px-4 undp-typography" v-html="activeCountryProfile.CountryText.successesInDevelopment.content"></div>
+            <h2 class="mb-4 px-4 undp-typography">{{countryText.successesInDevelopment.title}}</h2>
+            <div class="px-4 undp-typography" v-html="countryText.successesInDevelopment.content"></div>
           </v-col>
         </v-row>
         <v-row class="d-none d-md-flex d-print-flex no-page-break mb-4 mb-print-0">
@@ -350,7 +277,7 @@
               :pillarName="'MVI'"
               :ranks="graphRankData['MVI']"
               :values="graphValueData['MVI']"/>
-            <p :class="{'desc-mvi-one-page': !activeCountryProfile.CountryText}" class="desc-mvi desc-spiders mt-8 px-7">
+            <p :class="{'desc-mvi-one-page': !countryText}" class="desc-mvi desc-spiders mt-8 px-7">
               {{$t('countryProfile.infoBox.mviAnnotation')}}
             </p>
           </v-col>
@@ -361,8 +288,8 @@
         </v-row>
         <v-row class="d-none d-md-flex d-print-flex" v-if="!noData && countryText && countryText.challengesInDevelopment" justify="center" dense>
           <v-col cols="12">
-            <h2 class="px-4 mb-2 undp-typography">{{activeCountryProfile.CountryText.challengesInDevelopment.title}}</h2>
-            <div class="px-4 undp-typography" v-html="activeCountryProfile.CountryText.challengesInDevelopment.content"></div>
+            <h2 class="px-4 mb-2 undp-typography">{{countryText.challengesInDevelopment.title}}</h2>
+            <div class="px-4 undp-typography" v-html="countryText.challengesInDevelopment.content"></div>
           </v-col>
         </v-row>
         <p :v-if="countryText" class=" mb-0 pb-0 print-page-wrap_footer d-none d-print-block">
@@ -370,6 +297,7 @@
           <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
         </p>
       </div>
+    </div>
   </div>
 </template>
 
@@ -529,6 +457,8 @@ export default {
       return this.activeCountryProfile[langMap[this.locale]] ? this.activeCountryProfile[langMap[this.locale]] : this.activeCountryProfile[langMap.English]
     },
     locale() {
+      console.log("this.activeCountryProfile", this.activeCountryProfile)
+      console.log('language',this.$i18n.locale)
       return this.$i18n.locale
     },
     noData() {

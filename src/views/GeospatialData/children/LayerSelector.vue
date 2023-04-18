@@ -25,6 +25,7 @@
       dense
     >
       <v-col>
+        <p class="input-label mt-0">{{ this.layerLabel }}</p>
         <v-select
           rounded
           dense
@@ -35,7 +36,6 @@
           item-text="title"
           item-value="layerId"
           :items="dataset.layers"
-          :label="layerLabel"
           @change="emitLayerChange"
           return-object
           outlined

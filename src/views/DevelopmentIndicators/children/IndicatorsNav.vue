@@ -85,6 +85,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-list-item
                 v-show="!dataset || dataset === item"
+                v-if="datasetsWithIcons.includes(item) || dataset === item"
                 class="list-scrollabe_item dataset-item pt-4"
                 :class="{'dataset-item-active':dataset === item}"
                 :key="item"
@@ -604,6 +605,7 @@ export default {
   height: 66px;
 }
 .list-scrollabe_item.dataset-item-active {
+  overflow: hidden;
   height: 70px;
 }
 .inicator-item {
