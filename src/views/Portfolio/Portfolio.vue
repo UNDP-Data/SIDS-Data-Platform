@@ -715,7 +715,7 @@ export default {
   }
   .mt-negative{
     height: 215px;
-    margin-top: -205px !important;
+    margin-top: -160px !important; /* was 205 */
   }
   @media print {
     .mt-negative{

@@ -132,7 +132,7 @@ export default {
 .mvi-indicators-nav .list-item-container{
   border-bottom: 1px solid #D4D6D8;
   display: flex;
-  padding: 10px 0;
+  padding: 5px 0;
   width: 100%;
 }
 .mvi-indicators-nav .v-subheader{

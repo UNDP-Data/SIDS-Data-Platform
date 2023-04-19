@@ -28,7 +28,7 @@
           v-bind="attrs"
           :disabled="disabled"
           v-on="on"
-          color="#D12800"
+          color="#4F95DD"
         >
           mdi-information
         </v-icon>

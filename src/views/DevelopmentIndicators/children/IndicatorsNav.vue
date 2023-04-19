@@ -219,9 +219,9 @@
   </v-card>
   <v-card flat class="mt-2 active-indicator-info" v-if="activeIndicator && !isSmallScreen">
     <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
-    <v-card-text class="pt-2">
-      <p class="input-label">Year</p>
+    <v-card-text class="pt-1">
       <div class="mb-1 d-flex">
+        <div class="d-flex align-center mr-2"><p class="input-label">Year</p></div>
         <v-select class='dimensions-select'
           :items="activeIndicatorYears"
           :value="year"
@@ -248,9 +248,10 @@
           <v-icon v-else>mdi-play</v-icon>
         </v-btn>
       </div>
-      <p v-if="activeIndicatorDimensions.length > 1" class="input-label">{{$t('indicators.forms.dimension')}}</p>
-      <div class="mb-1 d-flex">
-        <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
+      <div class="mb-1 d-flex" style="width: 100%;">
+        <div class="d-flex align-center mr-2"><p v-if="activeIndicatorDimensions.length > 1" class="input-label">{{$t('indicators.forms.dimension')}}</p></div>
+        <div class="align-right" style="width: 100%;">
+          <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
           :items="activeIndicatorDimensions"
           :value="activeIndicatorCode"
           item-text="dimension"
@@ -260,6 +261,7 @@
           @change="emitindicatorChange"
           dense
         ></v-select>
+        </div>
       </div>
       {{activeIndicator.def}}
       <v-divider class="mb-1 mt-1"></v-divider>
@@ -636,7 +638,6 @@ export default {
   line-height: 22px !important;
 }
 .dimensions-select{
-  max-width: 60%;
   margin-right: 0;
 }
 .active-indicator-info {

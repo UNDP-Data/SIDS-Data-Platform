@@ -36,18 +36,18 @@ export default {
 }
 @media (max-width:639px) {
   .footer-root_text {
-    padding: 24px;
+    margin-left:0;
+    padding: 24px 24px 0 24px;
     text-align: center;
   }
   .footer-root {
     display: block;
+    height: 114px;
   }
   .l-selector {
-    float: right;
+    float:right;
     max-width: 260px;
   }
 }
-.footer-spacer {
-  min-width: 260px;
-}
+
 </style>

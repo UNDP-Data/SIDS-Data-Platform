@@ -98,8 +98,8 @@ export default {
 .mdl-tabs__tab-bar {
   flex-direction: column;
   height: 100%;
-    border-right: 1px solid rgba(10, 11, 49, 0.2);
-    border-bottom: none;
+  border-right: 1px solid rgba(10, 11, 49, 0.2);
+  border-bottom: none;
 
 }
 .mdl-tabs__tab{
@@ -178,5 +178,11 @@ export default {
 .sticky-menu-container {
   height: calc(100vh);
 
+}
+.v-list-item__title.menu-item-text {
+  flex: 1 1 100%;
+  overflow: visible;
+  white-space: normal;
+  line-height: .9rem;
 }
 </style>

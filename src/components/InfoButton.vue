@@ -7,7 +7,6 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-        color="normal"
         class="not-rounded"
         :large="isDesktop"
         :block="isDesktop"

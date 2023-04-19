@@ -618,6 +618,7 @@ export default {
   padding-top: 0;
   padding-bottom: 0;
   flex-wrap: nowrap;
+  justify-content: end;
 }
 .chips-block{
   margin-left: auto;
