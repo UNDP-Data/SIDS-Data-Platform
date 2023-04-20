@@ -89,6 +89,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.menu-item_text {
+  flex: 1 1 100%;
+  overflow: visible;
+  white-space: normal;
+  line-height: .9rem;
+}
 .main-menu {
   text-transform: uppercase;
 }
@@ -179,10 +185,5 @@ export default {
   height: calc(100vh);
 
 }
-.v-list-item__title.menu-item-text {
-  flex: 1 1 100%;
-  overflow: visible;
-  white-space: normal;
-  line-height: .9rem;
-}
+
 </style>
