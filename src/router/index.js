@@ -18,6 +18,7 @@ const routes = [
       goalsType: to.params.goalsType || 'sdgs'
     }),
     meta:{
+      template: 'PlatformPages',
       header:'portfolio.header',
       description:'A digital tool for analyzing the UNDP SIDS Offer Portfolio across the SDGs, SAMOA Pathway priorities, and six UNDP Signature Solutions.',
       infoContent:'aboutThis-portfolio',
@@ -79,6 +80,7 @@ const routes = [
       }
     },
     meta:{
+      template: 'PlatformPages',
       header:'indicators.headerIndicators',
       description:'A database of over 4000 development indicators for SIDS, compiled from 22 sources and featured alongside visualization and analytic tools.',
       infoContent:'aboutThis-indicators',
@@ -124,6 +126,7 @@ const routes = [
       }
     },
     meta:{
+      template: 'PlatformPages',
       header:'indicators.headerMVI',
       infoContent:'aboutThis-mvi',
       description:'A customizable Multidimensional Vulnerability Index (MVI) for SIDS to analyze environmental, geographic, economic, and financial vulnerability.',
@@ -159,6 +162,7 @@ const routes = [
       next();
     },
     meta:{
+      template: 'PlatformPages',
       header:'countryProfile.header',
       description:'Country profiles for Small Island Developing States with data across the pillars of the UNDP’s SIDS Offer, financial statistics, and vulnerability index.',
       infoContent:'aboutThis-profiles',
@@ -175,6 +179,7 @@ const routes = [
     link: '/geospatial-data',
     name: 'Geospatial Data',
     meta:{
+      template: 'PlatformPages',
       header:'gis.header',
       description:'A SIDS GIS portal and database compiled from more than 80 datasets and research studies with coverage of Small Island Developing States.',
       icon:'GIS',
@@ -194,6 +199,7 @@ const routes = [
     link: '/about',
     name: 'About',
     meta:{
+      template: 'PlatformPages',
       header:'about.header',
       description:'A digital instrument for supporting SIDS in following up on the SAMOA Pathway and building data-driven policy and development frameworks.',
       icon:'about',
@@ -208,6 +214,19 @@ const routes = [
       next();
     },
     component: () => import(/* webpackChunkName: "about" */ '../views/About/About.vue')
+  },
+  {
+    path: '/home',
+    link: '/home',
+    name: 'Homepage',
+    component: () => import(/* webpackChunkName: "indicators" */ '../views/Homepage/Homepage.vue'),
+    meta:{
+      template: 'Homepage',
+      header:'about.header',
+      description:'A digital instrument for supporting SIDS in following up on the SAMOA Pathway and building data-driven policy and development frameworks.',
+      icon:'about',
+      linkText:'home'
+    },
   },
   {
     path: '*',
