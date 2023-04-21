@@ -1,7 +1,7 @@
 <template>
   <div class="select">
     <v-select
-      rounded
+      class="undp-select"
       :value="countryActiveIdsList"
       :items="countriesToCompare"
       item-text="name"

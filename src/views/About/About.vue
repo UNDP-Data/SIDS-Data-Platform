@@ -129,7 +129,7 @@
         </template>
       </v-col>
 
-      <v-col :key="index+'11'" class="d-none d-sm-block d-md-none pa-10 pa-sm-10 pa-md-0" md="3" v-for="(resource, index) in resources">
+      <v-col :key="index+'11'" class="d-sm-block d-md-none pa-10 pa-sm-10 pa-md-0" md="3" v-for="(resource, index) in resources">
         <template >
           <resource :resource="resource" />
         </template>
@@ -147,7 +147,7 @@ import { mapState } from 'vuex';
 import Resource from './children/Resource';
 
 export default {
-  name: 'Portfolio',
+  name: 'About',
   data() {
     return {
       expansion:0
@@ -164,20 +164,20 @@ export default {
 }
 </script>
 <style>
-    .text-field {
-      width: 100%
-    }
+  .text-field {
+    width: 100%
+  }
 
   .last-panel{
     border-bottom: 1px solid #A9B1B7 !important;
   }
-   .about-page .v-expansion-panel::after {
+  .about-page .v-expansion-panel::after {
      border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
-   }
-   .about-page .theme--light.v-expansion-panels .v-expansion-panel{
+  }
+  .about-page .theme--light.v-expansion-panels .v-expansion-panel{
     background-color: transparent;
   }
-   .about-page {
+  .about-page {
     min-height: 100vh;
   }
   .about-page .v-expansion-panel-header {
@@ -228,7 +228,7 @@ export default {
     transform: rotate(180deg);
   }
   .subscribe-container{
-  background: #fff;
+  background: #FAFAFA !important;
   margin-bottom: 80px;
 }
 .subscribe-block_header{

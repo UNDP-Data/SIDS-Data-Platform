@@ -175,7 +175,7 @@
               <div class="select">
               <p class="input-label">{{$t('portfolio.year')}}</p>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 :value="year"
@@ -197,7 +197,7 @@
               <div class="select">
                 <p class="input-label">{{$t('portfolio.fundingCategories')}}</p>
                 <v-select
-                  rounded
+                  class="undp-select"
                   hide-details
                   dense
                   :value="fundingCategory"
@@ -220,7 +220,7 @@
               <div class="select">
                 <p class="input-label">{{$t('root.forms.region')}}</p>
                 <v-select
-                  rounded
+                  class="undp-select"
                   hide-details
                   dense
                   :value="region"
@@ -243,7 +243,7 @@
               <div class="select">
                 <p class="input-label">{{$t('portfolio.fundingSources')}}</p>
                 <v-autocomplete
-                  rounded
+                  class="undp-select"
                   hide-details
                   dense
                   :value="fundingSource"

@@ -43,9 +43,9 @@ export default {
     routes () {
       return this.$router.options.routes.filter( route => {
         if(this.isMobile) {
-          return !route.desctopOnly && route.path!=='*'
+          return !route.desctopOnly && route.path!=='*' && route.name !=='Homepage'
         }
-        return route.path!=='*'
+        return route.path!=='*' && route.name !=='Homepage'
       } )
     },
   }

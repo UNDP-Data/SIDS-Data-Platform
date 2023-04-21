@@ -13,7 +13,7 @@
           </v-col>
           <v-col cols="12" md="3" class="select-column">
             <v-select
-              class="country-select"
+              class="country-select undp-select"
               :value="activeCountryId"
               @change="selectCountry"
               :items="sidsListFilteredNoAverage"
@@ -39,10 +39,11 @@
           <v-col md="3" class="d-none-print d-none d-md-block" >
             <div class="select">
               <v-select
-                class="region-select"
+                class="region-select undp-select"
                 v-model="region"
                 :items="regions"
                 outlined
+                hide-details
               >
                 <template slot="selection" slot-scope="data">
                     {{$t('regions.'+data.item)}}
@@ -137,7 +138,7 @@
       <v-row justify="center" class="d-none-print d-md-none" v-if="!noData">
         <v-col cols="9">
           <v-select
-            class="country-select"
+            class="country-select undp-select"
             hide-details
             v-model="tab"
             item-value="name"
@@ -215,6 +216,7 @@
         <v-col cols="6" md="3" lg="3">
           <div class="select">
             <v-select
+              class="undp-select"
               v-model="rankType"
               :items="rankTypes"
               @change="changeRankType"

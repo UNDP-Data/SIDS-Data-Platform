@@ -37,6 +37,5 @@ export default {
 </script>
 <style>
 @import './assets/styles/RootStyles.css';
-@import './assets/styles/styles.css';
 
 </style>

@@ -19,7 +19,7 @@
       <p class="d-none d-md-block d-lg-block d-xl-block header-text_description mt-3 px-12">{{$t("root.header.description")}}</p>
       <div class="top-content_input mt-10 mb-16" id="search">
           <v-autocomplete
-            class=""
+            class="undp-search"
             :menu-props="{
               'nudge-right':0
             }"
@@ -115,12 +115,12 @@
   border: 0px !important;
   box-shadow: none !important;
 }
-.v-text-field.v-select .v-input__slot {
+.undp-search.v-text-field.v-select .v-input__slot {
   border-radius: 0;
   height: 48px;
-  border: 2px solid #fff;
+  /*border: 2px solid #fff;*/
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 1rem;
 }
 .top-content_input .v-input__append-inner {
   margin: auto;

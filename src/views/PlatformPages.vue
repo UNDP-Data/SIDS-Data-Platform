@@ -73,7 +73,6 @@ export default {
 @import '../assets/styles/text.css';
 @import '../assets/styles/forms.css';
 @import '../assets/styles/print.css';
-@import '../assets/styles/styles.css';
 @import '../choro/vizEngine.css';
 
 html {

@@ -126,9 +126,10 @@
         </template>
       </v-list-item-group>
     </v-list>
-    <v-select
+    <div class="mx-4">
+      <v-select
       v-if="dataset && indicatorCategories"
-      class="mx-4 my-6"
+      class="my-6 undp-select"
       dense
       v-model="activeCategory"
       hide-details
@@ -144,7 +145,7 @@
     </v-select>
     <v-select
       v-if="dataset && indicatorSubCategories && indicatorSubCategories.length > 1"
-      class="mx-4"
+      class="undp-select"
       dense
       hide-details
       v-model="activeSubCategory"
@@ -157,6 +158,8 @@
         {{data.item === 'allSubcategories' ? $t('indicators.forms.allSubcategories') : data.item}}
       </template>
     </v-select>
+    </div>
+
     <v-text-field v-if="dataset"
         class="search-input mx-4 mb-4"
         v-model="deepSearch"
@@ -222,7 +225,7 @@
     <v-card-text class="pt-1">
       <div class="mb-1 d-flex">
         <div class="d-flex align-center mr-2"><p class="input-label">Year</p></div>
-        <v-select class='dimensions-select'
+        <v-select class='dimensions-select undp-select'
           :items="activeIndicatorYears"
           :value="year"
           item-text="name"
@@ -230,6 +233,7 @@
           :disabled="playingYear || chartType==='series'"
           @change="emitYearChange"
           dense
+          hide-details
         >
           <template slot="selection" slot-scope="data">
             <span class="select-text-element">{{data.item.id === 'recentValue' ? $t('indicators.forms.recent') : data.item.name}}</span>
@@ -251,7 +255,7 @@
       <div class="mb-1 d-flex" style="width: 100%;">
         <div class="d-flex align-center mr-2"><p v-if="activeIndicatorDimensions.length > 1" class="input-label">{{$t('indicators.forms.dimension')}}</p></div>
         <div class="align-right" style="width: 100%;">
-          <v-select class='dimensions-select' v-if="activeIndicatorDimensions.length > 1"
+          <v-select class='dimensions-select undp-select' v-if="activeIndicatorDimensions.length > 1"
           :items="activeIndicatorDimensions"
           :value="activeIndicatorCode"
           item-text="dimension"
@@ -260,6 +264,7 @@
           :disabled="playingYear"
           @change="emitindicatorChange"
           dense
+          hide-details
         ></v-select>
         </div>
       </div>

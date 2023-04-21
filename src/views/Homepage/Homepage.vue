@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main id="home">
       <root-header/>
       <interfaces id="content"/>
       <video-block/>
       <resources/>
-      <about/>
+      <v-container><about/></v-container>
       <root-footer/>
     </v-main>
   </v-app>
@@ -16,8 +16,8 @@ import rootHeader from './children/appHeader';
 import interfaces from './children/interfaces';
 import videoBlock from './children/video';
 import resources from './children/resources';
-import About from './children/About/About.vue';
-import rootFooter from './children/footer.vue';
+import About from '../About/About.vue';
+import rootFooter from '@/components/RootFooter.vue';
 
 export default {
   name: 'Homepage',
@@ -37,14 +37,13 @@ export default {
 };
 </script>
 <style media="screen">
-/*@import '@/assets/font.css';
-@import '@/assets/styles.css';*/
 
 body, .v-application {
   font-family: "Proxima Nova", sans-serif !important;
-  background-color: #ffffff !important;
 }
-
+#home{
+  background-color: #ffffff;
+}
 html {
   scroll-behavior: smooth;
 }
