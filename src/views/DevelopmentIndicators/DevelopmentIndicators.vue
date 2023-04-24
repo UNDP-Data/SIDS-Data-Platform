@@ -138,7 +138,7 @@
             <div v-if="chartType === 'series'" class="sorting-row">
               <div class="select sorting sorting-select">
                 <v-select
-                  rounded
+                  class="undp-select"
                   dense
                   hide-details
                   v-model="region"

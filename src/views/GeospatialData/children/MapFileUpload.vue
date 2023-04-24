@@ -80,7 +80,7 @@
                     <label class="input-label">
                       {{variable.labl[0]}}</label>
                     <v-select
-                      rounded
+                      class="undp-select"
                       dense
                       hide-details
                       item-text="labl"

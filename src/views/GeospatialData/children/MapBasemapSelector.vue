@@ -36,9 +36,8 @@
       </template>
       <div class="select">
         <v-select
-          class="color-scheme-select"
+          class="color-scheme-select undp-select"
           :value="basemap"
-          rounded
           outlined
           @change="changeBasemap"
           dense

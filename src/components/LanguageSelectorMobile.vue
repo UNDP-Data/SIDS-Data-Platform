@@ -1,7 +1,7 @@
 <template>
   <div class="select">
     <v-select
-      rounded
+      class="undp-select"
       :value="activeLocale"
       :items="languages"
       item-text="name"

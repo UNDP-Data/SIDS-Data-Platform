@@ -5,7 +5,7 @@
         <div class="select">
           <label class="input-label">Model</label>
           <v-select
-            rounded
+            class="undp-select"
             dense
             hide-details
             item-value="chartType"
@@ -31,7 +31,7 @@
         <div class="select">
           <label class="input-label">Base Imputer</label>
           <v-select
-            rounded
+            class="undp-select"
             dense
             hide-details
             v-model="imputer"
@@ -54,12 +54,11 @@
         <div class="select">
           <label class="input-label">Predictor Selection Method</label>
           <v-select
-            rounded
+            class="undp-select"
             dense
             hide-details
             v-model="predictor"
             :items="predictors"
-
             @change="getMLestimate"
             item-text="name"
             item-value="id"
@@ -99,7 +98,7 @@
         <div class="select" v-else>
           <label class="input-label">Select predictors</label>
           <v-select
-            rounded
+            class="undp-select"
             dense
             v-model="nPredicor"
             :items="nPredicors"
@@ -115,7 +114,7 @@
         <div class="select">
           <label class="input-label">Number of Estimators in Ensemble models</label>
           <v-select
-            rounded
+            class="undp-select"
             dense
             hide-details
             v-model="estimator"
@@ -136,7 +135,7 @@
         <div class="select">
           <label class="input-label">Ensemble models</label>
           <v-select
-            rounded
+            class="undp-select"
             dense
             hide-details
             v-model="emodel"
@@ -152,7 +151,7 @@
         <div class="select">
           <label class="input-label">Prediction Interval Type</label>
           <v-select
-            rounded
+            class="undp-select"
             dense
             hide-details
             v-model="pinterval"

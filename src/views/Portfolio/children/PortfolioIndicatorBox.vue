@@ -26,4 +26,17 @@ export default {
     -webkit-text-stroke: 0;
   }
 }
+@media (min-height:500px) and (max-height: 900px) {
+  .stat-card{
+    max-width: 150px;
+    padding: .5rem 1rem 0;
+  }
+  .stat-card h3{
+    font-size: 2.5rem;
+    margin-bottom: .5rem;
+    color: #000;
+    -webkit-text-stroke: 0;
+  }
+}
+
 </style>

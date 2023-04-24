@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col md="7" xs="12" sm="12" class="pa-10 pa-sm-10 pa-md-4">
+      <v-col lg="7" xs="12" sm="12" class="pa-10 pa-sm-10 pa-md-4">
         <v-expansion-panels class="mb-4 " flat accordion>
           <v-expansion-panel>
             <v-expansion-panel-header>{{$t('about.whatSids')}}</v-expansion-panel-header>
@@ -120,7 +120,7 @@
         </v-card>
       </v-col>
 
-      <v-col class="d-none d-md-block offset-md-1" md="3" >
+      <v-col class="d-none d-lg-block offset-lg-1" lg="3" >
         <template v-for="(resource, index) in resources">
           <resource :key="index" v-if="index%2 === 0" :resource="resource" />
         </template>
@@ -129,16 +129,16 @@
         </template>
       </v-col>
 
-      <v-col :key="index+'11'" class="d-sm-block d-md-none pa-10 pa-sm-10 pa-md-0" md="3" v-for="(resource, index) in resources">
+      <v-col :key="index+'11'" class="d-md-block d-lg-none px-8" md="6" v-for="(resource, index) in resources">
         <template >
           <resource :resource="resource" />
         </template>
       </v-col>
-      <v-col cols="12" :key="index+'22'" class="d-block d-sm-none pa-10 pa-sm-10 pa-md-0" v-for="(resource, index) in resources">
+      <!-- v-col cols="12" :key="index+'22'" class="d-block d-sm-none pa-10 pa-sm-10 pa-md-0" v-for="(resource, index) in resources">
         <template >
           <resource :resource="resource" />
         </template>
-      </v-col>
+      </v-col-->
     </v-row>
   </div>
 </template>
@@ -205,43 +205,27 @@ export default {
     border-bottom: 1px solid #000;
     color: #000000 !important;
   }
+  .about-page .v-expansion-panel-header__icon:after{
+    right:5px;
+  }
   .v-expansion-panels {
     margin-bottom: 45px;
   }
-  .v-icon.mdi-chevron-down.theme--light{
-    display: none;
-  }
-  .v-expansion-panel-header__icon:after {
-    transform: translateY(-50%);
-    transition: all 200ms ease-in-out;
-    background: url(https://design.undp.org/static/media/chevron-down.16c97a3f.svg) no-repeat center center;
-    content: "";
-    float: right;
-    height: 13px;
-    position: absolute;
-    pointer-events: none;
-    right: 5px;
-    top: 50%;
-    width: 20px;
-  }
-  .v-expansion-panel-header--active .v-expansion-panel-header__icon:after{
-    transform: rotate(180deg);
-  }
   .subscribe-container{
-  background: #FAFAFA !important;
-  margin-bottom: 80px;
-}
-.subscribe-block_header{
-  font-weight: 400;
-  font-size: 25px;
-  line-height: 114.2%;
-  display: flex;
-  align-items: center;
-  color: #000000;
-}
-.subscribe-container a {
-  border-bottom:0;
-  color: #fff !important;
-  border-radius: 0;
-}
+    background: #FAFAFA !important;
+    margin-bottom: 80px;
+  }
+  .subscribe-block_header{
+    font-weight: 400;
+    font-size: 25px;
+    line-height: 114.2%;
+    display: flex;
+    align-items: center;
+    color: #000000;
+  }
+  .subscribe-container a {
+    border-bottom:0;
+    color: #fff !important;
+    border-radius: 0;
+  }
 </style>

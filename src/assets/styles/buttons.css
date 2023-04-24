@@ -175,7 +175,7 @@
   display: none;
 }
 
-.undp-select.v-select__selections:after {
+.undp-select .v-select__selections:after, .undp-select .v-input__append-inner:after {
   transform: translateY(-50%);
   transition: all 200ms ease-in-out;
   background: url(https://design.undp.org/static/media/chevron-down.16c97a3f.svg) no-repeat center center;

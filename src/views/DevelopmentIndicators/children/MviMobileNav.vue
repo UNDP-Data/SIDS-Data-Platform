@@ -46,7 +46,7 @@
                 <div class="select">
                   <label class="input-label">Chart type</label>
                   <v-select
-                    class="mt-1"
+                    class="mt-1 undp-select"
                     hide-details
                     item-value="chartType"
                     :value="chartType"
@@ -67,7 +67,7 @@
                 <div v-if="chartType === 'bars' || chartType === 'spider'" class="select">
                   <label class="input-label">Sorting</label>
                   <v-select
-                    class="mt-1"
+                    class="mt-1 undp-select"
                     hide-details
                     item-value="value"
                     item-text="text"
@@ -87,7 +87,7 @@
                 <div v-else class="select">
                   <label class="input-label">Region</label>
                   <v-select
-                    class="mt-1"
+                    class="mt-1 undp-select"
                     hide-details
                     item-value="value"
                     item-text="text"

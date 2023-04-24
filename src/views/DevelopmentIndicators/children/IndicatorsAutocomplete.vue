@@ -4,8 +4,7 @@
       <div class="select indicators-autocomplete">
         <label class="input-label">{{$t('indicators.forms.indicator')}}</label>
         <v-autocomplete
-          class="autocomplete-select"
-          rounded
+          class="autocomplete-select undp-select"
           dense
           hide-details
           :value="indicatorFirstCode"
@@ -24,9 +23,6 @@
               <v-list-item-subtitle class="inicator-item_description">
                 {{datasetsMeta[item.dataset] && datasetsMeta[item.dataset].datasetName}}
               </v-list-item-subtitle>
-              <!-- <v-list-item-subtitle class="inicator-item_description">
-                {{item.def}}
-              </v-list-item-subtitle> -->
             </v-list-item-content>
           </template>
         </v-autocomplete>

@@ -6,7 +6,7 @@
           <b>{{$t('countryNames.'+activeCountryId)}}</b> {{$t('countryProfile.header')}}
         </template>
       </printout-header>
-      <v-row class="mt-4 d-none-print profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
+      <v-row class="mt-4 d-print-none profile-header-row justify-space-between"  :style="isMobile ? {'background-image': `url(${require(`@/assets/media/country-photos/${activeCountryId}.jpg`)})`} : {}">
         <v-col cols="9" lg="9" sm="11" class="d-flex">
           <v-col class="d-none d-md-block" cols="12" md="4">
             <h2 class="mr-3 country-profile-header">{{$t('countryProfile.header')}}</h2>
@@ -36,7 +36,7 @@
               </template>
             </v-select>
           </v-col>
-          <v-col md="3" class="d-none-print d-none d-md-block" >
+          <v-col md="3" class="d-print-none d-none d-md-block" >
             <div class="select">
               <v-select
                 class="region-select undp-select"
@@ -56,7 +56,7 @@
           </v-col>
         </v-col>
         <v-col cols="3" lg="3" sm="1">
-            <v-col class="d-none-print d-flex justify-end" lg='auto'>
+            <v-col class="d-print-none d-flex justify-end" lg='auto'>
             <div class="d-none d-md-block mr-2 mr-md-0">
               <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
             </div>
@@ -81,7 +81,7 @@
         </v-col>
       </v-row>
     </div>
-    <div :class="{'print-page-wrap' : countryText}">
+    <div>
       <v-row class="d-none d-md-flex d-print-flex mt-10" v-if="!noData && countryText && countryText.developmentContext" justify="center" dense>
         <v-col cols="12">
           <h2 class="px-4 mb-0 undp-typography mb-4">{{countryText.developmentContext.title}}</h2>
@@ -92,7 +92,7 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row v-if="!noData && countryText && countryText.developmentContext" class=" d-none-print">
+      <v-row v-if="!noData && countryText && countryText.developmentContext" class=" d-print-none">
         <v-col class="mb-0 stat-card-container pl-7" cols='12'>
           <div class="mb-print-1 stat-card" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
               <h2>{{formatStats(stat.value)}}</h2>
@@ -101,15 +101,17 @@
           </div>
         </v-col>
       </v-row>
-      <v-row v-if="!noData && countryText && countryText.developmentContext" class=" d-print hidden-screen-only">
+      <v-row v-if="!noData && countryText && countryText.developmentContext" class="d-print hidden-screen-only">
         <v-col>
-          <div class="mb-3" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-            <h3 class="undp-typography">{{formatStats(stat.value)}} {{stat.unit}}</h3>
-            <p class="mb-2">{{stat.title}}</p>
+          <div class="d-flex flex-wrap">
+            <div class="mb-3 px-3 small-stat" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+              <h3 class="undp-typography">{{formatStats(stat.value)}} {{stat.unit}}</h3>
+              <p class="mb-2">{{stat.title}}</p>
+            </div>
           </div>
         </v-col>
       </v-row>
-      <v-row class="d-md-none d-none-print justify-center" v-if="!noData && countryText && countryText.developmentContext">
+      <v-row class="d-md-none d-print-none justify-center" v-if="!noData && countryText && countryText.developmentContext">
         <v-col cols="11">
           <v-expansion-panels flat accordion>
             <v-expansion-panel v-if="countryText && countryText.developmentContext">
@@ -135,7 +137,7 @@
           </v-expansion-panels>
         </v-col>
       </v-row>
-      <v-row justify="center" class="d-none-print d-md-none" v-if="!noData">
+      <v-row justify="center" class="d-print-none d-md-none" v-if="!noData">
         <v-col cols="9">
           <v-select
             class="country-select undp-select"
@@ -200,7 +202,7 @@
         </div>
       </v-col>
       </v-row>
-      <v-row class="d-none-print mt-16 mb-10" justify="center" v-if="!noData">
+      <v-row class="d-print-none mt-16 mb-10" justify="center" v-if="!noData">
         <v-col cols="11" md="7" class="pl-7">
           <country-multiselect
             :placeholder="$t('countryProfile.infoBox.overlayCountries')"
@@ -269,11 +271,11 @@
         </v-col>
       </v-row>
       <p v-if="!countryText" class="print-page-wrap_footer d-none d-print-block  mb-0 pb-0">
-        Live version and links to original data sources available at
+        Live version and links to original data sources available at 
         <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
       </p>
     </div>
-    <div :class="{'print-page-wrap' : countryText}">
+    <div>
       <v-row class="d-none d-md-flex d-print-flex mt-5" v-if="countryText && countryText.successesInDevelopment" justify="center" dense>
         <v-col cols="12">
           <h2 class="mb-4 px-4 undp-typography">{{countryText.successesInDevelopment.title}}</h2>
@@ -307,10 +309,12 @@
           <div class="px-4 undp-typography" v-html="countryText.challengesInDevelopment.content"></div>
         </v-col>
       </v-row>
-      <p :v-if="countryText" class=" mb-0 pb-0 print-page-wrap_footer d-none d-print-block">
+      <v-row><v-col>
+        <p :v-if="countryText" class=" mb-0 pb-0 print-page-wrap_footer d-none d-print-block undp-typography">
         Live version and links to original data sources available at
         <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
       </p>
+      </v-col></v-row>
     </div>
   </div>
 </template>
@@ -695,5 +699,8 @@ export default {
 }
 .stat-block{
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.small-stat{
+  width: 50%;
 }
 </style>

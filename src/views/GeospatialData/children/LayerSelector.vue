@@ -4,7 +4,7 @@
       <v-col>
         <p class="input-label mt-3">{{ this.datasetLabel }}</p>
         <v-autocomplete
-          class="map-input mb-3"
+          class="map-input mb-3 undp-select"
           dense
           hide-details
           id="gisDataset"
@@ -27,11 +27,10 @@
       <v-col>
         <p class="input-label mt-0">{{ this.layerLabel }}</p>
         <v-select
-          rounded
           dense
           hide-details
           id="gisLayer"
-          class="map-input"
+          class="map-input undp-select"
           :value="layer"
           item-text="title"
           item-value="layerId"
@@ -67,10 +66,9 @@
     >
       <v-col>
         <v-select
-          rounded
           dense
           hide-details
-          class="map-input"
+          class="map-input undp-select"
           :value="year"
           :items="layer.years"
           :label="layerLabel"

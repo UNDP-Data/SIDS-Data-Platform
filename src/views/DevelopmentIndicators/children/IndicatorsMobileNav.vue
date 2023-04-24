@@ -7,7 +7,7 @@
             <div class="select">
               <label class="input-label">{{$t('indicators.forms.chartType')}}</label>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-value="chartType"
@@ -30,7 +30,7 @@
             <div class="select">
               <label class="input-label">{{$t('indicators.forms.dimension')}}</label>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 :disabled="dimensions.length<2"
                 hide-details
@@ -50,7 +50,7 @@
               <label class="input-label">{{$t('portfolio.year')}}</label>
               <v-select
                 :disabled="chartType !== 'bars' || years.length === 1"
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-value="id"
@@ -71,7 +71,6 @@
             <v-btn
                 class="ml-2 mb-1 filter-sm-button"
                 :disabled="chartType !== 'series' || years.length === 1"
-                rounded
                 outlined
                 @click="toggleYearPlay"
                 fab
@@ -85,7 +84,7 @@
             <div v-if="chartType === 'bars'" class="select">
               <label class="input-label">{{$t('indicators.forms.sorting')}}</label>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-value="value"
@@ -107,7 +106,7 @@
               <label class="input-label">{{$t('indicators.forms.region')}}</label>
               <v-select
                 :disabled="chartType === 'choro' || chartType === 'global'"
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-value="value"

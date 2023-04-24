@@ -2,14 +2,25 @@
   <v-card flat class="overflow country-profile">
     <v-row>
       <v-col>
-        <v-subheader class="d-none d-md-block info-bar_header">{{$t('countryNames.'+id)}}</v-subheader>
+        <v-subheader class="d-none d-md-block d-print-none info-bar_header">{{$t('countryNames.'+id)}}</v-subheader>
         <hr style="margin-left:16px" class="d-none d-md-block">
       </v-col>
     </v-row>
+    <v-row class="d-none d-block-print">
+      <v-col class="mt-0 align-center printing-12">
+        <v-img
+          eager
+          class="bg-printable"
+          cover
+          :src="require(`@/assets/media/country-photos/${id}.jpg`)"
+          height="400"
+        ></v-img>
+      </v-col>
+    </v-row>
     <v-row>
-      <v-col class="printing-6 mt-4" cols="12" md="6">
+      <v-col class="mt-4 printing-12" cols="12" md="6">
         <v-row>
-          <v-col sm="6" md="12" lg="6">
+          <v-col sm="6" md="12" lg="6" class="printing-6">
             <v-list-item v-if="checkIndicator('key-sids-region')">
               <v-list-item-content class="small-padding">
                 <v-list-item-title               
@@ -76,7 +87,7 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col sm="6" md="12" lg="6">
+          <v-col sm="6" md="12" lg="6" class="printing-6">
             <info-hover-tooltip v-if="checkIndicator('key-wdi-AG.SRF.TOTL.K2')" :large="false">
             <template slot="content">
               <v-card flat>
@@ -191,9 +202,9 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col class="printing-6 mt-4" cols="12" md="6">
+      <v-col class="mt-4 d-print-none" cols="12" md="6">
         <v-row>
-          <v-col sm="12" lg="6" class="mt-0 d-flex align-center printing-12 ">
+          <v-col sm="12" lg="6" class="mt-0 d-flex align-center">
             <div class="pa-6 grey-background" style="width: 100%;">
               <v-img
               eager
@@ -204,7 +215,7 @@
             /> 
             </div>
           </v-col>
-          <v-col sm="12" lg="6" class="mt-0 align-center d-none d-block-print d-md-block printing-12">
+          <v-col sm="12" lg="6" class="mt-0 align-center d-none d-md-block">
             <v-img
               eager
               class="bg-printable"
@@ -214,6 +225,19 @@
             ></v-img>
           </v-col>
         </v-row>
+      </v-col>
+    </v-row>
+    <v-row class="d-none d-block-print">
+      <v-col class="mt-0 d-flex align-center ">
+        <div class="pa-6 grey-background" style="width: 100%;">
+          <v-img
+          eager
+          class="bg-printable"
+          contain
+          :src="require(`@/assets/media/profiles-maps/${id}.png`)"
+          height="378"
+        /> 
+        </div>
       </v-col>
     </v-row>
   </v-card>

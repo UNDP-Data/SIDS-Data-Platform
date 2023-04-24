@@ -7,7 +7,7 @@
             <div class="select">
               <p class="input-label">{{$t('root.forms.region')}}</p>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-text="name"
@@ -30,7 +30,7 @@
             <div class="select">
               <p class="input-label">{{$t('portfolio.year')}}</p>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-value="value"
@@ -55,7 +55,7 @@
             <div class="select">
               <p class="input-label">{{$t('portfolio.fundingCategories')}}</p>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 :value="fundingCategory"
@@ -77,7 +77,7 @@
             <div class="select">
               <p class="input-label">{{$t('portfolio.fundingSources')}}</p>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-text="name"
@@ -102,7 +102,7 @@
             <div class="select">
               <p class="input-label">{{$t('portfolio.goalType')}}</p>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-value="value"
@@ -126,7 +126,7 @@
             <div class="select">
               <p class="input-label">{{$t('portfolio.goal')}}</p>
               <v-select
-                rounded
+                class="undp-select"
                 dense
                 hide-details
                 item-value="value"

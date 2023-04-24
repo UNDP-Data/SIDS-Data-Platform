@@ -1,5 +1,5 @@
 <template>
-  <v-row class="mb-3 mt-10 d-none d-print-flex">
+  <v-row class="mb-3 mt-5 d-none d-print-flex">
     <v-col cols="3">
       <img
         class="printout-logo"
@@ -10,9 +10,7 @@
       <v-row dense>
         <v-col>
           <h2 class="printout-header text-center">
-
-            <slot  name="text"
-            ></slot>
+            <slot name="text"></slot>
           </h2>
         </v-col>
       </v-row>
