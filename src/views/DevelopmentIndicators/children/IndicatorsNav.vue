@@ -223,9 +223,9 @@
   <v-card flat class="mt-2 active-indicator-info" v-if="activeIndicator && !isSmallScreen">
     <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
     <v-card-text class="pt-1">
-      <div class="mb-1 d-flex">
-        <div class="d-flex align-center mr-2"><p class="input-label">Year</p></div>
-        <v-select class='dimensions-select undp-select'
+      <div class="mb-2 d-flex">
+        <div class="d-flex align-center mr-2"><p class="input-label mb-0">Year</p></div>
+        <v-select class='dimensions-select-button undp-select'
           :items="activeIndicatorYears"
           :value="year"
           item-text="name"
@@ -243,7 +243,7 @@
           </template>
         </v-select>
         <v-btn
-          class="mt-2"
+          class="mt-3"
           @click="toggleYearPlay"
           :disabled="chartType==='series' || activeIndicatorYears.length === 1"
           icon
@@ -252,10 +252,10 @@
           <v-icon v-else>mdi-play</v-icon>
         </v-btn>
       </div>
-      <div class="mb-1 d-flex" style="width: 100%;">
-        <div class="d-flex align-center mr-2"><p v-if="activeIndicatorDimensions.length > 1" class="input-label">{{$t('indicators.forms.dimension')}}</p></div>
+      <div class="mb-2 d-flex" style="width: 100%;">
+        <div class="d-flex align-center mr-2"><p v-if="activeIndicatorDimensions.length > 1" class="input-label mb-0">{{$t('indicators.forms.dimension')}}</p></div>
         <div class="align-right" style="width: 100%;">
-          <v-select class='dimensions-select undp-select' v-if="activeIndicatorDimensions.length > 1"
+          <v-select class='dimensions-select-button undp-select' v-if="activeIndicatorDimensions.length > 1"
           :items="activeIndicatorDimensions"
           :value="activeIndicatorCode"
           item-text="dimension"
@@ -642,7 +642,7 @@ export default {
   font-size: 16px !important;
   line-height: 22px !important;
 }
-.dimensions-select{
+.dimensions-select-button{
   margin-right: 0;
 }
 .active-indicator-info {

@@ -1,9 +1,8 @@
 
-.v-input {
+/*.v-input {
   font-size: 14px !important;
-}
+}*/
 .v-select, .v-input {
-
   font-weight: 600 !important;
 }
 .v-select fieldset , .text-field .v-text-field fieldset{
@@ -45,7 +44,6 @@
 }
 .tooltip-content {
   background: none !important;
-
   padding: 0 !important;
 }
 .tooltip-center {

@@ -81,7 +81,7 @@
         return 'blue'
       },
       selectItem(item) {
-        let link = 'https://data.undp.org/sids/app/';
+        let link = '/';
         if(item.type === 'indicator') {
           link += 'development-indicators/' + item.id + '/'
         }
@@ -103,24 +103,34 @@
   margin: auto;
   position: relative;
 }
-/*.top-content_input .v-input__slot {
-  border: 3px solid var(--white);
-  border-bottom : 2px solid var(--white);
+#home .theme--light.v-text-field > .v-input__control > .v-input__slot::before{
+  border:0;
 }
-.top-content_input .v-select--is-menu-active .v-input__slot {
-  background: rgba(255,255,255, 1) !important;
+.undp-search .v-select__slot{
+  border: 2px solid #FFF;
 }
-*/
+.undp-search .v-input__slot{
+  padding: 0 !important;
+}
+.undp-search .v-btn__content{
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+}
+.undp-search .v-input__append-inner {
+  margin-top: 0px !important;
+}
+.undp-search .v-text-field input {
+  padding: 0 10px 10px 10px !important;
+  font-size: 1.1rem !important;
+}
+#home .v-select__slot input{
+  color:#FFF !important;
+  padding: 0 0 20px 15px !important;
+  font-size: 1.1rem;
+}
 .v-text-field > .v-input__control > .v-input__slot::after{
   border: 0px !important;
   box-shadow: none !important;
-}
-.undp-search.v-text-field.v-select .v-input__slot {
-  border-radius: 0;
-  height: 48px;
-  /*border: 2px solid #fff;*/
-  text-transform: uppercase;
-  font-size: 1rem;
 }
 .top-content_input .v-input__append-inner {
   margin: auto;
