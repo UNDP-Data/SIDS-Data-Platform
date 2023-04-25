@@ -140,9 +140,9 @@
                 chartName="region"
                 :colorScheme="regionColors"
               ></portfolio-pie-chart>
-              <h3 class="d-none d-print-block chart-caption text-center undp-typography">
-                <b>Funding by regions</b>
-              </h3>
+              <h4 class="d-none d-print-block chart-caption text-center undp-typography mt-10">
+                Funding by regions
+              </h4>
             </v-col>
             <v-col class="position-relative" cols="6" md="5" lg="6">
               <div class="pie-tooltip-container d-print-none">
@@ -163,9 +163,9 @@
                 :activeCategory="fundingCategory"
                 :colorScheme="sourcesColor"
               ></portfolio-pie-chart>
-              <h3 class="d-none d-print-block chart-caption text-center undp-typography">
-                <b>Funding by category</b>
-              </h3>
+              <h4 class="d-none d-print-block chart-caption text-center undp-typography mt-10">
+                Funding by category
+              </h4>
             </v-col>
           </v-row>
         </v-col>
@@ -300,7 +300,7 @@
       />
       <portfolio-projects v-if="!($vuetify.breakpoint.lg || $vuetify.breakpoint.xl)" class="d-lg-none d-print-none" :projects="filteredProjectsByGoal" :goalType="goalsType" :goal="goal"/>
     </div>
-    <div class="d-none d-print-block">
+    <div class="d-none d-print-block mt-10">
       <h2 class="text-center undp-typography">
         Selected projects
       </h2>

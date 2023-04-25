@@ -16,13 +16,12 @@
   .print-page-wrap{
     z-index: 100;
     top: 0;
-    /*min-height: 1490px;
-    max-height: 1490px;*/
+    min-height: 1490px;
+    max-height: 1490px;
     box-sizing: border-box;
     position: relative !important;
     overflow: hidden;
     padding-left: 40px;
-    padding-right: 20px;
     page-break-after: always;
   }
   body .v-application .d-none-print {

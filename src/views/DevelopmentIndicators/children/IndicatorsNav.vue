@@ -70,7 +70,7 @@
         </v-menu>
       </template>
     </v-virtual-scroll>
-    <v-list v-if="!activeSearch" dense :class="{'list-datasets-active':dataset}" class="list-datasets list-scrollabe">
+    <v-list v-if="!activeSearch" dense :class="{'list-datasets-active':dataset}" class="list-datasets">
       <v-list-item-group>
         <template v-for="(item, i) in datasets" >
 
@@ -612,7 +612,6 @@ export default {
   height: 66px;
 }
 .list-scrollabe_item.dataset-item-active {
-  overflow: hidden;
   height: 70px;
 }
 .inicator-item {

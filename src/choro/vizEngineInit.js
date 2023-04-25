@@ -138,7 +138,7 @@ function appendLinesMapAndRegions() {
 
   this.main_chart_svg
     .append("text")
-    .attr("x", 815)
+    .attr("x", 760)
     .attr("y", 460)
     .text(() => { return rootThis.$t.call(rootThis.vue, 'regions.pacific')})
     .style("fill", "#" + regionColors("Pacific", "Y").substring(1))
@@ -149,7 +149,7 @@ function appendLinesMapAndRegions() {
 
   this.main_chart_svg
     .append("text")
-    .attr("x", 815)
+    .attr("x", 760)
     .attr("y", 130)
     .text(() => { return rootThis.$t.call(rootThis.vue, 'regions.caribbean')})
     .style("font-size", "18px")
@@ -160,8 +160,8 @@ function appendLinesMapAndRegions() {
 
   this.main_chart_svg
     .append("text")
-    .attr("x", 815)
-    .attr("y", 335)
+    .attr("x", 760)
+    .attr("y", 350)
     .text(() => { return rootThis.$t.call(rootThis.vue, 'regions.ais')})
     .style("fill", "#" + regionColors("AIS", "Y").substring(1))
     .attr("fill-opacity", 1)

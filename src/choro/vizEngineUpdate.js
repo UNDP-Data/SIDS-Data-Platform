@@ -1128,12 +1128,12 @@ export function updateRegionLables() {
     ) {
       regionTitleVals = {
         opacity: 1,
-        pacificX: 815,
+        pacificX: 760,
         pacificY: 460,
-        caribbeanX: 815,
+        caribbeanX: 760,
         caribbeanY: 130,
-        aisX: 815,
-        aisY: 335,
+        aisX: 760,
+        aisY: 350,
       };
     } else if (
       this.indiSelections["viz"] == "bars"
