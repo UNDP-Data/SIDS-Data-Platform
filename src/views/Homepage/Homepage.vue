@@ -35,6 +35,7 @@ export default {
     //
   }),
 };
+console.log('in homepage')
 </script>
 <style media="screen">
 

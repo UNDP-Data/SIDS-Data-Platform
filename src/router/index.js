@@ -31,8 +31,8 @@ const routes = [
     component: () => import(/* webpackChunkName: "portfolio" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
-      await store.dispatch('setFundingCategories');
-      await store.dispatch('setProjectData');
+      await store.dispatch('sids/setFundingCategories');
+      await store.dispatch('sids/setProjectData');
       setTimeout(() => {
         store.commit('loader/setLoading', false);
       }, 500)
@@ -236,12 +236,12 @@ const routes = [
       next();
     },
   },
-  {
+  /*{
     path: '*',
-    redirect: '',/*function() {
+    redirect: '/portfolio',/*function() {
       return window.innerWidth < 960 ? '/country-profiles' : '/portfolio'
-    }*/
-  }
+    }
+  } */
 ]
 
 const router = new VueRouter({

@@ -24,6 +24,9 @@
     padding-left: 40px;
     page-break-after: always;
   }
+  .portfolio .print-page-wrap{
+    padding-left: 0px;
+  }
   body .v-application .d-none-print {
     display: none !important;
   }

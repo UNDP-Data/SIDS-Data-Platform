@@ -54,7 +54,6 @@ export default {
   computed: {
     routes () {
       return this.$router.options.routes.filter( route => {
-        console.log('route',route)
         if(this.isMobile) {
           return !route.desctopOnly && route.path!=='*' && route.name!=='Homepage'
         }

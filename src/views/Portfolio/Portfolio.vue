@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="portfolio">
     <div class="print-page-wrap">
       <printout-header>
         <template slot="text">
@@ -269,7 +269,6 @@
         <portfolio-bars :projects="filteredProjects" :year="year" :goalsType='goalsType'></portfolio-bars>
       </v-row>
       <v-row class="d-none d-print-block">
-
         <v-col class="chart-caption-goals" cols="12">
           <h3 class="undp-typography">
             {{$t(`root.goals.${goalsType}`)}}

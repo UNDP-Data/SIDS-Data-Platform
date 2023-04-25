@@ -126,6 +126,7 @@ async function loadMLPredictorSize () {
 
 async function loadLang(lang) {
   let resp = await axios.get(`${API_URl}/cms/${lang}.json`);
+  console.log('loading text lang',lang);
   return resp.data
 }
 
