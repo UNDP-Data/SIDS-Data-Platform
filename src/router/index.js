@@ -31,8 +31,8 @@ const routes = [
     component: () => import(/* webpackChunkName: "portfolio" */ '../views/Portfolio/Portfolio.vue'),
     beforeEnter: async (to, from, next) => {
       store.commit('loader/setLoading', true);
-      await store.dispatch('sids/setFundingCategories');
-      await store.dispatch('sids/setProjectData');
+      await store.dispatch('setFundingCategories');
+      await store.dispatch('setProjectData');
       setTimeout(() => {
         store.commit('loader/setLoading', false);
       }, 500)
