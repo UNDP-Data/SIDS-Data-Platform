@@ -133,7 +133,7 @@ export function computeSubindexValues(indexData,indexWeights,indexYears,minMaxOb
           if (Object.keys(indexData[subsubindexCode]["data"]).includes(year)) {
             let subsubindexValue = indexData[subsubindexCode]["data"][year][country];
 
-            if (isNaN(subsubindexValue) || subsubindexValue==0) {
+            if (isNaN(subsubindexValue)) {
               if (!noData.includes(country)) {
                 noData.push(country);
               }
