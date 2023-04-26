@@ -647,10 +647,11 @@ export default {
 .active-indicator-info {
   max-height: calc(50vh - 50px);
   overflow-y: scroll;
-  overflow-x: hidden;
 }
 .indicators-nav {
   padding: relative;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .close-button {
   position: absolute !important;
