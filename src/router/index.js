@@ -222,26 +222,15 @@ const routes = [
     component: () => import(/* webpackChunkName: "indicators" */ '../views/Homepage/Homepage.vue'),
     meta:{
       template: 'Homepage',
-      header:'',
       description:'A digital instrument for supporting SIDS in following up on the SAMOA Pathway and building data-driven policy and development frameworks.',
-      icon:'',
-      linkText:'home'
-    },
-    beforeEnter: async (to, from, next) => {
-      store.commit('loader/setLoading', true);
-      await store.dispatch('texts/loadResourcesData');
-      setTimeout(() => {
-        store.commit('loader/setLoading', false);
-      }, 500)
-      next();
     },
   },
   /*{
     path: '*',
-    redirect: '/portfolio',/*function() {
+    redirect: '/',/*function() {
       return window.innerWidth < 960 ? '/country-profiles' : '/portfolio'
     }
-  } */
+  }*/
 ]
 
 const router = new VueRouter({
