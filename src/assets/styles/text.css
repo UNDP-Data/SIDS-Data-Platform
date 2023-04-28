@@ -1,3 +1,6 @@
+body{
+  font-family: 'ProximaNova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
+}
 /* homepage styles */
 .full-block {
   min-width: 100%;
@@ -90,7 +93,6 @@
   --spacing-12: 6rem;
   --spacing-13: 7rem;
   --fontFamily: 'ProximaNova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
-  --fontFamilyHeadings: 'SohneBreit', 'ProximaNova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
 }
 
 .bold {
@@ -296,7 +298,6 @@ a.undp-style:hover, .undp-style a:hover {
   letter-spacing: .05rem;
   margin-top: 0;
   margin-bottom: 1rem;
-  font-family: var(--fontFamilyHeadings);
 }
 @media (max-width: 48em) {
   .stat-card.small h2 {
@@ -312,7 +313,6 @@ a.undp-style:hover, .undp-style a:hover {
   letter-spacing: .05rem;
   margin-top: 0;
   margin-bottom: 1rem;
-  font-family: var(--fontFamilyHeadings);
 }
 .stat-card h4{
   text-transform: lowercase;

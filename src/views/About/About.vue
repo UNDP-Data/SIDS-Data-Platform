@@ -119,7 +119,6 @@
           </v-card-text>
         </v-card>
       </v-col>
-
       <v-col class="d-none d-lg-block offset-lg-1" lg="3" >
         <template v-for="(resource, index) in resources">
           <resource :key="index" v-if="index%2 === 0" :resource="resource" />
@@ -134,17 +133,13 @@
           <resource :resource="resource" />
         </template>
       </v-col>
-      <!-- v-col cols="12" :key="index+'22'" class="d-block d-sm-none pa-10 pa-sm-10 pa-md-0" v-for="(resource, index) in resources">
-        <template >
-          <resource :resource="resource" />
-        </template>
-      </v-col-->
     </v-row>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex';
 import Resource from './children/Resource';
+import store from '@/store'
 
 export default {
   name: 'About',
@@ -156,11 +151,15 @@ export default {
   components:{
     Resource
   },
+  async created() {
+   await store.dispatch('texts/loadResourcesData');
+   //this.resources = resp.data.additionalResources;
+  },
   computed: {
     ...mapState({
       resources: state => state.texts.resources
     }),
-  }
+  },
 }
 </script>
 <style>
