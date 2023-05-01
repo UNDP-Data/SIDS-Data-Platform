@@ -1,5 +1,5 @@
-body{
-  font-family: 'ProximaNova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
+body, .v-application{
+  font-family: 'Proxima Nova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
 }
 /* homepage styles */
 .full-block {
@@ -44,6 +44,10 @@ body{
 }
 .tooltip-white.v-tooltip__content {
   color: #000 !important;
+}
+.tooltip-content .theme--light.v-card > .v-card__text{
+  color: #000 !important;
+  opacity: 1 !important;
 }
 .v-expansion-panel-header{
   font-size: 1.2rem !important;
@@ -92,7 +96,7 @@ body{
   --spacing-11: 5rem;
   --spacing-12: 6rem;
   --spacing-13: 7rem;
-  --fontFamily: 'ProximaNova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
+  --fontFamily: 'Proxima Nova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
 }
 
 .bold {

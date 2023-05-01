@@ -55,7 +55,7 @@
               <v-card flat>
                 <v-card-text class="active-indicator-info">
                   {{indicatorsMetadata['key-wdi2-SP.POP.TOTL'].longDefinition}}
-                  <v-divider class="mb-1 mt-1"></v-divider>
+                  <hr class="mb-1 mt-1 undp-style light"/>
                   <b>{{$t('portfolio.year')}}:</b>
                     <template v-if="getIndicator('key-wdi2-SP.POP.TOTL').year && getIndicator('key-wdi2-SP.POP.TOTL').year!=='No Year'">
                       ({{getIndicator('key-wdi2-SP.POP.TOTL').year}})
@@ -93,7 +93,7 @@
               <v-card flat>
                 <v-card-text class="active-indicator-info">
                   {{indicatorsMetadata['key-wdi-AG.SRF.TOTL.K2'].longDefinition}}
-                  <v-divider class="mb-1 mt-1"></v-divider>
+                  <hr class="mb-1 mt-1 undp-style light"/>
                   <b>{{$t('portfolio.year')}}:</b>
                     <template v-if="getIndicator('key-wdi-AG.SRF.TOTL.K2').year && getIndicator('key-wdi-AG.SRF.TOTL.K2').year!=='No Year'">
                       ({{getIndicator('key-wdi-AG.SRF.TOTL.K2').year}})
@@ -131,7 +131,7 @@
                 <v-card flat>
                   <v-card-text class="active-indicator-info">
                     {{indicatorsMetadata['key-hdr-hdi'].longDefinition}}
-                    <v-divider class="mb-1 mt-1"></v-divider>
+                    <hr class="mb-1 mt-1 undp-style light"/>
                     <b>{{$t('portfolio.year')}}:</b>
                       <template v-if="getIndicator('key-hdr-hdi').year && getIndicator('key-hdr-hdi').year!=='No Year'">
                         ({{getIndicator('key-hdr-hdi').year}})
@@ -162,7 +162,7 @@
                 <v-card flat>
                   <v-card-text class="active-indicator-info">
                     {{indicatorsMetadata['key-wdi2-SI.POV.GINI'].longDefinition}}
-                    <v-divider class="mb-1 mt-1"></v-divider>
+                    <hr class="mb-1 mt-1 undp-style light"/>
                     <b>{{$t('portfolio.year')}}:</b>
                       <template v-if="getIndicator('key-wdi2-SI.POV.GINI').year && getIndicator('key-wdi2-SI.POV.GINI').year!=='No Year'">
                         ({{getIndicator('key-wdi2-SI.POV.GINI').year}})
@@ -361,5 +361,8 @@ hr{
 }
 .grey-background{
   background-color: #EDEFF0;
+}
+.country-profile .v-btn.red-arrow{
+  padding-left: 0 !important;
 }
 </style>

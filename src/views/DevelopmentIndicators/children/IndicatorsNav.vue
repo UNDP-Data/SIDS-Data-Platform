@@ -73,7 +73,6 @@
     <v-list v-if="!activeSearch" dense :class="{'list-datasets-active':dataset}" class="list-datasets">
       <v-list-item-group>
         <template v-for="(item, i) in datasets" >
-
           <v-tooltip
             right
             open-delay="300"
@@ -176,55 +175,55 @@
       :height="inticatorsListHeight"
       itemHeight="69"
     >
-    <template v-slot:default="{ item, index }">
-          <v-menu
-            right
-            offset-x
-            nudge-right="20"
-            open-delay="300"
-            close-delay="300"
-            transition="none"
-            max-width="250"
-            open-on-hover
-            :key="item['indicatorCode']"
-            content-class="tooltip-content"
-           >
-            <template v-slot:activator="{ on, attrs }">
-              <v-list-item
-                class="inicator-item"
-                :class="{'blue lighten-5': item['indicatorCode'] === activeIndicatorCode}"
-                v-bind="attrs"
-                v-on="on"
-                :disabled="getDimensionAvaliability(item.indicatorCode)"
-                @click="emitindicatorChange(item['indicatorCode'])"
-              >
-                <v-list-item-title class="inicator-item_header mt-2">
-                  {{item.indicator}}
-                </v-list-item-title>
-                <v-list-item-content class="inicator-item_description">
-                  {{item.def}}
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider v-if="dataset && index!== activeIndicatorsWithMeta.length" :key="'divider' + index"></v-divider>
-            </template>
-            <v-card class="tooltip-card">
-              <v-card-title class="mb-1 active-indicator_header">{{item.indicator}}</v-card-title>
-              <v-card-text>
-                <div class="mb-1">{{item.dim}}</div>
-                <v-divider class="mb-1 mt-1"></v-divider>
-                <b>Source:</b> {{item.source}} <br/>
-                <a :href="item.link" class="undp-style" target="_blank">Link</a>
-              </v-card-text>
-            </v-card>
-          </v-menu>
-        </template>
+      <template v-slot:default="{ item, index }">
+        <v-menu
+          right
+          offset-x
+          nudge-right="20"
+          open-delay="300"
+          close-delay="300"
+          transition="none"
+          max-width="250"
+          open-on-hover
+          :key="item['indicatorCode']"
+          content-class="tooltip-content"
+          >
+          <template v-slot:activator="{ on, attrs }">
+            <v-list-item
+              class="inicator-item"
+              :class="{'blue lighten-5': item['indicatorCode'] === activeIndicatorCode}"
+              v-bind="attrs"
+              v-on="on"
+              :disabled="getDimensionAvaliability(item.indicatorCode)"
+              @click="emitindicatorChange(item['indicatorCode'])"
+            >
+              <v-list-item-title class="inicator-item_header mt-2">
+                {{item.indicator}}
+              </v-list-item-title>
+              <v-list-item-content class="inicator-item_description">
+                {{item.def}}
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider v-if="dataset && index!== activeIndicatorsWithMeta.length" :key="'divider' + index"></v-divider>
+          </template>
+          <v-card class="tooltip-card">
+            <v-card-title class="mb-1 active-indicator_header">{{item.indicator}}</v-card-title>
+            <v-card-text>
+              <div class="mb-1">{{item.dim}}</div>
+              <v-divider class="mb-1 mt-1"></v-divider>
+              <b>Source:</b> {{item.source}} <br/>
+              <a :href="item.link" class="undp-style" target="_blank">Link</a>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </template>
     </v-virtual-scroll>
   </v-card>
   <v-card flat class="mt-2 active-indicator-info" v-if="activeIndicator && !isSmallScreen">
     <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
     <v-card-text class="pt-1">
+      <p class="input-label mb-0">Year</p>
       <div class="mb-2 d-flex">
-        <div class="d-flex align-center mr-2"><p class="input-label mb-0">Year</p></div>
         <v-select class='dimensions-select-button undp-select'
           :items="activeIndicatorYears"
           :value="year"
@@ -243,7 +242,7 @@
           </template>
         </v-select>
         <v-btn
-          class="mt-3"
+          class="mt-0"
           @click="toggleYearPlay"
           :disabled="chartType==='series' || activeIndicatorYears.length === 1"
           icon
@@ -252,9 +251,9 @@
           <v-icon v-else>mdi-play</v-icon>
         </v-btn>
       </div>
-      <div class="mb-2 d-flex" style="width: 100%;">
-        <div class="d-flex align-center mr-2"><p v-if="activeIndicatorDimensions.length > 1" class="input-label mb-0">{{$t('indicators.forms.dimension')}}</p></div>
-        <div class="align-right" style="width: 100%;">
+      <p v-if="activeIndicatorDimensions.length > 1" class="input-label mb-0">{{$t('indicators.forms.dimension')}}</p>
+      <div class="mb-2 d-flex">
+        <div class="align-right">
           <v-select class='dimensions-select-button undp-select' v-if="activeIndicatorDimensions.length > 1"
           :items="activeIndicatorDimensions"
           :value="activeIndicatorCode"
@@ -641,12 +640,21 @@ export default {
   font-size: 16px !important;
   line-height: 22px !important;
 }
-.dimensions-select-button{
+.dimensions-select-button.undp-select{
   margin-right: 0;
+  margin-top: 0;
+  border:0;
+  padding: 0 !important;
+  max-width: 170px;
+}
+.dimensions-select-button.undp-select.v-text-field.v-select .v-input__slot{
+  min-height: 0 !important;
+  padding-left:0 !important;
 }
 .active-indicator-info {
   max-height: calc(50vh - 50px);
   overflow-y: scroll;
+  color: #000;
 }
 .indicators-nav {
   padding: relative;

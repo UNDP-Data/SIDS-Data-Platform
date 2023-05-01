@@ -11,7 +11,7 @@
     :top="bottom ? false : true"
     :bottom="bottom ? true : false"
     :attach="attach"
-    :nudge-top="bottom ? 0 : 50"
+    :nudge-top="bottom ? 0 : 100"
     :nudge-bottom="bottom ? 50 : 0"
     :content-class="'tooltip-content ' + contentClass"
     >
@@ -80,5 +80,8 @@ export default {
 <style scoped>
 .mdi-information{
   font-size: 32px;
+}
+.tooltip-content{
+  color: #000;
 }
 </style>

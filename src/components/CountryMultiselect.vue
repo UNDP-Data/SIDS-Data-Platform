@@ -47,8 +47,8 @@ export default {
     placeholder: {
       type: String,
       default: function () {
-      return this.$t('root.forms.selectCountries')
-    }
+        return this.$t('root.forms.selectCountries')
+      }
     },
     countryActiveIdsList: {
       type: Array,

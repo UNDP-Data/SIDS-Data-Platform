@@ -5,7 +5,7 @@
       <interfaces id="content"/>
       <video-block/>
       <resources/>
-      <v-container><about/></v-container>
+      <v-container><about placement="home"/></v-container>
       <root-footer/>
     </v-main>
   </v-app>
@@ -35,13 +35,9 @@ export default {
     //
   }),
 };
-console.log('in homepage')
 </script>
 <style media="screen">
 
-body, .v-application {
-  font-family: "Proxima Nova", sans-serif !important;
-}
 #home{
   background-color: #ffffff;
 }

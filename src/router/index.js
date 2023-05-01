@@ -205,14 +205,6 @@ const routes = [
       icon:'about',
       linkText:'about'
     },
-    beforeEnter: async (to, from, next) => {
-      store.commit('loader/setLoading', true);
-      await store.dispatch('texts/loadResourcesData');
-      setTimeout(() => {
-        store.commit('loader/setLoading', false);
-      }, 500)
-      next();
-    },
     component: () => import(/* webpackChunkName: "about" */ '../views/About/About.vue')
   },
   {

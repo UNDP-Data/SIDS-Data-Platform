@@ -97,7 +97,6 @@ html {
 }
 body,
 .v-application {
-  font-family: "Proxima Nova", sans-serif !important;
   display:block !important; 
 }
 

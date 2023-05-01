@@ -2,7 +2,8 @@
   <div class="about-page">
     <v-row class="d-none d-md-flex mt-7" justify="center">
       <v-col cols="12">
-        <h2 class="undp-typography">{{$t('about.header')}}</h2>
+        <h3 v-if="this.placement === 'home'" class="undp-typography text-center">{{$t('about.header')}}</h3>
+        <h2 v-else class="undp-typography">{{$t('about.header')}}</h2>
       </v-col>
     </v-row>
     <v-row>
@@ -151,6 +152,7 @@ export default {
   components:{
     Resource
   },
+  props:['placement'],
   async created() {
    await store.dispatch('texts/loadResourcesData');
    //this.resources = resp.data.additionalResources;
