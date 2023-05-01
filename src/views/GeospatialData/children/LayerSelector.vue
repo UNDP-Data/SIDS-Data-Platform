@@ -14,6 +14,7 @@
           :items="datasets"
           item-text="title"
           item-value="title"
+          placeholder="Select a dataset"
           return-object
           outlined
         ></v-autocomplete>
@@ -65,13 +66,13 @@
       dense
     >
       <v-col>
+        <p class="input-label mt-0">{{ this.layerLabel }}</p>
         <v-select
           dense
           hide-details
           class="map-input undp-select"
           :value="year"
           :items="layer.years"
-          :label="layerLabel"
           @change="updateYear"
           outlined
         ></v-select>
@@ -147,4 +148,16 @@ export default {
 </script>
 
 <style>
+@media (max-width:959px) {
+  .map-input.undp-select{
+    margin-right: 0;
+    margin-top: 0;
+    border:0;
+    padding: 0 !important;
+  }
+  .map-input.undp-select.v-text-field.v-select .v-input__slot{
+  min-height: 0 !important;
+  padding-left: 10px !important;
+}
+}
 </style>

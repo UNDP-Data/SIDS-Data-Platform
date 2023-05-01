@@ -13,13 +13,13 @@ const constants = {
   //     "https://data.undpgeohub.org/sids-data/hex10/{z}/{x}/{y}.pbf",
   //   hex5clipped:
   //     "https://data.undpgeohub.org/sids-data/hex5clipped/{z}/{x}/{y}.pbf",
-    admin1Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin1/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
-    admin2Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin2/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    admin1Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin1/{z}/{x}/{y}.pbf?sp=r&st=2023-05-01T12:30:45Z&se=2028-05-01T20:30:45Z&spr=https&sv=2022-11-02&sr=c&sig=S359J0raAEGf4Oo%2Brxpo6B1y%2FwV04hAhlKyZJWVkDBc%3D",
+    admin2Overlay: "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/admin2/{z}/{x}/{y}.pbf?sp=r&st=2023-05-01T12:30:45Z&se=2028-05-01T20:30:45Z&spr=https&sv=2022-11-02&sr=c&sig=S359J0raAEGf4Oo%2Brxpo6B1y%2FwV04hAhlKyZJWVkDBc%3D",
 
   //   ocean:
   //     "https://data.undpgeohub.org/sids-data/oceans/{z}/{x}/{y}.pbf",
     allSids:
-    "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/allsids/{z}/{x}/{y}.pbf?sv=2020-08-04&st=2022-01-06T07%3A39%3A53Z&se=2023-01-07T07%3A39%3A00Z&sr=c&sp=racwl&sig=uN7Z2aqOpU9upKl2zP4hEh1VfgMVwYixgml8uS216g8%3D",
+    "https://undpngddlsgeohubdev01.blob.core.windows.net/sids/vectortiles/allsids/{z}/{x}/{y}.pbf?sp=r&st=2023-05-01T12:30:45Z&se=2028-05-01T20:30:45Z&spr=https&sv=2022-11-02&sr=c&sig=S359J0raAEGf4Oo%2Brxpo6B1y%2FwV04hAhlKyZJWVkDBc%3D",
   },
   hexes: ["hex-1km", "hex-5km", "hex-10km", "hex5clipped"],
   admins: ["admin1", "admin2"],

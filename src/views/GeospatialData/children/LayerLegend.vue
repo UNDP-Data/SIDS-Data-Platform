@@ -1,5 +1,5 @@
 <template>
-  <v-card class="histogram_frame mr-4 ml-4 mr-md-0 ml-md-0">
+  <v-card class="histogram_frame">
     <div
       v-if="activeLayer"
       class="pic app-body population-per-km col-flex"

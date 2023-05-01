@@ -1,5 +1,5 @@
 <template>
-  <v-card class="background-grey mr-4 ml-4 mr-md-0 ml-md-0">
+  <v-card class="mr-md-0 ml-md-0">
     <div
       v-if="activeLayer"
       class="w-100 col-flex"
@@ -169,12 +169,9 @@ export default {
   z-index: 4;
 }
 @media (max-width:959px) {
-  /* .background-grey {
-    background-color: transparent !important;
-  } */
   .histogram_frame {
     height: auto;
-    border-radius: 22px !important;
+    padding-bottom: 5px;
   }
   .main-legend {
     width: 100%

@@ -620,7 +620,7 @@ export default {
 }
 .inicator-item_header {
   text-align: left;
-  font-weight: 800 !important;
+  font-weight: 700 !important;
   width: 100%;
 }
 .inicator-item_description {
@@ -637,8 +637,9 @@ export default {
 .active-indicator_header {
   padding-bottom: 0.5em;
   word-break: break-word;
-  font-size: 16px !important;
+  font-size: 1.2rem !important;
   line-height: 22px !important;
+  font-weight: 700;
 }
 .dimensions-select-button.undp-select{
   margin-right: 0;
@@ -658,7 +659,6 @@ export default {
 }
 .indicators-nav {
   padding: relative;
-  overflow-y: scroll;
   overflow-x: hidden;
 }
 .close-button {

@@ -391,11 +391,11 @@ export default {
   }
 
   #mapsContainer, .map-container {
-    height: calc(100vh - 68px);
+    height: calc(100vh - 100px);
   }
   #mapsContainer #map,
   #mapsContainer #map2  {
-    height: calc(100vh - 68px);
+    height: calc(100vh - 120px);
     width: 100%;
   }
   .data-controller {

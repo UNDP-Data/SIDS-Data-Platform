@@ -101,5 +101,7 @@ export default {
   max-height: 85vh;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: #EDEFF0;
+  opacity: .6;
 }
 </style>
