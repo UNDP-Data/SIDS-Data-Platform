@@ -12,13 +12,13 @@
         <v-list-item  class="p-0">
           <v-list-item-content class="one-line">
             <v-list-item-title class="one-line_header one-line_header_full" v-text="$t('spiders.source')+':'"></v-list-item-title>
-            <v-list-item-subtitle><a :href="link" target="_blank">{{source}}</a></v-list-item-subtitle>
+            <v-list-item-subtitle><a :href="link" class="undp-style" target="_blank">{{source}}</a></v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item  class="p-0">
           <v-list-item-content class="one-line">
             <v-list-item-title class="one-line_header one-line_header_full" v-text="'SIDS Data:'"></v-list-item-title>
-            <v-list-item-subtitle><router-link :to="`/development-indicators/${code}/recentValue/bars`">{{header}}</router-link></v-list-item-subtitle>
+            <v-list-item-subtitle><router-link class="undp-style" :to="`/development-indicators/${code}/recentValue/bars`">{{header}}</router-link></v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="!ismvi" class="p-0">
@@ -58,6 +58,7 @@ export default {
 }
 .indicators-list {
   padding-bottom: 0;
+  color: #000 !important;
 }
 .indicators-list .one-line {
   flex-wrap: nowrap;
