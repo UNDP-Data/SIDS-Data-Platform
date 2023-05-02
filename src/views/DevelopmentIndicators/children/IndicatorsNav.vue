@@ -620,7 +620,6 @@ export default {
 }
 .inicator-item_header {
   text-align: left;
-  font-weight: 700 !important;
   width: 100%;
 }
 .inicator-item_description {
@@ -638,8 +637,7 @@ export default {
   padding-bottom: 0.5em;
   word-break: break-word;
   font-size: 1.2rem !important;
-  line-height: 22px !important;
-  font-weight: 700;
+  line-height: 1.4rem !important;
 }
 .dimensions-select-button.undp-select{
   margin-right: 0;
@@ -682,6 +680,9 @@ export default {
 .search-input .v-input__prepend-outer{
   margin: auto 0px auto 0 !important;
   padding-top: 7px;
+}
+.indicators-nav .input-label{
+  font-size: .9rem !important;
 }
 @media (max-width:959px) {
   .list-datasets {

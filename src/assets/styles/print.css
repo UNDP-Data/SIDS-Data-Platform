@@ -16,8 +16,8 @@
   .print-page-wrap{
     z-index: 100;
     top: 0;
-    min-height: 1490px;
-    max-height: 1490px;
+    /*min-height: 1490px;
+    max-height: 1490px;*/
     box-sizing: border-box;
     position: relative !important;
     overflow: hidden;

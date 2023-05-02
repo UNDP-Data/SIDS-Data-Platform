@@ -36,9 +36,9 @@
                 <v-list-item-title             
                   v-text="$t('countryProfile.infoBox.key-countryOffice')"
                 ></v-list-item-title>
-                <v-list-item-subtitle>{{
+                <v-list-item-subtitle><a :href="getIndicator('key-undpPage').value" target="_blank" class="undp-style">{{
                   getIndicator('key-countryOffice').value
-                }}</v-list-item-subtitle>
+                }}</a></v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
             <v-list-item  v-if="checkIndicator('key-3')">
@@ -188,17 +188,6 @@
                 </v-list-item>
               </template>
             </info-hover-tooltip>
-            <v-list-item v-if="checkIndicator('key-undpPage')">
-              <v-btn
-                variant="plain"
-                class="red-arrow"
-                depressed
-                :href="getIndicator('key-undpPage').value"
-                target="_blank"
-              >
-                {{$t('countryProfile.infoBox.key-undpPage')}}
-              </v-btn>
-            </v-list-item>
           </v-col>
         </v-row>
       </v-col>
@@ -235,7 +224,7 @@
           class="bg-printable"
           contain
           :src="require(`@/assets/media/profiles-maps/${id}.png`)"
-          height="378"
+          height="420"
         /> 
         </div>
       </v-col>

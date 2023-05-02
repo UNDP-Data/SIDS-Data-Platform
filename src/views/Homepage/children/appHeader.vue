@@ -252,7 +252,7 @@
   position: relative;
   width: 200px;
   max-width: 70%;
-  margin: 0.5em auto auto;
+  margin: 0.5em auto 1em;
 }
 
 </style>

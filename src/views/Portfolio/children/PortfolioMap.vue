@@ -84,7 +84,7 @@ export default {
           scale: 1.5
         },
         'pacific' : {
-          translate: [-1250, -350],
+          translate: [-1250, -380],
           scale: 2
         }
       },
@@ -591,12 +591,15 @@ export default {
 @media all and (min-width:1264px) {
   .map {
     min-height: 550px;
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 230px);
+  }
+  #map-container {
+    top:0;
   }
 }
 @media all and (min-width:1400px) {
   .map {
-    max-height: calc(100vh - 260px);
+    max-height: calc(100vh - 220px);
   }
 }
 

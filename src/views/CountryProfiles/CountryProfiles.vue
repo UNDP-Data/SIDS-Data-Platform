@@ -92,25 +92,6 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row v-if="!noData && countryText && countryText.developmentContext" class=" d-print-none">
-        <v-col class="mb-0 stat-card-container pl-7" cols='12'>
-          <div class="mb-print-1 stat-card" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-              <h2>{{formatStats(stat.value)}}</h2>
-              <h4>{{stat.unit.replace('%','percent')}}</h4>
-              <p>{{stat.title}}</p>
-          </div>
-        </v-col>
-      </v-row>
-      <v-row v-if="!noData && countryText && countryText.developmentContext" class="d-print hidden-screen-only">
-        <v-col>
-          <div class="d-flex flex-wrap">
-            <div class="mb-3 px-3 small-stat" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
-              <h3 class="undp-typography">{{formatStats(stat.value)}} {{stat.unit}}</h3>
-              <p class="mb-2">{{stat.title}}</p>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
       <v-row class="d-md-none d-print-none justify-center" v-if="!noData && countryText && countryText.developmentContext">
         <v-col cols="11">
           <v-expansion-panels flat accordion>
@@ -308,8 +289,35 @@
           <div class="px-4 undp-typography" v-html="countryText.challengesInDevelopment.content"></div>
         </v-col>
       </v-row>
-      <v-row><v-col>
-        <p :v-if="countryText" class=" mb-0 pb-0 print-page-wrap_footer d-none d-print-block undp-typography">
+    </div>
+    <div>
+      <v-row v-if="!noData && countryText && countryText.developmentContext" class=" d-print-none">
+        <v-col cols='12'>
+          <h2 class="px-4 mb-4 undp-typography">Key Statistics</h2>
+          <div class="mb-0 stat-card-container pl-4">
+            <div class="mb-print-1 stat-card" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+              <h3>{{formatStats(stat.value)}}</h3>
+              <h4>{{stat.unit.replace('%','percent')}}</h4>
+              <p>{{stat.title}}</p>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row v-if="!noData && countryText && countryText.developmentContext" class="d-print hidden-screen-only">
+        <v-col>
+          <h2 class="px-4 mb-4 undp-typography">Key statistics</h2>
+          <div class="d-flex flex-wrap">
+            <div class="mb-3 px-4 small-stat" v-for="stat in activeCountryProfile.KeyStats.slice(0, 6)" :key="stat.title">
+              <h3 class="undp-typography">{{formatStats(stat.value)}} {{stat.unit}}</h3>
+              <p class="mb-2">{{stat.title}}</p>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
+    <div>
+      <v-row><v-col class="ml-4">
+        <p :v-if="countryText" class="mb-0 pb-0 print-page-wrap_footer d-none d-print-block undp-typography">
         Live version and links to original data sources available at
         <a class="d-block mt-0 mb-0 pb-0" :href="pageLink">{{pageLink}}</a>
       </p>

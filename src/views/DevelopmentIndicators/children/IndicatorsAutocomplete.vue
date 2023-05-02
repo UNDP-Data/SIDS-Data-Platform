@@ -128,7 +128,6 @@ export default {
 }
 .inicator-item_header {
   text-align: left;
-  font-weight: 600 !important;
   width: 100%;
 }
 .inicator-item_description {

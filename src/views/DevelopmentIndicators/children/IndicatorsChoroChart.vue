@@ -1,6 +1,6 @@
 <template>
   <div class="choro mt-2">
-    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi')">
+    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global' && activeIndicatorsMeta)">
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
@@ -70,7 +70,7 @@ export default {
       return this.$i18n.locale
     },
     activeIndicatorsMeta() {
-      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-hdi']
+      return this.indicatorMeta[this.indicatorCode] || "" //"this.indicatorMeta['hdr-hdi']"
     },
     chartData() {
       if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {
