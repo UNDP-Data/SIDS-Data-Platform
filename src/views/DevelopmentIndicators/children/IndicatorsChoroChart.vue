@@ -1,6 +1,6 @@
 <template>
   <div class="choro mt-2">
-    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global' && activeIndicatorsMeta)">
+    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi')" >
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
@@ -40,6 +40,7 @@ import { mapState } from 'vuex';
 import Choro from '@/choro';
 import CountryMultiselect from '@/components/CountryMultiselect';
 import { countryGroupJson, countryColors } from '@/choro/countryGroup';
+import * as d3 from 'd3';
 
 export default {
   name: 'IndicatorsChoroChart',
@@ -70,7 +71,7 @@ export default {
       return this.$i18n.locale
     },
     activeIndicatorsMeta() {
-      return this.indicatorMeta[this.indicatorCode] || "" //"this.indicatorMeta['hdr-hdi']"
+      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-hdi']
     },
     chartData() {
       if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {
@@ -137,7 +138,6 @@ export default {
       this.choro && this.page === this.choro.page && this.choro.updateSeriesCountryList(res)
     },
     async initChart() {
-      console.log('page', this.page)
       let sidsXML = await service.loadSidsSVG();
       let mapLocations = await service.loadMapLocations();
       this.compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
@@ -265,6 +265,7 @@ export default {
     window.removeEventListener("resize", this.updateScreenSize);
   },
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

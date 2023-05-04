@@ -14,6 +14,7 @@
           item-value="indicatorCode"
           :filter="indicatorsFilter"
           :items="allIndicators"
+          placeholder="SELECT AN INDICATOR"
         >
           <template v-slot:item="{ item }">
             <v-list-item-content>
@@ -37,8 +38,8 @@
               <v-card-text v-if="activeIndicator" class="active-indicator-info">
                 {{activeIndicator.def}}
                 <v-divider class="mb-1 mt-1"></v-divider>
-                <b>Source:</b>{{activeIndicator.source}} <br/>
-                <a :href="activeIndicator.link" target="_blank">Link</a>
+                <b>Source:</b> {{activeIndicator.source}} <br/>
+                <a :href="activeIndicator.link" class="undp-style" target="_blank">Link</a>
               </v-card-text>
             </v-card>
           </template>

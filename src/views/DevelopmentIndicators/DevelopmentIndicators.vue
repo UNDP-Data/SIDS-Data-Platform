@@ -156,9 +156,6 @@
             </div>
           </v-col>
         </v-row>
-        <!-- v-row class="nav-filter-row d-print-none d-none d-lg-flex" dense justify="end">
-
-        </v-row -->
         <v-row dense :class="{'d-print-none' : !mlMode}">
           <v-col cols='12'>
             <indicators-choro-chart class="d-print-none" v-if='!noData' :chartId="'choro'" :region="region" :mviCodes="mviCodes" :year="year" :sorting="sortingName" :page="page" :chartType="chartType" :indicatorCode="indicator"/>
@@ -345,7 +342,7 @@ export default {
       return this.tabs.findIndex(menuItem => menuItem.chartType === this.chartType)
     },
     activeIndicatorsMeta() {
-      return this.indicatorsMeta[this.indicator] || this.indicatorsMeta['hdr-hdi']
+      return this.indicatorsMeta[this.indicator] || "" //this.indicatorsMeta['hdr-hdi']
     },
     mlAvaliable() {
       return this.indicator && this.indicator.match(/.*key|mvi|ndgain|wdi.*/gm);
