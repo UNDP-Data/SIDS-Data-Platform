@@ -40,7 +40,6 @@ import { mapState } from 'vuex';
 import Choro from '@/choro';
 import CountryMultiselect from '@/components/CountryMultiselect';
 import { countryGroupJson, countryColors } from '@/choro/countryGroup';
-import * as d3 from 'd3';
 
 export default {
   name: 'IndicatorsChoroChart',
