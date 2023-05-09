@@ -9,17 +9,17 @@
       <div class="d-flex flex-column flex-sm-row">
         <div class="phone-block">
           <v-card class="phone-block_card" flat>
-            <v-img
-              eager
-              class="d-sm-none mr-auto ml-auto"
-              width="42"
-              src="~@/assets/mediahome/profiles.png"
-            ></v-img>
-            <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
-              <a class="title_link" href="/country-profiles/">
+            <a class="title_link" href="/country-profiles/">
+              <v-img
+                eager
+                class="d-sm-none mr-auto ml-auto"
+                width="42"
+                src="~@/assets/mediahome/profiles.png"
+              ></v-img>
+              <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
                 {{$t('interfaces.profiles.header')}}
-              </a>
-            </v-card-title>
+              </v-card-title>
+            </a>
             <a class="d-none d-sm-block" href="/country-profiles/">
               <v-img
                 eager
@@ -35,17 +35,17 @@
         </div>
         <div class="phone-block">
           <v-card class="phone-block_card" flat>
-            <v-img
-              eager
-              class="d-sm-none mr-auto ml-auto"
-              width="42"
-              src="~@/assets/mediahome/indicators.png"
-            ></v-img>
-            <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
-              <a class="title_link" href="/development-indicators/">
+            <a class="title_link" href="/development-indicators/">
+              <v-img
+                eager
+                class="d-sm-none mr-auto ml-auto"
+                width="42"
+                src="~@/assets/mediahome/indicators.png"
+              ></v-img>
+              <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
                 {{$t('interfaces.indicators.header')}}
-              </a>
-            </v-card-title>
+              </v-card-title>
+            </a>
             <a class="d-none d-sm-block" href="/development-indicators/">
               <v-img
                 eager
@@ -61,17 +61,17 @@
         </div>
         <div class="phone-block">
           <v-card class="phone-block_card" flat>
-            <v-img
-              eager
-              class="d-sm-none mr-auto ml-auto"
-              width="42"
-              src="~@/assets/mediahome/MVI.png"
-            ></v-img>
-            <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
-              <a class="title_link" href="/vulnerability/">
+            <a class="title_link" href="/vulnerability/">
+              <v-img
+                eager
+                class="d-sm-none mr-auto ml-auto"
+                width="42"
+                src="~@/assets/mediahome/MVI.png"
+              ></v-img>
+              <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
                 {{$t('interfaces.mvi.header')}}
-              </a>
-            </v-card-title>
+              </v-card-title>
+            </a>
             <a class="d-none d-sm-block" href="/vulnerability/">
               <v-img
                 eager
@@ -87,17 +87,17 @@
         </div>
         <div class="phone-block">
           <v-card class="phone-block_card" flat>
-            <v-img
-              eager
-              class="d-sm-none mr-auto ml-auto"
-              width="42"
-              src="~@/assets/mediahome/GIS.png"
-            ></v-img>
-            <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
-              <a class="title_link" href="/geospatial-data/">
+            <a class="title_link" href="/geospatial-data/">
+              <v-img
+                eager
+                class="d-sm-none mr-auto ml-auto"
+                width="42"
+                src="~@/assets/mediahome/GIS.png"
+              ></v-img>
+              <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
                 {{$t('interfaces.gis.header')}}
-              </a>
-            </v-card-title>
+              </v-card-title>
+            </a>
             <a class="d-none d-sm-block" href="/geospatial-data/">
               <v-img
                 eager
@@ -113,17 +113,17 @@
         </div>
         <div class="phone-block">
           <v-card class="phone-block_card" flat>
-            <v-img
-              eager
-              class="d-sm-none mr-auto ml-auto"
-              width="42"
-              src="~@/assets/mediahome/portfolio.png"
-            ></v-img>
-            <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
-              <a class="title_link" href="/portfolio/">
-                {{$t('interfaces.portfolio.header')}}
-              </a>
-            </v-card-title>
+            <a class="title_link" href="/portfolio/">
+              <v-img
+                eager
+                class="d-sm-none mr-auto ml-auto"
+                width="42"
+                src="~@/assets/mediahome/portfolio.png"
+              ></v-img>
+              <v-card-title class="phone-block_title justify-center pr-0 pl-0 pt-0 pb-0 pb-sm-2">
+                  {{$t('interfaces.portfolio.header')}}
+              </v-card-title>
+            </a>
             <a class="d-none d-sm-block" href="/portfolio/">
               <v-img
                 eager
