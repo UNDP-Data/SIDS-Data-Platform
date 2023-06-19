@@ -4,6 +4,7 @@
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
+    <indicators-year-slider />
     <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(indicatorCode === 'region')">
       <div class="col-12 choroEntryContainer"><img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15"></div> 
     </div>
@@ -29,6 +30,7 @@
         </div>
       </v-col>
     </v-row>
+
   </div>
 </template>
 
@@ -39,6 +41,7 @@ import service from '@/services'
 import { mapState } from 'vuex';
 import Choro from '@/choro';
 import CountryMultiselect from '@/components/CountryMultiselect';
+import IndicatorsYearSlider from '@/components/IndicatorsYearSlider.vue';
 import { countryGroupJson, countryColors } from '@/choro/countryGroup';
 
 export default {
@@ -128,7 +131,8 @@ export default {
     }
   },
   components:{
-    CountryMultiselect
+    CountryMultiselect,
+    IndicatorsYearSlider
   },
   methods:{
     setCompareCountries(countryList) {
@@ -183,14 +187,19 @@ export default {
       }
     },
     getMVIavaliableCountrues() {
+      console.log('sidsList', sidsList.length)
+      sidsList.forEach(country => console.log('country.iso', country.iso))
       let res = sidsList.filter(country => {
+        console.log('country ======== ', country.iso);
         if(!country.average) {
           return !this.mviCodes.some((code) => {
+            console.log('code' , code)
             return this.chartData[code].data.recentValue[country.iso] === 'No Data'
           })
         } else if (countryGroupJson[country.iso]) {
           return Object.keys(countryGroupJson[country.iso]).some((iso) => {
             return !this.mviCodes.some((code) => {
+              console.log('code' , code)
               return this.chartData[code].data.recentValue[iso] === 'No Data'
             })
           })
