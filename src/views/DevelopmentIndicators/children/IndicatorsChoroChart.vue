@@ -1,10 +1,10 @@
 <template>
   <div class="choro mt-2">
-    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi')" >
+    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi') && (indicatorCode !== 'region')" >
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
-    <div class="choro_legend_container" :id="chartId+'_legend_container'">
+    <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(indicatorCode === 'region')">
       <div class="col-12 choroEntryContainer"><img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15"></div> 
     </div>
     <div class="spiderbox" style="height:0;margin:0;">
@@ -70,7 +70,7 @@ export default {
       return this.$i18n.locale
     },
     activeIndicatorsMeta() {
-      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-hdi']
+      return this.indicatorMeta[this.indicatorCode] || ''
     },
     chartData() {
       if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {
@@ -220,6 +220,7 @@ export default {
       }
     },
     chartData() {
+      console.log('in chartdata')
       if(this.choro && this.page === this.choro.page && (this.MLPredictionData || this.mlData)) {
         let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
         this.setCompareCountries(compareIdsList)

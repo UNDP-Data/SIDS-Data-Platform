@@ -23,17 +23,13 @@ import {
 
 
 export function updateVizEngine(indicatorCode) {
-
   this.indicatorCodeInitial = indicatorCode;
   this.indicatorCode = indicatorCode;
 
   if(this.page=="mvi"){
     this.indicatorCode = "mvi-index";
   }
-
-  if (this.indicatorCode == "region") {
-    this.indicatorCode = "hdr-hdi";///temp so has something to attach to data
-  }
+  
   if (Object.keys(indexCodes).includes(this.indicatorCode)) {
     this.vizMode = "index";
   } else {
@@ -392,7 +388,7 @@ export function countriesWithNoData() {
         if (value == "No Data" || typeof value != "number") {
           noData.push(iso);
         }
-      } catch (error) {console.log(error)} //console.log(error)}//console.log(error) }
+      } catch (error) {console.log(error)}
     });
   return noData
 }
@@ -486,16 +482,26 @@ export function updateCountrySvgColors(quantize) {
   ///draw choropleth scale
   if (this.page !== "mvi") {
     /* break the data values into 9 ranges of €100 each   */
-
-
-    this.sidsMapSelection
+    if (this.indicatorCode == "region"){
+      this.sidsMapSelection
+      .selectAll("path") // Map countries to regional colors
+      .attr("class", function () {
+         return (
+          regionColors(
+            rootThis.profileData[this.id].region,
+            rootThis.profileData[this.id].unMeber
+          ) + " shadow countrySvg"
+        );
+      });
+    } else {
+      this.sidsMapSelection
       .selectAll("path") /* Map  counties to  data */
       .attr("class", function () {
         try {
           let value = indicatorDataYear[this.id];
           if (value == "No Data" || typeof value != "number") {
             //hide country name
-            if (this.indicatorCode == "Region") {
+            if (this.indicatorCode == "region") {
               return (
                 regionColors(
                   rootThis.profileData[this.id].region,
@@ -510,7 +516,7 @@ export function updateCountrySvgColors(quantize) {
               rootThis.indiSelections["viz"] == "bars" ||
               rootThis.indiSelections["viz"] == "spider" ||
               rootThis.indiSelections["viz"] == "global" ||
-              rootThis.indicatorCode == "Region"
+              rootThis.indicatorCode == "region"
             ) {
               return (
                 regionColors(rootThis.profileData[this.id].region, "Y") +" shadow countrySvg"
@@ -531,7 +537,7 @@ export function updateCountrySvgColors(quantize) {
           /* reset country color to quantize range */
           let  stat = indicatorDataYear[this.id];
 
-          if (rootThis.indicatorCode == "Region") {
+          if (rootThis.indicatorCode == "region") {
             return (
               regionColors(rootThis.profileData[this.id].region, "Y") +
               " shadow countrySvg"
@@ -547,6 +553,9 @@ export function updateCountrySvgColors(quantize) {
           }
         });
       });
+    }
+
+
   } else {
     d3.select("#choro_map_container")
       .selectAll("path.countrySvg") /* Map  counties to  data */
@@ -629,7 +638,7 @@ export function updateCountryTitles(
         let country = c[b].id.replace('-text', '');
 
         if (
-          rootThis.indicatorCode == "Region" &&
+          rootThis.indicatorCode == "region" &&
           rootThis.indiSelections["viz"] === "choro"
         ) {
           d3.select(this).attr('fill-opacity', 1);

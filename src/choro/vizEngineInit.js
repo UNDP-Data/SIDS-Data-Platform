@@ -45,8 +45,6 @@ export function appendAllElements(){
 //
 export function initChoroLegend(quantize) {
 
-  d3.select(this.legendContainerSelector).select(".regionLegend").style('display','none');
-
   this.choroLegend = d3
     .select(this.legendContainerSelector)
     .selectAll("*")
@@ -219,7 +217,9 @@ export function initCountrySvgs(){
     .selectAll("path") // Map countries to regional colors
     .attr("class", function () {
        return (
-        regionColors(rootThis.profileData[this.id].region,rootThis.profileData[this.id].unMeber
+        regionColors(
+          rootThis.profileData[this.id].region,
+          rootThis.profileData[this.id].unMeber
         ) + " shadow countrySvg"
       );
     });

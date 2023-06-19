@@ -49,9 +49,9 @@ const routes = [
       let chartType = to.params.chartType || 'choro',
       indicator = to.params.indicator || 'region',
       year = to.params.year || 'recentValue';
-      if(document.body.clientWidth - 40 < 800 && indicator === 'region') {
+      /* if(document.body.clientWidth - 40 < 800 && indicator === 'region') {
         indicator = 'hdr-hdi'
-      }
+      }*/
       if((vuetify.framework.breakpoint.xs || vuetify.framework.breakpoint.sm)
         && chartType !== 'series'
       ) {
