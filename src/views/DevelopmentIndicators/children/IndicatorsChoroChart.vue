@@ -4,8 +4,10 @@
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
-    <indicators-year-slider 
-      @yearChange="setYear"
+    <indicators-year-slider
+      v-if="chartType !== 'series'"
+      :indiCode ="indicatorCode"
+      @yearChange="updateYear"
     />
     <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(indicatorCode === 'region')">
       <div class="col-12 choroEntryContainer"><img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15"></div> 
@@ -130,7 +132,7 @@ export default {
       } else {
         return this.getMVIavaliableCountrues()
       }
-    }
+    },
   },
   components:{
     CountryMultiselect,
@@ -141,9 +143,6 @@ export default {
       this.compareIdsList = countryList;
       let res = this.sidsList.filter(country => countryList.includes(country.id)).map(country => country.iso);
       this.choro && this.page === this.choro.page && this.choro.updateSeriesCountryList(res)
-    },
-    setYear(year){
-      this.year = year;
     },
     async initChart() {
       let sidsXML = await service.loadSidsSVG();
@@ -210,6 +209,11 @@ export default {
       })
       return res
     },
+    updateYear(year){
+      if(this.choro && this.page === this.choro.page) {
+        this.choro.updateVizYear(year)
+      }
+    }
   },
   async mounted() {
     await this.initChart()
