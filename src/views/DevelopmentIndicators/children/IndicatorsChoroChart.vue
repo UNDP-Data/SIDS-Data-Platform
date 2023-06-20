@@ -4,7 +4,9 @@
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
-    <indicators-year-slider />
+    <indicators-year-slider 
+      @yearChange="setYear"
+    />
     <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(indicatorCode === 'region')">
       <div class="col-12 choroEntryContainer"><img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15"></div> 
     </div>
@@ -140,6 +142,9 @@ export default {
       let res = this.sidsList.filter(country => countryList.includes(country.id)).map(country => country.iso);
       this.choro && this.page === this.choro.page && this.choro.updateSeriesCountryList(res)
     },
+    setYear(year){
+      this.year = year;
+    },
     async initChart() {
       let sidsXML = await service.loadSidsSVG();
       let mapLocations = await service.loadMapLocations();
@@ -193,20 +198,18 @@ export default {
         console.log('country ======== ', country.iso);
         if(!country.average) {
           return !this.mviCodes.some((code) => {
-            console.log('code' , code)
             return this.chartData[code].data.recentValue[country.iso] === 'No Data'
           })
         } else if (countryGroupJson[country.iso]) {
           return Object.keys(countryGroupJson[country.iso]).some((iso) => {
             return !this.mviCodes.some((code) => {
-              console.log('code' , code)
               return this.chartData[code].data.recentValue[iso] === 'No Data'
             })
           })
         }
       })
       return res
-    }
+    },
   },
   async mounted() {
     await this.initChart()
