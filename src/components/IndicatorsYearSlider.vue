@@ -64,11 +64,16 @@ export default {
     await this.defaultYear();
     var slider = sliderBottom()
     .tickValues(this.activeIndicatorYears)
-        .min(this.sliderYearsArray[0])
-        .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
-        .width(700)
-        .displayValue(true)
-        .on('onchange', (value) => this.emitYearChange(value));
+    .min(this.sliderYearsArray[0])
+    .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
+    .width(700)
+    // .displayValue(true)
+    .tickFormat(d3.format('d'))
+    .fill('var(--gray-400)')
+    .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
+    .marks(this.sliderYearsArray)
+    .handle(['M -10, 0 a 10,10 0 1,1 20,0 a 10,10 0 1,1 -20,0'])
+    .on('onchange', (value) => this.emitYearChange(value));
 
     d3.select(this.$el)
       .append('svg')
@@ -77,14 +82,16 @@ export default {
       .append('g')
       .attr('transform', 'translate(30,30)')
       .call(slider)
-  }
+  },
 }
 </script>
 <style>
-.v-slider__tick-label{
-  font-size: 0.7rem;
+.track{
+  stroke-width: 0;
 }
-.v-slider__thumb-label{
-  z-index: 100;
+.handle {
+fill: var(--dark-red);
+stroke-width: 0;
 }
+
 </style>
