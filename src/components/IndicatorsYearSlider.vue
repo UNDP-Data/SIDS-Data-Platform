@@ -127,6 +127,7 @@ export default {
           .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
           .marks(this.sliderYearsArray)
         sliderSVG.call(slider);
+        this.resetTicks();
         hideSlider = false;
       }
       else hideSlider = true;
