@@ -1,7 +1,7 @@
 <template>
-  <div class='sliderDiv' v-if="(indiCode !== 'region') && (activeIndicatorYears.length > 1)">
-  </div>
-  <div style='text-align: center;' v-else-if="(activeIndicatorYears.length === 1)"><h4>Year: {{ activeIndicatorYears[0] }}</h4></div>
+  <!-- div class='sliderDiv' v-if="(indiCode !== 'region') && (activeIndicatorYears.length > 1)" -->
+  <div class='sliderDiv'></div>
+  <!-- div style='text-align: center;' v-else-if="(activeIndicatorYears.length === 1)"><h4>Year: {{ activeIndicatorYears[0] }}</h4></div -->
 
 </template>
 <script>
@@ -10,7 +10,8 @@ import { mapState } from 'vuex';
 import * as d3 from 'd3';
 import {sliderBottom} from 'd3-simple-slider';
 // eslint-disable-next-line no-unused-vars
-let selectedYear;
+var selectedYear;
+var slider, sliderSVG;
 
 export default {
   name: 'IndicatorsYearSlider',
@@ -61,8 +62,9 @@ export default {
     },
   },
   async mounted(){
+    console.log('mounted')
     await this.defaultYear();
-    var slider = sliderBottom()
+    slider = sliderBottom()
     .tickValues(this.activeIndicatorYears)
     .min(this.sliderYearsArray[0])
     .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
@@ -75,7 +77,7 @@ export default {
     .handle(['M -10, 0 a 10,10 0 1,1 20,0 a 10,10 0 1,1 -20,0'])
     .on('onchange', (value) => this.emitYearChange(value));
 
-    d3.select(this.$el)
+    sliderSVG = d3.select(this.$el)
       .append('svg')
       .attr('width', 800)
       .attr('height', 100)
@@ -83,6 +85,17 @@ export default {
       .attr('transform', 'translate(30,30)')
       .call(slider)
   },
+  watch:{
+    indiCode(){
+      slider
+        .tickValues(this.activeIndicatorYears)
+        .min(this.sliderYearsArray[0])
+        .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
+        .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
+        .marks(this.sliderYearsArray)
+      sliderSVG.call(slider);
+    }
+  }
 }
 </script>
 <style>
