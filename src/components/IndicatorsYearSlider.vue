@@ -1,9 +1,20 @@
 <template>
   <div class="yearsContainer">
-    <div class="sliderContainer">
-      <svg width="800" height="100"><g transform='translate(30,30)'></g></svg>
+    <div class="sliderContainer" v-show="this.sliderYearsArray.length > 1 && this.indiCode !== 'region'">
+      <svg width="750" height="100">
+        <g transform='translate(30,30)'></g>
+      </svg>
+      <v-btn
+        class="mt-3"
+        @click="toggleYearPlay"
+        :disabled="activeIndicatorYears.length === 1"
+        icon
+        >
+        <v-icon v-if="playingYear">mdi-pause</v-icon>
+        <v-icon v-else>mdi-play</v-icon>
+      </v-btn>
     </div>
-    <div class="singleYear"><h4>Year: {{ activeIndicatorYears[0] }}</h4></div>
+    <div class="singleYear" v-show="this.sliderYearsArray.length === 1"><h4>Year: {{ activeIndicatorYears[0] }}</h4></div>
   </div>
 </template>
 <script>
@@ -11,15 +22,17 @@
 import { mapState} from 'vuex';
 import * as d3 from 'd3';
 import {sliderTop} from 'd3-simple-slider';
-// eslint-disable-next-line no-unused-vars
-var selectedYear;
-var slider, sliderSVG, sliderDiv, singleYearDiv; 
 
 export default {
   name: 'IndicatorsYearSlider',
   data: function () {
     return {
       selectedYear: null,
+      playingYear: false,
+      playInterval: null,
+      slider: null,
+      sliderSvg: null,
+      first: true,
     }
   },
   props:['indiCode'],
@@ -57,12 +70,44 @@ export default {
         this.$emit('yearChange', year)
       }
     },
+    toggleYearPlay() {
+      if(this.playingYear) {
+        this.pausePlayYear()
+      } else {
+        this.playYear()
+      }
+    },
+    playYear() {
+      this.playingYear = true;
+      if(this.playInterval) {
+        clearTimeout(this.playInterval)
+      }
+      let years = this.activeIndicatorYears.slice();
+      let index = 0;
+      this.transitionToNextYear(years, index)
+    },
+    transitionToNextYear(years, index) {
+      if(this.playingYear) {
+        if(index !== this.activeIndicatorYears.length-1) {
+          this.slider.value(years[index]);
+          index++;
+          this.playInterval = setTimeout(()=>{this.transitionToNextYear(years, index)}, 3000)
+        } else {
+          this.pausePlayYear()
+        }
+      } else {
+        clearTimeout(this.playInterval)
+      }
+    },
+    pausePlayYear() {
+      clearTimeout(this.playInterval)
+      this.playingYear = false;
+    },
     resetTicks(){
-      console.log('in resetticks')
-      sliderSVG.select('.axis')
+      this.sliderSVG.select('.axis')
         .attr('transform','translate(0,0)');
 
-      let ticks = sliderSVG.selectAll('.tick');
+      let ticks = this.sliderSVG.selectAll('.tick');
 
       ticks.append('circle')
         .attr('stroke','var(--dark-red)')
@@ -70,38 +115,47 @@ export default {
         .attr('r',3);
 
       ticks.select('text').attr('y', -10);
-      sliderSVG.select('.track-fill').attr('x1',-8);
+      this.sliderSVG.select('.track-fill').attr('x1',-8);
+      if (this.first) {
+        this.sliderSVG.select('.parameter-value')
+          .insert('rect', 'text')
+          .attr('x',-20)
+          .attr('y',-44)
+          .attr('rx', 5)
+          .attr('width', 40)
+          .attr('height', 25)
+          .attr('fill', '#000');
+
+        this.sliderSVG.select('.parameter-value')
+          .append('polygon')
+          .attr('points','-10,-24 10,-24 0,-11')
+          .attr('fill', '#000');
+
+        this.first = false;
+      }
     }
   },
   async mounted(){
     await this.defaultYear();
     // years slider
-    sliderDiv = d3.select(this.$el).select('.sliderContainer');
-    singleYearDiv = d3.select(this.$el).select('.singleYear').style('display','none');
-    sliderDiv.style('display','none');
-    sliderSVG = sliderDiv.select('g');
+    this.sliderSVG = d3.select(this.$el).select('.sliderContainer').select('g');
 
-    slider = sliderTop()
-    //.tickValues(this.activeIndicatorYears)
-    .min(this.sliderYearsArray[0])
-    .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
-    .width(700)
-    .displayValue(true)
-    .tickFormat(d3.format('d'))
-    .fill('var(--dark-red)')
-    .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
-    .marks(this.sliderYearsArray)
-    .handle(['M -8, 0 a 8,8 0 1,1 16,0 a 8,8 0 1,1 -16,0'])
-    .on('onchange', (value) => this.emitYearChange(value));
+    this.slider = sliderTop()
+      //.tickValues(this.activeIndicatorYears)
+      .min(this.sliderYearsArray[0])
+      .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
+      .width(700)
+      .displayValue(true)
+      .tickFormat(d3.format('d'))
+      .fill('var(--dark-red)')
+      .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
+      .marks(this.sliderYearsArray)
+      .handle(['M -8, 0 a 8,8 0 1,1 16,0 a 8,8 0 1,1 -16,0'])
+      .on('onchange', (value) => this.emitYearChange(value));
 
-    if (this.sliderYearsArray.length > 1 && this.indiCode !== 'region') {
-      console.log('in mounted ----');
-      sliderDiv.style('display','block')
-      
-      sliderSVG.call(slider)
-      this.resetTicks();
-
-      sliderSVG.select('.parameter-value')
+    if (this.sliderYearsArray.length > 1 && this.indiCode !== 'region') {    
+      this.sliderSVG.call(this.slider);
+      this.sliderSVG.select('.parameter-value')
       .insert('rect', 'text')
       .attr('x',-20)
       .attr('y',-44)
@@ -110,35 +164,27 @@ export default {
       .attr('height', 25)
       .attr('fill', '#000');
 
-      sliderSVG.select('.parameter-value')
-        .append('polygon')
-        .attr('points','-10,-24 10,-24 0,-11')
-        .attr('fill', '#000');
-      
-    }
-    else sliderDiv.style('display','none');
+    this.sliderSVG.select('.parameter-value')
+      .append('polygon')
+      .attr('points','-10,-24 10,-24 0,-11')
+      .attr('fill', '#000');
+
+    this.resetTicks();
+   }
   },
   watch:{
     indiCode(){
-      console.log('changed indicode', this.indiCode);
       if (this.sliderYearsArray.length > 1 && this.indiCode !== 'region'){
-        console.log('in watch ----');
-        sliderDiv.style('display','block');
-        slider
+
+        this.slider
           .min(this.sliderYearsArray[0])
           .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
           .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
           .marks(this.sliderYearsArray);
 
-        sliderSVG.call(slider);
+        this.sliderSVG.call(this.slider);
         this.resetTicks();
       }
-      else {
-        console.log('---- in else')
-        sliderDiv.style('display','none');
-      }
-      console.log( 'this.sliderYearsArray', this.sliderYearsArray, 'activeIndicatorYears', this.activeIndicatorYears)
-      if (this.sliderYearsArray.length === 1) singleYearDiv.style('display','block')
     }
   }
 }
@@ -146,6 +192,8 @@ export default {
 <style>
 .sliderContainer, .singleYear{
   text-align: center;
+  display: flex;
+  justify-content: center;
 }
 .track{
   stroke-width: 0;
