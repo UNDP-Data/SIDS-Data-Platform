@@ -1,9 +1,10 @@
 <template>
-  <div class="sliderContainer">
-    <div class='sliderDiv'></div>
-    <h4>Year: {{ activeIndicatorYears[0] }}</h4>
+  <div class="yearsContainer">
+    <div class="sliderContainer">
+      <svg width="800" height="100"><g transform='translate(30,30)'></g></svg>
+    </div>
+    <div class="singleYear"><h4>Year: {{ activeIndicatorYears[0] }}</h4></div>
   </div>
-
 </template>
 <script>
 /*global gtag*/
@@ -12,9 +13,7 @@ import * as d3 from 'd3';
 import {sliderTop} from 'd3-simple-slider';
 // eslint-disable-next-line no-unused-vars
 var selectedYear;
-var slider, sliderSVG; 
-// eslint-disable-next-line no-unused-vars
-var hideSlider = false;
+var slider, sliderSVG, sliderDiv, singleYearDiv; 
 
 export default {
   name: 'IndicatorsYearSlider',
@@ -59,6 +58,7 @@ export default {
       }
     },
     resetTicks(){
+      console.log('in resetticks')
       sliderSVG.select('.axis')
         .attr('transform','translate(0,0)');
 
@@ -70,11 +70,17 @@ export default {
         .attr('r',3);
 
       ticks.select('text').attr('y', -10);
-      sliderSVG.select('.track-fill').attr('x1',-8)
+      sliderSVG.select('.track-fill').attr('x1',-8);
     }
   },
   async mounted(){
     await this.defaultYear();
+    // years slider
+    sliderDiv = d3.select(this.$el).select('.sliderContainer');
+    singleYearDiv = d3.select(this.$el).select('.singleYear').style('display','none');
+    sliderDiv.style('display','none');
+    sliderSVG = sliderDiv.select('g');
+
     slider = sliderTop()
     //.tickValues(this.activeIndicatorYears)
     .min(this.sliderYearsArray[0])
@@ -85,20 +91,16 @@ export default {
     .fill('var(--dark-red)')
     .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
     .marks(this.sliderYearsArray)
-    .handle(['M -10, 0 a 10,10 0 1,1 20,0 a 10,10 0 1,1 -20,0'])
+    .handle(['M -8, 0 a 8,8 0 1,1 16,0 a 8,8 0 1,1 -16,0'])
     .on('onchange', (value) => this.emitYearChange(value));
 
-    sliderSVG = d3.select(this.$el)
-      .append('svg')
-      .attr('width', 800)
-      .attr('height', 100)
-      .append('g')
-      .attr('transform', 'translate(30,30)')
-    
     if (this.sliderYearsArray.length > 1 && this.indiCode !== 'region') {
+      console.log('in mounted ----');
+      sliderDiv.style('display','block')
+      
       sliderSVG.call(slider)
-      hideSlider = false;
       this.resetTicks();
+
       sliderSVG.select('.parameter-value')
       .insert('rect', 'text')
       .attr('x',-20)
@@ -109,45 +111,48 @@ export default {
       .attr('fill', '#000');
 
       sliderSVG.select('.parameter-value')
-      .append('polygon')
+        .append('polygon')
         .attr('points','-10,-24 10,-24 0,-11')
         .attr('fill', '#000');
       
     }
-    else hideSlider = true;
+    else sliderDiv.style('display','none');
   },
   watch:{
     indiCode(){
       console.log('changed indicode', this.indiCode);
       if (this.sliderYearsArray.length > 1 && this.indiCode !== 'region'){
+        console.log('in watch ----');
+        sliderDiv.style('display','block');
         slider
-          .tickValues(this.activeIndicatorYears)
           .min(this.sliderYearsArray[0])
           .max(this.sliderYearsArray[this.sliderYearsArray.length - 1])
           .value(this.sliderYearsArray[this.sliderYearsArray.length - 1])
-          .marks(this.sliderYearsArray)
+          .marks(this.sliderYearsArray);
+
         sliderSVG.call(slider);
         this.resetTicks();
-        hideSlider = false;
       }
-      else hideSlider = true;
+      else {
+        console.log('---- in else')
+        sliderDiv.style('display','none');
+      }
+      console.log( 'this.sliderYearsArray', this.sliderYearsArray, 'activeIndicatorYears', this.activeIndicatorYears)
+      if (this.sliderYearsArray.length === 1) singleYearDiv.style('display','block')
     }
   }
 }
 </script>
 <style>
-.sliderContainer{
+.sliderContainer, .singleYear{
   text-align: center;
 }
 .track{
   stroke-width: 0;
 }
 .handle {
-fill: var(--dark-red);
-stroke-width: 0;
-}
-.hide-slider {
-  display: none;
+  fill: var(--dark-red);
+  stroke-width: 0;
 }
 .tick line{
  display: none;
