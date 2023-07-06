@@ -124,7 +124,6 @@ export default {
         let codeSplit = code.split("-");
         APIcode=`/indicators/${codeSplit[0]}/${code}`
       }
-      console.log('apiCode+++++++++++++', APIcode)
       /// read global values instead of only those of the sids countries, global values used for normalization
       if (APIcode === '/indices/mvi') APIcode = '/indices/mviGlobal'
       let indicatorData = await service.loadIndicatorData(APIcode);

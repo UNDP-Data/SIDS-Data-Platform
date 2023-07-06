@@ -94,11 +94,11 @@ export function getIndexDataYears(indexData){
 }
 
 export function getMinMaxObj(indexData, indexWeights){
-  console.log('indexData', indexData)
+  // console.log('indexData', indexData)
   let minMaxObj={};
   for(let subindexCode in indexWeights["subindices"]){
     for(let subsubindexCode in indexWeights["subindices"][subindexCode]["subsubindices"]){
-      console.log('subsubindexCode',subsubindexCode)
+      // console.log('subsubindexCode',subsubindexCode)
       let minn=9999999,
       maxx=-9999999,
       indexYears=["recentValue"]
@@ -110,13 +110,13 @@ export function getMinMaxObj(indexData, indexWeights){
         if(min<minn){
           minn=min}
         if(max>maxx){maxx=max}
-        console.log('year',year,'arr',arr);
+        // console.log('year',year,'arr',arr);
       }
       let minMax={"maxx":maxx,"minn":minn}
       minMaxObj[subsubindexCode]=minMax
     }
   }
-  console.log('minMaxObj',minMaxObj)
+  // console.log('minMaxObj',minMaxObj)
   return minMaxObj
 }
 

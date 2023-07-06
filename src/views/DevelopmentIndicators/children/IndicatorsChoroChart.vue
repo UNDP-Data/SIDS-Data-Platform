@@ -12,6 +12,8 @@
     <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(indicatorCode === 'region')">
       <div class="col-12 choroEntryContainer"><img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15"></div> 
     </div>
+    <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(page!=='global') && (page!=='mvi') && (indicatorCode !== 'region')">
+    </div>
     <div class="spiderbox" style="height:0;margin:0;">
       <div class="indexSpider radarChart" style="text-align:center;height:0"></div>
     </div>
@@ -191,10 +193,10 @@ export default {
       }
     },
     getMVIavaliableCountrues() {
-      console.log('sidsList', sidsList.length)
-      sidsList.forEach(country => console.log('country.iso', country.iso))
+      // console.log('sidsList', sidsList.length)
+      // sidsList.forEach(country => console.log('country.iso', country.iso))
       let res = sidsList.filter(country => {
-        console.log('country ======== ', country.iso);
+        // console.log('country ======== ', country.iso);
         if(!country.average) {
           return !this.mviCodes.some((code) => {
             return this.chartData[code].data.recentValue[country.iso] === 'No Data'
@@ -236,7 +238,6 @@ export default {
       }
     },
     chartData() {
-      console.log('in chartdata')
       if(this.choro && this.page === this.choro.page && (this.MLPredictionData || this.mlData)) {
         let compareIdsList = this.sidsList.filter(sids => sids.average).map(country => country.id)
         this.setCompareCountries(compareIdsList)

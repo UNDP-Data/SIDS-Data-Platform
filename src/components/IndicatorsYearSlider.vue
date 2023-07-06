@@ -1,7 +1,7 @@
 <template>
-  <div class="yearsContainer">
+  <div class="yearsContainer mt-5">
     <div class="sliderContainer" v-show="this.sliderYearsArray.length > 1 && this.indiCode !== 'region'">
-      <svg width="750" height="100">
+      <svg width="750" height="40">
         <g transform='translate(30,30)'></g>
       </svg>
       <v-btn
@@ -88,7 +88,7 @@ export default {
     },
     transitionToNextYear(years, index) {
       if(this.playingYear) {
-        if(index !== this.activeIndicatorYears.length-1) {
+        if(index !== this.activeIndicatorYears.length) {
           this.slider.value(years[index]);
           index++;
           this.playInterval = setTimeout(()=>{this.transitionToNextYear(years, index)}, 3000)
@@ -190,6 +190,10 @@ export default {
 }
 </script>
 <style>
+.yearsContainer{
+  position:relative;
+  z-index:10;
+}
 .sliderContainer, .singleYear{
   text-align: center;
   display: flex;
@@ -213,7 +217,8 @@ export default {
   fill: #FFF;
   font-size: 0.8rem;
 }
-.slider line{
+.slider .track-inset{
   opacity: 0.5;
 }
+
 </style>
