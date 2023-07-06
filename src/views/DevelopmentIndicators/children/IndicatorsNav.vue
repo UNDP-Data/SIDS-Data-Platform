@@ -222,7 +222,7 @@
   <v-card flat class="mt-2 active-indicator-info" v-if="activeIndicator && !isSmallScreen">
     <v-card-title class="mb-1 active-indicator_header">{{activeIndicator.indicator}} ({{activeIndicator.units}})</v-card-title>
     <v-card-text class="pt-1">
-      <p class="input-label mb-0">Year</p>
+      <!-- p class="input-label mb-0">Year</p>
       <div class="mb-2 d-flex">
         <v-select class='dimensions-select-button undp-select'
           :items="activeIndicatorYears"
@@ -250,7 +250,7 @@
           <v-icon v-if="playingYear">mdi-pause</v-icon>
           <v-icon v-else>mdi-play</v-icon>
         </v-btn>
-      </div>
+      </div-->
       <p v-if="activeIndicatorDimensions.length > 1" class="input-label mb-0">{{$t('indicators.forms.dimension')}}</p>
       <div class="mb-2 d-flex">
         <div class="align-right">
@@ -344,7 +344,7 @@ export default {
     isSmallScreen() {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm || this.$vuetify.breakpoint.md
     },
-    activeIndicatorYears(){
+    /* activeIndicatorYears(){
       if(this.data && this.data.data) {
         return Object.keys(this.data.data).filter(year => year !== 'recentYear').map(year => {
           return {
@@ -355,7 +355,7 @@ export default {
       } else {
         return []
       }
-    },
+    }, */
     indicatorCategories() {
       if(this.activeDataset) {
         let categories = Object.keys(this.activeDataset);
@@ -497,12 +497,12 @@ export default {
         this.$emit('close', indicator)
       }
     },
-    emitYearChange(year) {
+    /* emitYearChange(year) {
       gtag('event', 'indi_year', {
         year
       });
       this.$emit('yearChange', year)
-    },
+    },*/
     setActiveindicator(indicator) {
       this.activeIndicator = indicator;
       this.activeIndicatorDimension = indicator.dim;
@@ -532,7 +532,7 @@ export default {
     clearDeepSearch() {
       this.deepSearch = '';
     },
-    toggleYearPlay() {
+    /* toggleYearPlay() {
       if(this.playingYear) {
         this.pausePlayYear()
       } else {
@@ -560,7 +560,7 @@ export default {
       } else {
         clearTimeout(this.playInterval)
       }
-    },
+    }*/
     getDimensionAvaliability(code) {
       let codeParsed = code.code || code;
       if(this.chartType !== 'ml') {
@@ -569,10 +569,10 @@ export default {
 
       return !Object.values(this.indicatorsMeta[codeParsed].yearValueCounts).some(v=>v >= this.MLTargetSize);
     },
-    pausePlayYear() {
+    /* pausePlayYear() {
       clearTimeout(this.playInterval)
       this.playingYear = false;
-    }
+    }*/ 
   },
   watch:{
     activeIndicatorCode() {

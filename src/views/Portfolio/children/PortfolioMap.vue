@@ -124,6 +124,8 @@ export default {
       return this.$i18n.locale
     },
     projectsNumber() {
+      // test to check double count of projects ---
+      // console.log('projects -- ', [...new Set(this.projects.map(d => d.id))])
       switch (this.region) {
         case 'caribbean':
           return 25;

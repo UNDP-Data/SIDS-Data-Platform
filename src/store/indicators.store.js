@@ -124,6 +124,8 @@ export default {
         let codeSplit = code.split("-");
         APIcode=`/indicators/${codeSplit[0]}/${code}`
       }
+      /// read global values instead of only those of the sids countries, global values used for normalization
+      if (APIcode === '/indices/mvi') APIcode = '/indices/mviGlobal'
       let indicatorData = await service.loadIndicatorData(APIcode);
       indicatorData = Object.keys(indexCodes).includes(indicatorCode) ? indicatorData : indicatorData[code];
       dispatch('ml/clearMlPredictionData',{}, {root:true})

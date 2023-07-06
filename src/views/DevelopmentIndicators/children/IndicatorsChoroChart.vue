@@ -1,11 +1,18 @@
 <template>
   <div class="choro mt-2">
-    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi')" >
+    <h4 class="choro-title d-print-none text-center" v-if="(page!=='global') && (page!=='mvi') && (indicatorCode !== 'region')" >
       {{activeIndicatorsMeta.indicator}}
       ({{activeIndicatorsMeta.units}})
     </h4>
-    <div class="choro_legend_container" :id="chartId+'_legend_container'">
+    <indicators-year-slider
+      v-if="chartType !== 'series'"
+      :indiCode ="indicatorCode"
+      @yearChange="updateYear"
+    />
+    <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(indicatorCode === 'region')">
       <div class="col-12 choroEntryContainer"><img class="regionLegend" src="@/assets/media/choro-legend.jpeg" style="margin-top:-15"></div> 
+    </div>
+    <div class="choro_legend_container" :id="chartId+'_legend_container'" v-if="(page!=='global') && (page!=='mvi') && (indicatorCode !== 'region')">
     </div>
     <div class="spiderbox" style="height:0;margin:0;">
       <div class="indexSpider radarChart" style="text-align:center;height:0"></div>
@@ -29,6 +36,7 @@
         </div>
       </v-col>
     </v-row>
+
   </div>
 </template>
 
@@ -39,6 +47,7 @@ import service from '@/services'
 import { mapState } from 'vuex';
 import Choro from '@/choro';
 import CountryMultiselect from '@/components/CountryMultiselect';
+import IndicatorsYearSlider from '@/components/IndicatorsYearSlider.vue';
 import { countryGroupJson, countryColors } from '@/choro/countryGroup';
 
 export default {
@@ -70,7 +79,7 @@ export default {
       return this.$i18n.locale
     },
     activeIndicatorsMeta() {
-      return this.indicatorMeta[this.indicatorCode] || this.indicatorMeta['hdr-hdi']
+      return this.indicatorMeta[this.indicatorCode] || ''
     },
     chartData() {
       if(this.MLPredictionData && this.MLPredictionData.data[this.year]) {
@@ -125,10 +134,11 @@ export default {
       } else {
         return this.getMVIavaliableCountrues()
       }
-    }
+    },
   },
   components:{
-    CountryMultiselect
+    CountryMultiselect,
+    IndicatorsYearSlider
   },
   methods:{
     setCompareCountries(countryList) {
@@ -183,7 +193,10 @@ export default {
       }
     },
     getMVIavaliableCountrues() {
+      // console.log('sidsList', sidsList.length)
+      // sidsList.forEach(country => console.log('country.iso', country.iso))
       let res = sidsList.filter(country => {
+        // console.log('country ======== ', country.iso);
         if(!country.average) {
           return !this.mviCodes.some((code) => {
             return this.chartData[code].data.recentValue[country.iso] === 'No Data'
@@ -197,6 +210,11 @@ export default {
         }
       })
       return res
+    },
+    updateYear(year){
+      if(this.choro && this.page === this.choro.page) {
+        this.choro.updateVizYear(year)
+      }
     }
   },
   async mounted() {

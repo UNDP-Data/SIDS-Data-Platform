@@ -107,7 +107,7 @@ export default {
     barsData() {
       let allYearBarData = (project, data) => {
         return {
-          projects: data.projects + project.year.length,
+          projects: data.projects + 1, //+ project.year.length,
           budget: data.budget + this.getProjectFundning(project)
         }
       }
