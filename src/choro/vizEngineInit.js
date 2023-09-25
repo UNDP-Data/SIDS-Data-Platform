@@ -45,7 +45,7 @@ export function appendAllElements(){
 //
 export function initChoroLegend(quantize) {
 
-  d3.select(this.legendContainerSelector).select(".regionLegend").style('display','none');
+  d3.select(this.legendContainerSelector).select(".regionLegend_container").style('display','none');
 
   this.choroLegend = d3
     .select(this.legendContainerSelector)
