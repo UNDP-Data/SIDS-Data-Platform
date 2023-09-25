@@ -21,6 +21,7 @@ import * as d3 from 'd3';
 
 
 export function getIndexValues(indexData) {
+  console.log('calculating index - data:', indexData)
   let indexWeights = this.preprocessIndexWeights()
 
   let indexYears = this.getIndexDataYears(indexData)
@@ -80,6 +81,7 @@ export function preprocessIndexWeights(){
       indexWeights["subindices"][subindexCode]["weight"]=0
     }
   }
+  console.log('index weight preprocess:', indexWeights)
   return indexWeights;
 }
 
@@ -90,6 +92,8 @@ export function getIndexDataYears(indexData){
   } else {
     indexYears = [this.indiSelections["year"]];
   }
+
+  console.log('index years:', indexYears)
   return indexYears;
 }
 
@@ -113,6 +117,7 @@ export function getMinMaxObj(indexData, indexWeights){
       minMaxObj[subsubindexCode]=minMax
     }
   }
+  console.log('min-max object:', minMaxObj)
   return minMaxObj
 }
 
@@ -161,6 +166,7 @@ export function computeSubindexValues(indexData,indexWeights,indexYears,minMaxOb
     }
     allValues[subindexCode] = { data: subindexValues };
   }
+  console.log('subindex values:', allValues)
   return allValues;
 }
 
@@ -191,6 +197,7 @@ export function computeIndexValues(allValues,indexWeights,indexYears){
     }
     indexValues[year] = yearValues;
   }
+  console.log('index values:', indexValues)
   return indexValues;
 }
 
