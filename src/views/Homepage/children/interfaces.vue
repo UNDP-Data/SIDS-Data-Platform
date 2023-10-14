@@ -7,7 +7,7 @@
         </v-col>
       </v-row>
       <div class="d-flex flex-column flex-sm-row">
-        <div class="phone-block">
+        <a class="phone-block" href="/country-profiles/">
           <v-card class="phone-block_card" flat>
             <a class="title_link" href="/country-profiles/">
               <v-img
@@ -32,8 +32,8 @@
               {{$t('interfaces.profiles.description')}}
             </v-card-text>
           </v-card>
-        </div>
-        <div class="phone-block">
+        </a>
+        <a class="phone-block" href="/development-indicators/">
           <v-card class="phone-block_card" flat>
             <a class="title_link" href="/development-indicators/">
               <v-img
@@ -58,8 +58,8 @@
                 {{$t('interfaces.indicators.description')}}
               </v-card-text>
           </v-card>
-        </div>
-        <div class="phone-block">
+        </a>
+        <a class="phone-block" href="/vulnerability/">
           <v-card class="phone-block_card" flat>
             <a class="title_link" href="/vulnerability/">
               <v-img
@@ -84,8 +84,8 @@
                 {{$t('interfaces.mvi.description')}}
               </v-card-text>
           </v-card>
-        </div>
-        <div class="phone-block">
+        </a>
+        <a class="phone-block" href="/geospatial-data/">
           <v-card class="phone-block_card" flat>
             <a class="title_link" href="/geospatial-data/">
               <v-img
@@ -110,8 +110,8 @@
                 {{$t('interfaces.gis.description')}}
               </v-card-text>
           </v-card>
-        </div>
-        <div class="phone-block">
+        </a>
+        <a class="phone-block" href="/portfolio/">
           <v-card class="phone-block_card" flat>
             <a class="title_link" href="/portfolio/">
               <v-img
@@ -136,7 +136,7 @@
                 {{$t('interfaces.portfolio.description')}}
               </v-card-text>
           </v-card>
-        </div>
+        </a>
       </div>
     </v-container>
   </div>
@@ -164,10 +164,16 @@
   width: 20%;
   padding: 10px;
   box-sizing: border-box;
+  text-decoration: none;
+}
+.phone-block:focus {
+  box-shadow: 0 0 4px #0468b1 !important;
+    outline: 0 !important;
 }
 .phone-block_card {
   background: transparent !important;
 }
+
 .phone-block_title {
 
   word-break: keep-all;

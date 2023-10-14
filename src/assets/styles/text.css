@@ -100,6 +100,7 @@ body, .v-application{
   --spacing-12: 6rem;
   --spacing-13: 7rem;
   --fontFamily: 'Proxima Nova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
+  --fontFamilyHeadings: 'SohneBreit', 'ProximaNova', 'proxima-nova', 'Helvetica Neue', 'sans-serif';
 }
 
 .bold {
@@ -161,6 +162,17 @@ caption.undp-typography, h1.undp-typography, h2.undp-typography, h3.undp-typogra
 @media(min-width:48em) {
   caption.undp-typography, h1.undp-typography, h2.undp-typography, h3.undp-typography, h4.undp-typography, h5.undp-typography, h6.undp-typography.undp-typography.undp-typography.undp-typography.undp-typography {
     margin-bottom: 1rem;
+  }
+}
+
+@keyframes lineLoop-animation-for-links {
+  0% {
+    background-position: 100% 100%, -30px 100%;
+    background-size: 100% 2px, 0 2px;
+  }
+  to {
+    background-position: calc(100% + 30px) 100%, 0 100%;
+    background-size: 0 2px, 100% 2px;
   }
 }
 
@@ -246,6 +258,11 @@ a.undp-style, .undp-style a{
   background-size: 100% 2px, 0 1px;
   text-decoration: none;
   color: var(--black) !important;
+}
+
+a.undp-style:focus{
+  box-shadow: 0 0 4px #0468b1 !important;
+  outline: 0 !important;
 }
 
 a.undp-style:hover, .undp-style a:hover {

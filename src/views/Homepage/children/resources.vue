@@ -8,7 +8,11 @@
       </v-row>
       <v-row class="mb-auto">
         <v-col v-for ="resource in resources" cols="12" sm="4" :key="resource.id">
-          <v-card class="resources-block d-flex flex-column" flat>
+          <v-card 
+            class="resources-block d-flex flex-column" 
+            flat
+            :href="`${path}/resources/${resource.link}`"
+          >
             <v-card-text class="resources-block_chip pl-6 pr-6 pb-6" color="#fff">{{$t(`resources.${resource.id}.badge`)}}</v-card-text>
             <v-img
               eager
@@ -29,7 +33,6 @@
                   class="red-arrow"
                   depressed
                   :style="{ 'background-color': hover ? '#FFFFFF' : '#FFFFFF', 'font-size':'16px' }"
-                  :href="`${path}/resources/${resource.link}`"
                 >
                   {{$t('resources.open')}}
                 </v-btn>
@@ -76,6 +79,7 @@
   font-size: 35px;
   line-height: 114.2%;
   color: #fff;
+  font-family: var(--fontFamilyHeadings);
 }
 .resources-block_chip {
   font-weight: 700;

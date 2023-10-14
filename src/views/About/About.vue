@@ -13,7 +13,7 @@
             <v-expansion-panel-header>{{$t('about.whatSids')}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <p class='undp-typography'>
-                <a href="http://unohrlls.org/about-sids/" target="_blank">{{$t('about.whatSidsContent[0]')}}</a> {{$t('about.whatSidsContent[1]')}}
+                <a href="http://unohrlls.org/about-sids/" target="_blank" class="undp-style">{{$t('about.whatSidsContent[0]')}}</a> {{$t('about.whatSidsContent[1]')}}
               </p>
               <p class='undp-typography'>
                 {{$t('about.whatSidsContent[2]')}}
@@ -32,7 +32,7 @@
             <v-expansion-panel-content>
               <p class='undp-typography'>
                 {{$t('about.whatOfferContent[0]')}}
-                <a href="https://www.sparkblue.org/dashboard/small-island-developing-states" target="_blank">
+                <a href="https://www.sparkblue.org/dashboard/small-island-developing-states" target="_blank" class="undp-style">
                   <b>{{$t('about.whatOfferContent[1]')}}</b>
                 </a>
                   {{$t('about.whatOfferContent[2]')}}
@@ -88,7 +88,7 @@
             <v-expansion-panel-content>
               <p class='undp-typography'>
                 {{$t('about.whatContactContent[0]')}}
-                <a href="https://www.sparkblue.org/dashboard/small-island-developing-states" target="_blank">
+                <a href="https://www.sparkblue.org/dashboard/small-island-developing-states" target="_blank" class="undp-style">
                   {{$t('about.whatContactContent[1]')}}</a>.
               </p>
               <p class='undp-typography'>
@@ -200,11 +200,6 @@ export default {
   }
   .about-page .v-expansion-panel::after {
     border-top: 1px solid #A9B1B7 !important;
-  }
-  .about-page a {
-    text-decoration: none;
-    border-bottom: 1px solid #000;
-    color: #000000 !important;
   }
   .about-page .v-expansion-panel-header__icon:after{
     right:5px;

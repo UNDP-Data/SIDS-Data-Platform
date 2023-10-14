@@ -20,8 +20,9 @@
               v-for="route in routes"
               :key="route.link"
               :to="route.link"
+              style="padding: 0;"
             >
-              <v-list-item-content>
+              <v-list-item-content style="padding: 0;">
                 <v-list-item-title
                   class="menu-item_text"
                   v-text="$t('navigation.' + route.meta.linkText)">
@@ -96,10 +97,14 @@ export default {
   line-height: .9rem;
 }
 .main-menu {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.15;
   text-transform: uppercase;
 }
 .main-menu-desktop {
   background: transparent !important;
+  padding: 0 0.75rem;
 }
 .mdl-tabs__tab-bar {
   flex-direction: column;
@@ -139,15 +144,26 @@ export default {
 .navigation-menu-drawer {
   height: 100vh !important;
 }
-.menu-item{
-  border-bottom: 1px solid #D4D6D8;
-  padding: 8px 20px;
-  margin-left: 24px;
-  font-weight: 500;
+.menu-item {    
+  border: none;
+  border-bottom: 1px solid #a9b1b7;
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 0;
 }
+
+.menu-item:hover{
+  background-color: #edeff0 !important;
+}
+
 .menu-item .menu-item_text {
-  font-size: 14px !important;
-  letter-spacing: 1px;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-transform: uppercase;
+  padding: 1.5rem;
 }
 .menu-item.v-list-item--active::before {
   opacity: 0;
@@ -172,7 +188,8 @@ export default {
   max-width: 16.66667%
 }
 .menu-item.v-list-item--active .menu-item_text {
-  color: #E21549;
+  background-color: var(--blue-600);
+  color: #fff;
 }
 .nav-logo-block {
   width: 100%;

@@ -193,6 +193,7 @@
 .header-text_header {
   font-weight: 650;
   margin-top: -6px;
+  font-family: var(--fontFamilyHeadings);
 }
 .header-text_header-big {
   font-size: 58px;
@@ -201,6 +202,7 @@
   -ms-animation: fadein 2s;
   -o-animation: fadein 2s;
   animation: fadein 2s;
+  font-family: var(--fontFamilyHeadings);
 }
 
 .header-text_header-small {
@@ -210,6 +212,7 @@
   -ms-animation: fadein 3s;
   -o-animation: fadein 3s;
   animation: fadein 3s;
+  font-family: var(--fontFamilyHeadings);
 }
 
 .header-text_description {
