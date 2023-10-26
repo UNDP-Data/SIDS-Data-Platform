@@ -6,7 +6,7 @@
           style='margin: 0; display: flex; align-items: center; gap: 1rem;'
         >
           <a href='https://www.undp.org/' target='_blank' rel='noreferrer'>
-            <img alt='undp logo' src="@/assets/media/logo.png" style='width: 72px;' />
+            <img alt='undp logo' src="@/assets/media/logo.png" style='width: 60px;' />
           </a>
           <h5 class='undp-typography margin-bottom-00'>
             United Nations
