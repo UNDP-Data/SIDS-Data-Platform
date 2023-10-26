@@ -6,8 +6,18 @@
       :class="{ 'border-wrapper-fixed': offset }"
     >
       <a href="/" class="nav-logo-block pa-4 mt-0">
-        <img class="nav-logo-block_image" src="@/assets/media/RFSIDS-dark.png" alt="">
-        <h3 class="block-subheader nav-logo-block_text">Data Platform</h3>
+        <div
+          style='margin: 0; display: flex; align-items: center; gap: 1rem; width: 100%;'
+        >
+          <a href='./'>
+            <img alt='undp logo' src="@/assets/media/undp-logo-blue.svg" style='width: 72px;' />
+          </a>
+          <p class='undp-typography margin-bottom-00' style="color: var(--black); font-size: 1.25rem;">
+            Rising Up
+            <br />
+            For SIDS
+          </p>
+        </div>
       </a>
       <v-list
         class="main-menu-desktop main-menu mt-10"
@@ -200,7 +210,7 @@ export default {
 }
 .sticky-menu-container {
   height: calc(100vh);
-
+  width: 100%;
 }
 
 </style>

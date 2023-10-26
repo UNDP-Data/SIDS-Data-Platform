@@ -1,9 +1,10 @@
 <template>
   <div class="about-page">
     <v-row class="d-none d-md-flex mt-7" justify="center">
-      <v-col cols="12">
+      <v-col cols="12" style="display: flex; justify-content: space-between; align-items: center;">
         <h3 v-if="this.placement === 'home'" class="undp-typography text-center">{{$t('about.header')}}</h3>
         <h2 v-else class="undp-typography">{{$t('about.header')}}</h2>
+        <language-selector class="l-selector ml-4 ml-sm-auto mr-4" style="margin: 0 !important"/>
       </v-col>
     </v-row>
     <v-row>
@@ -141,6 +142,7 @@
 import { mapState } from 'vuex';
 import Resource from './children/Resource';
 import store from '@/store'
+import LanguageSelector from '@/components/LanguageSelector'
 
 export default {
   name: 'About',
@@ -150,7 +152,8 @@ export default {
     }
   },
   components:{
-    Resource
+    Resource,
+    LanguageSelector
   },
   props:['placement'],
   async created() {

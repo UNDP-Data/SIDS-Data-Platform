@@ -23,7 +23,7 @@
     </a>
     <img
       class="d-block d-md-none header-bar_logo-mobile"
-      src="@/assets/media/RFSIDS.png"
+      src="@/assets/media/logo.png"
       alt="Rising Up For Small Islands Developing States Logo"/>
   </header>
 </template>

@@ -85,7 +85,7 @@
         <v-col class="float-md-right pb-0" cols="10" sm="9" md='9' xl="10">
           <h2 class="page-header mt-md-2 mb-0 undp-typography">{{$t('portfolio.header')}}</h2>
         </v-col>
-        <v-col class="d-flex justify-end" cols="2" sm="1" md='3' xl="2">
+        <v-col class="d-flex justify-end" cols="2" sm="1" md='3' xl="2" style="align-items: center;">
           <div class="">
             <info-button :contentName="'aboutThis-portfolio'"/>
           </div>
@@ -99,6 +99,7 @@
               :categories="fundingCategoriesTypes"
             />
           </div>
+          <language-selector class="l-selector ml-4 ml-sm-auto mr-4" style="margin: 0 !important"/>
         </v-col>
       </v-row>
       <v-row class="d-none d-md-flex mt-0 d-print-none">
@@ -333,6 +334,7 @@ import PortfolioMobileNav from './children/PortfolioMobileNav';
 import PortfolioPrintoutChips from './children/PortfolioPrintoutChips';
 import PortfolioMobileChips from './children/PortfolioMobileChips';
 import InfoHoverTooltip from '@/components/InfoHoverTooltip';
+import LanguageSelector from '@/components/LanguageSelector'
 import PortfolioProjects from './children/PortfolioProjects';
 import InfoButton from '@/components/InfoButton.vue'
 
@@ -346,6 +348,7 @@ import {goalTypes, goals} from '@/assets/goalsList'
 export default {
   name: 'Portfolio',
   components: {
+    LanguageSelector,
     PortfolioMap,
     PortfolioPieChart,
     PortfolioExport,

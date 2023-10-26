@@ -1,7 +1,7 @@
 <template>
-  <div class="select">
+  <div style="width: 190px;">
     <v-select
-      class="undp-select"
+      class="undp-language-select ant-select-selector ant-select-selection-search"
       :value="activeLocale"
       :items="languages"
       item-text="name"

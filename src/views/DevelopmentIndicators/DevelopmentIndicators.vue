@@ -39,7 +39,7 @@
           {{$t('indicators.headerMVI')}}
         </h2>
       </v-col>
-      <v-col class="d-flex justify-end" cols='3' sm="2" lg="3" xl="2">
+      <v-col class="d-flex justify-end" cols='3' sm="2" lg="3" xl="2" style="align-items: center;">
         <div class="mt-0 mb-2">
           <info-button :contentName="page!=='mvi' ? 'aboutThis-indicators' : 'aboutThis-mvi'"/>
         </div>
@@ -50,6 +50,7 @@
           :indiCode="indicator"
         />
         </div>
+        <language-selector class="l-selector ml-4 ml-sm-auto mr-4" style="margin: 0 !important"/>
       </v-col>
     </v-row>
     <v-row dense>
@@ -209,6 +210,7 @@ import IndicatorsMobileNav from './children/IndicatorsMobileNav.vue'
 import MviMobileNav from './children/MviMobileNav.vue'
 import IndicatorsAutocomplete from './children/IndicatorsAutocomplete.vue'
 import PrintoutHeader from '@/components/PrintoutHeader.vue'
+import LanguageSelector from '@/components/LanguageSelector'
 import IndicatorsExport from './children/IndicatorsExport.vue'
 import MVIIndicatorsNav from './children/MVIIndicatorsNav.vue'
 import indicatorsMLmodels from './children/indicatorsMLmodels.vue'
@@ -294,6 +296,7 @@ export default {
     }
   },
   components: {
+    LanguageSelector,
     InfoButton,
     IndicatorsNav,
     PrintoutHeader,

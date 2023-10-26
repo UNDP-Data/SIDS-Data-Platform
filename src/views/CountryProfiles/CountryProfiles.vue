@@ -56,13 +56,14 @@
           </v-col>
         </v-col>
         <v-col cols="3" lg="3" sm="1">
-            <v-col class="d-print-none d-flex justify-end" lg='auto'>
+            <v-col class="d-print-none d-flex justify-end" lg='auto' style="align-items: center;">
             <div class="d-none d-md-block mr-2 mr-md-0">
               <info-button :fab="!isDesktop && !isTablet" :contentName="'aboutThis-profiles'"/>
             </div>
             <div class="ml-3">
               <export :idsList="selectedCountriesIds"/>
             </div>
+            <language-selector class="l-selector ml-4 ml-sm-auto mr-4" style="margin: 0 !important"/>
           </v-col>
         </v-col>
       </v-row>
@@ -343,6 +344,7 @@ import CountryMultiselect from '@/components/CountryMultiselect.vue'
 import * as d3 from 'd3';
 import store from '@/store'
 import sizeMixin from '@/mixins/size.mixin'
+import LanguageSelector from '@/components/LanguageSelector'
 import { mapState } from 'vuex';
 
 export default {
@@ -350,6 +352,7 @@ export default {
   props:['compareIdsList', 'activeCountryId'],
   mixins:[sizeMixin],
   components: {
+    LanguageSelector,
     PrintoutHeader,
     Export,
     CountryInfoBar,
