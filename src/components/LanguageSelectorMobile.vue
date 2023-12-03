@@ -1,7 +1,7 @@
 <template>
   <div class="select">
     <v-select
-      class="undp-select"
+      class="undp-language-select ant-select-selector ant-select-selection-search"
       :value="activeLocale"
       :items="languages"
       item-text="name"
@@ -12,12 +12,6 @@
       dense
       hide-details
     >
-      <template slot="selection" slot-scope="data">
-        <span class="select-text-element text-capitalize">{{data.item.id}}</span>
-      </template>
-      <template  slot="item" slot-scope="data">
-        {{data.item.name }}
-      </template>
     </v-select>
   </div>
 </template>

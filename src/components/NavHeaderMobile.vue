@@ -60,6 +60,6 @@ export default {
   width: 56px;
 }
 .language-selector-container {
-  max-width: 80px;
+  width: 190px;
 }
 </style>

@@ -52,10 +52,13 @@ export default {
 <style scoped>
 .footer-root {
   height: auto;
+  width: 100%;
   font-family: var(--fontFamily);
   background-color: var(--blue-600);
   padding: 3.25rem 0.75rem 3rem 0.75rem;
   color: var(--white);
+  z-index: 10;
+  position: absolute;
 }
 
 .footerEl {
@@ -83,7 +86,6 @@ export default {
   }
   .footer-root {
     display: block;
-    height: 114px;
   }
   .l-selector {
     float:right;

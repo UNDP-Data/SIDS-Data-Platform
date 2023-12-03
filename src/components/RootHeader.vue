@@ -21,10 +21,6 @@
     <a class="header_button-down d-none d-md-block" href="#content">
       <img alt="Arrow Down Icon" src="@/assets/media/icons/arrow-down.png">
     </a>
-    <img
-      class="d-block d-md-none header-bar_logo-mobile"
-      src="@/assets/media/logo.png"
-      alt="Rising Up For Small Islands Developing States Logo"/>
   </header>
 </template>
 

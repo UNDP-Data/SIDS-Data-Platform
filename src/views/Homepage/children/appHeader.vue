@@ -62,10 +62,6 @@
             <img alt="Arrow Down Icon" src="@/assets/mediahome/arrow-down.png">
           </a>
       </main>
-      <img
-        class="d-block d-md-none header-bar_logo-mobile"
-        src="@/assets/mediahome/logo.png"
-        alt="Rising Up For Small Islands Developing States Logo"/>
     </div>
   </div>
 </template>

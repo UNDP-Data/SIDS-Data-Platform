@@ -681,6 +681,9 @@ export default {
      padding-top: 25vh;
      padding-bottom: 20px;
    }
+   .l-selector {
+    display: none;
+   }
  }
  /* @media print {
    .profiles-page {
